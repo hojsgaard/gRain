@@ -1,0 +1,83 @@
+<html><head><title>Extract conditional probabilities and clique potentials from data</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="Rchm.css">
+</head>
+<body>
+
+<table width="100%"><tr><td>extractCPT,extractPOT(gRain)</td><td align="right">R Documentation</td></tr></table><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+<param name="keyword" value="R:   extractCPT">
+<param name="keyword" value="R:   extractCPT.table">
+<param name="keyword" value="R:   extractPOT">
+<param name="keyword" value="R:   extractPOT.table">
+<param name="keyword" value=" Extract conditional probabilities and clique potentials from data">
+</object>
+
+
+<h2>Extract conditional probabilities and clique potentials from data</h2>
+
+
+<h3>Description</h3>
+
+<p>
+Extract conditional probabilities and clique potentials from data
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+extractCPT(x, graph, V = nodes(graph), smooth = 0)
+extractPOT(x, graph, smooth = 0)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+A contingency table (an array)</td></tr>
+<tr valign="top"><td><code>graph</code></td>
+<td>
+To extractCPT graph is a DAG while to extractPOT graph is
+an undirected triangulated graph.</td></tr>
+<tr valign="top"><td><code>V</code></td>
+<td>
+The set of vertices for which CPTs should be extracted</td></tr>
+<tr valign="top"><td><code>smooth</code></td>
+<td>
+See 'details' below</td></tr>
+</table>
+
+<h3>Details</h3>
+
+<p>
+If <code>smooth</code> is non&ndash;zero then zero entries of
+<code>values</code> are replaced with <code>smooth</code> before normalization takes place.
+</p>
+
+
+<h3>Value</h3>
+
+<p>
+extractCPT: A list of conditional probability tables
+extractPOT: A list of clique potentials</p>
+
+<h3>Author(s)</h3>
+
+<p>
+Søren Højsgaard, sorenh@agrsci.dk
+</p>
+
+
+<h3>See Also</h3>
+
+<p>
+<code><a href="compileCPT.html">compileCPT</a></code>, <code><a href="compileCPT.html">compilePOT</a></code>, <code><a href="grain.html">grain</a></code>
+</p>
+
+
+
+<hr><div align="center">[Package <em>gRain</em> version 0.8.2 <a href="00Index.html">Index</a>]</div>
+
+</body></html>

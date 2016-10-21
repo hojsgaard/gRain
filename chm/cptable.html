@@ -1,0 +1,102 @@
+<html><head><title>Create conditional probability tables (CPTs)</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="Rchm.css">
+</head>
+<body>
+
+<table width="100%"><tr><td>cptable(gRain)</td><td align="right">R Documentation</td></tr></table><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+<param name="keyword" value="R:   cptable">
+<param name="keyword" value="R:   print.cptable">
+<param name="keyword" value=" Create conditional probability tables (CPTs)">
+</object>
+
+
+<h2>Create conditional probability tables (CPTs)</h2>
+
+
+<h3>Description</h3>
+
+<p>
+Creates conditional probability tables of the form p(v|pa(v)).
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+cptable(v,pa=NULL, levels=NULL, values = NULL, normalize = TRUE, smooth = 0)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>v</code></td>
+<td>
+A vertex</td></tr>
+<tr valign="top"><td><code>pa</code></td>
+<td>
+The parents of vertex v</td></tr>
+<tr valign="top"><td><code>values</code></td>
+<td>
+Probabilities; recycled if necessary</td></tr>
+<tr valign="top"><td><code>normalize</code></td>
+<td>
+See 'details' below.</td></tr>
+<tr valign="top"><td><code>smooth</code></td>
+<td>
+See 'details' below.</td></tr>
+<tr valign="top"><td><code>levels</code></td>
+<td>
+See 'details' below.</td></tr>
+</table>
+
+<h3>Details</h3>
+
+<p>
+If <code>normalize=TRUE</code> then for each configuration of the parents
+the probabilities are normalized to sum to one. 
+</p>
+<p>
+If <code>smooth</code> is non&ndash;zero then zero entries of
+<code>values</code> are replaced with <code>smooth</code> before normalization takes place.
+</p>
+
+
+<h3>Value</h3>
+
+<p>
+If a <code>gmData</code> object is given, then 'cpt' returns an object of
+class 'ctab' (which is a general representation of a table).
+<br>
+If no  <code>gmData</code> object is given, then
+'cpt' returns an object of class 'cptTemplate'. 
+<br>
+'compileCPT' returns an object of class 'cptspec' (which is just a list
+with a special class attribute).</p>
+
+<h3>Author(s)</h3>
+
+<p>
+Søren Højsgaard, sorenh@agrsci.dk
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+
+yn &lt;- c("yes","no")
+ynm &lt;- c("yes","no","maybe")
+a    &lt;- cptable(~asia, values=c(1,99),levels=yn)
+t.a  &lt;- cptable(~tub+asia, values=c(5,95,1,99,1,999),levels=ynm)
+d.a  &lt;- cptable(~dia+asia, values=c(5,5,1,99,100,999),levels=ynm)
+compileCPT(list(a,t.a,d.a))
+
+</pre>
+
+
+
+<hr><div align="center">[Package <em>gRain</em> version 0.8.0 <a href="00Index.html">Index]</a></div>
+
+</body></html>

@@ -1,0 +1,87 @@
+<html><head><title>Compile a graphical independence network (a Bayesian network)</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="Rchm.css">
+</head>
+<body>
+
+<table width="100%"><tr><td>compile.grain(gRain)</td><td align="right">R Documentation</td></tr></table><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+<param name="keyword" value="R:   compile.grain">
+<param name="keyword" value="R:   compile.cpt-grain">
+<param name="keyword" value="R:   compile.pot-grain">
+<param name="keyword" value=" Compile a graphical independence network (a Bayesian network)">
+</object>
+
+
+<h2>Compile a graphical independence network (a Bayesian network)</h2>
+
+
+<h3>Description</h3>
+
+<p>
+Compiles a Bayesian network. This means creating a junction tree and
+establishing clique potentials.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+compile.grain(object, method = "mcwh", propagate = FALSE, root = NULL, smooth = 0, control = object$control, details = 0, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>object</code></td>
+<td>
+A grain object </td></tr>
+<tr valign="top"><td><code>method</code></td>
+<td>
+Triangulation method. Currently only "mcwh" is available</td></tr>
+<tr valign="top"><td><code>propagate</code></td>
+<td>
+If TRUE the network is also propagated meaning that
+the cliques of the junction tree are calibrated to each other.</td></tr>
+<tr valign="top"><td><code>root</code></td>
+<td>
+A set of variables which must be in the root of the
+junction tree</td></tr>
+<tr valign="top"><td><code>smooth</code></td>
+<td>
+If non-zero this value is added to all potentials (to
+avoid zeros in the joint distribution)</td></tr>
+<tr valign="top"><td><code>control</code></td>
+<td>
+Controlling the compilation process. </td></tr>
+<tr valign="top"><td><code>details</code></td>
+<td>
+For debugging info. Do not use.</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+Currently not used.</td></tr>
+</table>
+
+<h3>Value</h3>
+
+<p>
+A compiled Bayesian network; an object of class <code>compgrain</code>.</p>
+
+<h3>Author(s)</h3>
+
+<p>
+Søren Højsgaard, sorenh@agrsci.dk
+</p>
+
+
+<h3>See Also</h3>
+
+<p>
+<code><a href="grain.html">grain</a></code>, <code><a href="compile.html">propagate</a></code>
+</p>
+
+
+
+<hr><div align="center">[Package <em>gRain</em> version 0.8.2 <a href="00Index.html">Index</a>]</div>
+
+</body></html>

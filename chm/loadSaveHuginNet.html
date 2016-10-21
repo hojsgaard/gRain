@@ -1,0 +1,95 @@
+<html><head><title>Load and save Hugin net files</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="Rchm.css">
+</head>
+<body>
+
+<table width="100%"><tr><td>loadHuginNet(gRain)</td><td align="right">R Documentation</td></tr></table><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+<param name="keyword" value="R:   loadHuginNet">
+<param name="keyword" value="R:   saveHuginNet">
+<param name="keyword" value=" Load and save Hugin net files">
+</object>
+
+
+<h2>Load and save Hugin net files</h2>
+
+
+<h3>Description</h3>
+
+<p>
+These functions can load a net file saved in the 'Hugin format' into R
+and save a network in R as a file in the 'Hugin format'.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+loadHuginNet(file, description, details = 0)
+saveHuginNet(gin, file, details = 0)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>gin</code></td>
+<td>
+An independence network</td></tr>
+<tr valign="top"><td><code>file</code></td>
+<td>
+Name of HUGIN net file. Convenient to give the file the
+extension '.net'</td></tr>
+<tr valign="top"><td><code>description</code></td>
+<td>
+A text describing the network, defaults to <code>file</code></td></tr>
+<tr valign="top"><td><code>details</code></td>
+<td>
+Debugging information</td></tr>
+</table>
+
+<h3>Value</h3>
+
+<p>
+An object (a list) of class "huginNet".</p>
+
+<h3>Author(s)</h3>
+
+<p>
+Søren Højsgaard, sorenh@agrsci.dk
+</p>
+
+
+<h3>See Also</h3>
+
+<p>
+<code><a href="grain.html">grain</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+
+tf &lt;- system.file("huginex", "chest_clinic.net", package = "gRain")
+chest &lt;- loadHuginNet(tf, details=1)
+chest 
+
+td &lt;- tempdir()
+saveHuginNet(chest, paste(td,"/chest.net",sep=''))
+
+chest2 &lt;- loadHuginNet(paste(td,"/chest.net",sep=''))
+
+tf &lt;- system.file("huginex", "golf.net", package = "gRain")
+golf &lt;- loadHuginNet(tf, details=1)
+
+saveHuginNet(golf, paste(td,"/golf.net",sep=''))
+golf2 &lt;- loadHuginNet(paste(td,"/golf.net",sep=''))
+
+</pre>
+
+
+
+<hr><div align="center">[Package <em>gRain</em> version 0.8.2 <a href="00Index.html">Index</a>]</div>
+
+</body></html>

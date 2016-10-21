@@ -1,0 +1,76 @@
+useDynLib(gRain)
+
+exportPattern("^[[:alpha:]]+")
+
+importFrom(Rcpp, evalCpp)
+
+importFrom(stats, simulate)
+
+import(methods)
+
+import(gRbase)
+
+importFrom(graph, edges, nodes)
+#importMethodsFrom(graph, plot)
+
+importFrom(magrittr,"%>%")
+export("%>%")
+
+importFrom("functional", "Curry")
+export("Curry")
+
+importFrom("graphics", "plot")
+importFrom("stats", "runif", "terms", "xtabs")
+importFrom("utils", "str")
+
+importFrom(igraph, igraph.from.graphNEL, V, "V<-", layout.graphopt)
+
+S3method(compile, CPTgrain)
+S3method(compile, POTgrain)
+S3method(compile, grain)
+
+S3method(grain, CPTspec)
+S3method(grain, POTspec)
+S3method(grain, dModel)
+S3method(grain, graphNEL)
+S3method(iplot, grain)
+S3method(nodeNames, grain)
+S3method(nodeStates, grain)
+S3method(plot, grain)
+S3method(predict, grain)
+S3method(print, CPTspec)
+S3method(print, POTspec)
+
+
+S3method(print, cptable)
+S3method(print, grain)
+S3method(printlist, default)
+S3method(printlist, list)
+
+S3method(evidence, grain)
+S3method("evidence<-", grain)
+
+S3method(propagate, grain)
+S3method(querygrain, grain)
+S3method(splitVec, default)
+S3method(splitVec, list)
+
+S3method(summary, CPTspec)
+S3method(summary, grain)
+S3method(update, CPTgrain)
+S3method(valueLabels, cptable)
+
+S3method(varNames, cptable)
+
+S3method(simulate, grain)
+
+S3method( as.data.frame, grain_ev)
+S3method( print, grain_jev )
+S3method( print, grain_ev )
+
+S3method( subset, grain_ev)
+S3method( universe, grain)
+S3method( varNames, grainEvidence_)
+S3method( varNames, grain_ev)
+
+

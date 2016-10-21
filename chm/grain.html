@@ -1,0 +1,142 @@
+<html><head><title>Graphical Independence Network</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="Rchm.css">
+</head>
+<body>
+
+<table width="100%"><tr><td>grain(gRain)</td><td align="right">R Documentation</td></tr></table><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+<param name="keyword" value="R:   grain">
+<param name="keyword" value="R:   print.grain">
+<param name="keyword" value="R:   grain.CPTspec">
+<param name="keyword" value="R:   grain.POTspec">
+<param name="keyword" value="R:   grain.graphNEL">
+<param name="keyword" value="R:   nodeNames">
+<param name="keyword" value="R:   nodeStates">
+<param name="keyword" value="R:   nodeNames.grain">
+<param name="keyword" value="R:   nodeStates.grain">
+<param name="keyword" value="R:   plot.grain">
+<param name="keyword" value=" Graphical Independence Network">
+</object>
+
+
+<h2>Graphical Independence Network</h2>
+
+
+<h3>Description</h3>
+
+<p>
+The 'grain' builds a graphical independence network.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+grain(x, data, control=list(), smooth=0, details=0, ...) 
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+An argument to build an independence network from.</td></tr>
+<tr valign="top"><td><code>data</code></td>
+<td>
+An optional data set (currently must be an array/table)</td></tr>
+<tr valign="top"><td><code>control</code></td>
+<td>
+A list defining controls, see 'details' below.</td></tr>
+<tr valign="top"><td><code>smooth</code></td>
+<td>
+A (usuall small) number to add to the counts of a table
+if the grain is built from a graph plus a dataset.</td></tr>
+<tr valign="top"><td><code>details</code></td>
+<td>
+Debugging information.</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+Additional arguments, currently not used.</td></tr>
+</table>
+
+<h3>Details</h3>
+
+<p>
+If 'smooth' is  non-zero then entries of 'values' which a zero are
+replaced by the value of 'smooth' - BEFORE any normalization takes place.
+</p>
+
+
+<h3>Value</h3>
+
+<p>
+An object of class "grain"</p>
+
+<h3>Author(s)</h3>
+
+<p>
+Søren Højsgaard, sorenh@agrsci.dk
+</p>
+
+
+<h3>See Also</h3>
+
+<p>
+<code><a href="cptable.html">cptable</a></code>,
+<code><a href="querygrain.html">setFinding</a></code>,
+<code><a href="querygrain.html">getFinding</a></code>,
+<code><a href="querygrain.html">pFinding</a></code>,
+<code><a href="querygrain.html">retractFinding</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+
+yn &lt;- c("yes","no")
+a    &lt;- cptable(~asia, values=c(1,99),levels=yn)
+t.a  &lt;- cptable(~tub+asia, values=c(5,95,1,99),levels=yn)
+s    &lt;- cptable(~smoke, values=c(5,5), levels=yn)
+l.s  &lt;- cptable(~lung+smoke, values=c(1,9,1,99), levels=yn)
+b.s  &lt;- cptable(~bronc+smoke, values=c(6,4,3,7), levels=yn)
+e.lt &lt;- cptable(~either+lung+tub,values=c(1,0,1,0,1,0,0,1),levels=yn)
+x.e  &lt;- cptable(~xray+either, values=c(98,2,5,95), levels=yn)
+d.be &lt;- cptable(~dysp+bronc+either, values=c(9,1,7,3,8,2,1,9), levels=yn)
+
+plist &lt;- compileCPT(list(a, t.a, s, l.s, b.s, e.lt, x.e, d.be))
+pn &lt;- grain(plist)
+pn
+
+summary(pn)
+plot(pn)
+
+data(HairEyeColor)
+d   &lt;- HairEyeColor
+dag &lt;- dagList(list(~Hair, ~Eye+Hair, ~Sex+Hair))
+class(dag)
+ug &lt;- ugList(list(~Eye+Hair, ~Sex+Hair))
+class(ug)
+
+b1  &lt;- grain(dag,d)
+class(b1)
+
+b3  &lt;- grain(ug,d)
+class(b3)
+
+plist &lt;- compileCPT(list(a, t.a))
+pn &lt;- grain(plist)
+querygrain(pn)
+
+plist &lt;- compileCPT(list(a, t.a, s))
+pn &lt;- grain(plist)
+querygrain(pn)
+
+</pre>
+
+
+
+<hr><div align="center">[Package <em>gRain</em> version 0.8.2 <a href="00Index.html">Index</a>]</div>
+
+</body></html>

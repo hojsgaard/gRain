@@ -1,0 +1,741 @@
+% \VignetteIndexEntry{Short introduction to the gRain package}
+% \VignetteDepends{gRbase}
+% \VignetteKeyword{Graphical Models}
+% \VignetteKeyword{Probabilistic networks}
+
+\documentclass[10pt]{article}
+\usepackage{boxedminipage,color,a4wide,url}
+\usepackage[latin1]{inputenc}
+
+\usepackage[authoryear,round]{natbib}
+\bibliographystyle{plainnat}
+
+\usepackage{Sweave}
+\SweaveOpts{height=4}
+
+\SweaveOpts{prefix.string=figures/graph}
+
+\def\pkg#1{\texttt{#1}}
+\def\grbn{\texttt{gRain}}
+\def\grain{\texttt{grain}}
+\def\code#1{{\texttt{#1}}}
+\def\R{\texttt{R}}
+
+
+<<echo=FALSE,print=FALSE>>=
+require( gRain )
+prettyVersion <- packageDescription("gRain")$Version
+prettyDate <- format(Sys.Date())
+dir.create( "figures" )
+@
+
+
+\author{S{\o}ren H{\o}jsgaard\\Aalborg University, Denmark}
+\title{Bayesian networks in R with the \pkg{gRain} package}
+\date{\pkg{gRain} version \Sexpr{prettyVersion} as of \Sexpr{prettyDate}}
+
+
+
+\begin{document}
+
+%%\SweaveInput{Rmarkup.STY}
+%% ------------------------
+\definecolor{darkred}{rgb}{.7,0,0}
+\definecolor{midnightblue}{rgb}{0.098,0.098,0.439}
+
+\DefineVerbatimEnvironment{Sinput}{Verbatim}{
+  fontfamily=tt,
+  %%fontseries=b,
+  %% xleftmargin=2em,
+  formatcom={\color{midnightblue}}
+}
+\DefineVerbatimEnvironment{Soutput}{Verbatim}{
+  fontfamily=tt,
+  %%fontseries=b,
+  %% xleftmargin=2em,
+  formatcom={\color{darkred}}
+}
+\DefineVerbatimEnvironment{Scode}{Verbatim}{
+  fontfamily=tt,
+  %%fontseries=b,
+  %% xleftmargin=2em,
+  formatcom={\color{blue}}
+}
+
+\fvset{listparameters={\setlength{\topsep}{-2pt}}}
+\renewenvironment{Schunk}{\linespread{.90}}{}
+%% ------------------------
+
+\maketitle
+
+
+\tableofcontents
+\parindent0pt\parskip5pt
+
+\section{Introduction}
+
+The \grbn\ package implements propagation in [gra]phical [i]ndependence
+[n]etworks (hereafter abbreviated \grain). Such networks are also known
+as probabilistic networks and Bayesian networks.
+
+To cite \grbn\ in publications, please use:
+
+\begin{quote}
+Søren Højsgaard (2012). Graphical Independence Networks with the gRain
+Package for R. Journal of Statistical Software, 46(10),
+1-26. \url{http://www.jstatsoft.org/v46/i10/}.
+\end{quote}
+
+and possibly also
+
+\begin{quote}
+Søren Højsgaard, David Edwards and Steffen Lauritzen (2012). Graphical
+Models with R. Springer
+\end{quote}
+
+More information about the package, other graphical modelling packages
+and development versions is available from
+\begin{quote}
+\url{http://people.math.aau.dk/~sorenh/software/gR}
+\end{quote}
+
+
+\section{A worked example: chest clinic}
+\label{sec:chest}
+
+@
+<<echo=F, results=hide>>=
+yn <- c("yes","no")
+a    <- cptable(~asia, values=c(1,99),levels=yn)
+t.a  <- cptable(~tub|asia, values=c(5,95,1,99),levels=yn)
+s    <- cptable(~smoke, values=c(5,5), levels=yn)
+l.s  <- cptable(~lung|smoke, values=c(1,9,1,99), levels=yn)
+b.s  <- cptable(~bronc|smoke, values=c(6,4,3,7), levels=yn)
+e.lt <- cptable(~either|lung:tub,values=c(1,0,1,0,1,0,0,1),levels=yn)
+x.e  <- cptable(~xray|either, values=c(98,2,5,95), levels=yn)
+d.be <- cptable(~dysp|bronc:either, values=c(9,1,7,3,8,2,1,9), levels=yn)
+plist <- compileCPT(list(a, t.a, s, l.s, b.s, e.lt, x.e, d.be))
+plist
+net1 <- grain(plist)
+net1
+@ %def
+
+@
+<<LS,fig=T,include=F,echo=F>>=
+require(Rgraphviz)
+plot(net1)
+@ %def
+
+
+This section reviews the chest clinic example of \cite{lau/spieg:88}
+(illustrated in Figure~\ref{fig:chest-LS}) and shows one way of
+specifying the model in \grbn{}.  \cite{lau/spieg:88} motivate the
+chest clinic example as follows:
+
+\begin{quote}
+  ``Shortness--of--breath (dyspnoea) may be due to tuberculosis, lung
+  cancer or bronchitis, or none of them, or more than one of them. A
+  recent visit to Asia increases the chances of tuberculosis, while
+  smoking is known to be a risk factor for both lung cancer and
+  bronchitis. The results of a single chest X--ray do not discriminate
+  between lung cancer and tuberculosis, as neither does the presence or
+  absence of dyspnoea.''
+\end{quote}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[height=5cm]{figures/graph-LS}
+  \caption{Chest clinic example from LS.}
+  \label{fig:chest-LS}
+\end{figure}
+
+
+
+
+\subsection{Building a network}
+
+A Bayesian network is a special case of graphical independence
+networks. In this section we outline how to build a Bayesian network.
+The starting point is a probability
+distribution factorising accoring to a DAG with nodes
+$V$. Each node $v\in V$ has a set $pa(v)$ of parents and each node
+$v\in V$ has a finite set of states. A joint distribution
+over the variables $V$ can be given as
+\begin{equation}
+  \label{eq:dagfact1}
+  p(V) = \prod_{v\in V} p(v|pa(v))
+\end{equation}
+where $p(v|pa(v))$ is a function defined on $(v,pa(v))$. This function
+satisfies that $\sum_{v^*} p(v=v^*|pa(v))=1$, i.e.\ that
+for each configuration of the parents $pa(v)$, the sum
+over the levels of $v$ equals one. Hence $p(v|pa(v))$ becomes the
+conditional distribution of $v$ given $pa(v)$.
+In practice $p(v|pa(v))$ is specified as a table called a conditional
+probability table or a CPT for short.
+Thus, a Bayesian network can be regarded as a complex stochastic model built up by
+putting together simple components (conditional probability
+distributions).
+
+Thus the DAG in
+Figure~\ref{fig:chest-LS} dictates a factorization of the joint
+probability function as
+\begin{equation}
+  \label{eq:chestfact1}
+  p(V) =
+  p(\alpha)p(\sigma)p(\tau|\alpha)p(\lambda|\sigma)p(\beta|\sigma)p(\epsilon|\tau,\lambda)
+  p(\delta|\epsilon, \beta)p(\xi|\epsilon).
+\end{equation}
+In (\ref{eq:chestfact1}) we have
+$\alpha=\mbox{asia}$,
+$\sigma=\mbox{smoker}$,
+$\tau=\mbox{tuberculosis}$,
+$\lambda=\mbox{lung cancer}$,
+$\beta=\mbox{bronchitis}$,
+$\epsilon=\mbox{either tuberculosis or lung cancer}$,
+$\delta=\mbox{dyspnoea}$ and
+$\xi=\mbox{xray}$. Note that $\epsilon$ is a logical variable which is
+true if either $\tau$ or $\lambda$ are true and false otherwise.
+
+
+<<echo=F,results=hide>>=
+library(gRain)
+options("prompt"="> ","width"=85)
+@
+
+
+\subsection{Queries to networks}
+\label{sec:xxx}
+
+Suppose we are given the evidence (sometimes also called ``finding'')
+that a set of variables $E\subset V$ have a specific value $e^*$. For
+example that a person has recently visited Asia and suffers from
+dyspnoea, i.e.\ $\alpha=\mbox{yes}$ and $\delta=\mbox{yes}$.
+
+With this evidence, we are often interested in the
+conditional distribution $p(v|E=e^*)$ for some of the variables $v \in
+V \setminus E$ or in $p(U|E=e^*)$ for a set $U\subset V
+\setminus E$.
+
+In the chest clinic example, interest might be in $p(\lambda|e^*)$, $p(\tau|e^*)$
+and  $p(\beta|e^*)$, or possibly in the joint (conditional) distribution
+$p(\lambda,\tau,\beta|e^*)$.
+
+Interest might also be in
+calculating the probability of a specific event, e.g.\ the probability
+of seeing a specific evidence, i.e.\ $p(E=e^*)$.
+
+
+\section{A one--minute version of  \grbn{}}
+\label{sec:oneminute}
+
+
+\subsection{Specifying a network}
+\label{sec:specifying-network}
+
+
+A simple way of  specifying the model for the chest clinic
+example is as follows.
+
+\begin{enumerate}
+\item Specify conditional probability tables (with values as given in
+  \cite{lau/spieg:88}):
+
+@
+<<>>=
+yn <- c("yes","no")
+a    <- cptable(~asia, values=c(1,99),levels=yn)
+t.a  <- cptable(~tub|asia, values=c(5,95,1,99),levels=yn)
+s    <- cptable(~smoke, values=c(5,5), levels=yn)
+l.s  <- cptable(~lung|smoke, values=c(1,9,1,99), levels=yn)
+b.s  <- cptable(~bronc|smoke, values=c(6,4,3,7), levels=yn)
+e.lt <- cptable(~either|lung:tub,values=c(1,0,1,0,1,0,0,1),levels=yn)
+x.e  <- cptable(~xray|either, values=c(98,2,5,95), levels=yn)
+d.be <- cptable(~dysp|bronc:either, values=c(9,1,7,3,8,2,1,9), levels=yn)
+@ %def
+
+\item Compile list of conditional probability tables and create the network:
+
+@
+<<>>=
+plist <- compileCPT(list(a, t.a, s, l.s, b.s, e.lt, x.e, d.be))
+plist
+plist$tub
+plist$either ## Notice: a logical node
+net1 <- grain(plist)
+net1
+@ %def
+
+
+
+\end{enumerate}
+
+\subsection{Querying a network}
+\label{sec:querying-network}
+
+\begin{enumerate}
+\item The network can be queried to give marginal probabilities:
+
+@
+<<>>=
+querygrain(net1, nodes=c("lung","bronc"), type="marginal")
+@ %def
+
+\item Likewise, a joint distribution can be obtained:
+
+@
+<<>>=
+querygrain(net1,nodes=c("lung","bronc"), type="joint")
+@ %def
+
+\item Evidence can be entered in one of these two equivalent forms:
+
+<<>>=
+net12  <- setEvidence(net1, evidence=list(asia="yes", dysp="yes"))
+net12  <- setEvidence(net1,
+                      nodes=c("asia", "dysp"), states=c("yes", "yes"))
+@ %def
+
+\item The probability of observing this evidence under the model is
+@
+<<>>=
+pEvidence( net12 )
+@ %def
+
+
+\item The network can be queried again:
+
+@
+<<>>=
+querygrain( net12, nodes=c("lung","bronc") )
+querygrain( net12, nodes=c("lung","bronc"), type="joint" )
+@ %def
+\end{enumerate}
+
+
+\subsection{Conditioning on evidence with zero probability}
+\label{sec:zero-probabilities}
+
+Consider setting the evidence
+@
+<<>>=
+net13 <- setEvidence(net1,nodes=c("either", "tub"),
+                     states=c("no","yes"))
+@ %def
+
+Under the model, this finding has zero probability;
+@
+<<>>=
+pEvidence( net13 )
+@ %def
+
+Therefore, all conditional probabilities are (under the model) undefined;
+
+@
+<<>>=
+querygrain( net13, nodes=c("lung","bronc"), type="joint" )
+@ %def
+
+We can look closer into this zero--probability issue. Because the node
+\code{either} is logical, half of the configurations will have zero probability:
+
+@
+<<>>=
+tt <- querygrain( net1, type="joint")
+sum(tt==0)/length(tt)
+@ %def
+
+In particular the configuration above has zero probability
+@
+<<>>=
+sum(tableSlice(tt, c("either","tub"), c("no","yes")))
+@ %def
+
+Zero probailities (or almost zero probabilities) also arise in a
+different in a different setting. Consider this example
+
+@
+<<>>=
+yn <- c("yes","no")
+eps <- 1e-100
+a    <- cptable(~a,   values=c(1,eps),levels=yn)
+b.a  <- cptable(~b+a, values=c(1,eps,eps,1),levels=yn)
+c.b  <- cptable(~c+b, values=c(1,eps,eps,1),levels=yn)
+plist <- compileCPT(list(a, b.a, c.b))
+bn   <- grain(plist)
+( tt   <- querygrain(bn, type="joint") )
+@ %def
+
+@
+<<>>=
+querygrain(setEvidence(bn, nodes=c("a","c"), state=c("no", "yes")))
+@ %def
+
+No problem so far, but if \code{eps} is made smaller numerical
+problems arise:
+@
+<<>>=
+eps <- 1e-200
+a    <- cptable(~a,   values=c(1,eps),levels=yn)
+b.a  <- cptable(~b+a, values=c(1,eps,eps,1),levels=yn)
+c.b  <- cptable(~c+b, values=c(1,eps,eps,1),levels=yn)
+plist <- compileCPT(list(a, b.a, c.b))
+bn   <- grain(plist)
+( tt   <- querygrain(bn, type="joint") )
+querygrain(setEvidence(bn, nodes=c("a","c"), state=c("no", "yes")))
+@ %def
+
+
+
+
+
+
+\section{Hard  and virtual (likelihood) evidence}
+\label{sec:hard-virt-likel}
+
+Below we describe  how to work with virtual evidence (also known
+as likelihood evidence) in \grbn. This is done via the function
+\code{setEvidence()}.
+
+The clique potential representation in a Bayesian network gives
+\begin{displaymath}
+  p(x) \propto \psi(x) = \prod_{C} \psi_C(x_C)
+\end{displaymath}
+where we recall that the whole idea in computations with Bayesian
+networks is to avoid calculation the product on the right hand
+side. Instead computations are based on propagation (multiplying,
+dividing and summing clique potentials $\psi_C$ in an appropriate
+order, and such an appropriate order comes from a junction tree).
+The normalizing constant, say $c=\sum_x \psi(x)$, comes out of
+propagation as a ``by product''.
+
+Suppose a set of nodes $E$ are known to have a specific value,
+i.e. $x_E=x^*_E$. This is called hard evidence. The probability of
+the event $x_E=x^*_E$ is
+\begin{displaymath}
+  p(x_E=x^*_E)=E_p\{I(x_E=x^*_E)\} = \sum_x I(x_E=x^*_E) p(x)
+  = \frac{1}{c} \sum_x I(x_E=x^*_E) \psi(x)
+\end{displaymath}
+
+The computations are based on modifying the clique potentials $\psi_C$
+by giving value zero to states in $\psi_C$ which are not consistent
+with $x_E=x^*_E$. This can be achieved with an indicator function, say
+$L_C(x_C)$ such that we obtain a set of new potentials $\tilde \psi_C
+= L_C(x_C) \psi_C(x_C)$. Propagation with these new potentials gives,
+as a by product, $\tilde c=\sum \tilde \psi(x)$ where
+$\tilde\psi(x)= \prod_C \tilde\psi_C(x_C)$. Consequently, we have
+$p(x_E=x^*_E)=\tilde c / c$.
+
+In a more general setting we may have non--negative weights $L(x)$ for
+each value of $x$. We may calculate
+\begin{displaymath}
+  E_p\{L(X)\} = \sum_x L(x)p(x)
+\end{displaymath}
+If $L(X)$ factorizes as $L(X)=L_C(X_C)$ then the computations are
+carried out as outlined above, i.e.\ by the message passing scheme.
+
+
+\subsection{An excerpt of the chest clinic network}
+\label{sec:an-excerpt-chest}
+
+
+Consider the following excerpt of
+the chest clinic network which is described in the paper mentioned
+above.
+
+@
+<<>>=
+yn <- c("yes","no")
+a    <- cptable(~asia, values=c(1,99),levels=yn)
+t.a  <- cptable(~tub|asia, values=c(5,95,1,99),levels=yn)
+
+( plist1 <- compileCPT( list( a, t.a ) ) )
+plist1[[1]]
+plist1[[2]]
+( chest1 <- grain(plist1) )
+querygrain( chest1 )
+@ %def
+
+\subsection{Specifying hard evidence}
+\label{sec:hard-evidence}
+
+
+Suppose we want to make a diagnosis about tuberculosis given the
+evidence that a person has recently been to Asia. The functions
+\code{setFinding()} (which has been in \grbn\ for years) and
+\code{setEvidence()} (which is a recent addition to \grbn) can both be used for this
+purpose. The following forms are equivalent.
+
+@
+<<>>=
+setFinding(  chest1, nodes="asia", states="yes")
+setEvidence( chest1, nodes="asia", states="yes")
+setEvidence( chest1, evidence=list(asia="yes"))
+@ %def
+
+@
+<<>>=
+querygrain( setEvidence( chest1, evidence=list(asia="yes")) )
+@ %def
+
+\subsection{What is virtual evidence (also called likelihood evidence)
+?}
+\label{sec:virt-evid-likel}
+
+Suppose we do not know with certainty whether a patient has
+recently been to Asia (perhaps the patient is too ill to
+tell). However the patient (if he/she is Caucasian) may be unusually
+tanned and this lends support to the hypothesis of a recent visit to
+Asia.
+
+To accommodate we create an extended network with an extra
+node for which we enter evidence.  However, it is NOT necessary to do
+so in practice, because we may equivalently enter the virtual evidence
+in the original network.
+
+We can then introduce a new variable
+\code{guess.asia} with \code{asia} as its only parent.
+
+@
+<<print=T>>=
+g.a <- parray(c("guess.asia", "asia"), levels=list(yn, yn),
+              values=c(.8,.2, .1,.9))
+@ %def
+
+This reflects the assumption that for patients who have recently been
+to Asia we would guess so in 80\% of the cases, whereas for patients who have
+not recently been to A we would (erroneously) guess that they have
+recently been to Asia in 10\% of the cases.
+
+@
+<<>>=
+( plist2 <- compileCPT( list( a, t.a, g.a ) ) )
+( chest2 <- grain(plist2) )
+querygrain( chest2 )
+@ %def
+
+
+Now specify the guess or judgment, that the person has recently been
+to Asia:
+
+@
+<<>>=
+querygrain( setEvidence( chest2, evidence=list(guess.asia="yes")) )
+@ %def
+
+\subsection{Specifying virtual evidence}
+\label{sec:spec-virt-evid}
+
+The same guess or judgment can be specified as virtual evidence
+(also called likelihood evidence) for the original network:
+
+@
+<<>>=
+querygrain( setEvidence( chest1, evidence=list(asia=c(.8, .1))) )
+@ %def
+
+This also means that specifying that specifying \code{asia='yes'} can
+be done as
+@
+<<>>=
+querygrain( setEvidence( chest1, evidence=list(asia=c(1, 0))) )
+@ %def
+
+
+\subsection{A mixture of a discrete and a continuous variable}
+\label{sec:ixture}
+
+\grain\ only handles discrete variables with a finite state space, but
+using likelihood evidence it is possible to work with networks with
+both discrete and continuous variables (or other types of variables).
+This is possible only when he networks
+have a specific structure. This is possible when no discrete variable
+has non--discrete parents.
+
+Take a simple example: $x$ is a discrete variable with levels $1$ and
+$2$; $y_1|x=k \sim N(\mu_k, \sigma^2_k)$ and $y_2|x=k \sim
+Poi(\lambda_k)$ where $k=1,2$. The joint distribution is
+\begin{displaymath}
+  p(x,y_1, y_2) = p(x)p(y_1|x)p(y_2|x)
+\end{displaymath}
+
+Suppose the interest is in the distribution of $x$ given
+$y_1=y_1^*$ and $y_2=y_2^*$. We then have
+\begin{displaymath}
+  p(x|y_1^*, y_2^*) \propto p(x) p(y_1^*|x)p(y_2^*|x) =
+  p(x) L_1(x) L_2(x)
+\end{displaymath}
+
+
+
+
+
+
+
+\section{Building networks from data}
+\label{sec:using-textttsm-argum}
+
+The following two graphs specify the same model:
+@
+<<fig=T>>=
+dG  <- dag(~A:B)
+uG  <- ug(~A:B)
+par(mfrow=c(1,2)); plot( dG ); plot( uG )
+@ %def
+
+
+
+
+Suppose data is
+@
+<<print=T>>=
+dat <-as.table(parray(c("A","B"), levels=c(2,2), values=c(0,0,2,3)))
+class( dat )
+@ %def
+
+A network can be built from data using:
+
+@
+<<print=T>>=
+gr.dG <- compile( grain( dG, dat ) )
+gr.uG <- compile( grain( uG, dat ) )
+@ %def
+
+However, when there are zeros in the table, care must be taken.
+
+\subsection{Extracting information from tables}
+\label{sec:extr-inform-from}
+
+In the process of creating networks, conditional probability tables
+are extracted when the graph is a dag and clique potentials are
+extracted when the graph is a chordal (i.e.\ triangulated) undirected
+graph. This takes place as follows (internally):
+
+@
+<<>>=
+extractCPT( dat, dG )
+c( extractPOT( dat, uG ) )
+@ %def
+
+The conditional probability table $P(A|B)$ contains \code{NaN}s
+because
+\begin{displaymath}
+  P(A|B=B1)=\frac{n(A,B=B1)}{\sum_A n(A,B=B1)} = \frac{0}{0} = \mbox{NaN}
+\end{displaymath}
+
+For this reason the network \code{gr.dG} above will fail to compile
+whereas \code{gr.uG} will work, but it may not give the expected results.
+
+\subsection{Using smooth}
+\label{sec:using-smooth}
+
+To illustrate what goes on, we can extract the distributions from data
+as follows:
+
+@
+<<print=T>>=
+p.A.g.B <- tableDiv(dat, tableMargin(dat, "B"))
+p.B <- tableMargin(dat, "B")/sum(dat)
+p.AB <- tableMult( p.A.g.B, p.B)
+@ %def
+
+However, the result is slightly misleading because \code{tableDiv}
+sets $0/0=0$.
+
+In \grain\ there is a \code{smooth} argument that will add a small
+number to the cell entries before extracting tables, i.e.
+\begin{displaymath}
+  P(A|B=B1)=\frac{n(A,B=B1)+\epsilon}{\sum_A ( n(A,B=B1) + \epsilon) }
+  = \frac{\epsilon}{2\epsilon} = 0.5
+\end{displaymath}
+and
+\begin{displaymath}
+  P(B)= \frac{\sum_A (n(A,B)+\epsilon)}{\sum_{AB} (n(A,B)+\epsilon)}
+\end{displaymath}
+
+We can mimic this as follows:
+@
+<<>>=
+e <- 1e-2
+(dat.e <- dat + e)
+@ %def
+
+@
+<<print=T>>=
+pe.A.g.B <- tableDiv(dat.e, tableMargin(dat, "B"))
+pe.B <- tableMargin(dat.e, "B")/sum(dat.e)
+pe.AB  <- tableMult( pe.A.g.B, pe.B )
+@ %def
+
+However this resulting joint distribution is different from what is
+obtained from the adjusted table itself
+@
+<<>>=
+dat.e / sum( dat.e )
+@ %def
+
+This difference appears in the \grain\ networks.
+
+\subsection{Extracting tables}
+\label{sec:extracting-tables}
+
+One can do
+@
+<<>>=
+gr.dG <- compile( grain( dG, dat, smooth=e ) )
+@ %def
+
+which (internally) corresponds to
+@
+<<>>=
+extractCPT( dat, dG, smooth=e)
+@ %def
+
+We get
+@
+<<>>=
+querygrain( gr.dG )
+querygrain( gr.uG )
+@ %def
+
+However, if we condition on \code{B=B1} we get:
+@
+<<>>=
+querygrain(setFinding(gr.dG, nodes="B", states="B1"))
+querygrain(setFinding(gr.uG, nodes="B", states="B1"))
+@ %def
+
+so the ``problem'' with zero entries shows up in a different
+place. However, the answer is not necessarily wrong; the answer simply
+states that $P(A|B=B1)$ is undefined.
+To ``remedy'' we can use the \code{smooth} argument:
+@
+<<>>=
+gr.uG <- compile( grain( uG, dat, smooth=e) )
+@ %def
+which (internally) corresponds to
+@
+<<>>=
+c( extractPOT( dat, uG, smooth=e ) )
+@ %def
+
+Notice that the results are not exactly identical:
+
+@
+<<>>=
+querygrain( gr.uG )
+querygrain( gr.dG )
+@ %def
+
+
+@
+<<>>=
+querygrain( setFinding(gr.uG, nodes="B", states="B1") )
+querygrain( setFinding(gr.dG, nodes="B", states="B1") )
+@ %def
+
+
+
+\bibliography{gRain}
+
+\end{document}
+

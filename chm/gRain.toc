@@ -1,0 +1,235 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HEAD></HEAD><HTML><BODY>
+<UL>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Package gRain:  Contents">
+<param name="Local" value="00Index.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Package gRain:  R objects">
+</OBJECT>
+<UL>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="gRain-package">
+<param name="Local" value="gRain-package.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="andtable">
+<param name="Local" value="andtable.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="compile">
+<param name="Local" value="compile.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="compile.cpt-grain">
+<param name="Local" value="compile.grain.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="compile.grain">
+<param name="Local" value="compile.grain.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="compile.pot-grain">
+<param name="Local" value="compile.grain.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="compileCPT">
+<param name="Local" value="compileCPT.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="compilePOT">
+<param name="Local" value="compileCPT.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="cptable">
+<param name="Local" value="cptable.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="extractCPT">
+<param name="Local" value="extractCPT.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="extractCPT.table">
+<param name="Local" value="extractCPT.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="extractPOT">
+<param name="Local" value="extractCPT.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="extractPOT.table">
+<param name="Local" value="extractCPT.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="getFinding">
+<param name="Local" value="querygrain.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="gRain">
+<param name="Local" value="gRain-package.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="grain">
+<param name="Local" value="grain.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="grain.CPTspec">
+<param name="Local" value="grain.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="grain.graphNEL">
+<param name="Local" value="grain.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="grain.POTspec">
+<param name="Local" value="grain.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="loadHuginNet">
+<param name="Local" value="loadSaveHuginNet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="nodeNames">
+<param name="Local" value="grain.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="nodeNames.grain">
+<param name="Local" value="grain.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="nodeStates">
+<param name="Local" value="grain.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="nodeStates.grain">
+<param name="Local" value="grain.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="ortable">
+<param name="Local" value="andtable.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="pFinding">
+<param name="Local" value="querygrain.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="plot.grain">
+<param name="Local" value="grain.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="predict.grain">
+<param name="Local" value="predict.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="print.cptable">
+<param name="Local" value="cptable.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="print.CPTspec">
+<param name="Local" value="compileCPT.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="print.grain">
+<param name="Local" value="grain.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="print.grainFinding">
+<param name="Local" value="querygrain.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="print.POTspec">
+<param name="Local" value="compileCPT.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="propagate">
+<param name="Local" value="compile.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="propagate.grain">
+<param name="Local" value="propagate.grain.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="querygrain">
+<param name="Local" value="querygrain.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="querygrain.grain">
+<param name="Local" value="querygrain.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="retractFinding">
+<param name="Local" value="querygrain.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="saveHuginNet">
+<param name="Local" value="loadSaveHuginNet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="setFinding">
+<param name="Local" value="querygrain.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="simulate.grain">
+<param name="Local" value="simulate.html">
+</OBJECT>
+</UL>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Package gRain:  Titles">
+</OBJECT>
+<UL>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Compile a graphical independence network (a Bayesian network)">
+<param name="Local" value="compile.grain.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Compile and propagate functions">
+<param name="Local" value="compile.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Compile conditional probability tables / cliques potentials.">
+<param name="Local" value="compileCPT.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Conditional probability tables based on logical dependcies">
+<param name="Local" value="andtable.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Create conditional probability tables (CPTs)">
+<param name="Local" value="cptable.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Extract conditional probabilities and clique potentials from data">
+<param name="Local" value="extractCPT.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Graphical Independence Network">
+<param name="Local" value="grain.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Load and save Hugin net files">
+<param name="Local" value="loadSaveHuginNet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Make predictions from a probabilistic network">
+<param name="Local" value="predict.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Overview - the gRain package for graphical independence networks">
+<param name="Local" value="gRain-package.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Propagate a graphical independence network (a Bayesian network)">
+<param name="Local" value="propagate.grain.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Query an independence network">
+<param name="Local" value="querygrain.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Simulate from an independence network">
+<param name="Local" value="simulate.html">
+</OBJECT>
+</UL>
+</UL>
+</BODY></HTML>

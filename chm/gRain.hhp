@@ -1,0 +1,16 @@
+[OPTIONS]
+Auto Index=Yes
+Contents file=gRain.toc
+Compatibility=1.1 or later
+Compiled file=gRain.chm
+Default topic=00Index.html
+Display compile progress=No
+Full-text search=Yes
+Full text search stop list file=..\..\..\gnuwin32\help\R.stp
+Title=R Help for package gRain
+
+
+[FILES]
+00Index.html
+
+internal-gRain.html

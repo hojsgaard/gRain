@@ -1,0 +1,79 @@
+<html><head><title>Conditional probability tables based on logical dependcies</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="Rchm.css">
+</head>
+<body>
+
+<table width="100%"><tr><td>andtable(gRain)</td><td align="right">R Documentation</td></tr></table><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+<param name="keyword" value="R:   andtable">
+<param name="keyword" value="R:   ortable">
+<param name="keyword" value=" Conditional probability tables based on logical dependcies">
+</object>
+
+
+<h2>Conditional probability tables based on logical dependcies</h2>
+
+
+<h3>Description</h3>
+
+<p>
+Generate conditional probability tables based on the logical
+expressions AND and OR.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+andtable(v, pa = NULL, pa1 = c(TRUE, FALSE), pa2 = c(TRUE, FALSE), levels)
+ortable(v, pa = NULL, pa1 = c(TRUE, FALSE), pa2 = c(TRUE, FALSE), levels)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>v</code></td>
+<td>
+A vertex</td></tr>
+<tr valign="top"><td><code>pa</code></td>
+<td>
+The parents of vertex v</td></tr>
+<tr valign="top"><td><code>pa1,pa2</code></td>
+<td>
+The coding of the logical parents</td></tr>
+<tr valign="top"><td><code>levels</code></td>
+<td>
+The levels (or rather labels) of v, see 'examples' below</td></tr>
+</table>
+
+<h3>Value</h3>
+
+<p>
+A cptable.</p>
+
+<h3>Author(s)</h3>
+
+<p>
+Søren Højsgaard, sorenh@agrsci.dk
+</p>
+
+
+<h3>See Also</h3>
+
+<p>
+<code><a href="cptable.html">cptable</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+ortable(c("v","A","B"), levels=c("yes","no"))
+</pre>
+
+
+
+<hr><div align="center">[Package <em>gRain</em> version 0.8.0 <a href="00Index.html">Index]</a></div>
+
+</body></html>

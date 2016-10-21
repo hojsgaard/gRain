@@ -1,0 +1,555 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HEAD></HEAD><HTML><BODY>
+<UL>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Package gRprobnet:  Contents">
+<param name="Local" value="00Index.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Package gRprobnet:  R objects">
+</OBJECT>
+<UL>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="gRbayesnet-package">
+<param name="Local" value="gRbayesnet-package.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="as.ctab.numeric">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="as.cumcounts">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="as.cumcounts.data.frame">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="as.data.frame.ctab">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="as.double.ctab">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="as.probnet">
+<param name="Local" value="makebn.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="as.probnet.cptspec">
+<param name="Local" value="makebn.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="as.probnet.dagsh">
+<param name="Local" value="makebn.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="as.probnet.huginNet">
+<param name="Local" value="makebn.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="cardOrder">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="checkdag">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="closure">
+<param name="Local" value="graphs-operations.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="compilegm">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="compilegm.cpt-gmInstance">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="compilegm.dag-gmInstance">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="compilegm.ug-gmInstance">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="cpt">
+<param name="Local" value="cpt.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="cptspec">
+<param name="Local" value="cpt.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="ctab">
+<param name="Local" value="ctab-class.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="ctab-class">
+<param name="Local" value="ctab-class.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="ctabdiv">
+<param name="Local" value="ctab-class.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="ctabmarg">
+<param name="Local" value="ctab-class.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="ctabmult">
+<param name="Local" value="ctab-class.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="ctabnames">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="ctabnames,ctab-method">
+<param name="Local" value="ctab-class.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="ctabop">
+<param name="Local" value="ctab-class.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="dag2cptspec">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="dagsh-class">
+<param name="Local" value="graphsh-class.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="deleteNodes">
+<param name="Local" value="graphs-operations.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="display">
+<param name="Local" value="display-methods.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="display,bayesnet-method">
+<param name="Local" value="display-methods.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="display,graphsh-method">
+<param name="Local" value="display-methods.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="display-methods">
+<param name="Local" value="display-methods.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="edges">
+<param name="Local" value="edges-methods2.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="edges,compgmInstance">
+<param name="Local" value="edges-methods2.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="edges,compgmInstance,ANY-method">
+<param name="Local" value="edges-methods2.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="edges,cpt-gmInstance">
+<param name="Local" value="edges-methods2.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="edges,cpt-gmInstance,ANY-method">
+<param name="Local" value="edges-methods2.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="edges,dagsh,ANY-method">
+<param name="Local" value="edges-methods2.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="edges,ugsh,ANY-method">
+<param name="Local" value="edges-methods2.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="edges-methods">
+<param name="Local" value="edges-methods2.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="enterEvidence">
+<param name="Local" value="querybn.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="evidence">
+<param name="Local" value="querybn.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="getSlot">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="gmInstance-class">
+<param name="Local" value="bayesnet-class.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="graphsh-class">
+<param name="Local" value="graphsh-class.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="gRbayesnet">
+<param name="Local" value="gRbayesnet-package.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="is.subset">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="is.subsetList">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="isComplete">
+<param name="Local" value="graphs-operations.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="isSimplical">
+<param name="Local" value="graphs-operations.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="isTriangulated">
+<param name="Local" value="graphs-operations.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="loadHuginNet">
+<param name="Local" value="loadSaveHuginNet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="maximalSet">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="mcs">
+<param name="Local" value="graphs-operations.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="mcwhSH">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="moralize">
+<param name="Local" value="graphs-operations.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="names2pairs">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="neigh">
+<param name="Local" value="graphs-operations.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="newdagsh">
+<param name="Local" value="graphs-operations.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="newgmInstance">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="newgmInstance.cptspec">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="newgmInstance.dagsh">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="newgmInstance.ugsh">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="newugsh">
+<param name="Local" value="graphs-operations.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="nodeJoint">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="nodeMarginal">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="nodeNames">
+<param name="Local" value="makebn.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="nodeNames.gmInstance">
+<param name="Local" value="makebn.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="nodes">
+<param name="Local" value="edges-methods2.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="nodes,compgmInstance-method">
+<param name="Local" value="edges-methods2.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="nodes,cpt-gmInstance-method">
+<param name="Local" value="edges-methods2.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="nodes,graphsh-method">
+<param name="Local" value="edges-methods2.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="nodes-methods">
+<param name="Local" value="edges-methods2.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="nodeStates">
+<param name="Local" value="makebn.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="nodeStates.gmInstance">
+<param name="Local" value="makebn.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="pevidence">
+<param name="Local" value="querybn.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="plot.compgmInstance">
+<param name="Local" value="plot.bayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="plot.cpt-gmInstance">
+<param name="Local" value="plot.bayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="plot.dag-gmInstance">
+<param name="Local" value="plot.bayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="plot.dagsh">
+<param name="Local" value="plot.ugsh.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="plot.ug-gmInstance">
+<param name="Local" value="plot.bayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="plot.ugsh">
+<param name="Local" value="plot.ugsh.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="predict.compgmInstance">
+<param name="Local" value="predict.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="print.bnevidence">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="print.cpt">
+<param name="Local" value="cpt.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="print.cptspec">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="print.ctab">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="print.dagsh">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="print.gmInstance">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="print.huginNet">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="print.ugsh">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="printlist">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="printlist.list">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="printlist.numeric">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="propagate">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="propagate.compgmInstance">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="querygm">
+<param name="Local" value="querybn.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="querygm.gmInstance">
+<param name="Local" value="querybn.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="retractEvidence">
+<param name="Local" value="querybn.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="ripOrder">
+<param name="Local" value="graphs-operations.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="saveHuginNet">
+<param name="Local" value="loadSaveHuginNet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="show">
+<param name="Local" value="edges-methods2.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="show,dagsh-method">
+<param name="Local" value="edges-methods2.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="show,ugsh-method">
+<param name="Local" value="edges-methods2.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="simplicalNodes">
+<param name="Local" value="graphs-operations.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="simulate.compgmInstance">
+<param name="Local" value="simulate.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="splitVec">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="splitVec.list">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="splitVec.numeric">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="subgraph">
+<param name="Local" value="graphs-operations.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="summary.gmInstance">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="triangulate">
+<param name="Local" value="graphs-operations.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="ug2dag">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="ugsh-class">
+<param name="Local" value="graphsh-class.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="varNames.ctab">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="vpav">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+</UL>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Package gRprobnet:  Titles">
+</OBJECT>
+<UL>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Bayesian Network">
+<param name="Local" value="makebn.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Bayesian network predictions">
+<param name="Local" value="predict.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Bayesian networks in R ">
+<param name="Local" value="gRbayesnet-package.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Class "bayesnet" ~~~ ">
+<param name="Local" value="bayesnet-class.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Class "ctab" - General representation of and operations on   multidimensional tables">
+<param name="Local" value="ctab-class.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Class "graphsh" ~~~ ">
+<param name="Local" value="graphsh-class.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Create conditional probability tables (CPTs)">
+<param name="Local" value="cpt.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Interacting with Bayesian Networks">
+<param name="Local" value="querybn.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Internal functions for the gRbayesnet package">
+<param name="Local" value="internal-gRbayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Load and save Hugin net files">
+<param name="Local" value="loadSaveHuginNet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Methods for Functions edges and nodes in Package `XXXX'">
+<param name="Local" value="edges-methods2.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Plot a Bayesian network">
+<param name="Local" value="plot.bayesnet.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Plot undirected and directed graphs">
+<param name="Local" value="plot.ugsh.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Simulate from a BN">
+<param name="Local" value="simulate.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="Undirected and directed graphs.">
+<param name="Local" value="graphs-operations.html">
+</OBJECT>
+<LI> <OBJECT type="text/sitemap">
+<param name="Name" value="~~ Methods for Function display in Package `gRbayesnet' ~~">
+<param name="Local" value="display-methods.html">
+</OBJECT>
+</UL>
+</UL>
+</BODY></HTML>
