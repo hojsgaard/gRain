@@ -2,7 +2,7 @@ Package: gRain
 Version: 1.3-1
 Title: Graphical Independence Networks
 Author: Søren Højsgaard <sorenh@math.aau.dk>
-Maintainer: Søren Højsgaard <sorenh@math.aau.dk>
+Maintainer: Søren Højsgaard <sorenh@math.aau.dk> 
 Description: Probability propagation in graphical independence networks, also
     known as Bayesian networks or probabilistic expert systems.
 License: GPL (>= 2)
