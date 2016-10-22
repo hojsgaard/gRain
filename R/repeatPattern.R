@@ -20,71 +20,88 @@
 #'     \url{http://www.jstatsoft.org/v46/i10/}.
 #' @keywords utils
 #' @examples
+#'
+#' ## Example: Markov chain
+#' yn <- c("yes","no")
 #' 
-#' ## Specify hidden markov models. The x[i]'s are unobserved, the
+#' ## Specify p(x0)
+#' x.0 <- cptable(~x0, values=c(1, 9), levels=yn)
+#' 
+#' ## Specify transition density
+#' x.x <- cptable(~x[i]|x[i-1], values=c(1, 99, 2, 98), levels=yn)
+#'
+#' ## Pattern to be repeated
+#' pat <- list(x.x)
+#' 
+#' rep.pat <- repeatPattern(pat, instances=1:5)
+#' cpt <- compileCPT(c(list(x.0), rep.pat))
+#' mc <- grain(cpt)
+#'
+#' if (interactive()) iplot(mc)
+#' 
+#' ## Example: Hidden markov model: The x[i]'s are unobserved, the
 #' ## y[i]'s can be observed.
 #' 
 #' yn <- c("yes","no")
 #' 
 #' ## Specify p(x0)
-#' x.0 <- cptable(~x0, values=c(1,1), levels=yn)
+#' x.0 <- cptable(~x0, values=c(1, 9), levels=yn)
 #' 
 #' ## Specify transition density
-#' x.x <- cptable(~x[i]|x[i-1], values=c(1,99,2,98),levels=yn)
+#' x.x <- cptable(~x[i]|x[i-1], values=c(1, 99, 2, 98), levels=yn)
 #' 
-#' ## Specify emissiob density
-#' y.x <- cptable(~y[i]|x[i],   values=c(1,99,2,98),levels=yn)
+#' ## Specify emission density
+#' y.x <- cptable(~y[i]|x[i],   values=c(10, 90, 20, 80), levels=yn)
 #' 
 #' ## The pattern to be repeated
-#' pp <- list(x.x, y.x)
+#' pat <- list(x.x, y.x)
 #' 
 #' ## Repeat pattern and create network
-#' ppp <- repeatPattern(pp, instances=1:10)
-#' qqq <- compileCPT(c(list(x.0),ppp))
-#' rrr <- grain(qqq)
-#' 
-#' 
+#' rep.pat <- repeatPattern(pat, instances=1:5)
+#' cpt <- compileCPT(c(list(x.0), rep.pat))
+#' hmm <- grain(cpt)
+#' hmm 
+#'
+#' if (interactive()) iplot(hmm)
 #' 
 #' @export repeatPattern
 repeatPattern <- function(plist, instances, unlist=TRUE){
-  ans <- list()
-  for (ii in seq_along(instances)){
-    ans[[ii]] <- .do.one(plist, instances[[ii]])
-  }
-  if (unlist)
-    ans <- unlist(ans, recursive=FALSE)
-
-  ans
-}
-
-
-.subst <- function(x, i.val){
-                                        #vv <- c("xyz[i+1]tyu", "xx[i]")
-                                        #x <- c("xyz[i+1]tyu", "xx[i]","kkkk")
-                                        #x <- c("xyztyu", "xx","kkkk")
-  with.brack <- grep("\\[",x)
-  vv <- x[with.brack]
-  
-  if (length(vv)>0){
-    idx.vec <- gsub("[^\\[]*\\[([^\\]*)\\].*", "\\1", vv)
-    idx.exp <- parse(text=idx.vec)
-    idx.val <- unlist(lapply(idx.exp, eval, list(i=i.val)))
-    vv2 <- list()
-    for (ii in seq_along(idx.val)){
-      vv2[[ii]] <- gsub("\\[([^\\]*)\\]", idx.val[ii], vv[ii])
+    ans <- list()
+    for (ii in seq_along(instances)){
+        ans[[ ii ]] <- .do.one(plist, instances[[ ii ]])
     }
-    vv2 <- unlist(vv2)
-    x[with.brack] <- vv2
-  }
-  x
+    if (unlist)
+        ans <- unlist(ans, recursive=FALSE)
+    ans
 }
 
 .do.one <- function(plist1, i.val){
-  pp <- lapply(plist1, function(xx){
-    xx$vpa <- .subst(xx$vpa,i.val)
-    xx
-  }) 
-  pp 
+    pp <- lapply(plist1, function(xx){
+        xx$vpa <- .subst(xx$vpa,i.val)
+        xx
+    }) 
+    pp 
+}
+
+.subst <- function(x, i.val){
+    ##vv <- c("xyz[i+1]tyu", "xx[i]")
+    ##x <- c("xyz[i+1]tyu", "xx[i]","kkkk")
+    ##x <- c("xyztyu", "xx","kkkk")
+    with.brack <- grep("\\[",x)
+    vv <- x[ with.brack ]
+    
+    if (length(vv)>0){
+        idx.vec <- gsub("[^\\[]*\\[([^\\]*)\\].*", "\\1", vv)
+        idx.exp <- parse(text=idx.vec)
+        idx.val <- unlist(lapply(idx.exp, eval, list(i=i.val)))
+        vv2 <- list()
+        for (ii in seq_along(idx.val)){
+            vv2[[ii]] <- gsub("\\[([^\\]*)\\]", idx.val[ii], vv[ii])
+        }
+        vv2 <- unlist(vv2)
+        x[ with.brack ] <- vv2
+    }
+    x
 }
 
 
