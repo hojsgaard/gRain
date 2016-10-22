@@ -10,12 +10,14 @@ os:
 - osx
 before_install:
 - if [ "$TRAVIS_OS_NAME" == "linux" ]; then tlmgr install boxedminipage; fi
-- if [ "$TRAVIS_OS_NAME" == "osx" ]; then sudo tlmgr install a4wide boxedminipage; fi
-- if [ "$TRAVIS_OS_NAME" == "osx" ]; then curl -O http://r.research.att.com/libs/gfortran-4.8.2-darwin13.tar.bz2; sudo tar fvxz gfortran-4.8.2-darwin13.tar.bz2 -C /; fi
+- if [ "$TRAVIS_OS_NAME" == "osx" ]; then sudo tlmgr install a4wide boxedminipage;
+  fi
+- if [ "$TRAVIS_OS_NAME" == "osx" ]; then curl -O http://r.research.att.com/libs/gfortran-4.8.2-darwin13.tar.bz2;
+  sudo tar fvxz gfortran-4.8.2-darwin13.tar.bz2 -C /; fi
 deploy:
   provider: releases
   api_key:
-    secure: Y8J/3linU4tHe1kVTfQzr3hyVmrGoDHr5uoLs9C3sYhKLlW0FugWDe+2AbomiPT/0NxviBZSc8d5B8ioV7Xiy/ZpNJSg4ZwDetAYCYFP4brHP9KVN1Kg0JVV4wp1qT/+vN9ihHSLPX2OGkAVFPbb9ZQ8pBhvKj0p1/GpH6RbN9E03vpgVSeZX9oK1EL1PWGhAZe1KtuAR9ER39bU+qqTQIMqRLWk2tMYT1UA67nh82BjgBU8vnXFzoGWSwWZqhPkFcwfns+k93Ya1YNEvRjT7ZSHbHkTZvrNJY8i4xh2dVfbrxDot+bJfLtqefUbsnHypLi2oX0yoarjmkbnmGIF0TIbEtg9eX/XHG4IwJvo3VI/iwCCz0qLls+0fQ0Cb5vvQwrCLYTau6zWe9ljTIQDtMwUziGXEOXgrzoPs/3BK1XX3B8oMuLJecd0INrTVcjHD/EbMDsNyrqGcN/QaXmbQMrJEiqJpDmK/VEQAPcsNVmBnwtmBQd31MXDMWabdMHBn4gDfAgm+TUH4Ll0h7/oPJMUQVTPdko7Z0ncaSQdhy72liBosHW3PTtxo02vqqH2Ng+ji9LDBnqKn2U42HWNj9J6eR8kBfZxr9cEYLatV52NU7qgkSz0RQQ9N+NU8bgkzc7IdaXlT5FoWuP94AFJ6evfCwQcU5RBrgD+Mfc8Ge8=
+    secure: 2TJ0jYFEKBxxSkdUfyaG/tNFOjvhQPI1SWkJVf8KffP6OvKdfyg5afDvtUedltoRHCitu/ogI91Ot7ZPmVoBiMA6Y/6aYLKNRNrFAVmRYZCNvU6VAkF0/E13slhyW1hGO/Er8xxoV4S55o9I3teAvxOvQWo1jur+NKaQ96mtlT/QBE/JNEpKn2uMpdhFwMgTZ7ccTsdys/X3DRd+yQdyhZVmT7jn1gpAbYOeGbkfb4vwkPPA0kIRSL8RUHx8r3k9qFYOW1ILMG8xZ1oNral7jRofHVNj6rSx/GOB9vTVGk27YHwy3drk+/Vgi5G2JtZi4YJib0Tq21CtZBBcXQR6Q7sCD8p6F51zq10y5MPIrzMovNM3BDILoiwg8hPrPtIZ6wfgCj71mmqQs489HR2FIszJvlJ/9ns2ZDnAxcQFMBTpzxV6Ft4dU+OmTwIsu6uhqhnzZbA9ZJK7djureoYLR/Qn0ZaO9ROteJ0LcZtIlMGct/sHfFqWe/B4iir5mqXys+JSCnfdIeKuA5aLAlWxgzlpjERtWuL9Z2DwIXoEo/160qh3CgX29KCqIW/5T64+jq4ulleMmenp9w/iqIMv9+fp93bkuiKbdI/KHM/HTA73S9L1O5Z8E8krfJJz+d25KjH9llM91Is/txUHFSkMDgjdq7I0HQXuh6mIKJTKqXc=
   skip_cleanup: true
   file_glob: true
   file: gRain_*.t*gz
