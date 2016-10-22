@@ -18,7 +18,7 @@ deploy:
     secure: eLJPOv6UCMMCo4vA/ZCahJtwKMo89V7eOAJ663gvTB9ntXTf7aWAbCaOt+Oufgw7oHaTUSoC8NOJNnOnoHUo9Vvf6721SNDqs/6viUkOVUnTT0RTWOwrtLqVQZB1ewC2qar6Z2kPO7RsCnTjkSlOjHhpTjNBcjatbxfwZJ+1qUH6hQPZ8oQLPpYgqHWIWQ46/3sLEyXcC799SL5tY638kNOmqijiFBhRrWQij8TiczdswGQjzL4tLSRXf95fwSo/m9sIlJjtq3gIhAP+dDHzsnanqDKt7+IsE5y9KJCiqRHrcPA6y4P/UW6f5IeFUbi1KnCmmcvk/Blr/D6TqzTNeh2H0R5F0PLp5IXwtkuJ1/au1IegS3JrUiFkRIeoJtd3OU/CJLMP01CoZjrJxWIf9049QKlThYueOHT7jA75rhNuHUTTlxWZcVJY6PsjzN9DQPFAKox95gH+XADb8w4Mr6djhi6AmOO5rBFQSj2KM7ZDDoq78iyfi1dgEOTqDZQ0R5bDFw6n6l8zpE6YT8z8hc6uDIpZPO0fRvHMlO4F9vZNcPtC4yD85JucIzb/ZBINneFRw2IDwviTHRePo7jKFQoE7tJChjQOH78aEeCwmKCwZBX786/iQCcFu0fg7b+bvzG8ne81L6ma8V1PFHOoKCpI9IewOywAJUHkdPhvXko=
   skip_cleanup: true
   file_glob: true
-  file: gRbase_*.t*gz
+  file: gRain_*.t*gz
   on:
-    repo: hojsgaard/gRbase	
+    repo: hojsgaard/gRain	
     tags: true
