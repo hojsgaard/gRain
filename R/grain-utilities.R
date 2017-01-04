@@ -64,7 +64,7 @@ getgrain <- function(object, name=c("universe", "data", "dag", "ug", "cptlist",
            )
 }
 
-## getgin <- getgrain
+gin <- getgrain
 
 
 

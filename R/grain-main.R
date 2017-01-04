@@ -117,7 +117,7 @@ grain.CPTspec <- function(x, data=NULL, control=list(), smooth=0, details=0,...)
                  ),
             .setExtraComponents(control, details))
 
-  class(ans) <- c("CPTgrain","grain")
+  class(ans) <- c("CPTgrain", "grain")
   return(ans)
 }
 
