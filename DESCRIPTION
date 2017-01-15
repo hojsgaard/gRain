@@ -20,7 +20,8 @@ URL: http://people.math.aau.dk/~sorenh/software/gR/
 Encoding: UTF-8
 Suggests:
     Rgraphviz,
-    microbenchmark
+    microbenchmark,
+		knitr
 LinkingTo: Rcpp (>= 0.11.1), RcppArmadillo, RcppEigen, gRbase (>= 1.8-0)
 ByteCompile: Yes
 RoxygenNote: 5.0.1

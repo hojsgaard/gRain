@@ -59,8 +59,8 @@ propagate.grain <- function(object, details=object$details, ...){
   ## object$equipot <- propagateLS(object$temppot,
   ##                               rip=object$rip, initialize=TRUE, details=details)
 
-  object$equipot <-
-      propagateLS(object$temppot, rip=object$rip)
+  object$potential$pot_equi <-
+      propagateLS(pot(object)$pot_temp, rip=rip(object))
 
   ## object$isInitialized <- TRUE
   object$isPropagated  <- TRUE
@@ -81,13 +81,13 @@ propagate.grain <- function(object, details=object$details, ...){
 propagate__ <- function(object, details=object$details, ...){
 
   t0 <- proc.time()
-  ## propagate.grain: equipot is updated after propagation on temppot
+  ## propagate.grain: equipot is updated after propagation on pot_temp
   ## such that equipot will contain the updated potentials.
-  ## object$equipot <- propagateLS(object$temppot,
+  ## object$equipot <- propagateLS(object$pot_temp,
   ##                               rip=object$rip, initialize=TRUE, details=details)
 
-  object$equipot <-
-      propagateLS__(object$temppot, rip=object$rip)
+  object$potential$pot_equi<-
+      propagateLS__(pot(object)$pot_temp, rip=rip(object))
 
   ## object$isInitialized <- TRUE
   object$isPropagated  <- TRUE

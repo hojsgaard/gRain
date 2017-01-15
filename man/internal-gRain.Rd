@@ -16,6 +16,7 @@
 \alias{randomCPT}
 \alias{getgrain}
 \alias{getgin}
+\alias{gin}
 
 \alias{printlist}
 \alias{printlist.default}

@@ -1,3 +1,6 @@
+
+
+
 randomCPT <- function(object, states=c("yes","no")){
 
     if (class(object) != "graphNEL")
@@ -34,13 +37,13 @@ setSliceValue <- function(x, slice, complement=FALSE, value=0){
 }
 
 
-
-
-getgrain <- function(object, name=c("universe", "data", "dag", "ug", "cptlist",
-                                 "origpot", "temppot", "equipot", "rip",
-                                 "isCompiled", "isPropagated",
-                                 "evidence", "pEvidence",
-                                 "control", "details")){
+getgrain<- function(object, name=c("universe", "data", "dag", "ug", "cptlist",
+                                   "origpot", "temppot", "equipot",
+                                   "pot_orig", "pot_temp", "pot_equi",
+                                   "rip",
+                                   "isCompiled", "isPropagated",
+                                   "evidence", "pEvidence",
+                                   "control", "details")){
 
     switch(name,
            universe 		    = object$universe,
@@ -49,9 +52,15 @@ getgrain <- function(object, name=c("universe", "data", "dag", "ug", "cptlist",
            ug 			    	  = object$ug,
            cptlist          = object$cptlist,
 
-           origpot          = object$origpot,
-           temppot          = object$temppot,
-           equipot          = object$equipot,
+           potential        = object$potential,
+           origpot          = object$potential$pot_orig,
+           temppot          = object$potential$pot_temp,
+           equipot          = object$potential$pot_equi,
+
+           pot_orig  = object$potential$pot_orig,
+           pot_temp  = object$potential$pot_temp,
+           pot_equi  = object$potential$pot_equi,
+
            rip              = object$rip,
 
            isCompiled       = object$isCompiled,
@@ -64,9 +73,7 @@ getgrain <- function(object, name=c("universe", "data", "dag", "ug", "cptlist",
            )
 }
 
-gin <- getgrain
-
-
+getgin <- getgrain
 
 .infoPrint <- function(details, limit=1, ...,  prefix='.'){
   if(details>=limit){

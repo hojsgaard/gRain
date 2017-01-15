@@ -25,8 +25,8 @@
 #'
 #' plist <- compileCPT(list(a, t.a )) 
 #' bn    <- grain(plist)
-#' bnc   <- compile(bn, propagate=F)
-#' bncp  <- compile(bn, propagate=T)
+#' bnc   <- compile(bn, propagate=FALSE)
+#' bncp  <- compile(bn, propagate=TRUE)
 #' 
 #' ## New p(tub | asia)
 #' z <- c(20, 80, 1, 99) 
@@ -72,11 +72,11 @@ setCPT.grain <- function(object, value){
             } 
         }        
     }
-    if (!gin(object, "isCompiled")){
+    if (!getgin(object, "isCompiled")){
         ##cat("object is not compiled\n")
         object
     } else {
-        isp <- gin(object, "isPropagated")
+        isp <- getgin(object, "isPropagated")
         ##cat("object IS compiled; propated?", isp, "\n")
         ## RIP exists; just need to update potentials
         object <- .mkPots(object, update=TRUE)

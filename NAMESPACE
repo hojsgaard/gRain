@@ -29,8 +29,18 @@ S3method(compile, CPTgrain)
 S3method(compile, POTgrain)
 S3method(compile, grain)
 
+S3method(compile, extractCPT)
+S3method(compile, extractPOT)
+
+
+
+
 S3method(grain, CPTspec)
 S3method(grain, POTspec)
+
+S3method(grain, extractCPT)
+S3method(grain, extractPOT)
+
 S3method(grain, dModel)
 S3method(grain, graphNEL)
 S3method(iplot, grain)
@@ -69,8 +79,18 @@ S3method( print, grain_jev )
 S3method( print, grain_ev )
 
 S3method( subset, grain_ev)
-S3method( universe, grain)
 S3method( varNames, grainEvidence_)
 S3method( varNames, grain_ev)
 
+S3method( universe, grain)
+S3method(uni, grain)
 
+S3method(potential, grain)
+S3method(pot, grain)
+
+S3method(rip, grain)
+S3method("rip<-", grain)
+S3method(setCPT, grain)
+S3method("setcpt<-",grain)
+
+    

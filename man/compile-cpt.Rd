@@ -2,6 +2,8 @@
 % Please edit documentation in R/CPT-POT-compile.R
 \name{compile-cpt}
 \alias{compile-cpt}
+\alias{compile.extractCPT}
+\alias{compile.extractPOT}
 \alias{compileCPT}
 \alias{compilePOT}
 \alias{print.CPTspec}
@@ -11,17 +13,25 @@
 compileCPT(x, forceCheck = TRUE, details = 0)
 
 compilePOT(x)
+
+\method{compile}{extractPOT}(object, ...)
+
+\method{compile}{extractCPT}(object, ...)
 }
 \arguments{
 \item{x}{To \code{compileCPT} x is a list of conditional
 probability tables; to \code{compilePOT}, x is a list of clique
-potentials}
+potentials.}
 
 \item{forceCheck}{Controls if consistency checks of the probability
 tables should be made.}
 
 \item{details}{Controls amount of print out. Mainly for debugging
-purposes}
+purposes.}
+
+\item{object}{A list of potentials or of CPTs.}
+
+\item{...}{Additional arguments; currently not used.}
 }
 \value{
 \code{compileCPT} returns a list of class 'cptspec'

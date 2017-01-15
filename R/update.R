@@ -53,11 +53,10 @@
 
     if ("CPTlist" %in% arg.names){
         object$cptlist[names(args$CPTlist)] <- args$CPTlist
-        pot.with.1        <- .createPotList( object$rip, object$universe )
+        pot.with.1        <- .mkArrayList( rip(object), uni(object) )
         newpot            <- .insertCPT(object$cptlist, pot.with.1, details=0)
-        object$origpot    <- newpot
-        object$temppot    <- newpot
-        object$equipot    <- .insertNA(pot.with.1)
+        object$potential <-
+            list(pot_orig=newpot, pot_temp=newpot, pot_equi=.initArrayList(pot.with.1, NA))
         object$isPropagated <- FALSE
     }
     object

@@ -18,9 +18,9 @@
 #'     \code{file}
 #' @param details Debugging information
 #' @return An object (a list) of class "huginNet".
-#' @author S<f8>ren H<f8>jsgaard, \email{sorenh@@math.aau.dk}
+#' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
 #' @seealso \code{\link{grain}}
-#' @references S<f8>ren H<f8>jsgaard (2012). Graphical Independence
+#' @references Søren Højsgaard (2012). Graphical Independence
 #'     Networks with the gRain Package for R. Journal of Statistical
 #'     Software, 46(10), 1-26.
 #'     \url{http://www.jstatsoft.org/v46/i10/}.
@@ -339,18 +339,26 @@ loadHuginNet <- function(file, description=rev(unlist(strsplit(file, "/")))[1],
 #' @rdname load-save-hugin
 saveHuginNet <- function(gin, file, details=0){
 
-  cptlist <- gin$cptlist
-  gmd     <- gin$universe
+    if (!inherits( gin, "grain"))
+        stop("Not a grain object")
+    
+    if (is.null(gmd <- getgin(gin, "universe")))
+        stop("Strange error: no universe in network")
 
-  vlab <- gmd$levels
-  vnam <- gmd$nodes
-  nn   <- length(vlab)
-
-  th     <- cumsum(c(0,rep(2*pi/nn, nn-1)))
-  r      <- 100
-  coords <- lapply(th, function(d) round(r+r*c(cos(d), sin(d))))
-
-  con <- file(file, "wb")
+    if (is.null(cptlist <- getgin(gin, "cptlist"))){
+        cat("Object does not have 'cptlist' component; creating one for you...\n")
+        cptlist <- mkcptlist(gin)
+    }
+        
+    vlab <- gmd$levels
+    vnam <- gmd$nodes
+    nn   <- length(vlab)
+    
+    th     <- cumsum(c(0,rep(2*pi/nn, nn-1)))
+    r      <- 100
+    coords <- lapply(th, function(d) round(r+r*c(cos(d), sin(d))))
+    
+    con <- file(file, "wb")
 
   ## Write (trivial) net specification
   ##
@@ -361,22 +369,22 @@ saveHuginNet <- function(gin, file, details=0){
   ## Write node specification
   ##
   for (ii in 1:length(vlab)){
-    st<-paste("node ", vnam[ii],"\n","{","\n",sep='')
-    writeLines(st,con,sep="")
+    st <-paste("node ", vnam[ii],"\n","{","\n",sep='')
+    writeLines(st, con, sep="")
     ## cat(st)
     st <- paste("   label = \"\";","\n")
-    writeLines(st,con,sep="")
+    writeLines(st, con, sep="")
     ## cat(st)
     st <- paste("   position = (", paste(coords[[ii]], collapse=' '), ");\n")
-    writeLines(st,con,sep="")
+    writeLines(st, con, sep="")
     ## cat(st)
 
     st2 <- sapply(vlab[[ii]], function(d) paste('"',d,'"',sep=''))
     st  <- paste("   states = (", paste(st2, collapse=' '), ");\n")
-    writeLines(st,con,sep="")
+    writeLines(st, con, sep="")
     ## cat(st)
     st <- paste("}\n")
-    writeLines(st,con,sep="")
+    writeLines(st, con, sep="")
     ## cat(st)
   }
 

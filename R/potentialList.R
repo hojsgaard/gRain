@@ -1,16 +1,23 @@
 ## Create potential list (rip, universe)
 ##
-.createPotList <- function(rip.order, universe)
-{
-    cliques     <- rip.order$cliques
-    APlist  <- as.list(rep(NA,length(cliques)))
-    for ( i  in 1:length(cliques))
-        {
-            cq    <- cliques[[ i ]]
-            vlab  <- universe$levels[cq]
-            APlist[[ i ]] <- parray(cq, vlab)
-        }
-    APlist
+.mkArrayList <- function(rip.order, universe, values=1){
+    cliques <- rip.order$cliques
+    
+    potlist  <- as.list(rep(NA, length(cliques)))
+    
+    for ( i in seq_along(cliques)){
+        cq    <- cliques[[ i ]]
+        vlab  <- universe$levels[cq]
+        potlist[[ i ]] <- newar(cq, vlab, values)
+    }
+    potlist
+}
+
+.initArrayList <- function(x, values=NA){
+    lapply(x, function(z) {
+        z[] <- values             
+        z
+    } )
 }
 
 ## Insert cpt's into potential list (cptlist, APlist)
@@ -35,15 +42,7 @@
     APlist
 }
 
-.insertNA <- function(list.of.tables)
-{
-    lapply(list.of.tables,
-           function(xxx)
-           {
-               xxx[] <- NA
-               xxx
-           } )
-}
+
 
 
 ## FIXME .findHosts can be replaced by gRbase::get_superset_
@@ -54,6 +53,16 @@
 
 
 
+## .insertNA <- function(list.of.tables)
+## {
+##     lapply(list.of.tables,
+##            function(xxx)
+##            {
+##                xxx[] <- NA
+##                xxx
+##            } )
+## }
+##
 
 
 

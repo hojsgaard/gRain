@@ -98,12 +98,12 @@ setJEvi_<- function(object, evidence=NULL, propagate=TRUE, details=0){
         vn  <- sapply(evidence, varNames)    
         rp  <- getgrain(object, "rip")    
         hc  <- getHostClique(vn, rp$cliques)
-        pot <- object$temppot
+        pot <- pot(object)$pot_temp
 #        str(evidence, hc)
 #        pot.b <<-pot
         pot2 <- insertJEvi(evidence, pot, hc)
 #        pot.a <<- pot2
-        object$temppot <- pot2
+        object$potential$pot_temp <- pot2
         object$evidence <- evidence
     }
     object <- if (propagate) propagate( object ) else object

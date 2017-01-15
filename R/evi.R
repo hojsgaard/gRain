@@ -146,7 +146,7 @@ setEvi_ <- function(object, evidence=NULL, propagate=TRUE, details=0){
             host  <- getHostClique(varNames( ne ), rp$cliques)
             #str(list(ne, host))
             #pot.b <<- object$temppot
-            object$temppot <- insertEvi( ne, object$temppot, host )
+            object$potential$pot_temp <- insertEvi( ne, pot(object)$pot_temp, host )
             #pot.a <<- object$temppot
             
             te <- if (is.null_ev( oe )) ne else union_ev( oe, ne )
@@ -176,7 +176,8 @@ retractEvi <- function(object, items=NULL, propagate=TRUE){
 retractEvi_ <- function(object, items=NULL, propagate=TRUE){
     ##cat("++++ retractEvidence_\n")
     .resetgrain <- function(x){
-        x$temppot       <- x$origpot
+        ##x$temppot       <- x$pot_orig
+        x$potential$pot_temp       <- pot(x)$pot_orig
         x$evidence       <- NULL
         x$isPropagated  <- FALSE
         x
@@ -220,22 +221,20 @@ absorbEvi <- function(object, propagate=TRUE ){
 #' @name grain-evi
 absorbEvi_<- function(object, propagate=TRUE ){
     ## Update 'object' as
-    ## 1) set origpot <- temppot
+    ## 1) set pot_orig <- pot_temp
     ## 2) ignore any finding
-    object$origpot <- object$temppot
+    object$potential$pot_orig <- pot(object)$pot_temp
     object$evidence <- NULL
     object$isPropagated <- FALSE
 
     if (propagate) propagate(object) else object
 }
 
-
-
 #' @name grain-evi
 pEvidence <- function(object){
     if ( !inherits(object, "grain") )
         stop("'object' is not a 'grain' object")
-    attr(object$equipot,"pEvidence")
+    attr(object$potential$pot_equi, "pEvidence")
 }
 
 #' @name grain-evi

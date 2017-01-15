@@ -109,8 +109,8 @@ querygrain.grain <- function(object, nodes = nodeNames(object), type = "marginal
     result <- match.arg(result, c("array","data.frame"))
     t0 <- proc.time()
 
-    if (is.null(nodes))
-        return(invisible(NULL))
+    if (is.null(nodes)) return(invisible(NULL))
+    else if (inherits(nodes, "formula")) nodes <- unlist(rhsf2list(nodes))
 
     if (!object$isCompiled){
         if (details>=1) cat("  Compiling (and propagating) model ...\n")
@@ -125,37 +125,32 @@ querygrain.grain <- function(object, nodes = nodeNames(object), type = "marginal
     type = match.arg(type, choices=c("marginal","joint","conditional"))
     switch(type,
            "marginal"={
-               ans <- .nodeMarginal(object, nodes=nodes, exclude=exclude,
+               out <- .nodeMarginal(object, nodes=nodes, exclude=exclude,
                                     details=details)
                if (result=="data.frame")
-                   ans <- lapply(ans, as.data.frame.table)
+                   out <- lapply(out, as.data.frame.table)
            },
            "joint"={
-               ans <- .nodeJoint(object, nodes=nodes, exclude=exclude,
+               out <- .nodeJoint(object, nodes=nodes, exclude=exclude,
                                  normalize=normalize, details=details)
                if (result=="data.frame")
-                   ans <- as.data.frame.table(ans)
+                   out <- as.data.frame.table(out)
          },
            "conditional"={
-               ## qobject <- querygrain.grain(object, nodes=nodes,
-               ##                             type="joint", exclude=exclude,
-               ##                             result="data.frame")
-               ## nst     <- nodeStates(object)[nodes]
-               ## ans     <- parray(nodes, nst, values=qobject$Freq,
-               ##                   normalize="first")
 
                qobject <- querygrain.grain(object, nodes=nodes,
                                            type="joint", exclude=exclude)
-
-               ans <- tabDiv( qobject, tabMarg(qobject, nodes[-1]) )
-
+               if (length(names(dimnames(qobject))) > 1)
+                   out <- tabDiv( qobject, tabMarg(qobject, nodes[-1]) )
+               else
+                   out <- qobject
 
                if (result=="data.frame")
-                   ans <- as.data.frame.table(ans)
+                   out <- as.data.frame.table(out)
            })
     if (object$control$timing)
         cat("Time: query", proc.time()-t0, "\n")
-    ans
+    out
 }
 
 
@@ -179,7 +174,7 @@ querygrain.grain <- function(object, nodes = nodeNames(object), type = "marginal
 
     if (any(idxb)){
         ## cat(".Calculating directly from clique\n")
-        tab   <- object$equipot[[ which(idxb)[1] ]]
+        tab   <- pot(object)$pot_equi[[ which(idxb)[1] ]]
         value <- tableMargin(tab, nodes)
         if (!normalize){
             value$values <- value$values * pEvidence(object)
@@ -187,11 +182,11 @@ querygrain.grain <- function(object, nodes = nodeNames(object), type = "marginal
     } else {
         ## cat(".Calculating brute force\n")
         nnodes <- length( nodes )
-        dn    <- object$universe$levels[nodes]
-        value <- parray(names(dn), dn)
+        dn    <- uni(object)$levels[nodes]
+        value <- newar(names(dn), dn)
 
         nodes2  <- nodes[2:nnodes]
-        dn2   <- object$universe$levels[nodes2]
+        dn2   <- uni(object)$levels[nodes2]
         gr2   <- as.matrix( expand.grid( dn2 ) )
 
         object  <- absorbEvidence( object )
@@ -235,7 +230,7 @@ querygrain.grain <- function(object, nodes = nodeNames(object), type = "marginal
             cvert  <- nodes[i]
             idx    <- host.cq[i]
             ## querygrain - .nodeMarginal: Calculations based on equipot
-            cpot   <- object$equipot[[ idx ]]
+            cpot   <- pot(object)$pot_equi[[ idx ]]
             mtab   <- tableMargin( cpot, cvert )
             mtab   <- mtab / sum( mtab )
             out[[ i ]] <- mtab

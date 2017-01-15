@@ -1,7 +1,8 @@
-% \VignetteIndexEntry{Short introduction to the gRain package}
-% \VignetteDepends{gRbase}
-% \VignetteKeyword{Graphical Models}
-% \VignetteKeyword{Probabilistic networks}
+%\VignetteEngine{knitr::knitr} 
+%\VignetteIndexEntry{Short introduction to the gRain package}
+%\VignetteDepends{gRbase}
+%\VignetteKeyword{Graphical Models}
+%\VignetteKeyword{Probabilistic networks}
 
 \documentclass[10pt]{article}
 \usepackage{boxedminipage,color,a4wide,url}
@@ -10,10 +11,27 @@
 \usepackage[authoryear,round]{natbib}
 \bibliographystyle{plainnat}
 
-\usepackage{Sweave}
-\SweaveOpts{height=4}
 
-\SweaveOpts{prefix.string=figures/graph}
+
+<<include=FALSE>>=
+library(knitr)
+opts_chunk$set(
+height=4
+)
+@
+
+
+
+
+
+<<include=FALSE,echo=FALSE,warning=FALSE>>=
+library(knitr)
+dir.create( "figures" )
+opts_chunk$set(
+fig.path='figures/graph'
+)
+@
+
 
 \def\pkg#1{\texttt{#1}}
 \def\grbn{\texttt{gRain}}
@@ -22,11 +40,10 @@
 \def\R{\texttt{R}}
 
 
-<<echo=FALSE,print=FALSE>>=
+<<echo=FALSE>>=
 require( gRain )
 prettyVersion <- packageDescription("gRain")$Version
 prettyDate <- format(Sys.Date())
-dir.create( "figures" )
 @
 
 
@@ -40,31 +57,32 @@ dir.create( "figures" )
 
 %%\SweaveInput{Rmarkup.STY}
 %% ------------------------
-\definecolor{darkred}{rgb}{.7,0,0}
-\definecolor{midnightblue}{rgb}{0.098,0.098,0.439}
-
-\DefineVerbatimEnvironment{Sinput}{Verbatim}{
-  fontfamily=tt,
-  %%fontseries=b,
-  %% xleftmargin=2em,
-  formatcom={\color{midnightblue}}
-}
-\DefineVerbatimEnvironment{Soutput}{Verbatim}{
-  fontfamily=tt,
-  %%fontseries=b,
-  %% xleftmargin=2em,
-  formatcom={\color{darkred}}
-}
-\DefineVerbatimEnvironment{Scode}{Verbatim}{
-  fontfamily=tt,
-  %%fontseries=b,
-  %% xleftmargin=2em,
-  formatcom={\color{blue}}
-}
-
-\fvset{listparameters={\setlength{\topsep}{-2pt}}}
-\renewenvironment{Schunk}{\linespread{.90}}{}
-%% ------------------------
+%% \definecolor{darkred}{rgb}{.7,0,0}
+%% \definecolor{midnightblue}{rgb}{0.098,0.098,0.439}
+%% 
+%% \DefineVerbatimEnvironment{Sinput}{Verbatim}{
+%%   fontfamily=tt,
+%%   %%fontseries=b,
+%%   %% xleftmargin=2em,
+%%   formatcom={\color{midnightblue}}
+%% }
+%% \DefineVerbatimEnvironment{Soutput}{Verbatim}{
+%%   fontfamily=tt,
+%%   %%fontseries=b,
+%%   %% xleftmargin=2em,
+%%   formatcom={\color{darkred}}
+%% }
+%% \DefineVerbatimEnvironment{Scode}{Verbatim}{
+%%   fontfamily=tt,
+%%   %%fontseries=b,
+%%   %% xleftmargin=2em,
+%%   formatcom={\color{blue}}
+%% }
+%% 
+%% \fvset{listparameters={\setlength{\topsep}{-2pt}}}
+%% \renewenvironment{Schunk}{\linespread{.90}}{}
+%% %% ------------------------
+%% 
 
 \maketitle
 
@@ -81,7 +99,7 @@ as probabilistic networks and Bayesian networks.
 To cite \grbn\ in publications, please use:
 
 \begin{quote}
-Søren Højsgaard (2012). Graphical Independence Networks with the gRain
+SÃ¸ren HÃ¸jsgaard (2012). Graphical Independence Networks with the gRain
 Package for R. Journal of Statistical Software, 46(10),
 1-26. \url{http://www.jstatsoft.org/v46/i10/}.
 \end{quote}
@@ -89,7 +107,7 @@ Package for R. Journal of Statistical Software, 46(10),
 and possibly also
 
 \begin{quote}
-Søren Højsgaard, David Edwards and Steffen Lauritzen (2012). Graphical
+SÃ¸ren HÃ¸jsgaard, David Edwards and Steffen Lauritzen (2012). Graphical
 Models with R. Springer
 \end{quote}
 
@@ -103,8 +121,7 @@ and development versions is available from
 \section{A worked example: chest clinic}
 \label{sec:chest}
 
-@
-<<echo=F, results=hide>>=
+<<echo=F, results='hide'>>=
 yn <- c("yes","no")
 a    <- cptable(~asia, values=c(1,99),levels=yn)
 t.a  <- cptable(~tub|asia, values=c(5,95,1,99),levels=yn)
@@ -120,8 +137,7 @@ net1 <- grain(plist)
 net1
 @ %def
 
-@
-<<LS,fig=T,include=F,echo=F>>=
+<<LSinclude=F,echo=F>>=
 require(Rgraphviz)
 plot(net1)
 @ %def
@@ -197,7 +213,7 @@ $\xi=\mbox{xray}$. Note that $\epsilon$ is a logical variable which is
 true if either $\tau$ or $\lambda$ are true and false otherwise.
 
 
-<<echo=F,results=hide>>=
+<<echo=F,results='hide'>>=
 library(gRain)
 options("prompt"="> ","width"=85)
 @
@@ -240,7 +256,6 @@ example is as follows.
 \item Specify conditional probability tables (with values as given in
   \cite{lau/spieg:88}):
 
-@
 <<>>=
 yn <- c("yes","no")
 a    <- cptable(~asia, values=c(1,99),levels=yn)
@@ -255,7 +270,6 @@ d.be <- cptable(~dysp|bronc:either, values=c(9,1,7,3,8,2,1,9), levels=yn)
 
 \item Compile list of conditional probability tables and create the network:
 
-@
 <<>>=
 plist <- compileCPT(list(a, t.a, s, l.s, b.s, e.lt, x.e, d.be))
 plist
@@ -275,14 +289,12 @@ net1
 \begin{enumerate}
 \item The network can be queried to give marginal probabilities:
 
-@
 <<>>=
 querygrain(net1, nodes=c("lung","bronc"), type="marginal")
 @ %def
 
 \item Likewise, a joint distribution can be obtained:
 
-@
 <<>>=
 querygrain(net1,nodes=c("lung","bronc"), type="joint")
 @ %def
@@ -296,7 +308,6 @@ net12  <- setEvidence(net1,
 @ %def
 
 \item The probability of observing this evidence under the model is
-@
 <<>>=
 pEvidence( net12 )
 @ %def
@@ -304,7 +315,6 @@ pEvidence( net12 )
 
 \item The network can be queried again:
 
-@
 <<>>=
 querygrain( net12, nodes=c("lung","bronc") )
 querygrain( net12, nodes=c("lung","bronc"), type="joint" )
@@ -316,21 +326,18 @@ querygrain( net12, nodes=c("lung","bronc"), type="joint" )
 \label{sec:zero-probabilities}
 
 Consider setting the evidence
-@
 <<>>=
 net13 <- setEvidence(net1,nodes=c("either", "tub"),
                      states=c("no","yes"))
 @ %def
 
 Under the model, this finding has zero probability;
-@
 <<>>=
 pEvidence( net13 )
 @ %def
 
 Therefore, all conditional probabilities are (under the model) undefined;
 
-@
 <<>>=
 querygrain( net13, nodes=c("lung","bronc"), type="joint" )
 @ %def
@@ -338,14 +345,12 @@ querygrain( net13, nodes=c("lung","bronc"), type="joint" )
 We can look closer into this zero--probability issue. Because the node
 \code{either} is logical, half of the configurations will have zero probability:
 
-@
 <<>>=
 tt <- querygrain( net1, type="joint")
 sum(tt==0)/length(tt)
 @ %def
 
 In particular the configuration above has zero probability
-@
 <<>>=
 sum(tableSlice(tt, c("either","tub"), c("no","yes")))
 @ %def
@@ -353,7 +358,6 @@ sum(tableSlice(tt, c("either","tub"), c("no","yes")))
 Zero probailities (or almost zero probabilities) also arise in a
 different in a different setting. Consider this example
 
-@
 <<>>=
 yn <- c("yes","no")
 eps <- 1e-100
@@ -365,14 +369,12 @@ bn   <- grain(plist)
 ( tt   <- querygrain(bn, type="joint") )
 @ %def
 
-@
 <<>>=
 querygrain(setEvidence(bn, nodes=c("a","c"), state=c("no", "yes")))
 @ %def
 
 No problem so far, but if \code{eps} is made smaller numerical
 problems arise:
-@
 <<>>=
 eps <- 1e-200
 a    <- cptable(~a,   values=c(1,eps),levels=yn)
@@ -442,7 +444,6 @@ Consider the following excerpt of
 the chest clinic network which is described in the paper mentioned
 above.
 
-@
 <<>>=
 yn <- c("yes","no")
 a    <- cptable(~asia, values=c(1,99),levels=yn)
@@ -465,14 +466,12 @@ evidence that a person has recently been to Asia. The functions
 \code{setEvidence()} (which is a recent addition to \grbn) can both be used for this
 purpose. The following forms are equivalent.
 
-@
 <<>>=
 setFinding(  chest1, nodes="asia", states="yes")
 setEvidence( chest1, nodes="asia", states="yes")
 setEvidence( chest1, evidence=list(asia="yes"))
 @ %def
 
-@
 <<>>=
 querygrain( setEvidence( chest1, evidence=list(asia="yes")) )
 @ %def
@@ -495,8 +494,7 @@ in the original network.
 We can then introduce a new variable
 \code{guess.asia} with \code{asia} as its only parent.
 
-@
-<<print=T>>=
+<<>>=
 g.a <- parray(c("guess.asia", "asia"), levels=list(yn, yn),
               values=c(.8,.2, .1,.9))
 @ %def
@@ -506,7 +504,6 @@ to Asia we would guess so in 80\% of the cases, whereas for patients who have
 not recently been to A we would (erroneously) guess that they have
 recently been to Asia in 10\% of the cases.
 
-@
 <<>>=
 ( plist2 <- compileCPT( list( a, t.a, g.a ) ) )
 ( chest2 <- grain(plist2) )
@@ -517,7 +514,6 @@ querygrain( chest2 )
 Now specify the guess or judgment, that the person has recently been
 to Asia:
 
-@
 <<>>=
 querygrain( setEvidence( chest2, evidence=list(guess.asia="yes")) )
 @ %def
@@ -528,14 +524,12 @@ querygrain( setEvidence( chest2, evidence=list(guess.asia="yes")) )
 The same guess or judgment can be specified as virtual evidence
 (also called likelihood evidence) for the original network:
 
-@
 <<>>=
 querygrain( setEvidence( chest1, evidence=list(asia=c(.8, .1))) )
 @ %def
 
 This also means that specifying that specifying \code{asia='yes'} can
 be done as
-@
 <<>>=
 querygrain( setEvidence( chest1, evidence=list(asia=c(1, 0))) )
 @ %def
@@ -575,27 +569,21 @@ $y_1=y_1^*$ and $y_2=y_2^*$. We then have
 \label{sec:using-textttsm-argum}
 
 The following two graphs specify the same model:
-@
-<<fig=T>>=
-dG  <- dag(~A:B)
-uG  <- ug(~A:B)
+<<>>=
+dG  <- dag(~A:B + B:C)
+uG  <- ug(~A:B + B:C)
 par(mfrow=c(1,2)); plot( dG ); plot( uG )
 @ %def
 
-
-
-
 Suppose data is
-@
-<<print=T>>=
-dat <-as.table(parray(c("A","B"), levels=c(2,2), values=c(0,0,2,3)))
+<<>>=
+dat <-newar(c("A","B","C"), levels=c(2,2,2), values=c(0,0,2,3,1,2,1,4))
 class( dat )
 @ %def
 
 A network can be built from data using:
 
-@
-<<print=T>>=
+<<>>=
 gr.dG <- compile( grain( dG, dat ) )
 gr.uG <- compile( grain( uG, dat ) )
 @ %def
@@ -610,7 +598,6 @@ are extracted when the graph is a dag and clique potentials are
 extracted when the graph is a chordal (i.e.\ triangulated) undirected
 graph. This takes place as follows (internally):
 
-@
 <<>>=
 extractCPT( dat, dG )
 c( extractPOT( dat, uG ) )
@@ -631,8 +618,7 @@ whereas \code{gr.uG} will work, but it may not give the expected results.
 To illustrate what goes on, we can extract the distributions from data
 as follows:
 
-@
-<<print=T>>=
+<<>>=
 p.A.g.B <- tableDiv(dat, tableMargin(dat, "B"))
 p.B <- tableMargin(dat, "B")/sum(dat)
 p.AB <- tableMult( p.A.g.B, p.B)
@@ -653,14 +639,12 @@ and
 \end{displaymath}
 
 We can mimic this as follows:
-@
 <<>>=
 e <- 1e-2
 (dat.e <- dat + e)
 @ %def
 
-@
-<<print=T>>=
+<<>>=
 pe.A.g.B <- tableDiv(dat.e, tableMargin(dat, "B"))
 pe.B <- tableMargin(dat.e, "B")/sum(dat.e)
 pe.AB  <- tableMult( pe.A.g.B, pe.B )
@@ -668,7 +652,6 @@ pe.AB  <- tableMult( pe.A.g.B, pe.B )
 
 However this resulting joint distribution is different from what is
 obtained from the adjusted table itself
-@
 <<>>=
 dat.e / sum( dat.e )
 @ %def
@@ -679,26 +662,22 @@ This difference appears in the \grain\ networks.
 \label{sec:extracting-tables}
 
 One can do
-@
 <<>>=
 gr.dG <- compile( grain( dG, dat, smooth=e ) )
 @ %def
 
 which (internally) corresponds to
-@
 <<>>=
 extractCPT( dat, dG, smooth=e)
 @ %def
 
 We get
-@
 <<>>=
 querygrain( gr.dG )
 querygrain( gr.uG )
 @ %def
 
 However, if we condition on \code{B=B1} we get:
-@
 <<>>=
 querygrain(setFinding(gr.dG, nodes="B", states="B1"))
 querygrain(setFinding(gr.uG, nodes="B", states="B1"))
@@ -708,26 +687,22 @@ so the ``problem'' with zero entries shows up in a different
 place. However, the answer is not necessarily wrong; the answer simply
 states that $P(A|B=B1)$ is undefined.
 To ``remedy'' we can use the \code{smooth} argument:
-@
 <<>>=
 gr.uG <- compile( grain( uG, dat, smooth=e) )
 @ %def
 which (internally) corresponds to
-@
 <<>>=
 c( extractPOT( dat, uG, smooth=e ) )
 @ %def
 
 Notice that the results are not exactly identical:
 
-@
 <<>>=
 querygrain( gr.uG )
 querygrain( gr.dG )
 @ %def
 
 
-@
 <<>>=
 querygrain( setFinding(gr.uG, nodes="B", states="B1") )
 querygrain( setFinding(gr.dG, nodes="B", states="B1") )

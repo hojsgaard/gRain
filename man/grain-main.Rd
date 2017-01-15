@@ -6,6 +6,8 @@
 \alias{grain.CPTspec}
 \alias{grain.POTspec}
 \alias{grain.dModel}
+\alias{grain.extractCPT}
+\alias{grain.extractPOT}
 \alias{grain.graphNEL}
 \alias{iplot.grain}
 \alias{is.grain}
@@ -19,6 +21,10 @@ grain(x, data = NULL, control = list(), smooth = 0, details = 0, ...)
 
 \method{grain}{POTspec}(x, data = NULL, control = list(), smooth = 0,
   details = 0, ...)
+
+\method{grain}{extractPOT}(x, ...)
+
+\method{grain}{extractCPT}(x, ...)
 
 \method{grain}{graphNEL}(x, data = NULL, control = list(), smooth = 0,
   details = 0, ...)
@@ -124,7 +130,7 @@ class( b3 )
 Søren Højsgaard, \email{sorenh@math.aau.dk}
 }
 \references{
-S<f8>ren H<f8>jsgaard (2012). Graphical Independence
+Søren Højsgaard (2012). Graphical Independence
     Networks with the gRain Package for R. Journal of Statistical
     Software, 46(10), 1-26.
     \url{http://www.jstatsoft.org/v46/i10/}.

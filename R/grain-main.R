@@ -33,7 +33,7 @@
 #'     \code{\link{setEvidence}}, \code{\link{getFinding}},
 #'     \code{\link{pFinding}}, \code{\link{retractFinding}}
 #'     %\code{\link[gRbase]{gmData}}
-#' @references S<f8>ren H<f8>jsgaard (2012). Graphical Independence
+#' @references Søren Højsgaard (2012). Graphical Independence
 #'     Networks with the gRain Package for R. Journal of Statistical
 #'     Software, 46(10), 1-26.
 #'     \url{http://www.jstatsoft.org/v46/i10/}.
@@ -110,65 +110,67 @@ grain <- function(x, data=NULL, control=list(), smooth=0, details=0,...){
 grain.CPTspec <- function(x, data=NULL, control=list(), smooth=0, details=0,...){
   ##cat("grain.CPTspec\n")
   control  <- .setControl(control)
-  ans  <- c(list(universe    = attr(x,"universe"),
+  out  <- c(list(universe    = attr(x,"universe"),
                  data        = data,
                  dag         = attr(x,"dag"),    ## Needed to save network in Hugin format
                  cptlist     = c(x)              ## Needed to save network in Hugin format
                  ),
             .setExtraComponents(control, details))
 
-  class(ans) <- c("CPTgrain", "grain")
-  return(ans)
+  class(out) <- c("CPTgrain", "grain")
+  return(out)
 }
 
 #' @rdname grain-main
 grain.POTspec <- function(x, data=NULL, control=list(), smooth=0, details=0,...){
-  ## cat("grain.POTspec\n")
-  control  <- .setControl(control)
-  ans  <- c(list(universe    = attr(x, "universe"),
-                 data        = data,
-                 equipot     = c(x),
-                 ug          = attr(x, "ug"),
-                 rip         = attr(x, "rip"),
-                 dag         = attr(x, "dag"),    ## Needed to save network in Hugin format
-                 cptlist     = attr(x, "cptlist") ## Needed to save network in Hugin format
-                 ),
-            .setExtraComponents(control, details))
-  class(ans) <- c("POTgrain","grain")
-  ans
+    ## cat("grain.POTspec\n")
+    control  <- .setControl(control)
+    
+    out  <- c(list(universe    = attr(x, "universe"),
+                   data        = data,
+                   cqpot       = c(x),
+                   ug          = attr(x, "ug"),
+                   rip         = attr(x, "rip")
+                   ),
+              .setExtraComponents(control, details))
+    class(out) <- c("POTgrain","grain")
+    out
 }
+
+#' @rdname grain-main
+grain.extractPOT <- function(x, ...){grain(compile(x))}
+
+#' @rdname grain-main
+grain.extractCPT <- function(x, ...){grain(compile(x))}
+
 
 ## A graph + data (wrappers for calling grain.POTspec and grain.CPTspec)
 #' @rdname grain-main
 grain.graphNEL <- function(x, data=NULL, control=list(), smooth=0, details=0,...){
     if (missing(data))
         stop("Data must be given to create grain from graph\n")
-    if (!(is.array(data) || is.data.frame(data)))
+    if (!(is.named.array(data) || is.data.frame(data)))
         stop("Data must be an array or a dataframe\n")
 
-  if (is.DAG(x)){
-    ans <- grain(compileCPT(extractCPT(data, x, smooth=smooth)),
-                 data=data, control=control, details=details)
-  } else {
-    if (is.TUG(x)){
-      ans <- grain(compilePOT(extractPOT(data, x, smooth=smooth)),
-                   data=data, control=control, details=details)
-    } else {
-      stop("graph 'x' is neither a directed acyclic graph or a triangulated undirected graph")
-    }
-  }
-  return(ans)
+    if (is.DAG(x))
+        zz <- compileCPT(extractCPT(data, x, smooth=smooth))
+    else if (is.TUG(x))
+        zz <- compilePOT(extractPOT(data, x, smooth=smooth))
+    else
+        stop("graph 'x' is neither a directed acyclic graph or a triangulated undirected graph")
+
+    grain(zz, data=data, control=control, details=details)
 }
 
 #' @rdname grain-main
 grain.dModel <- function(x, data=NULL, control=list(), smooth=0, details=0,...){
 
-    if (!x$isDecomposable)
-        stop("Model must be decompsable graphical model\n")
-    g <- ugList( terms( x ) )
-    if (is.null(data))
+    if (!x$isDecomposable) stop("Model must be decompsable\n")
+    if (is.null(data)) ## FIXME grain.dModel: Need to check data
         data <- x$datainfo$data
-    grain(g, data=data, smooth=smooth, details=details, ...)
+
+    gg <- ugList( terms( x ) )
+    grain(gg, data=data, smooth=smooth, details=details, ...)
 }
 
 
@@ -227,6 +229,25 @@ is.grain <- function(object){
       )
 }
 
+
+
+
+
+    
+    
+##     if (is.DAG(x)){
+##         ans <- grain(compileCPT(extractCPT(data, x, smooth=smooth)),
+##                      data=data, control=control, details=details)
+##     } else {
+##         if (is.TUG(x)){
+##             ans <- grain(compilePOT(extractPOT(data, x, smooth=smooth)),
+##                          data=data, control=control, details=details)
+##         } else {
+##             stop("graph 'x' is neither a directed acyclic graph or a triangulated undirected graph")
+##         }
+##     }
+##     ans
+    ##
 
 
 

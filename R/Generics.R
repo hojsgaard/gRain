@@ -36,5 +36,36 @@ universe.grain <- function(object, ...) object$universe
 #' @rdname grain-generics
 varNames.grainEvidence_ <- function(x) x$summary$nodes
 
-## #' @rdname grain-generics
-## rip.grain <- function(object) object$rip
+#' @rdname grain-generics
+rip.grain <- function(object, ...)
+    getgin(object, "rip")
+
+
+#' @rdname grain-generics
+uni <- function(object)
+    UseMethod("uni")
+
+#' @rdname grain-generics
+uni.grain <- function(object)
+    object$universe
+
+#' @rdname grain-generics
+pot <- function(object)
+    UseMethod("pot")
+
+#' @rdname grain-generics
+pot.grain <- function(object)
+    object$potential
+
+#' @rdname grain-generics
+potential <- function(object)
+   UseMethod("potential")
+
+#' @rdname grain-generics
+potential.grain <- function(object)
+   object$potential
+
+
+
+
+

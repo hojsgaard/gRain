@@ -6,6 +6,13 @@
 \alias{nodeNames.grain}
 \alias{nodeStates}
 \alias{nodeStates.grain}
+\alias{pot}
+\alias{pot.grain}
+\alias{potential}
+\alias{potential.grain}
+\alias{rip.grain}
+\alias{uni}
+\alias{uni.grain}
 \alias{universe}
 \alias{universe.grain}
 \alias{varNames.grainEvidence_}
@@ -24,6 +31,20 @@ universe(object, ...)
 \method{universe}{grain}(object, ...)
 
 \method{varNames}{grainEvidence_}(x)
+
+\method{rip}{grain}(object, ...)
+
+uni(object)
+
+\method{uni}{grain}(object)
+
+pot(object)
+
+\method{pot}{grain}(object)
+
+potential(object)
+
+\method{potential}{grain}(object)
 }
 \arguments{
 \item{x, object}{A relevant object.}

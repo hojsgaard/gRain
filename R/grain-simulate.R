@@ -50,9 +50,9 @@ simulate.grain <- function(object, nsim=1, seed=NULL, ...){
     }
   }
 
-  plist  <- object$equipot
-  cqlist <- object$rip$cli
-  splist <- object$rip$sep
+  plist  <- pot(object)$pot_equi
+  cqlist <- rip(object)$cliques
+  splist <- rip(object)$separators
 
   ## Init
   ans           <- matrix(0, nrow=nsim, ncol=length(nodeNames(object)))
