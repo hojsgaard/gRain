@@ -170,7 +170,7 @@ querygrain.grain <- function(object, nodes = nodeNames(object), type = "marginal
 
     cliq  <- object$rip$cliques
     ##idxb <- sapply(cliq, function(cq) subsetof(nodes, cq))
-    idxb <- sapply(cliq, function(cq) gRbase::is_subsetof_(nodes, cq))
+    idxb <- sapply(cliq, function(cq) gRbase::is_subsetof(nodes, cq))
 
     if (any(idxb)){
         ## cat(".Calculating directly from clique\n")
@@ -183,7 +183,7 @@ querygrain.grain <- function(object, nodes = nodeNames(object), type = "marginal
         ## cat(".Calculating brute force\n")
         nnodes <- length( nodes )
         dn    <- uni(object)$levels[nodes]
-        value <- newar(names(dn), dn)
+        value <- tab(names(dn), dn)
 
         nodes2  <- nodes[2:nnodes]
         dn2   <- uni(object)$levels[nodes2]

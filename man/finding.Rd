@@ -2,10 +2,10 @@
 % Please edit documentation in R/finding.R
 \name{finding}
 \alias{finding}
+\alias{setFinding}
+\alias{retractFinding}
 \alias{getFinding}
 \alias{pFinding}
-\alias{retractFinding}
-\alias{setFinding}
 \title{Set, retrieve, and retract finding in Bayesian network.}
 \usage{
 setFinding(object, nodes = NULL, states = NULL, flist = NULL,
@@ -81,9 +81,6 @@ pFinding(bn2)
 
 
 }
-\author{
-Søren Højsgaard, \email{sorenh@math.aau.dk}
-}
 \references{
 Søren Højsgaard (2012). Graphical Independence Networks
 with the gRain Package for R. Journal of Statistical Software, 46(10), 1-26.
@@ -94,6 +91,8 @@ with the gRain Package for R. Journal of Statistical Software, 46(10), 1-26.
 \code{\link{retractEvidence}} \code{\link{pEvidence}}
 \code{\link{querygrain}}
 }
+\author{
+Søren Højsgaard, \email{sorenh@math.aau.dk}
+}
 \keyword{models}
 \keyword{utilities}
-

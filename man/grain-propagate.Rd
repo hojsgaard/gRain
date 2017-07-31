@@ -4,8 +4,10 @@
 \alias{grain-propagate}
 \alias{propagate.grain}
 \alias{propagateLS}
+\alias{propagate__}
 \alias{propagateLS__}
 \alias{propagate__}
+\alias{propagateLS}
 \title{Propagate a graphical independence network (a Bayesian network)}
 \usage{
 \method{propagate}{grain}(object, details = object$details, ...)
@@ -69,9 +71,6 @@ if (require(microbenchmark))
         propagate__(pnc) )
 
 }
-\author{
-Søren Højsgaard, \email{sorenh@math.aau.dk}
-}
 \references{
 Søren Højsgaard (2012). Graphical Independence
     Networks with the gRain Package for R. Journal of Statistical
@@ -81,6 +80,8 @@ Søren Højsgaard (2012). Graphical Independence
 \seealso{
 \code{\link{grain}}, \code{\link[gRbase]{compile}}
 }
+\author{
+Søren Højsgaard, \email{sorenh@math.aau.dk}
+}
 \keyword{models}
 \keyword{utilities}
-

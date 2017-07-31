@@ -188,7 +188,7 @@ retractJEvi <- function(object, items=NULL, propagate=TRUE, details=0){
 #' evidence( bn3 )
 #' 
 new_jev <- function(ev, levels){
-    if ( inherits( ev, "grain_jev") ) return( ev )
+    if (inherits(ev, "grain_jev")) return( ev )
 
     if (!is.list(ev)) stop("'ev' must be a list")
     if (!is.list(levels)) stop("'levels' must be a list")

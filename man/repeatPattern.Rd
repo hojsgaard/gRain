@@ -68,9 +68,6 @@ hmm
 if (interactive()) iplot(hmm)
 
 }
-\author{
-Søren Højsgaard, \email{sorenh@math.aau.dk}
-}
 \references{
 Søren Højsgaard (2012). Graphical Independence
     Networks with the gRain Package for R. Journal of Statistical
@@ -80,5 +77,7 @@ Søren Højsgaard (2012). Graphical Independence
 \seealso{
 \code{\link{grain}}, \code{\link{compileCPT}}
 }
+\author{
+Søren Højsgaard, \email{sorenh@math.aau.dk}
+}
 \keyword{utils}
-

@@ -3,26 +3,50 @@
 \name{extract-cpt}
 \alias{extract-cpt}
 \alias{extractCPT}
-\alias{extractCPT.data.frame}
 \alias{extractCPT.table}
+\alias{extractCPT.data.frame}
 \alias{extractPOT}
-\alias{extractPOT.data.frame}
 \alias{extractPOT.table}
+\alias{extractPOT.data.frame}
+\alias{extractPOT}
+\alias{extractMARG}
+\alias{data2cpt}
+\alias{data2pot}
+\alias{data2marg}
+\alias{marg2pot}
+\alias{pot2marg}
 \title{Extract conditional probabilities and clique potentials from
     data.}
 \usage{
-extractCPT(x, graph, smooth = 0)
+extractCPT(data_, graph, smooth = 0)
 
-extractPOT(x, graph, smooth = 0)
+extractPOT(data_, graph, smooth = 0)
+
+extractMARG(data_, graph, smooth = 0)
+
+data2cpt(data_, graph, smooth = 0)
+
+data2pot(data_, graph, smooth = 0)
+
+data2marg(data_, graph, smooth = 0)
+
+marg2pot(mg)
+
+pot2marg(pt)
 }
 \arguments{
-\item{x}{An array or a dataframe.}
+\item{data_}{A named array or a dataframe.}
 
-\item{graph}{A graph represented as a graphNEL object.  For
-extractCPT, graph must be a DAG while for extractPOT, graph
-must be undirected triangulated graph.}
+\item{graph}{A graphNEL object or a list or formula which can be
+turned into a graphNEL object by calling \code{ug} or
+\code{dag}. For extractCPT, graph must be/define a DAG while for
+extractPOT, graph must be/define undirected triangulated graph.}
 
 \item{smooth}{See 'details' below.}
+
+\item{mg}{An object of class \code{MARG_rep}}
+
+\item{pt}{An object of class \code{POT_rep}}
 }
 \value{
 extractCPT: A list of conditional probability tables
@@ -62,18 +86,26 @@ dgf   <- ~asia + tub * asia + smoke + lung * smoke +
          xray * either + dysp * bronc * either
 dg    <- dag(dgf)
 pp    <- extractCPT(chestSim100000, dg)
+
+pn2   <- grain(pp)
+## Same as:
 cpp2  <- compileCPT(pp)
 pn2   <- grain(cpp2)
+
 q2    <- querygrain(pn2)
 
 ## Version 2) Specify triangulated undirected graph and data
 ugf <- list(c("either", "lung", "tub"), c("either", "lung", "bronc"), 
     c("either", "xray"), c("either", "dysp", "bronc"), c("smoke", 
     "lung", "bronc"), c("asia", "tub"))
-gg    <- ugList(ugf)
+gg    <- ug(ugf)
 pp    <- extractPOT(chestSim100000, gg)
+
+pn3   <- grain(pp)
+## Same as:
 cpp3  <- compilePOT(pp)
 pn3   <- grain(cpp3)
+
 q3    <- querygrain(pn3)
 
 ## Compare results:
@@ -81,9 +113,6 @@ str(q1)
 str(q2[names(q1)])
 str(q3[names(q1)])
 
-}
-\author{
-Søren Højsgaard, \email{sorenh@math.aau.dk}
 }
 \references{
 Søren Højsgaard (2012). Graphical Independence Networks
@@ -94,5 +123,7 @@ Søren Højsgaard (2012). Graphical Independence Networks
 \code{\link{compileCPT}}, \code{\link{compilePOT}},
     \code{\link{grain}}
 }
+\author{
+Søren Højsgaard, \email{sorenh@math.aau.dk}
+}
 \keyword{utilities}
-

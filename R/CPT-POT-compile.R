@@ -4,8 +4,6 @@
 ## p2 <- cptable(~b, levels=uni2, values=c(7, 3))
 ## compileCPT( list(p1, p1, p2) )
 
-
-
 #' @title Compile conditional probability tables / cliques potentials.
 #' 
 #' @description Compile conditional probability tables / cliques
@@ -37,32 +35,211 @@
 #'
 #' @keywords utilities
 #' 
+
+as_cptlist <- function(x, forceCheck=FALSE){
+    if (!(inherits(x, "list") &&
+          all(unlist(lapply(x, function(a) is.named.array(a))))))
+        stop("input must be named list of named arrays")
+    
+    if (forceCheck){
+        compile_cpt(x, forceCheck=TRUE)
+    } else {
+        out <- x
+        vl  <- lapply(out, function(g) dimnames(g)[[1]])
+        vn  <- names(vl)
+        di  <- unlist(lapply(vl, length))
+        universe   <- list(nodes = vn, levels = vl, nlev = di)
+        attr(out, "universe") <- universe
+        ## FIXME do we need dag here????
+        class(out) <- "CPTspec_simple"
+        out
+    }    
+}
+
+compile_cpt <- function(x, forceCheck=TRUE){
+
+    if (!inherits(x, "list")) stop("A list is expected")    
+    ## FIXME: Fragile that there is no control over input
+    zz <- lapply(x, .parseCPT_item)
+
+    vn <- unlist(lapply(zz, "[[", "vnam"))
+    vl <- lapply(zz, "[[", "vlev")
+    vd <- unlist(lapply(vl, length))
+    vp <- lapply(zz, "[[", "vpar")
+    di <- unlist(lapply(vl, length))
+    
+    names(vl) <- vn
+    names(vd) <- vn
+
+    universe  <- list(nodes = vn, levels = vl, nlev = di)
+
+    ## FIXME: Perhaps not create dag here at all unless check is required
+    dg <- dagList(vp, forceCheck = forceCheck)
+    print(dg)
+    
+    if (forceCheck){        
+        ## Distribution specified for all variables?
+        ss <- setdiff(unique.default(unlist(vp)), vn)
+        if (length(ss) > 0)
+            stop(paste("distribution not specified for variable(s):", toString(ss)))
+
+        ## Are dimensions consistent?
+        lapply(1:length(vn), function(i){
+            ##cat(c(i, prod(vd[vp[[i]]]), length(zz[[i]]$values)), "\n")
+            if (prod(vd[vp[[i]]]) != length(zz[[i]]$values)){
+                cat(paste("problem here:\n",
+                          "cpt:", toString(vp[[i]]), "\n",
+                          "number of values given: ", length(zz[[i]]$values),"\n",
+                          "number of values expected: ", prod(vd[vp[[i]]]), "\n"))
+                stop("can not proceed!")
+            }
+        })
+    }
+    
+    out <-
+        lapply(1:length(vn), function(i){
+            dn <- vl[vp[[i]]]
+            di <- c(vd[vp[[i]]], use.names=FALSE)
+            ar <- array(zz[[i]]$values + zz[[i]]$smooth, dim=di, dimnames=dn)
+            ar <- tabNormalize(ar, type="first")
+            ar
+        })
+    names(out) <- vn
+
+    attr(out, "universe") <- universe
+    attr(out, "dag") <- dg 
+    class(out) <- "CPTspec"
+    out
+}
+
+
+.parseCPT_item <- function(xi){ ## Create intermediate form of CPTs
+
+    cls <- c("cptable", "parray", "array", "matrix") ## FIXME: Fragile
+    j   <- inherits(xi, cls, which=T)
+
+    if (!any(u <- j > 0)) stop("xi not a valid object")
+    
+    cls <- cls[u]    
+    vpar <- varNames(xi)
+    vlev <- valueLabels(xi)[[1]]
+    smooth <- if (cls == "cptable") attr(xi, "smooth") else 0
+
+    out <- list(vnam=vpar[1], vlev=vlev, vpar=vpar, values=as.numeric(xi),
+                normalize="first", smooth=smooth)
+    out
+ }
+
+#' @rdname compile-cpt
+compilePOT <- function(x){
+    
+    .make.universe <- function(x){
+        lll       <- unlist(lapply(x, dimnames), recursive=FALSE)
+        nnn       <- names(lll)
+        iii       <- match(unique(nnn), nnn)
+        levels    <- lll[iii]
+        vn        <- nnn[iii]
+        di        <- c(lapply(levels, length), recursive=TRUE)
+        names(di) <- vn
+        universe  <- list(nodes = vn, levels = levels, nlev   = di)
+        universe
+    }
+
+    if (!inherits(x, "POT_rep")) stop("can not compile 'x'\n")
+    if (is.null(attr(x, "rip"))) stop("no rip attribute; not a proper POT_spec object")
+
+    attr(x, "universe") <- .make.universe(x)
+    attr(x, "ug")       <- ug(attr(x, "rip")$cliques)
+    class(x) <- "POTspec"
+    x
+}
+
+#' @rdname compile-cpt
+compile.POT_rep <- function(object, ...)
+    compilePOT(object)
+
+#' @rdname compile-cpt
+compile.CPT_rep <- function(object, ...)
+    compileCPT(object)
+
+print.CPTspec <- function(x,...){
+    cat("CPTspec with probabilities:\n")
+    lapply(x,
+           function(xx){
+               vn <- varNames(xx)
+               if (length(vn) > 1){
+                   cat(paste(" P(", vn[1], "|", paste(vn[-1], collapse=' '), ")\n"))
+               } else {
+                   cat(paste(" P(", vn, ")\n"))
+               }
+           })
+  invisible(x)
+}
+
+as_CPTspec_simple <- function(x){
+    z <- c(x)
+    attr(z, "universe") <- attr(x, "universe")
+    class(z) <- "CPTspec_simple"
+    z
+}
+
+print.CPTspec_simple <- function(x,...){
+    cat("CPTspec_simple with probabilities:\n")
+    lapply(x,
+           function(xx){
+               vn <- varNames(xx)
+               if (length(vn) > 1){
+                   cat(paste(" P(", vn[1], "|", paste(vn[-1], collapse=' '), ")\n"))
+               } else {
+                   cat(paste(" P(", vn, ")\n"))
+               }
+           })
+  invisible(x)
+}
+
+
+
+summary.CPTspec <- function(object,...){
+    lapply(object, function(x){x})
+}
+
+print.POTspec <- function(x,...){
+    cat("POTspec with potentials:\n")
+    lapply(x,
+           function(xx){
+               vn <- names(dimnames(xx))
+               cat(   "(", paste(vn, collapse=' '),") \n")
+           })
+    
+  return(invisible(x))
+}
+
+
+
+
 compileCPT <- function(x, forceCheck=TRUE, details=0){
 
-    #if (!inherits(x, "extractCPT")) stop("can not compile 'x'\n")
-
-    zz <- lapply(x, .parseCPTlist)
+    zz <- lapply(x, .parseCPT_item)
 
     vnamList <- lapply(zz, "[[", "vnam") ## variable name
     vparList <- lapply(zz, "[[", "vpar") ## variable and parent names
     vlevList <- lapply(zz, "[[", "vlev") ## variable level
     vn       <- unlist(vnamList, use.names=FALSE)
     names( vlevList ) <- vn
-
-    out        <- vector("list", length(vn))
-    names(out) <- vn
-    di         <- unlist( lapply(vlevList, length) )
-
-
+    
     ## Check for acyclicity
     if (details>=1) cat(". creating dag and checking for acyclicity...\n")
     dg  <- dagList(vparList)
     oo  <- topoSort(dg)
     if (length(oo) == 0)
         stop("Graph defined by the cpt's is not acyclical...\n");
-   
-    if (details>=1) cat(". creating probability tables ...\n")
 
+
+    if (details>=1) cat(". creating probability tables ...\n")
+    
+    out        <- vector("list", length(vn))
+    names(out) <- vn
+    
     for ( i  in seq_along( vnamList ) ){
         if (!forceCheck && class(zz[[ i ]])[1]=="parray"){
             out[[ i ]] <- zz[[ i ]]
@@ -94,11 +271,12 @@ compileCPT <- function(x, forceCheck=TRUE, details=0){
                          smooth    = zz[[ i ]]$smooth
                          )
             class(uu) <- "array"
-            out[[ i ]] <- uu
-                
+            out[[ i ]] <- uu                
         }
     }
-    
+
+    di         <- unlist(lapply(vlevList, length))
+
     universe        <- list(nodes = vn, levels = vlevList, nlev = di)
     attr(out, "universe") <- universe
     attr(out, "dag") <- dg ## FIXME: Not really needed to store dag
@@ -106,84 +284,19 @@ compileCPT <- function(x, forceCheck=TRUE, details=0){
     out
 }
 
-#' @rdname compile-cpt
-compilePOT <- function(x){
-    if (!inherits(x, "extractPOT")) stop("can not compile 'x'\n")
-    
-    uug <- ugList(lapply(x, function(a) names(dimnames(a))))
-    if (!is.TUG(uug))
-        stop("Graph defined by potentals is not triangulated...\n")
-
-    lll       <- unlist(lapply(x, dimnames), recursive=FALSE)
-    nnn       <- names(lll)
-    iii       <- match(unique(nnn), nnn)
-    levels    <- lll[iii]
-    vn        <- nnn[iii]
-    di        <- c(lapply(levels, length), recursive=TRUE)
-    names(di) <- vn
-    universe  <- list(nodes = vn, levels = levels, nlev   = di)
-
-    attr(x, "universe") <- universe
-    attr(x, "ug") <- uug
-    attr(x, "rip") <- rip(uug)
-    class(x) <- "POTspec"
-    x
-}
-
-#' @rdname compile-cpt
-compile.extractPOT <- function(object, ...)
-    compilePOT(object)
-
-#' @rdname compile-cpt
-compile.extractCPT <- function(object, ...)
-    compileCPT(object)
 
 
 
-.parseCPTlist <- function(xi){ ## Create intermediate form of CPTs
-
-    if (is.array(xi)) cls <- "array"
-    else cls <- class(xi)[1]
-    
-    vpar <- varNames(xi)
-    vlev <- valueLabels(xi)[[1]]
-    
-    switch(cls,
-           "cptable"={
-               tmp <-
-                   list(vnam=vpar[1], vlev=vlev, vpar=vpar, values=xi$values,
-                        normalize=if (xi$normalize) "first" else "none", smooth=xi$smooth)
-           },
-           "parray"={
-               tmp <-
-                   list(vnam=vpar[1], vlev=vlev, vpar=vpar, values=as.numeric(xi),
-                        normalize="first", smooth=0)
-           },
-           "array"={
-               tmp <-
-                   list(vnam=vpar[1], vlev=vlev, vpar=vpar, values=as.numeric(xi),
-                        normalize="first", smooth=0)
-         })
-    tmp
-}
 
 
-print.CPTspec <- function(x,...){
-    cat("CPTspec with probabilities:\n")
-    lapply(x,
-           function(xx){
-               vn <- varNames(xx)
-               if (length(vn) > 1){
-                   cat(paste(" P(", vn[1], "|", paste(vn[-1], collapse=' '), ")\n"))
-               } else {
-                   cat(paste(" P(", vn, ")\n"))
-               }
-           })
-  return( invisible(x) )
-}
 
-summary.CPTspec <- function(object,...){
-    lapply(object, function(x){x})
+
+
+
+
+
+
+
     ## print(object)
   ## cat(sprintf("attributes:\n %s\n", toString(names(attributes(object)))))
   ## cat(sprintf("names:\n %s \n", toString(attributes(object)$names)))
@@ -199,21 +312,3 @@ summary.CPTspec <- function(object,...){
   ## cat(sprintf("dagM: \n"))
   ## print(attributes(object)$dagM)
   ## return(invisible(object))
-}
-
-
-
-
-
-print.POTspec <- function(x,...){
-  cat("POTspec with potentials:\n")
-  lapply(x,
-         function(xx){
-           vn <- names(dimnames(xx))
-           cat(   "(", paste(vn, collapse=' '),") \n")
-         })
-
-  return(invisible(x))
-}
-
-

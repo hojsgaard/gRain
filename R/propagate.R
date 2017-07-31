@@ -100,7 +100,7 @@ propagate__ <- function(object, details=object$details, ...){
   }
 
   .timing(" Time: propagation:", object$control, t0)
-  return(object)
+  object
 }
 
 ## Lauritzen Spiegelhalter propagation

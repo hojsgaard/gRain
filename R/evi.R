@@ -120,7 +120,7 @@ setEvi_ <- function(object, evidence=NULL, propagate=TRUE, details=0){
     if ( is.null_ev( evidence ) ){
         cat("Nothing to do\n")
     } else {
-        if (!object$isCompiled){
+        if (!getgin(x, "isCompiled")){
             object <- compile(object)
             object$isInitialized  <- FALSE
             object$isPropagated   <- FALSE            
@@ -234,8 +234,16 @@ absorbEvi_<- function(object, propagate=TRUE ){
 pEvidence <- function(object){
     if ( !inherits(object, "grain") )
         stop("'object' is not a 'grain' object")
-    attr(object$potential$pot_equi, "pEvidence")
+    attr(pot(object)$pot_equi, "pEvidence")
 }
+
+#' @name grain-evi
+pEvi <- function(object)
+    pEvidence(object)
+
+
+
+
 
 #' @name grain-evi
 getEvidence <- function(object){
@@ -358,7 +366,7 @@ insertEvi <- function(evi.list, pot, hostclique){
 getHostClique <- function(set.list, cliques){
     out <- lapply(set.list,
                   function(x){
-                      gRbase::get_superset_( x, cliques, all=FALSE)
+                      gRbase::get_superset( x, cliques, all=FALSE)
                   })
     len <- sapply(out, length)
     if (any( len == 0)){

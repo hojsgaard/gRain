@@ -11,10 +11,11 @@
 #' 
 #' @aliases extractCPT extractCPT.table extractCPT.data.frame
 #'     extractPOT extractPOT.table extractPOT.data.frame
-#' @param x An array or a dataframe.
-#' @param graph A graph represented as a graphNEL object.  For
-#'     extractCPT, graph must be a DAG while for extractPOT, graph
-#'     must be undirected triangulated graph.
+#' @param data_ A named array or a dataframe.
+#' @param graph A graphNEL object or a list or formula which can be
+#'     turned into a graphNEL object by calling \code{ug} or
+#'     \code{dag}. For extractCPT, graph must be/define a DAG while for
+#'     extractPOT, graph must be/define undirected triangulated graph.
 #' @param smooth See 'details' below.
 #' @return extractCPT: A list of conditional probability tables
 #'     extractPOT: A list of clique potentials.
@@ -51,18 +52,26 @@
 #'          xray * either + dysp * bronc * either
 #' dg    <- dag(dgf)
 #' pp    <- extractCPT(chestSim100000, dg)
+#'
+#' pn2   <- grain(pp)
+#' ## Same as:
 #' cpp2  <- compileCPT(pp)
 #' pn2   <- grain(cpp2)
+#' 
 #' q2    <- querygrain(pn2)
 #' 
 #' ## Version 2) Specify triangulated undirected graph and data
 #' ugf <- list(c("either", "lung", "tub"), c("either", "lung", "bronc"), 
 #'     c("either", "xray"), c("either", "dysp", "bronc"), c("smoke", 
 #'     "lung", "bronc"), c("asia", "tub"))
-#' gg    <- ugList(ugf)
+#' gg    <- ug(ugf)
 #' pp    <- extractPOT(chestSim100000, gg)
+#'
+#' pn3   <- grain(pp)
+#' ## Same as:
 #' cpp3  <- compilePOT(pp)
 #' pn3   <- grain(cpp3)
+#'
 #' q3    <- querygrain(pn3)
 #' 
 #' ## Compare results:
@@ -71,123 +80,205 @@
 #' str(q3[names(q1)])
 #' 
 #' @rdname extract-cpt
-extractCPT <- function(x, graph, smooth=0){
-    if ( !(is.data.frame(x) || is.named.array(x)) )
-        stop("'x' must be dataframe or array.")
-    if (!inherits(graph, "graphNEL"))
-        stop("'graph' must be a graphNEL object")
-    if (!is.DAG(graph))
-        stop("'graph' must be a DAG")
 
-    
-    V   <- graph::nodes(graph)
-    vpa <- vpar(graph)[V]
+extractCPT <- function(data_, graph, smooth=0){
+    .is.valid.data(data_)
 
-    ans <- .extractCPT_(x, vpa=vpa, smooth=smooth)
-    class(ans) <- c("extractCPT","list")
-    ans
-}
+    if (inherits(graph, c("formula", "list")))
+        graph <- dag(graph)
 
+    if (!is.DAG(graph)) stop("'graph' not a DAG")
 
-.extractCPT_ <- function(x, vpa, smooth=0){
-
-    if (is.data.frame(x)){
-        ans <- lapply(vpa, function(ss){
-            xtabs(~., data=x[, ss, drop=FALSE])
-        })
-    } else {
-        ans <- lapply(vpa, function(ss){
-            tableMargin(x, ss)
-        })
-    }
-
-    ## FIXME : Get rid of this parray stuff (at least as a class)
-    ans <- lapply(ans, as.parray, normalize="first", smooth=smooth)
-    
-    chk <- unlist(lapply(ans, function(zz) any(is.na(zz))))
-    nnn <- names(chk)[which(chk)]
-    if (length(nnn)>0){
-        cat(sprintf("NAs found in conditional probability table(s) for nodes: %s\n", toString(nnn)))
-        cat(sprintf("  ... consider using the smooth argument\n"))
-    }
-
-    ans
-}
-
-
-
-
-## FIXME extractPOT: Why can't graph be a matrix
-
-#' @rdname extract-cpt
-extractPOT <- function(x, graph, smooth=0){
-    if ( !(is.data.frame(x) || is.named.array(x)) )
-        stop("'x' must be dataframe or array.")    
-    if (!inherits(graph, "graphNEL"))
-        stop("'graph' must be a graphNEL object")    
-    if (!is.TUG(graph))
-        stop("'graph' must be a triangulated undirected graph")
-    
-    rp  <- rip( graph )
-
-    out <- .extractPOT_(x, rip=rp, smooth=smooth)
-    attr(out, "rip")     <- rp
-        
-    class(out) <- c("extractPOT","list")
+    vpa <- vpar(graph)
+    out <- .extractCPT_(data_, vpa=vpa, smooth=smooth)
+    ##FIXME: Should any info be stored in the output? vpa for example?
+    class(out) <- "CPT_rep"
     out
 }
 
 
-## .extractPOT_ gives clique potential representation (meaning that the product
-## of these is the joint, so each clique potential is not a clique marginal).
 
-.extractPOT_ <- function(x, rip, smooth=0){
 
-    .extractPOT_table <- function(x, cliq, seps=NULL, smooth=0){
-        ans <- vector("list", length(cliq))
+.is.valid.data <- function(data_){
+    if ( !(is.data.frame(data_) || is.named.array(data_)) )
+        stop("'data_' must be dataframe or array.")
+}
+
+.extractCPT_ <- function(data_, vpa, smooth=0){
+
+    if (is.data.frame(data_)){
+        out <- lapply(vpa,
+                      function(ss){ xtabs(~., data=data_[, ss, drop=FALSE]) })
+    } else {
+        out <- lapply(vpa,
+                      function(ss){ tabMarg(data_, ss) })
+    }
+    
+    ## FIXME : Get rid of this parray stuff (at least as a class)
+    ## FIXME: Normalization takes place here
+    out <- lapply(out, as.parray, normalize="first", smooth=smooth)
+    
+    chk <- unlist(lapply(out, function(zz) any(is.na(zz))))
+    nnn <- names(chk)[which(chk)]
+    if (length(nnn) > 0){
+        cat(sprintf("NAs found in conditional probability table(s) for nodes: %s\n", toString(nnn)))
+        cat(sprintf("  ... consider using the smooth argument\n"))
+    }
+
+    out
+}
+
+#' @rdname extract-cpt
+extractPOT <- function(data_, graph, smooth=0){
+    .is.valid.data(data_)
+
+    if (inherits(graph, c("formula", "list")))
+        graph <- ug(graph)
+    
+    if (!is.TUG(graph)) stop("'graph' not undirected and triangulated")
+    rp  <- rip( graph )
+    
+    out <- .extractPOT_(data_, rip=rp, smooth=smooth)
+    attr(out, "rip")     <- rp
+    
+    class(out) <- "POT_rep"
+    out
+}
+
+.extractPOT_ <- function(data_, rip, smooth=0){
+
+    .normalize <- function(tt, sp){
+        if (length(sp) > 0) tabDiv0(tt, tabMarg(tt, sp))
+        else tt / sum(tt)        
+    }
+    
+    .extractPOT_table <- function(data_, cliq, seps=NULL, smooth=0){
+        out <- vector("list", length(cliq))
         for ( i  in seq_along(cliq)){
             cq    <- cliq[[ i ]]
             sp    <- seps[[ i ]]
-            t.cq  <- tableMargin(x, cq) + smooth
-            names(dimnames(t.cq)) <- cq
-            if (!is.null(seps) && length(sp)>0){
-                t.sp      <- tableMargin(t.cq, sp)
-                ans[[ i ]] <- tableOp2(t.cq, t.sp, op=`/`)
-            } else {
-                ans[[ i ]] <- t.cq / sum(t.cq)
-            }
+            ##str(list(cq=cq, sp=sp))
+            t.cq  <- tabMarg(data_, cq) + smooth
+            out[[i]] <- .normalize(t.cq, sp)
         }
-        ans
+        out
     }
     
-    .extractPOT_dataframe <- function(x, cliq, seps=NULL, smooth=0){        
-        ans <- vector("list", length(cliq))
+    .extractPOT_dataframe <- function(data_, cliq, seps=NULL, smooth=0){        
+        out <- vector("list", length(cliq))
         for ( i  in seq_along(cliq)){
             cq   <- cliq[[ i ]]
             sp   <- seps[[ i ]]
-            ## FIXME: Isn't that the same 
-            xxx  <- xtabs(~., data=x[ , cq, drop=FALSE])  ## cross classfy data in dataframe
-            t.cq <- tableMargin(xxx, cq) + smooth         ## then marginalize
-            ## FIXME: As
-            t.cq  <- xtabs(~., data=x[ , cq, drop=FALSE]) + smooth
+            ##str(list(cq=cq, sp=sp))
             
-            
-            names(dimnames(t.cq)) <- cq
-            if (!is.null(seps) && length(sp)>0){
-                t.sp       <- tableMargin(t.cq, sp)
-                ans[[ i ]] <- tableOp2(t.cq, t.sp, op=`/`)
-            } else {
-                ans[[ i ]] <- t.cq / sum(t.cq)
-            }
+            t.cq  <- xtabs(~., data=data_[ , cq, drop=FALSE]) + smooth                       
+            out[[i]] <- .normalize(t.cq, sp)
         }
-        ans
+        out
     }
     
 
-    if (is.data.frame(x)){
-        .extractPOT_dataframe(x, rip$cliques, rip$sep, smooth=smooth)
+    if (is.data.frame(data_)){
+        .extractPOT_dataframe(data_, rip$cliques, rip$sep, smooth=smooth)
     } else {
-        .extractPOT_table(x, rip$cliques, rip$sep, smooth=smooth)
+        .extractPOT_table(data_, rip$cliques, rip$sep, smooth=smooth)
     }
 }
+
+#' @rdname extract-cpt
+extractMARG <- function(data_, graph, smooth=0){
+    .is.valid.data(data_)
+    if (!is.TUG(graph))
+        stop("'graph' not undirected and triangulated")
+    
+    rp  <- rip( graph )
+
+    out <- .extractMARG_(data_, rip=rp, smooth=smooth)
+    attr(out, "rip")     <- rp
+        
+    class(out) <- "MARG_rep"
+    out
+}
+
+
+.extractMARG_ <- function(data_, rip, smooth=0){
+
+    .extractMARG_table <- function(data_, cliq, seps=NULL, smooth=0){
+        out <- vector("list", length(cliq))
+        for ( i  in seq_along(cliq)){
+            cq    <- cliq[[ i ]]
+            t.cq  <- tabMarg(data_, cq) + smooth
+            out[[i]] <- t.cq / sum(t.cq)
+        }
+        out
+    }
+
+    
+    .extractMARG_dataframe <- function(data_, cliq, seps=NULL, smooth=0){        
+        out <- vector("list", length(cliq))
+        for ( i  in seq_along(cliq)){
+            cq   <- cliq[[ i ]]
+            t.cq  <- xtabs(~., data=data_[ , cq, drop=FALSE]) + smooth
+            out[[i]] <- t.cq / sum(t.cq)
+        }
+        out
+    }
+            
+    if (is.data.frame(data_)){
+        .extractMARG_dataframe(data_, rip$cliques, rip$sep, smooth=smooth)
+    } else {
+        .extractMARG_table(data_, rip$cliques, rip$sep, smooth=smooth)
+    }
+}
+
+
+## FIXME: or cpt_from_data
+#' @rdname extract-cpt
+data2cpt <- extractCPT
+
+#' @rdname extract-cpt
+data2pot <- extractPOT
+
+#' @rdname extract-cpt
+data2marg <- extractMARG
+
+
+#' @rdname extract-cpt
+#' @param mg An object of class \code{MARG_rep}
+marg2pot <- function(mg){
+    if (!inherits(mg, "MARG_rep")) stop("'mg' not a MARG_rep object\n")
+    rp <- attr(mg, "rip")
+    seps <- rp$separators
+    pt <- lapply(seq_along(rp$cliques),
+                 function(i){
+                     if (length(seps[[i]]) == 0)
+                         mg[[i]]
+                     else
+                         tabDiv0(mg[[i]], tabMarg(mg[[i]], seps[[i]]))               
+                 })
+    attr(pt, "rip") <- rp
+    class(pt) <- "POT_rep"
+    pt
+}
+
+#' @rdname extract-cpt
+#' @param pt An object of class \code{POT_rep}
+pot2marg <- function(pt){
+    if (!inherits(pt, "POT_rep")) stop("'pt' not a POT_rep object\n")    
+    mg <- pt
+    rp <- attr(pt, "rip")
+    seps <- rp$separators
+    par  <- rp$parents
+    
+    for (i in 2:length(rp$cliques)){
+        if (par[i] > 0){
+            mg[[i]] <- tabMult(mg[[i]], tabMarg(mg[[par[i]]], seps[[i]]))
+        }
+    }
+    class(mg) <- "MARG_rep"
+    mg
+}
+
+
+
 

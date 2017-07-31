@@ -6,13 +6,12 @@
 #' 
 #' @name recent
 #'
-#' @aliases rip<- rip<-.grain mkcptlist
+#' @aliases rip<- rip<-.grain mkcptlist as.cptlist
 #'
 #' @param object An appropriate R object
 #' @param value A value to be assigned
 #' @param ... Additional arguments
 #' 
-
 
 "rip<-" <- function(object, value)
     UseMethod("rip<-")
@@ -35,6 +34,15 @@ mkcptlist <- function(object){
     vp <- vpar(dg)
     lapply(vp, function(vv){
         z <- qgrain(object, nodes=vv, type="cond")
-        arperm(z, vv)}
+        tabPerm(z, vv)}
         )
 }
+
+as.cptlist <- function(..., forceCheck=TRUE, details=0){
+    args <- list(...)
+    if (inherits(args, "list") && length(args) == 1)
+        compileCPT(args[[1]])
+    else
+        compileCPT(args)
+}
+

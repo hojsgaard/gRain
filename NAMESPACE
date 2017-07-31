@@ -25,21 +25,19 @@ importFrom("utils", "str")
 
 importFrom(igraph, igraph.from.graphNEL, V, "V<-", layout.graphopt)
 
-S3method(compile, CPTgrain)
-S3method(compile, POTgrain)
 S3method(compile, grain)
 
-S3method(compile, extractCPT)
-S3method(compile, extractPOT)
+S3method(compile, CPTgrain)
+S3method(compile, POTgrain)
 
-
-
+S3method(compile, CPT_rep)
+S3method(compile, POT_rep)
 
 S3method(grain, CPTspec)
 S3method(grain, POTspec)
 
-S3method(grain, extractCPT)
-S3method(grain, extractPOT)
+S3method(grain, CPT_rep)
+S3method(grain, POT_rep)
 
 S3method(grain, dModel)
 S3method(grain, graphNEL)

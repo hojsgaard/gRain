@@ -1,25 +1,35 @@
 //[[Rcpp::depends(gRbase,RcppArmadillo,RcppEigen)]]
 
+// tabMarg__ tabMult__ tabDiv0__
+
 #include <RcppArmadillo.h>
 #include "gRbase.h"
 
 using namespace Rcpp;
 using namespace gRbase;
 
+
+//[[Rcpp::export]]
+NumericVector check__(List cqpotList_){
+  NumericVector out = tabMult__(cqpotList_[0], cqpotList_[1]);
+  return out;
+}
+
+
 //[[Rcpp::export]]
 List propagateLS__(List cqpotList_, List rip){
   List cqpotList = clone(cqpotList_);
 
-	List cliq  = rip["cliques"], seps = rip["separators"], childList = rip["childList"];
+  List cliq  = rip["cliques"], seps = rip["separators"], childList = rip["childList"];
   IntegerVector pa = rip["parents"];
-
-	NumericVector sp_pot, cq_pot, pa_pot, tmpd;
+  
+  NumericVector sp_pot, cq_pot, pa_pot, tmpd;
   CharacterVector cq, sp;
   IntegerVector ch, tmp;
   double normConst, zd;
   int i, j, ncliq = cliq.length(), nch, idx;
 
-  for (i=ncliq-1; i>0; --i){
+  for (i = ncliq - 1; i > 0; --i){
     //std::cout << " collect    i= " << i << std::endl;
     cq = cliq[i];      //Rprintf("cq\n");     Rf_PrintValue( cq );
     sp = seps[i];      //Rprintf("sp\n");     Rf_PrintValue( sp );
@@ -33,33 +43,33 @@ List propagateLS__(List cqpotList_, List rip){
     } else {
       zd = sum( cq_pot );
       tmpd = cqpotList[0];
-			tmpd = zd * tmpd;
-			cqpotList[0] = tmpd;
+      tmpd = zd * tmpd;
+      cqpotList[0] = tmpd;
       tmpd = cqpotList[i];
-			tmpd = tmpd / zd;
-			cqpotList[i] = tmpd;
+      tmpd = tmpd / zd;
+      cqpotList[i] = tmpd;
     }
   }
-
+  
   tmpd = cqpotList[0]; normConst = sum( tmpd );
-
+  
   for (i=0; i<ncliq; ++i){
     // std::cout << " distribute i= " << i << std::endl;
     ch  = childList[i];
     nch = ch.size();
     if (nch>0){
       for (j=0; j<nch; ++j){
-				idx = ch[ j ]-1;
-				sp  = seps[ idx ];
-				if( sp.size() > 0){
-					// Rf_PrintValue(sp);
-					sp_pot = tabMarg__(cqpotList[i], sp);
-					cqpotList[ idx ] = tabMult__( cqpotList[ idx ], sp_pot);
-				}
+	idx = ch[ j ]-1;
+	sp  = seps[ idx ];
+	if( sp.size() > 0){
+	  // Rf_PrintValue(sp);
+	  sp_pot = tabMarg__(cqpotList[i], sp);
+	  cqpotList[ idx ] = tabMult__( cqpotList[ idx ], sp_pot);
+	}
       }
     }
   }
-
+  
   cqpotList.attr("pEvidence")=normConst;
   return cqpotList;
 }

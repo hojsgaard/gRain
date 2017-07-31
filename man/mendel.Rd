@@ -22,4 +22,3 @@ men <- mendel( c("y","g"), names = c("ch", "fa", "mo") )
 men
 
 }
-

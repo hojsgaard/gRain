@@ -1,9 +1,7 @@
 
+randomCPT <- function(object, states=c("yes", "no")){
 
-
-randomCPT <- function(object, states=c("yes","no")){
-
-    if (class(object) != "graphNEL")
+    if (!inherits(object, "graphNEL"))
         stop("'object' must be a graphNEL object\n")
     if (!is.DAG(object))
         stop("'object' is not a DAG\n")
@@ -46,20 +44,21 @@ getgrain<- function(object, name=c("universe", "data", "dag", "ug", "cptlist",
                                    "control", "details")){
 
     switch(name,
-           universe 		    = object$universe,
-           data 			      = object$data,
-           dag 				      = object$dag,
-           ug 			    	  = object$ug,
+           universe 	    = object$universe,
+           data 	    = object$data,
+           dag 		    = object$dag,
+           ug 		    = object$ug,
            cptlist          = object$cptlist,
+           cpt              = object$cptlist,
 
            potential        = object$potential,
            origpot          = object$potential$pot_orig,
            temppot          = object$potential$pot_temp,
            equipot          = object$potential$pot_equi,
 
-           pot_orig  = object$potential$pot_orig,
-           pot_temp  = object$potential$pot_temp,
-           pot_equi  = object$potential$pot_equi,
+           pot_orig         = object$potential$pot_orig,
+           pot_temp         = object$potential$pot_temp,
+           pot_equi         = object$potential$pot_equi,
 
            rip              = object$rip,
 

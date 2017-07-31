@@ -1,3 +1,7 @@
+## NOTICE: the compiled object will contain a dag and a cptlist.
+## These are not used for any calculations; only used for saving
+## the network in Hugin format...
+
 #' @title Compile a graphical independence network (a Bayesian network)
 #' 
 #' @description Compiles a Bayesian network. This means creating a
@@ -31,31 +35,42 @@
 #' @rdname grain-compile
 compile.grain <-
   function(object, propagate=FALSE, root=NULL,
-           control=object$control, details=0,...) {    #method <- match.arg(tolower(method), c("mcwh","r"))
+           control=object$control, details=0,...) {    
     NextMethod("compile")
 }
 
-.mkRIP <- function(object, root=NULL, update=FALSE){
+create_jt <- function(object, root=NULL, update=TRUE){
+
+    ##gg <- as(getgin(object, "dag"), "dgCMatrix")
+    ##dagList(vpar(getgin(object, "cptlist")), result="dgCMatrix")
+    ##gg <- moralizeMAT(gg)
+
+    mdag <- moralize(getgin(object, "dag"), result="dgCMatrix")
+    if (length(root) > 1) mdag <- .setRoot(mdag, root)
     
-    mdagM <- moralizeMAT( as(object$dag, "Matrix") )
-    if (length(root) > 1) ## Force variables in <root> to be complete in mdagM
-        mdagM <- .setRoot( mdagM, root )
+    ##mdagM <- moralizeMAT( as(object$dag, "dgCMatrix") )
+    ## Force variables in <root> to be complete in mdagM
+    ## if (length(root) > 1) mdagM <- .setRoot( mdagM, root )
     
-    ugM   <- triangulateMAT(mdagM)
-    rp   <- ripMAT( ugM )
-    ug    <- as(ugM,   "graphNEL")
+    ug_   <- triangulateMAT(mdag)  ## FIXME : Coercions are a MESS
+    rp    <- ripMAT( ug_ )
+    ug_   <- as(ug_,   "graphNEL")
     
     if (update){
-        object[c("rip", "ug")] <- list(rip=rp, ug=ug)
+        object[c("rip", "ug")] <- list(rip=rp, ug=ug_)
         object
     } else
         list(rip=rp, ug=ug)
 }
 
-.mkPots <- function(object, update=FALSE, details=0){
-    pot.1   <- .mkArrayList( getgin(object, "rip"), universe(object) )
-    pot_orig <- pot_temp <- .insertCPT(getgin(object, "cptlist"), pot.1, details)
-    equipot <- .initArrayList(pot.1, NA)
+create_pot <- function(object, update=TRUE){
+
+    if (is.null(rip(object))) stop("No rip slot (junction tree) in object\n")
+    if (is.null(cpt(object))) stop("No cpt slot in object\n")
+    
+    pot.1    <- .mkArrayList( getgin(object, "rip"), universe(object) )
+    pot_orig <- pot_temp <- .insertCPT(getgin(object, "cptlist"), pot.1, details=0)
+    equipot  <- .initArrayList(pot.1, NA)
 
     if (update){
         object$potential <- list(pot_orig=pot_orig, pot_temp=pot_temp, pot_equi=equipot)
@@ -64,17 +79,26 @@ compile.grain <-
         list(pot_orig=pot_orig, pot_temp=pot_temp, pot_equi=equipot)
 }
 
+##' setRoot: Completes the variables in <root> in the graph
+.setRoot <- function(mdagM, root){
+    vn  <- colnames(mdagM)
+    dn  <- dimnames(mdagM)
+    ft  <- names2pairs(match(root, vn), sort=FALSE, result="matrix")
+    ft  <- rbind(ft, ft[, 2:1, drop=FALSE])
+    mdagM <- .sparse_setXtf1(mdagM, ft)
+    dimnames(mdagM) <- dn
+    mdagM
+}
 
 #' @rdname grain-compile
 compile.CPTgrain <-
     function(object, propagate=FALSE, root=NULL, control=object$control, details=0, ...){
-
-        #cat("Creating RIP and graphs \n")
-        object <- .mkRIP(object, root, update=TRUE)
         
-        #cat("Creating potentials\n")
-        object <- .mkPots(object, details, update=TRUE)
-
+        #cat("Creating RIP and graphs \n")
+        object <- create_jt(object, root, update=TRUE)
+        cat("Creating potentials\n")
+        object <- create_pot(object, update=TRUE)
+        
         object$isCompiled   <- TRUE
         object$isPropagated <- FALSE
         object$control      <- control
@@ -83,34 +107,58 @@ compile.CPTgrain <-
     }
 
 
-## NOTICE: the compiled object will contain a dag and a cptlist.
-## These are not used for any calculations; only used for saving
-## the network in Hugin format...
+
+
+## 
+
+
 
 #' @rdname grain-compile
 compile.POTgrain <-
-  function(object, propagate=FALSE, root=NULL, control=object$control, details=0,...) {
+    function(object, propagate=FALSE, root=NULL, control=object$control, details=0,...) {
 
-      if (is.null(rip(object)))
-          stop("No rip component in object \n")
-      if (is.null(object$cqpot))
-          stop("No cqpot component in object \n")
-      
-      object$potential <-
-          list(pot_orig=object$cqpot,
-               pot_temp=object$cqpot,
-               pot_equi=.initArrayList(object$cqpot, NA))
-      ## object$cqpot <- NULL
-      
-      object$isCompiled   <- TRUE
-      object$isPropagated <- FALSE
-      object$control      <- control
+        if (is.null(rip(object)))
+            stop("No rip component in object \n")
+        if (is.null(object$cqpot))
+            stop("No cqpot component in object \n")
+        
+        object$potential <-
+            list(pot_orig=object$cqpot,
+                 pot_temp=object$cqpot,
+                 pot_equi=.initArrayList(object$cqpot, NA))
+        ## object$cqpot <- NULL
+        
+        object$isCompiled   <- TRUE
+        object$isPropagated <- FALSE
+        object$control      <- control
+        
+        if (propagate) propagate(object) else object
+    }
 
-      if (propagate) propagate(object) else object
-  }
 
 
+.createJTreeGraph <- function(rip){
+    if (length(rip$cliques) > 1){
+        ft <- cbind(rip$parents, 1:length(rip$parents))
+        ft <- ft[ft[, 1] != 0, ,drop=FALSE]
+        V <- seq_along(rip$parents)
+        if (nrow(ft) == 0){
+            jt <- new("graphNEL", nodes = as.character(V), edgemode = "undirected")
+        } else {
+            jt <- graph::ftM2graphNEL(ft, V=as.character(V), edgemode="undirected")
+        }
+    } else {
+        jt <- new("graphNEL", nodes = "1", edgemode = "undirected")
+    }
+    jt
+}
 
+
+.timing <- function(text, control, t0){
+  if (!is.null(control$timing) && control$timing)
+    cat(sprintf("%40s", text), proc.time()-t0,"\n")
+
+}
 
 
 
@@ -184,40 +232,8 @@ compile.POTgrain <-
 
 
 
-##' setRoot: Completes the variables in <root> in the graph
-.setRoot <- function(mdagM, root){
-    vn    <- colnames(mdagM)
-    dn <- dimnames(mdagM)
-    ft <- names2pairs(match(root, vn), sort=FALSE, result="matrix")
-    ft <- rbind(ft,ft[,2:1,drop=FALSE])
-    mdagM <- .sparse_setXtf1(mdagM, ft)
-    dimnames(mdagM) <- dn
-    mdagM
-}
 
 
-.createJTreeGraph <- function(rip){
-  if (length(rip$cliques)>1){
-    ft <-cbind(rip$parents, 1:length(rip$parents))
-    ft <- ft[ft[,1]!=0,, drop=FALSE]
-    V <- seq_along(rip$parents)
-    if (nrow(ft)==0){
-      jt <- new("graphNEL", nodes = as.character(V), edgemode = "undirected")
-    } else {
-      jt <- graph::ftM2graphNEL(ft, V=as.character(V), edgemode="undirected")
-    }
-  } else {
-    jt <- new("graphNEL", nodes = "1", edgemode = "undirected")
-  }
-  return(jt)
-}
-
-
-.timing <- function(text, control, t0){
-  if (!is.null(control$timing) && control$timing)
-    cat(sprintf("%40s", text), proc.time()-t0,"\n")
-
-}
 
 
 

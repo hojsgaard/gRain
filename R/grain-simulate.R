@@ -40,11 +40,11 @@
 #' @export simulate.grain
 simulate.grain <- function(object, nsim=1, seed=NULL, ...){
 
-  if (!object$isCompiled){
+  if (!getgin(x, "isCompiled")){
     ##cat("Compiling (and propagating) model ...\n")
     object <- compile(object, propagate=TRUE)
   } else {
-    if (!object$isPropagated){
+    if (!getgin(x, "isPropagated")){
       ## cat("Propagating model...\n")
       object <- propagate(object)
     }

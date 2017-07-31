@@ -36,9 +36,6 @@ Makes predictions (either as the most likely state or
     finding (evidence) on other variables in an independence
     network.
 }
-\author{
-Søren Højsgaard, \email{sorenh@math.aau.dk}
-}
 \references{
 Søren Højsgaard (2012). Graphical Independence Networks
     with the gRain Package for R. Journal of Statistical Software,
@@ -47,5 +44,7 @@ Søren Højsgaard (2012). Graphical Independence Networks
 \seealso{
 \code{\link{grain}}
 }
+\author{
+Søren Højsgaard, \email{sorenh@math.aau.dk}
+}
 \keyword{models}
-

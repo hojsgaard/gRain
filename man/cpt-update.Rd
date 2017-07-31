@@ -2,10 +2,10 @@
 % Please edit documentation in R/setcpt.R
 \name{cpt-update}
 \alias{cpt-update}
-\alias{setCPT}
-\alias{setCPT.grain}
 \alias{setcpt<-}
 \alias{setcpt<-.grain}
+\alias{setCPT}
+\alias{setCPT.grain}
 \title{Update CPTs in Bayesian network}
 \usage{
 setcpt(object) <- value
@@ -43,9 +43,6 @@ bnc2   <- setCPT(bnc, list(tub=z))
 bncp2   <- setCPT(bncp, list(tub=z))
 
 }
-\author{
-Søren Højsgaard, \email{sorenh@math.aau.dk}
-}
 \references{
 Søren Højsgaard (2012). Graphical Independence
     Networks with the gRain Package for R. Journal of Statistical
@@ -57,6 +54,8 @@ Søren Højsgaard (2012). Graphical Independence
     \code{\link[gRbase]{triangulate}}, \code{\link[gRbase]{rip}},
     \code{\link[gRbase]{junctionTree}}
 }
+\author{
+Søren Højsgaard, \email{sorenh@math.aau.dk}
+}
 \keyword{models}
 \keyword{utilities}
-

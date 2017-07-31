@@ -71,11 +71,6 @@ sister.node   <- cptable( ~ S | R, values=cond.prob.tbl, levels=bayes.levels )
 ## Testing 
 compile(grain(compileCPT(list( root.node, query.node, sister.node ))), propagate=TRUE)
 
-
-
-}
-\author{
-Søren Højsgaard, \email{sorenh@math.aau.dk}
 }
 \references{
 Søren Højsgaard (2012). Graphical Independence
@@ -89,5 +84,7 @@ Søren Højsgaard (2012). Graphical Independence
     \code{\link{extractPOT}}, \code{\link{compilePOT}},
     \code{\link{grain}}
 }
+\author{
+Søren Højsgaard, \email{sorenh@math.aau.dk}
+}
 \keyword{models}
-

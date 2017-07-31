@@ -1,3 +1,73 @@
+## CPTspec
+## - universe
+## - cptlist
+## - dag
+##
+## POTspec
+## - universe
+## - cqpot (er det egentlig ikke klike marginaler? NEJ, det er betingede fordelinger)
+## - ug
+## - rip
+##
+
+## compile
+## -------
+##   CPTspec
+##   - rip
+##   - ug
+##   - potlist
+##
+##   POTspec
+##   - potlist
+
+## Efter compilering:
+## ------------------
+## cptspec findes slet ikke, men selve cpt'erne er i et slot for sig selv (cpt)
+## - cptlist (kopi)
+## - dag (kopi)
+##
+## - universe (kopi)
+## - ug (compile result)
+## - rip (compile result)
+## - potlist (compile result)
+##
+## cqpot findes slet ikke, men selve pot'erne er i et slot for sig selv (cqpot)
+## - cqpot  (kopi)
+##
+## - universe  (kopi)
+## - ug  (kopi)
+## - rip  (kopi)
+## - potlist (compile result)
+##
+## Der skal være metoder
+##   get_dag, der tager en hvis den findes og ellers laver den
+##   get_cqpot (get_cqmarg) der tager en hvis den findes og ellers laver den
+##
+## Hvis man ændrer cpt/pot:
+## -- indenfor univers er det ok
+## -- man må ændre værdi af cpt/pot men ikke ændre retning på pile / ikke ændre domæne
+## -- man må ikke slette cpt/pot, men man må gerne give det uniform fordeling
+##
+## Hvis man ændrer ug:
+## -- for CPTspec: efterfølgende laves der: rip/potlist
+## -- for POTspec: ikke lovligt
+##
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ### #####################################################
 ###
 ### Creating grain objects
@@ -104,68 +174,75 @@ grain <- function(x, data=NULL, control=list(), smooth=0, details=0,...){
   UseMethod("grain")
 }
 
+
+
+
+
+
+
 ## A list of cpt's
 ##
 #' @rdname grain-main
-grain.CPTspec <- function(x, data=NULL, control=list(), smooth=0, details=0,...){
-  ##cat("grain.CPTspec\n")
-  control  <- .setControl(control)
-  out  <- c(list(universe    = attr(x,"universe"),
-                 data        = data,
-                 dag         = attr(x,"dag"),    ## Needed to save network in Hugin format
-                 cptlist     = c(x)              ## Needed to save network in Hugin format
-                 ),
-            .setExtraComponents(control, details))
-
-  class(out) <- c("CPTgrain", "grain")
-  return(out)
-}
-
-#' @rdname grain-main
-grain.POTspec <- function(x, data=NULL, control=list(), smooth=0, details=0,...){
-    ## cat("grain.POTspec\n")
+grain.CPTspec <- function(x, control=list(), smooth=0, details=0,...){
+    ##cat("grain.CPTspec\n")
     control  <- .setControl(control)
-    
     out  <- c(list(universe    = attr(x, "universe"),
-                   data        = data,
-                   cqpot       = c(x),
-                   ug          = attr(x, "ug"),
-                   rip         = attr(x, "rip")
+                   cptlist     = as_CPTspec_simple(x), ## Strips unnecessary stuff                   
+                   dag         = attr(x, "dag")        ## FIXME Needed to save network in Hugin format                   
                    ),
               .setExtraComponents(control, details))
-    class(out) <- c("POTgrain","grain")
+    ## FIXME: Generate dag if does not exist??
+    class(out) <- c("CPTgrain", "grain")
     out
 }
 
 #' @rdname grain-main
-grain.extractPOT <- function(x, ...){grain(compile(x))}
+grain.POTspec <- function(x, control=list(), smooth=0, details=0,...){
+    control  <- .setControl(control)
+    out  <- c(list(universe    = attr(x, "universe"),              
+                   cqpot       = x, ## FIXME: was c(x)...                  
+                   ug          = attr(x, "ug"),
+                   rip         = attr(x, "rip")
+                   ),
+              .setExtraComponents(control, details))
+    ## FIXME: Generate dag if does not exist??
+    class(out) <- c("POTgrain", "grain")
+    out
+}
 
 #' @rdname grain-main
-grain.extractCPT <- function(x, ...){grain(compile(x))}
+grain.POT_rep <- function(x, ...){grain(compile(x))}
+
+#' @rdname grain-main
+grain.CPT_rep <- function(x, ...){grain(compile(x))}
 
 
 ## A graph + data (wrappers for calling grain.POTspec and grain.CPTspec)
 #' @rdname grain-main
 grain.graphNEL <- function(x, data=NULL, control=list(), smooth=0, details=0,...){
-    if (missing(data))
+    if (is.null(data))
         stop("Data must be given to create grain from graph\n")
     if (!(is.named.array(data) || is.data.frame(data)))
         stop("Data must be an array or a dataframe\n")
 
+    
     if (is.DAG(x))
-        zz <- compileCPT(extractCPT(data, x, smooth=smooth))
+        zz <- extractCPT(data, x, smooth=smooth)
     else if (is.TUG(x))
-        zz <- compilePOT(extractPOT(data, x, smooth=smooth))
+        zz <- extractPOT(data, x, smooth=smooth)
     else
         stop("graph 'x' is neither a directed acyclic graph or a triangulated undirected graph")
 
+    ## zz is either CPTspec or POTspec
+    zz <- compile(zz)
     grain(zz, data=data, control=control, details=details)
 }
 
 #' @rdname grain-main
-grain.dModel <- function(x, data=NULL, control=list(), smooth=0, details=0,...){
+grain.dModel <- function(x, data=NULL, control=list(), smooth=0, details=0, ...){
 
-    if (!x$isDecomposable) stop("Model must be decompsable\n")
+    if (!x$isDecomposable)
+        stop("Model must be decompsable\n")
     if (is.null(data)) ## FIXME grain.dModel: Need to check data
         data <- x$datainfo$data
 
@@ -176,9 +253,9 @@ grain.dModel <- function(x, data=NULL, control=list(), smooth=0, details=0,...){
 
 ## Printing grain
 ##
-print.grain <- function(x,...){
-    cat("Independence network: Compiled:", x$isCompiled,
-        "Propagated:", x$isPropagated, "\n")
+print.grain <- function(x, ...){
+    cat("Independence network: Compiled:", getgin(x, "isCompiled"), 
+        "Propagated:", getgin(x, "isPropagated"), "\n")
     cat("  Nodes:"); str(unname(nodeNames(x)))
     if ( !is.null(x$evidence) ){
         cat("  Evidence:\n");
@@ -186,13 +263,13 @@ print.grain <- function(x,...){
         if (!is.null((p <- pEvidence(x))))
             cat(sprintf("  pEvidence: %f\n", p))
     }
-    return(invisible(x))
+    invisible(x)
 }
 
 ## FIXME: this print.grain is for new type of evidence...
 print.grain <- function(x,...){
-    cat("Independence network: Compiled:", x$isCompiled,
-        "Propagated:", x$isPropagated, "\n")
+    cat("Independence network: Compiled:", getgin(x, "isCompiled"),
+        "Propagated:", getgin(x, "isPropagated"), "\n")
     cat("  Nodes:"); str(unname(nodeNames(x)))
     if ( !is.null((ev <- evidence(x))) ){
         cat("  Evidence:\n");
@@ -201,18 +278,11 @@ print.grain <- function(x,...){
         if (!is.null((p <- pEvidence(x))))
             cat(sprintf("  pEvidence: %f\n", p))
     }
-    return(invisible(x))
+    invisible(x)
 }
-
-#' @rdname grain-main
-#' @param object Any R object.
-is.grain <- function(object){
-    "grain" %in% class(object)
-}
-
 
 .setControl <- function(control){
-  con <- list(timing=0)
+  con <- list(timing = 0)
   con[(namc <- names(control))] <- control
   con
 }

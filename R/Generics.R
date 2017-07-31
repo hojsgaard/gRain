@@ -47,7 +47,7 @@ uni <- function(object)
 
 #' @rdname grain-generics
 uni.grain <- function(object)
-    object$universe
+    getgin(object, "universe")
 
 #' @rdname grain-generics
 pot <- function(object)
@@ -55,7 +55,16 @@ pot <- function(object)
 
 #' @rdname grain-generics
 pot.grain <- function(object)
-    object$potential
+    getgin(object, "potential")
+
+#' @rdname grain-generics
+cpt <- function(object)
+    UseMethod("cpt")
+
+#' @rdname grain-generics
+cpt.grain <- function(object)
+    getgin(object, "cptlist")
+
 
 #' @rdname grain-generics
 potential <- function(object)
@@ -65,7 +74,15 @@ potential <- function(object)
 potential.grain <- function(object)
    object$potential
 
+#' @rdname grain-generics
+vpar.CPTspec <- function(object, ...){
+    lapply(object, function(u) names(dimnames(u)))
+}
 
+#' @rdname grain-generics
+vpar.CPTgrain <- function(object, ...){
+    lapply(getgin(object, "cptlist"), function(u) names(dimnames(u)))
+}
 
 
 

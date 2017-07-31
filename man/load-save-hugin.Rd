@@ -4,6 +4,7 @@
 \alias{load-save-hugin}
 \alias{loadHuginNet}
 \alias{saveHuginNet}
+\alias{saveHuginNet}
 \title{Load and save Hugin net files}
 \usage{
 loadHuginNet(file, description = rev(unlist(strsplit(file, "/")))[1],
@@ -52,9 +53,6 @@ saveHuginNet(golf, paste(td,"/golf.net",sep=''))
 golf2 <- loadHuginNet(paste(td,"/golf.net",sep=''))
 
 }
-\author{
-Søren Højsgaard, \email{sorenh@math.aau.dk}
-}
 \references{
 Søren Højsgaard (2012). Graphical Independence
     Networks with the gRain Package for R. Journal of Statistical
@@ -64,5 +62,7 @@ Søren Højsgaard (2012). Graphical Independence
 \seealso{
 \code{\link{grain}}
 }
+\author{
+Søren Højsgaard, \email{sorenh@math.aau.dk}
+}
 \keyword{utilities}
-

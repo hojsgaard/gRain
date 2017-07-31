@@ -8,7 +8,7 @@
     for ( i in seq_along(cliques)){
         cq    <- cliques[[ i ]]
         vlab  <- universe$levels[cq]
-        potlist[[ i ]] <- newar(cq, vlab, values)
+        potlist[[ i ]] <- tab(cq, vlab, values)
     }
     potlist
 }
@@ -22,24 +22,24 @@
 
 ## Insert cpt's into potential list (cptlist, APlist)
 ##
-.insertCPT <- function(cptlist, APlist, details=0)
+.insertCPT <- function(cptlist, potlist, details=0)
 {
     if (details>=1) cat(".Inserting cpt's in potential list [.insertCPT]\n")
 
-    APnames <- lapply(APlist, function(x) names(dimnames(x)))
+    APnames <- lapply(potlist, function(x) names(dimnames(x)))
     CPnames <- unname(lapply(cptlist, function(x) varNames(x)))
 
-    ## FIXME .findHosts can be replaced by gRbase::get_superset_
+    ## FIXME .findHost can be replaced by gRbase::get_superset_
     hosts    <- .findHosts( CPnames, APnames )
 
-    for ( i  in 1:length(cptlist))
-        {
+    for (i in 1:length(cptlist)) {
             cptc <- cptlist[[ i ]]
             j    <- hosts[ i ]
-            APlist[[ j ]] <- tableOp( APlist[[ j ]], cptc, "*" )
+            ##print(potlist[[j]])
+            potlist[[ j ]] <- tableOp( potlist[[ j ]], cptc, "*" )
         }
-    .infoPrint(details, 4, {cat("....APlist (after insertion):\n"); print(APlist) })
-    APlist
+    .infoPrint(details, 4, {cat("....potlist (after insertion):\n"); print(potlist) })
+    potlist
 }
 
 

@@ -3,19 +3,26 @@
 \name{grain-generics}
 \alias{grain-generics}
 \alias{nodeNames}
+\alias{nodeStates}
+\alias{nodeNames.grain}
+\alias{nodeStates.grain}
 \alias{nodeNames.grain}
 \alias{nodeStates}
 \alias{nodeStates.grain}
-\alias{pot}
-\alias{pot.grain}
-\alias{potential}
-\alias{potential.grain}
-\alias{rip.grain}
-\alias{uni}
-\alias{uni.grain}
 \alias{universe}
 \alias{universe.grain}
 \alias{varNames.grainEvidence_}
+\alias{rip.grain}
+\alias{uni}
+\alias{uni.grain}
+\alias{pot}
+\alias{pot.grain}
+\alias{cpt}
+\alias{cpt.grain}
+\alias{potential}
+\alias{potential.grain}
+\alias{vpar.CPTspec}
+\alias{vpar.CPTgrain}
 \title{gRain generics}
 \usage{
 nodeNames(x)
@@ -42,9 +49,17 @@ pot(object)
 
 \method{pot}{grain}(object)
 
+cpt(object)
+
+\method{cpt}{grain}(object)
+
 potential(object)
 
 \method{potential}{grain}(object)
+
+\method{vpar}{CPTspec}(object, ...)
+
+\method{vpar}{CPTgrain}(object, ...)
 }
 \arguments{
 \item{x, object}{A relevant object.}
@@ -56,4 +71,3 @@ potential(object)
 \description{
 Generic functions etc for the gRain package
 }
-

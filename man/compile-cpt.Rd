@@ -2,21 +2,23 @@
 % Please edit documentation in R/CPT-POT-compile.R
 \name{compile-cpt}
 \alias{compile-cpt}
-\alias{compile.extractCPT}
-\alias{compile.extractPOT}
+\alias{as_cptlist}
 \alias{compileCPT}
+\alias{summary.CPTspec}
 \alias{compilePOT}
 \alias{print.CPTspec}
-\alias{summary.CPTspec}
+\alias{compilePOT}
+\alias{compile.POT_rep}
+\alias{compile.CPT_rep}
 \title{Compile conditional probability tables / cliques potentials.}
 \usage{
-compileCPT(x, forceCheck = TRUE, details = 0)
+as_cptlist(x, forceCheck = FALSE)
 
 compilePOT(x)
 
-\method{compile}{extractPOT}(object, ...)
+\method{compile}{POT_rep}(object, ...)
 
-\method{compile}{extractCPT}(object, ...)
+\method{compile}{CPT_rep}(object, ...)
 }
 \arguments{
 \item{x}{To \code{compileCPT} x is a list of conditional
@@ -26,12 +28,12 @@ potentials.}
 \item{forceCheck}{Controls if consistency checks of the probability
 tables should be made.}
 
-\item{details}{Controls amount of print out. Mainly for debugging
-purposes.}
-
 \item{object}{A list of potentials or of CPTs.}
 
 \item{...}{Additional arguments; currently not used.}
+
+\item{details}{Controls amount of print out. Mainly for debugging
+purposes.}
 }
 \value{
 \code{compileCPT} returns a list of class 'cptspec'
@@ -42,9 +44,6 @@ Compile conditional probability tables / cliques
     potentials as a preprocessing step for creating a graphical
     independence network
 }
-\author{
-Søren Højsgaard, \email{sorenh@math.aau.dk}
-}
 \references{
 Søren Højsgaard (2012). Graphical Independence Networks
     with the gRain Package for R. Journal of Statistical Software,
@@ -53,5 +52,7 @@ Søren Højsgaard (2012). Graphical Independence Networks
 \seealso{
 \code{\link{extractCPT}}, \code{\link{extractPOT}}
 }
+\author{
+Søren Højsgaard, \email{sorenh@math.aau.dk}
+}
 \keyword{utilities}
-

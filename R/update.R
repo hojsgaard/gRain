@@ -44,7 +44,7 @@
 #' @export update.CPTgrain
 "update.CPTgrain" <- function(object,  ...){
 
-    if(!(object$isCompiled))
+    if (!getgin(object, "isCompiled"))
         object <- compile( object )
 
     ##cl <- match.call(expand.dots=TRUE)
@@ -56,7 +56,9 @@
         pot.with.1        <- .mkArrayList( rip(object), uni(object) )
         newpot            <- .insertCPT(object$cptlist, pot.with.1, details=0)
         object$potential <-
-            list(pot_orig=newpot, pot_temp=newpot, pot_equi=.initArrayList(pot.with.1, NA))
+            list(pot_orig=newpot,
+                 pot_temp=newpot,
+                 pot_equi=.initArrayList(pot.with.1, NA))
         object$isPropagated <- FALSE
     }
     object
