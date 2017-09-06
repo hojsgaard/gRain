@@ -129,7 +129,7 @@ cptable <- function(vpar, levels=NULL, values=NULL, normalize=TRUE,  smooth=0 ){
 
 print.cptable <- function(x,...){
     v <- c(x)
-    xx <<- x
+    ##xx <<- x
     dim(v) <- c(length(attr(x,"levels")), length(v) / length(attr(x, "levels")))
     ##dim(v) <- c(length(x,"levels")), length(v) / length(attr(x, "levels")))
     rownames(v) <- attr(x, "levels")

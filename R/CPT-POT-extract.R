@@ -124,7 +124,6 @@ extractCPT <- function(data_, graph, smooth=0){
         cat(sprintf("NAs found in conditional probability table(s) for nodes: %s\n", toString(nnn)))
         cat(sprintf("  ... consider using the smooth argument\n"))
     }
-
     out
 }
 

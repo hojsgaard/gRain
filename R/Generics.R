@@ -62,8 +62,21 @@ cpt <- function(object)
     UseMethod("cpt")
 
 #' @rdname grain-generics
-cpt.grain <- function(object)
+cpt.CPTgrain <- function(object)
     getgin(object, "cptlist")
+
+#' @rdname grain-generics
+#' @param position Where to insert 'value'
+#' @param value Value to insert at 'position'
+"cpt<-" <- function(object, position, value){
+    UseMethod("cpt<-")
+}
+
+#' @rdname grain-generics
+"cpt<-.CPTgrain" <- function(object, position, value){
+    object$cptlist[position] <- value
+}
+
 
 
 #' @rdname grain-generics
@@ -85,4 +98,8 @@ vpar.CPTgrain <- function(object, ...){
 }
 
 
+
+.isComp <- function(x) getgin(x, "isCompiled")
+
+.isProp <- function(x) getgin(x, "isPropagated")
 

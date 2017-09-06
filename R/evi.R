@@ -120,7 +120,7 @@ setEvi_ <- function(object, evidence=NULL, propagate=TRUE, details=0){
     if ( is.null_ev( evidence ) ){
         cat("Nothing to do\n")
     } else {
-        if (!getgin(x, "isCompiled")){
+        if (!.isComp(object)){
             object <- compile(object)
             object$isInitialized  <- FALSE
             object$isPropagated   <- FALSE            

@@ -1,9 +1,12 @@
 \name{internal-gRain}
 
-%\alias{mendel}
+\alias{as_CPTspec_simple}
+\alias{print.CPTspec_simple}
+%\alias{}
+%\alias{}
+
 
 \alias{Curry}
-
 \alias{summary.grain}
 
 \alias{print.huginNet}

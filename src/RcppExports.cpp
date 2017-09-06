@@ -7,17 +7,6 @@
 
 using namespace Rcpp;
 
-// check__
-NumericVector check__(List cqpotList_);
-RcppExport SEXP _gRain_check__(SEXP cqpotList_SEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< List >::type cqpotList_(cqpotList_SEXP);
-    rcpp_result_gen = Rcpp::wrap(check__(cqpotList_));
-    return rcpp_result_gen;
-END_RCPP
-}
 // propagateLS__
 List propagateLS__(List cqpotList_, List rip);
 RcppExport SEXP _gRain_propagateLS__(SEXP cqpotList_SEXP, SEXP ripSEXP) {
@@ -41,16 +30,4 @@ BEGIN_RCPP
     rcpp_result_gen = Rcpp::wrap(sparse_setXtf1(XX_, TF_));
     return rcpp_result_gen;
 END_RCPP
-}
-
-static const R_CallMethodDef CallEntries[] = {
-    {"_gRain_check__", (DL_FUNC) &_gRain_check__, 1},
-    {"_gRain_propagateLS__", (DL_FUNC) &_gRain_propagateLS__, 2},
-    {"_gRain_sparse_setXtf1", (DL_FUNC) &_gRain_sparse_setXtf1, 2},
-    {NULL, NULL, 0}
-};
-
-RcppExport void R_init_gRain(DllInfo *dll) {
-    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
-    R_useDynamicSymbols(dll, FALSE);
 }

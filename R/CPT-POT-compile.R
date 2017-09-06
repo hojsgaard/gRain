@@ -56,9 +56,10 @@ as_cptlist <- function(x, forceCheck=FALSE){
     }    
 }
 
+#' @rdname compile-cpt
 compile_cpt <- function(x, forceCheck=TRUE){
 
-    if (!inherits(x, "list")) stop("A list is expected")    
+    if (!is.list(x)) stop("A list is expected")    
     ## FIXME: Fragile that there is no control over input
     zz <- lapply(x, .parseCPT_item)
 
@@ -75,33 +76,37 @@ compile_cpt <- function(x, forceCheck=TRUE){
 
     ## FIXME: Perhaps not create dag here at all unless check is required
     dg <- dagList(vp, forceCheck = forceCheck)
-    print(dg)
     
     if (forceCheck){        
         ## Distribution specified for all variables?
-        ss <- setdiff(unique.default(unlist(vp)), vn)
+        ss <- setdiff(unique.default(unlist(vp)),  vn)
         if (length(ss) > 0)
             stop(paste("distribution not specified for variable(s):", toString(ss)))
 
         ## Are dimensions consistent?
         lapply(1:length(vn), function(i){
             ##cat(c(i, prod(vd[vp[[i]]]), length(zz[[i]]$values)), "\n")
-            if (prod(vd[vp[[i]]]) != length(zz[[i]]$values)){
-                cat(paste("problem here:\n",
-                          "cpt:", toString(vp[[i]]), "\n",
-                          "number of values given: ", length(zz[[i]]$values),"\n",
-                          "number of values expected: ", prod(vd[vp[[i]]]), "\n"))
-                stop("can not proceed!")
+            if (length(zz[[i]]$values > 0)) { ## =0 can happen if cptable(..., values=NULL)
+                if (prod(vd[vp[[i]]]) != length(zz[[i]]$values)){
+                    cat(paste("problem here:\n",
+                              "cpt:", toString(vp[[i]]), "\n",
+                              "number of values given: ", length(zz[[i]]$values),"\n",
+                              "number of values expected: ", prod(vd[vp[[i]]]), "\n"))
+                    stop("can not proceed!")
+                }
             }
-        })
+            })
     }
     
     out <-
         lapply(1:length(vn), function(i){
             dn <- vl[vp[[i]]]
             di <- c(vd[vp[[i]]], use.names=FALSE)
-            ar <- array(zz[[i]]$values + zz[[i]]$smooth, dim=di, dimnames=dn)
-            ar <- tabNormalize(ar, type="first")
+            if (length(zz[[i]]$values) > 0)
+                ar <- array(zz[[i]]$values + zz[[i]]$smooth, dim=di, dimnames=dn)
+            else
+                ar <- array(rep(1.0, prod(di)) + zz[[i]]$smooth, dim=di, dimnames=dn)
+            ##ar <- tabNormalize(ar, type="first") ## FIXME Should happen at compile time???
             ar
         })
     names(out) <- vn
@@ -115,7 +120,9 @@ compile_cpt <- function(x, forceCheck=TRUE){
 
 .parseCPT_item <- function(xi){ ## Create intermediate form of CPTs
 
-    cls <- c("cptable", "parray", "array", "matrix") ## FIXME: Fragile
+    ## cat(".parseCPT_item\n"); print(xi)
+    
+    cls <- c("cptable", "parray", "array", "matrix", "xtabs", "table") ## FIXME: Fragile
     j   <- inherits(xi, cls, which=T)
 
     if (!any(u <- j > 0)) stop("xi not a valid object")
@@ -123,12 +130,14 @@ compile_cpt <- function(x, forceCheck=TRUE){
     cls <- cls[u]    
     vpar <- varNames(xi)
     vlev <- valueLabels(xi)[[1]]
-    smooth <- if (cls == "cptable") attr(xi, "smooth") else 0
+    smooth <- if (cls[1] == "cptable") attr(xi, "smooth") else 0
 
+    
     out <- list(vnam=vpar[1], vlev=vlev, vpar=vpar, values=as.numeric(xi),
                 normalize="first", smooth=smooth)
     out
  }
+
 
 #' @rdname compile-cpt
 compilePOT <- function(x){
@@ -176,6 +185,27 @@ print.CPTspec <- function(x,...){
   invisible(x)
 }
 
+print.CPTspec <- function(x, ...){
+    print.default(c(x))
+}
+
+
+summary.CPTspec <- function(object, ...){
+    cat("CPTspec with probabilities:\n")
+    lapply(object,
+           function(xx){
+               vn <- varNames(xx)
+               if (length(vn) > 1){
+                   cat(paste(" P(", vn[1], "|", paste(vn[-1], collapse=' '), ")\n"))
+               } else {
+                   cat(paste(" P(", vn, ")\n"))
+               }
+           })
+  invisible(object)
+}
+
+
+
 as_CPTspec_simple <- function(x){
     z <- c(x)
     attr(z, "universe") <- attr(x, "universe")
@@ -197,12 +227,6 @@ print.CPTspec_simple <- function(x,...){
   invisible(x)
 }
 
-
-
-summary.CPTspec <- function(object,...){
-    lapply(object, function(x){x})
-}
-
 print.POTspec <- function(x,...){
     cat("POTspec with potentials:\n")
     lapply(x,
@@ -211,13 +235,13 @@ print.POTspec <- function(x,...){
                cat(   "(", paste(vn, collapse=' '),") \n")
            })
     
-  return(invisible(x))
+  invisible(x)
 }
 
+#' @rdname compile-cpt
+compileCPT <- compile_cpt
 
-
-
-compileCPT <- function(x, forceCheck=TRUE, details=0){
+.compileCPT <- function(x, forceCheck=TRUE, details=0){
 
     zz <- lapply(x, .parseCPT_item)
 
@@ -233,7 +257,6 @@ compileCPT <- function(x, forceCheck=TRUE, details=0){
     oo  <- topoSort(dg)
     if (length(oo) == 0)
         stop("Graph defined by the cpt's is not acyclical...\n");
-
 
     if (details>=1) cat(". creating probability tables ...\n")
     

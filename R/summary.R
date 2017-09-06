@@ -2,14 +2,14 @@ summary.grain <- function(object, type='std', ...){
 
     type <- match.arg(type, c("std", "cliques", "rip", "configurations"))
     
-    cat("Independence network: Compiled:", getgin(object, "isCompiled"), "Propagated:", getgin(object, "isPropagated"), "\n")
+    cat("Independence network: Compiled:", .isComp(object), "Propagated:", .isProp(object), "\n")
     
     if (length(object$evidence)) getEvidence(object)
     
     cat(" Nodes :")
     utils::str(nodeNames(object)) ## $universe$nodes)
     
-    if (getgin(object, "isCompiled")){
+    if (.isComp(object)){
         
         cq.length <- sapply(rip(object)$cliques, length)
         

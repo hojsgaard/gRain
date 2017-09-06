@@ -108,8 +108,8 @@
 #'     Software, 46(10), 1-26.
 #'     \url{http://www.jstatsoft.org/v46/i10/}.
 #' @keywords models
-#' @examples
 #' 
+#' @examples
 #' ## Asia (chest clinic) example:
 #' yn   <- c("yes","no")
 #' a    <- cptable(~asia,              values=c(1,99), levels=yn)
@@ -132,14 +132,13 @@
 #' ## the same clique of the junction tree:
 #' 
 #' bnc2 <- compile(bn, root=c("lung", "bronc", "tub"), propagate=TRUE)
-#' 
-#' system.time({
-#'   for (i in 1:200)
-#'     querygrain(bnc, nodes=c("lung","bronc", "tub"), type="joint")})
-#' system.time({
-#'   for (i in 1:200)
-#'     querygrain(bnc2, nodes=c("lung","bronc", "tub"), type="joint")})
 #'
+#' if (require(microbenchmark)){
+#' microbenchmark(
+#'   querygrain(bnc, nodes=c("lung","bronc", "tub"), type="joint"),
+#'   querygrain(bnc2, nodes=c("lung","bronc", "tub"), type="joint")
+#' )}
+#' 
 #'
 #' ## Simple example - one clique only in triangulated graph:
 #' plist.s <- compileCPT( list(a, t.a) )
@@ -151,39 +150,33 @@
 #' bn.d <- grain( plist.d )
 #' querygrain( bn.d )
 #' 
-#' 
 #' ## Create network from data and graph specification.
 #' ## There are different ways:
+#' 
 #' data(HairEyeColor)
 #' hec <- HairEyeColor
-#' daG <- dag( ~Hair + Eye:Hair + Sex:Hair )
-#' class( daG )
-#' uG <- ug( ~Eye:Hair + Sex:Hair )
-#' class( uG )
+#' daG <- dag(~Hair + Eye:Hair + Sex:Hair)
+#' class(daG)
+#' uG <- ug( ~Eye:Hair + Sex:Hair)
+#' class(uG)
 #' 
 #' ## Create directly from dag:
-#' b1  <- grain( daG, hec )
-#' class( b1 )
+#' bn.dag  <- grain(daG, data=hec)
+#' class(bn.dag)
+#' compile(bn.dag)
 #' 
 #' ## Build model from undirected (decomposable) graph
-#' b3  <- grain( uG, hec )
-#' class( b3 )
+#' bn.ug  <- grain(uG, data=hec)
+#' class(bn.ug)
+#' compile(bn.ug)
 #' 
 #' @export grain
-grain <- function(x, data=NULL, control=list(), smooth=0, details=0,...){
+grain <- function(x, control=list(), smooth=0, details=0, data=NULL, ...){
   UseMethod("grain")
 }
 
-
-
-
-
-
-
-## A list of cpt's
-##
 #' @rdname grain-main
-grain.CPTspec <- function(x, control=list(), smooth=0, details=0,...){
+grain.CPTspec <- function(x, control=list(), smooth=0, details=0, ...){
     ##cat("grain.CPTspec\n")
     control  <- .setControl(control)
     out  <- c(list(universe    = attr(x, "universe"),
@@ -219,13 +212,12 @@ grain.CPT_rep <- function(x, ...){grain(compile(x))}
 
 ## A graph + data (wrappers for calling grain.POTspec and grain.CPTspec)
 #' @rdname grain-main
-grain.graphNEL <- function(x, data=NULL, control=list(), smooth=0, details=0,...){
+grain.graphNEL <- function(x, control=list(), smooth=0, details=0, data=NULL, ...){
     if (is.null(data))
         stop("Data must be given to create grain from graph\n")
     if (!(is.named.array(data) || is.data.frame(data)))
         stop("Data must be an array or a dataframe\n")
 
-    
     if (is.DAG(x))
         zz <- extractCPT(data, x, smooth=smooth)
     else if (is.TUG(x))
@@ -239,7 +231,7 @@ grain.graphNEL <- function(x, data=NULL, control=list(), smooth=0, details=0,...
 }
 
 #' @rdname grain-main
-grain.dModel <- function(x, data=NULL, control=list(), smooth=0, details=0, ...){
+grain.dModel <- function(x, control=list(), smooth=0, details=0, data=NULL, ...){
 
     if (!x$isDecomposable)
         stop("Model must be decompsable\n")
@@ -254,8 +246,8 @@ grain.dModel <- function(x, data=NULL, control=list(), smooth=0, details=0, ...)
 ## Printing grain
 ##
 print.grain <- function(x, ...){
-    cat("Independence network: Compiled:", getgin(x, "isCompiled"), 
-        "Propagated:", getgin(x, "isPropagated"), "\n")
+    cat("Independence network: Compiled:", .isComp(x),
+        "Propagated:", .isProp(x), "\n")
     cat("  Nodes:"); str(unname(nodeNames(x)))
     if ( !is.null(x$evidence) ){
         cat("  Evidence:\n");
@@ -268,8 +260,8 @@ print.grain <- function(x, ...){
 
 ## FIXME: this print.grain is for new type of evidence...
 print.grain <- function(x,...){
-    cat("Independence network: Compiled:", getgin(x, "isCompiled"),
-        "Propagated:", getgin(x, "isPropagated"), "\n")
+    cat("Independence network: Compiled:", .isComp(x),
+        "Propagated:", .isProp(x), "\n")
     cat("  Nodes:"); str(unname(nodeNames(x)))
     if ( !is.null((ev <- evidence(x))) ){
         cat("  Evidence:\n");

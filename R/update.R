@@ -44,7 +44,7 @@
 #' @export update.CPTgrain
 "update.CPTgrain" <- function(object,  ...){
 
-    if (!getgin(object, "isCompiled"))
+    if (!.isComp(object))
         object <- compile( object )
 
     ##cl <- match.call(expand.dots=TRUE)

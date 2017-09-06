@@ -15,7 +15,7 @@ plot.grain <- function(x, type, ...){
    }
 
    if (missing(type)){
-       if (getgin(x, "isCompiled")){
+       if (.isComp(x)){
            Rgraphviz::plot(x$ug)
        } else {
            if ("pot-grain" %in% class(x)){
@@ -39,7 +39,7 @@ iplot.grain <- function(x,type, ...){
   #.primiplot(x$dag)
 
   if (missing(type)){
-    if (getgin(x, "isCompiled")){
+    if (.isComp(x)){
       .primiplot(x$ug)
     } else {
       if ("pot-grain" %in% class(x)){

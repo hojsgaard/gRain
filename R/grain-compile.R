@@ -30,74 +30,102 @@
 #'     Software, 46(10), 1-26.
 #'     \url{http://www.jstatsoft.org/v46/i10/}.
 #' @keywords utilities models
+#'
+#' @examples
+#' ## To be written
 #' 
+
+
+
+#' @rdname grain-compile
+add_jtree <- function(object, root=NULL){
+    UseMethod("add_jtree")
+}
+
+#' @rdname grain-compile
+add_jtree.CPTgrain <- function(object, root=NULL){
+    if (!inherits(object, "CPTgrain")) stop("Not a CPTgrain object\n") 
+    object[c("rip", "ug")] <- .create_jtree(object, root) 
+    object
+}
+#' @rdname grain-compile
+add_jtree.POTgrain <- function(object, root=NULL){
+    if (is.null(rip(object)))
+        stop("No rip component in object \n")
+    object
+}
+
+
+.create_jtree <- function(object, root=NULL, update=TRUE){
+
+    mdag <- moralize(getgin(object, "dag"), result="dgCMatrix")
+    if (length(root) > 1) mdag <- .setRoot(mdag, root)
+        
+    ug_   <- triangulateMAT(mdag)  ## FIXME : Coercions are a MESS
+    rp_   <- ripMAT( ug_ )
+    ug_   <- as(ug_, "graphNEL")
+
+    list(rip=rp_, ug=ug_)
+}
+
+
+#' @rdname grain-compile
+add_potential <- function(object){
+    UseMethod("add_potential")
+}
+
+#' @rdname grain-compile
+add_potential.CPTgrain <- function(object){
+    object$potential <- .create_potential(object)
+    object
+}
+
+#' @rdname grain-compile
+add_potential.POTgrain <- function(object){
+    if (is.null(object$cqpot))
+        stop("No cqpot component in object \n")
+    object$potential <-
+        list(pot_orig=object$cqpot,
+             pot_temp=object$cqpot,
+             pot_equi=.initArrayList(object$cqpot, NA))
+    ##class(pot_orig) <- class(pot_temp) <- class(pot_equi) <- "POTspec"
+    object
+}
+
+
+.create_potential <- function(object){
+
+    if (is.null(rip(object)))
+        stop("No rip slot (junction tree) in object\n")
+    if (is.null(cpt(object)))
+        stop("No cpt slot in object\n")
+    
+    pot.1    <- .mkArrayList(rip(object), universe(object))
+    pot_orig <- pot_temp <- .insertCPT(cpt(object), pot.1, details=0)
+    pot_equi <- .initArrayList(pot.1, NA)
+
+    ##class(pot_orig) <- class(pot_temp) <- class(pot_equi) <- "POTspec"
+    list(pot_orig=pot_orig, pot_temp=pot_temp, pot_equi=pot_equi)
+}
+
+
+
 
 #' @rdname grain-compile
 compile.grain <-
   function(object, propagate=FALSE, root=NULL,
-           control=object$control, details=0,...) {    
+           control=object$control, details=0, ...) {    
     NextMethod("compile")
 }
 
-create_jt <- function(object, root=NULL, update=TRUE){
-
-    ##gg <- as(getgin(object, "dag"), "dgCMatrix")
-    ##dagList(vpar(getgin(object, "cptlist")), result="dgCMatrix")
-    ##gg <- moralizeMAT(gg)
-
-    mdag <- moralize(getgin(object, "dag"), result="dgCMatrix")
-    if (length(root) > 1) mdag <- .setRoot(mdag, root)
-    
-    ##mdagM <- moralizeMAT( as(object$dag, "dgCMatrix") )
-    ## Force variables in <root> to be complete in mdagM
-    ## if (length(root) > 1) mdagM <- .setRoot( mdagM, root )
-    
-    ug_   <- triangulateMAT(mdag)  ## FIXME : Coercions are a MESS
-    rp    <- ripMAT( ug_ )
-    ug_   <- as(ug_,   "graphNEL")
-    
-    if (update){
-        object[c("rip", "ug")] <- list(rip=rp, ug=ug_)
-        object
-    } else
-        list(rip=rp, ug=ug)
-}
-
-create_pot <- function(object, update=TRUE){
-
-    if (is.null(rip(object))) stop("No rip slot (junction tree) in object\n")
-    if (is.null(cpt(object))) stop("No cpt slot in object\n")
-    
-    pot.1    <- .mkArrayList( getgin(object, "rip"), universe(object) )
-    pot_orig <- pot_temp <- .insertCPT(getgin(object, "cptlist"), pot.1, details=0)
-    equipot  <- .initArrayList(pot.1, NA)
-
-    if (update){
-        object$potential <- list(pot_orig=pot_orig, pot_temp=pot_temp, pot_equi=equipot)
-        object
-    } else
-        list(pot_orig=pot_orig, pot_temp=pot_temp, pot_equi=equipot)
-}
-
-##' setRoot: Completes the variables in <root> in the graph
-.setRoot <- function(mdagM, root){
-    vn  <- colnames(mdagM)
-    dn  <- dimnames(mdagM)
-    ft  <- names2pairs(match(root, vn), sort=FALSE, result="matrix")
-    ft  <- rbind(ft, ft[, 2:1, drop=FALSE])
-    mdagM <- .sparse_setXtf1(mdagM, ft)
-    dimnames(mdagM) <- dn
-    mdagM
-}
 
 #' @rdname grain-compile
 compile.CPTgrain <-
-    function(object, propagate=FALSE, root=NULL, control=object$control, details=0, ...){
+    function(object, propagate=FALSE, root=NULL, control=object$control,
+             details=0, ...){
         
-        #cat("Creating RIP and graphs \n")
-        object <- create_jt(object, root, update=TRUE)
-        cat("Creating potentials\n")
-        object <- create_pot(object, update=TRUE)
+        object <- add_jtree(object, root)
+        object <- add_potential(object)
         
         object$isCompiled   <- TRUE
         object$isPropagated <- FALSE
@@ -105,28 +133,15 @@ compile.CPTgrain <-
         
         if (propagate) propagate(object) else object
     }
-
-
-
-
-## 
-
 
 
 #' @rdname grain-compile
 compile.POTgrain <-
-    function(object, propagate=FALSE, root=NULL, control=object$control, details=0,...) {
-
-        if (is.null(rip(object)))
-            stop("No rip component in object \n")
-        if (is.null(object$cqpot))
-            stop("No cqpot component in object \n")
-        
-        object$potential <-
-            list(pot_orig=object$cqpot,
-                 pot_temp=object$cqpot,
-                 pot_equi=.initArrayList(object$cqpot, NA))
-        ## object$cqpot <- NULL
+    function(object, propagate=FALSE, root=NULL, control=object$control,
+             details=0,...) {
+      
+        object <- add_jtree(object, root)
+        object <- add_potential(object)
         
         object$isCompiled   <- TRUE
         object$isPropagated <- FALSE
@@ -134,7 +149,6 @@ compile.POTgrain <-
         
         if (propagate) propagate(object) else object
     }
-
 
 
 .createJTreeGraph <- function(rip){
@@ -162,150 +176,29 @@ compile.POTgrain <-
 
 
 
+## setRoot: Completes the variables in <root> in the graph,
+## FIXME: setRoot: Assumes sparse matrix. A MESS
+.setRoot <- function(mdagM, root){
+    vn  <- colnames(mdagM)
+    dn  <- dimnames(mdagM)
+    ft  <- names2pairs(match(root, vn), sort=FALSE, result="matrix")
+    ft  <- rbind(ft, ft[, 2:1, drop=FALSE])
+    mdagM <- .sparse_setXtf1(mdagM, ft)
+    dimnames(mdagM) <- dn
+    mdagM
+}
 
 
 
 
 
 
-
-
-
-
-
-
-
-## 
-## #' @rdname grain-compile
-## compile.POTgrain <-
-##   function(object, propagate=FALSE, root=NULL,
-##            control=object$control, details=0,...) {
-## 
-##       t00 <-  proc.time()
-##       ##FAST jt  <- .createJTreeGraph(object$rip)
-##       ans     <- list(## FAST jt          = jt,
-##           ##temppot   = object$equipot,
-##           ##origpot   = object$equipot,
-##           ## FAST mdag        = object$ug,
-##           details     = details )
-## 
-##       ##object$equipot   <- .insertNA(object$equipot)
-## 
-##       object$potential <-
-##           list(origpot=object$potential$equipot,
-##                temppot=object$potential$equipot,
-##                equipot=.insertNA(object$potential$equipot))
-## 
-##       
-##                                         #object$details <- NULL
-##       ans            <- c(object, ans)
-##       class(ans)     <- class(object)
-## 
-##       ans$isCompiled   <- TRUE
-##       ans$isPropagated <- FALSE
-##       ans$control      <- control
-##       .timing(" Time: (total) compile:", control, t00)
-## 
-##       if (propagate){     ## Propagate if asked to
-##           .infoPrint(details, 1, cat(".Initializing network\n"))
-##           ans             <- propagate(ans)
-##       }
-##       ans$dag <- NULL
-##       return(ans)
-##   }
-## 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      ## vn    <- colnames(mdagM)
-      ## nlev  <- object$universe$nlev[vn]
-      ## FAST jt    <- .createJTreeGraph(.rip)
-
-
-
-
-
-
-###' @rdname grain-compile
-##compile.CPTgrain <-
-##    function(object, propagate=FALSE, root=NULL, control=object$control, details=0, ...){
-##        
-##        mdagM <- moralizeMAT( as(object$dag, "Matrix") )
-##        if (length(root) > 1) ## Force variables in <root> to be complete in mdagM
-##            mdagM <- .setRoot( mdagM, root )
-##        
-##        ugM   <- triangulateMAT(mdagM)
-##        .rip   <- ripMAT( ugM )
-##        ug    <- as(ugM,   "graphNEL")
-##        mdag  <- as(mdagM, "graphNEL")  ## Never used!
-##        
-##### Insert potentials; ## Input: rip, universe, cptlist
-##        pot.1   <- .createPotList( .rip, universe(object) )
-##        origpot <- temppot <- .insertCPT(object$cptlist, pot.1, details)
-##        equipot <- .insertNA(pot.1)
-##        
-##### Collect results
-##        ans  <- list(rip         = .rip,
-##                     ug          = ug,
-##                     equipot     = equipot,
-##                     temppot     = temppot,
-##                     origpot     = origpot,
-##                     details     = details )
-##        ans        <- c(object, ans)
-##        class(ans) <- class(object)
-##        
-##        ans$isCompiled   <- TRUE
-##        ans$isPropagated <- FALSE
-##        ans$control      <- control
-##        
-##      if (propagate){     ## Propagate if asked to
-##          propagate(ans)
-##      } else
-##          ans
-##  }
-##
-##
-##
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    ##gg <- as(getgin(object, "dag"), "dgCMatrix")
+    ##dagList(vpar(getgin(object, "cptlist")), result="dgCMatrix")
+    ##gg <- moralizeMAT(gg)
+    ##mdagM <- moralizeMAT( as(object$dag, "dgCMatrix") )
+    ## Force variables in <root> to be complete in mdagM
+    ## if (length(root) > 1) mdagM <- .setRoot( mdagM, root )
 
 
 

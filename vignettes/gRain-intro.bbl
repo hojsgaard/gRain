@@ -1,0 +1,29 @@
+\begin{thebibliography}{3}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[H{\o}jsgaard(2012)]{hoj:12}
+S{\o}ren H{\o}jsgaard.
+\newblock Graphical independence networks with the {gRain} package for {R}.
+\newblock \emph{Journal of Statistical Software}, 46\penalty0 (10):\penalty0
+  1--26, 2012.
+\newblock URL \url{http://www.jstatsoft.org/v46/i10/}.
+
+\bibitem[H{\o}jsgaard et~al.(2012)H{\o}jsgaard, Edwards, and
+  Lauritzen]{hoj:edw:lau:12}
+S{\o}ren H{\o}jsgaard, David Edwards, and {Steffen L.} Lauritzen.
+\newblock \emph{Graphical Models with R}.
+\newblock Springer, 2012.
+\newblock ISBN 978-1-4614-2299-0.
+
+\bibitem[Lauritzen and Spiegelhalter(1988)]{lau/spieg:88}
+Steffen~Lilholt Lauritzen and David Spiegelhalter.
+\newblock Local computations with probabilities on graphical structures and
+  their application to expert systems.
+\newblock \emph{J. Roy. Stat. Soc. Ser. B}, 50\penalty0 (2):\penalty0 157--224,
+  1988.
+
+\end{thebibliography}

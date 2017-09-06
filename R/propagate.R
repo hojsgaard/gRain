@@ -17,17 +17,18 @@
 #' based version, and after some additional testing the c++ based
 #' version will become the default.
 #' 
-#' @aliases propagate.grain propagateLS propagate__ propagateLS__
+#' @aliases propagate.grain propagateLS propagateLS__
 #' @param object A grain object
 #' @param details For debugging info
+#' @param engine Either "R" or "cpp"; "cpp" is the default and the
+#'     fastest.
 #' @param ... Currently not used
 #' @return A compiled and propagated grain object.
 #' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
 #' @seealso \code{\link{grain}}, \code{\link[gRbase]{compile}}
-#' @references Søren Højsgaard (2012). Graphical Independence
-#'     Networks with the gRain Package for R. Journal of Statistical
-#'     Software, 46(10), 1-26.
-#'     \url{http://www.jstatsoft.org/v46/i10/}.
+#' @references Søren Højsgaard (2012). Graphical Independence Networks
+#'     with the gRain Package for R. Journal of Statistical Software,
+#'     46(10), 1-26.  \url{http://www.jstatsoft.org/v46/i10/}.
 #' @keywords utilities models
 #' @examples
 #' 
@@ -47,61 +48,40 @@
 #' 
 #' if (require(microbenchmark))
 #'     microbenchmark(
-#'         propagate(pnc),
-#'         propagate__(pnc) )
+#'         propagate(pnc, engine="R"),
+#'         propagate(pnc, engine="cpp") )
 #' 
 #' @export propagate.grain
-propagate.grain <- function(object, details=object$details, ...){
 
-  t0 <- proc.time()
-  ## propagate.grain: equipot is updated after propagation on temppot
-  ## such that equipot will contain the updated potentials.
-  ## object$equipot <- propagateLS(object$temppot,
-  ##                               rip=object$rip, initialize=TRUE, details=details)
+## propagate.grain: equipot is updated after propagation on temppot
+## such that equipot will contain the updated potentials.
+## object$equipot <- propagateLS(object$temppot,
+##                               rip=object$rip, initialize=TRUE, details=details)
 
-  object$potential$pot_equi <-
-      propagateLS(pot(object)$pot_temp, rip=rip(object))
+propagate.grain <- function(object, details=object$details, engine="cpp", ...){
 
-  ## object$isInitialized <- TRUE
-  object$isPropagated  <- TRUE
+    t0 <- proc.time()
+    engine <- match.arg(tolower(engine), c("r", "cpp"))
 
-  ## FIXME: propagate.grain : Looks strange
-  if ( !is.null(getEvidence(object)) ){
-      ev <- getEvidence(object)
-      attr(ev, "pEvidence") <- pEvidence(object)
-      object$evidence <- ev
-  }
+    pfun <- switch(engine,
+                   "r"={propagateLS},
+                   "cpp"={propagateLS__})
 
-  .timing(" Time: propagation:", object$control, t0)
-  return(object)
+    object$potential$pot_equi <-
+        pfun(pot(object)$pot_temp, rip=rip(object))
+           
+    object$isPropagated  <- TRUE
+    
+    ## FIXME: propagate.grain : Looks strange
+    if ( !is.null((ev <- getEvidence(object))) ){
+        attr(ev, "pEvidence") <- pEvidence(object)
+        object$evidence <- ev
+    }
+    
+    .timing(" Time: propagation:", object$control, t0)
+    object
 }
 
-
-#' @rdname grain-propagate
-propagate__ <- function(object, details=object$details, ...){
-
-  t0 <- proc.time()
-  ## propagate.grain: equipot is updated after propagation on pot_temp
-  ## such that equipot will contain the updated potentials.
-  ## object$equipot <- propagateLS(object$pot_temp,
-  ##                               rip=object$rip, initialize=TRUE, details=details)
-
-  object$potential$pot_equi<-
-      propagateLS__(pot(object)$pot_temp, rip=rip(object))
-
-  ## object$isInitialized <- TRUE
-  object$isPropagated  <- TRUE
-
-  ## FIXME: propagate.grain : Looks strange
-  if ( !is.null(getEvidence(object)) ){
-      ev <- getEvidence(object)
-      attr(ev, "pEvidence") <- pEvidence(object)
-      object$evidence <- ev
-  }
-
-  .timing(" Time: propagation:", object$control, t0)
-  object
-}
 
 ## Lauritzen Spiegelhalter propagation
 ##
@@ -131,15 +111,15 @@ propagateLS <- function(cqpotList, rip, initialize=TRUE, details=0){
     ##
     .infoPrint(details,2, cat("..BACKWARD:\n"))
     t0 <- proc.time()
-    if (ncliq>1){
-        for ( i  in ncliq:2){
+    if (ncliq > 1){
+        for (i in ncliq:2){
             cq   <- cliq[[ i ]]
             sp   <- seps[[ i ]]
             .infoPrint2(details, 2, "Clique %d: {%s}\n",  i , .colstr( cq ))
             cq.pot   <- cqpotList[[ i ]]
             pa.pot   <- cqpotList[[pa[ i ]]]
-
-            if (length(sp)>=1 && !is.na(sp)){
+            
+            if (length(sp) >= 1 && !is.na(sp)){
                 .infoPrint2(details, 2, "Marg onto sep {%s}\n", .colstr(sp))
                 sp.pot               <- tableMargin(cq.pot, sp)
                 cqpotList[[ i ]]     <- tableOp2(cq.pot, sp.pot, `/`)
@@ -151,34 +131,86 @@ propagateLS <- function(cqpotList, rip, initialize=TRUE, details=0){
             }
         }
     }
-
+    
     normConst      <- sum(cqpotList[[1]])
     cqpotList[[1]] <- cqpotList[[1]] / normConst
-
+    
     ## Forward propagation (distribute evidence) away from root of junction tree
     ##
-    .infoPrint(details,2,cat("..FORWARD:\n"))
+    .infoPrint(details, 2, cat("..FORWARD:\n"))
     t0 <- proc.time()
     for ( i  in 1:ncliq){
         .infoPrint2(details, 2, "Clique %d: {%s}\n",  i , .colstr(cliq[[ i ]]))
         ch <- childList[[ i ]]
-        if (length(ch)>0)
+        if (length(ch) > 0)
+        {
+            .infoPrint2(details,2, "..Children: %s\n", .colstr(ch))
+            for ( j  in 1:length(ch))
             {
-                .infoPrint2(details,2, "..Children: %s\n", .colstr(ch))
-                for ( j  in 1:length(ch))
-                    {
-                        if (length(seps[[ch[ j ]]])>0)
-                            {
-                                .infoPrint2(details, 2, "Marg onto sep %i: {%s}\n", ch[ j ], .colstr(seps[[ch[ j ]]]))
-                                sp.pot            <- tableMargin(cqpotList[[ i ]], seps[[ch[ j ]]])
-                                ##cat(sprintf("......is.na: sp.pot=%i\n", any(is.na(sp.pot))))
-                                cqpotList[[ch[ j ]]]  <- tableOp2(cqpotList[[ch[ j ]]], sp.pot, `*`)
-                                .infoPrint(details, 4, { cat("Marginal:\n"); print (sp.pot) })
-                            }
-                    }
+                if (length(seps[[ch[ j ]]])>0)
+                {
+                    .infoPrint2(details, 2, "Marg onto sep %i: {%s}\n", ch[ j ], .colstr(seps[[ch[ j ]]]))
+                    sp.pot            <- tableMargin(cqpotList[[ i ]], seps[[ch[ j ]]])
+                    ##cat(sprintf("......is.na: sp.pot=%i\n", any(is.na(sp.pot))))
+                    cqpotList[[ch[ j ]]]  <- tableOp2(cqpotList[[ch[ j ]]], sp.pot, `*`)
+                    .infoPrint(details, 4, { cat("Marginal:\n"); print (sp.pot) })
+                }
             }
+        }
     }
-
+    
     attr(cqpotList, "pEvidence") <- normConst
     cqpotList
 }
+
+
+
+
+
+
+
+
+## #' @rdname grain-propagate
+## propagate__ <- function(object, details=object$details, ...){
+    
+##     t0 <- proc.time()
+    
+##     object$potential$pot_equi<-
+##         propagateLS__(pot(object)$pot_temp, rip=rip(object))
+    
+##     object$isPropagated  <- TRUE
+    
+##     ## FIXME: propagate.grain : Looks strange
+##     if ( !is.null(getEvidence(object)) ){
+##         ev <- getEvidence(object)
+##         attr(ev, "pEvidence") <- pEvidence(object)
+##         object$evidence <- ev
+##     }
+    
+##     .timing(" Time: propagation:", object$control, t0)
+##     object
+## }
+
+
+
+## propagate.grain <- function(object, details=object$details, ...){
+
+##     t0 <- proc.time()
+    
+##     object$potential$pot_equi <-
+##         propagateLS(pot(object)$pot_temp, rip=rip(object))
+    
+##     object$isPropagated  <- TRUE
+    
+##     ## FIXME: propagate.grain : Looks strange
+##     if ( !is.null(getEvidence(object)) ){
+##         ev <- getEvidence(object)
+##         attr(ev, "pEvidence") <- pEvidence(object)
+##         object$evidence <- ev
+##     }
+    
+##     .timing(" Time: propagation:", object$control, t0)
+##     object
+## }
+
+

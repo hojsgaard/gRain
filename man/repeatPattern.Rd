@@ -25,7 +25,7 @@ Repeated patterns is a useful model specification
 \examples{
 
 ## Example: Markov chain
-yn <- c("yes","no")
+yn <- c("yes", "no")
 
 ## Specify p(x0)
 x.0 <- cptable(~x0, values=c(1, 9), levels=yn)
@@ -45,7 +45,7 @@ if (interactive()) iplot(mc)
 ## Example: Hidden markov model: The x[i]'s are unobserved, the
 ## y[i]'s can be observed.
 
-yn <- c("yes","no")
+yn <- c("yes", "no")
 
 ## Specify p(x0)
 x.0 <- cptable(~x0, values=c(1, 9), levels=yn)

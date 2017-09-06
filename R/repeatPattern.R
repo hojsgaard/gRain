@@ -3,7 +3,6 @@
 #' @description Repeated patterns is a useful model specification
 #'     short cut for Bayesian networks
 #' 
-#' 
 #' @param plist A list of conditional probability tables. The variable
 #'     names must have the form \code{name[i]} and the \code{i} will
 #'     be substituted by the values given in \code{instances} below.
@@ -12,6 +11,7 @@
 #'     element is a copy of \code{plist} in which \code{name[i]} are
 #'     substituted. If \code{TRUE} the result is the result of
 #'     applying \code{unlist()}.
+#' 
 #' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
 #' @seealso \code{\link{grain}}, \code{\link{compileCPT}}
 #' @references Søren Højsgaard (2012). Graphical Independence
@@ -22,7 +22,7 @@
 #' @examples
 #'
 #' ## Example: Markov chain
-#' yn <- c("yes","no")
+#' yn <- c("yes", "no")
 #' 
 #' ## Specify p(x0)
 #' x.0 <- cptable(~x0, values=c(1, 9), levels=yn)
@@ -42,7 +42,7 @@
 #' ## Example: Hidden markov model: The x[i]'s are unobserved, the
 #' ## y[i]'s can be observed.
 #' 
-#' yn <- c("yes","no")
+#' yn <- c("yes", "no")
 #' 
 #' ## Specify p(x0)
 #' x.0 <- cptable(~x0, values=c(1, 9), levels=yn)
@@ -65,10 +65,12 @@
 #' if (interactive()) iplot(hmm)
 #' 
 #' @export repeatPattern
+#' 
 repeatPattern <- function(plist, instances, unlist=TRUE){
-    ans <- list()
-    for (ii in seq_along(instances)){
-        ans[[ ii ]] <- .do.one(plist, instances[[ ii ]])
+    ##ans <- list() ## FIXME: Ugly
+    ans <- vector("list", length(instances))
+    for (i in seq_along(instances)){
+        ans[[ i ]] <- .do.one(plist, instances[[ i ]])
     }
     if (unlist)
         ans <- unlist(ans, recursive=FALSE)
@@ -77,7 +79,8 @@ repeatPattern <- function(plist, instances, unlist=TRUE){
 
 .do.one <- function(plist1, i.val){
     pp <- lapply(plist1, function(xx){
-        xx$vpa <- .subst(xx$vpa,i.val)
+        ##xx$vpa <- .subst(xx$vpa, i.val)                 ## FIX 14/8/2017
+        attr(xx, "vpa") <- .subst(attr(xx, "vpa"), i.val) ## FIX 14/8/2017
         xx
     }) 
     pp 

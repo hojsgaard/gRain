@@ -28,7 +28,7 @@
 mkcptlist <- function(object){
     if (!inherits(object, "grain"))
         stop("Object is not a 'grain' object\n")
-    if (getgin(object, "isCompiled"))
+    if (!.isComp(object)) ## FIXME should be !.isComp??
         object <- compile(object)
     dg <- ug2dag(getgin(object, "ug"))
     vp <- vpar(dg)

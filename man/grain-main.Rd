@@ -17,7 +17,7 @@
 \alias{grain.dModel}
 \title{Graphical Independence Network}
 \usage{
-grain(x, data = NULL, control = list(), smooth = 0, details = 0, ...)
+grain(x, control = list(), smooth = 0, details = 0, data = NULL, ...)
 
 \method{grain}{CPTspec}(x, control = list(), smooth = 0, details = 0, ...)
 
@@ -27,11 +27,11 @@ grain(x, data = NULL, control = list(), smooth = 0, details = 0, ...)
 
 \method{grain}{CPT_rep}(x, ...)
 
-\method{grain}{graphNEL}(x, data = NULL, control = list(), smooth = 0,
-  details = 0, ...)
+\method{grain}{graphNEL}(x, control = list(), smooth = 0, details = 0,
+  data = NULL, ...)
 
-\method{grain}{dModel}(x, data = NULL, control = list(), smooth = 0,
-  details = 0, ...)
+\method{grain}{dModel}(x, control = list(), smooth = 0, details = 0,
+  data = NULL, ...)
 }
 \arguments{
 \item{x}{An argument to build an independence network
@@ -39,14 +39,14 @@ from. Typically a list of conditional probability tables, a DAG
 or an undirected graph. In the two latter cases, data must also
 be provided.}
 
-\item{data}{An optional data set (currently must be an array/table)}
-
 \item{control}{A list defining controls, see 'details' below.}
 
 \item{smooth}{A (usually small) number to add to the counts of a
 table if the grain is built from a graph plus a dataset.}
 
 \item{details}{Debugging information.}
+
+\item{data}{An optional data set (currently must be an array/table)}
 
 \item{...}{Additional arguments, currently not used.}
 }
@@ -62,7 +62,6 @@ If 'smooth' is non-zero then entries of 'values' which a
     normalization takes place.
 }
 \examples{
-
 ## Asia (chest clinic) example:
 yn   <- c("yes","no")
 a    <- cptable(~asia,              values=c(1,99), levels=yn)
@@ -86,12 +85,11 @@ bnc <- compile(bn, propagate=TRUE)
 
 bnc2 <- compile(bn, root=c("lung", "bronc", "tub"), propagate=TRUE)
 
-system.time({
-  for (i in 1:200)
-    querygrain(bnc, nodes=c("lung","bronc", "tub"), type="joint")})
-system.time({
-  for (i in 1:200)
-    querygrain(bnc2, nodes=c("lung","bronc", "tub"), type="joint")})
+if (require(microbenchmark)){
+microbenchmark(
+  querygrain(bnc, nodes=c("lung","bronc", "tub"), type="joint"),
+  querygrain(bnc2, nodes=c("lung","bronc", "tub"), type="joint")
+)}
 
 
 ## Simple example - one clique only in triangulated graph:
@@ -104,23 +102,25 @@ plist.d <- compileCPT( list(a, t.a, s) )
 bn.d <- grain( plist.d )
 querygrain( bn.d )
 
-
 ## Create network from data and graph specification.
 ## There are different ways:
+
 data(HairEyeColor)
 hec <- HairEyeColor
-daG <- dag( ~Hair + Eye:Hair + Sex:Hair )
-class( daG )
-uG <- ug( ~Eye:Hair + Sex:Hair )
-class( uG )
+daG <- dag(~Hair + Eye:Hair + Sex:Hair)
+class(daG)
+uG <- ug( ~Eye:Hair + Sex:Hair)
+class(uG)
 
 ## Create directly from dag:
-b1  <- grain( daG, hec )
-class( b1 )
+bn.dag  <- grain(daG, data=hec)
+class(bn.dag)
+compile(bn.dag)
 
 ## Build model from undirected (decomposable) graph
-b3  <- grain( uG, hec )
-class( b3 )
+bn.ug  <- grain(uG, data=hec)
+class(bn.ug)
+compile(bn.ug)
 
 }
 \references{

@@ -14,14 +14,15 @@ Imports:
     igraph,
     graph,
     magrittr,
-		functional,
+    functional,
     Rcpp (>= 0.11.1)
 URL: http://people.math.aau.dk/~sorenh/software/gR/
 Encoding: UTF-8
+VignetteBuilder: knitr
 Suggests:
     Rgraphviz,
     microbenchmark,
-		knitr
+    knitr
 LinkingTo: Rcpp (>= 0.11.1), RcppArmadillo, RcppEigen, gRbase (>= 1.8-0)
 ByteCompile: Yes
 RoxygenNote: 6.0.1

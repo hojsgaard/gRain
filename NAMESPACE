@@ -92,3 +92,14 @@ S3method(setCPT, grain)
 S3method("setcpt<-",grain)
 
     
+S3method(add_jtree, CPTgrain)
+S3method(add_jtree, POTgrain)
+S3method(add_potential, CPTgrain)
+S3method(add_potential, POTgrain)
+S3method(vpar, CPTgrain)
+S3method(vpar, CPTspec)
+
+S3method(cpt, CPTgrain)
+S3method("cpt<-", CPTgrain)
+S3method(print, CPTspec_simple)
+

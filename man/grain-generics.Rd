@@ -18,7 +18,9 @@
 \alias{pot}
 \alias{pot.grain}
 \alias{cpt}
-\alias{cpt.grain}
+\alias{cpt.CPTgrain}
+\alias{cpt<-}
+\alias{cpt<-.CPTgrain}
 \alias{potential}
 \alias{potential.grain}
 \alias{vpar.CPTspec}
@@ -51,7 +53,11 @@ pot(object)
 
 cpt(object)
 
-\method{cpt}{grain}(object)
+\method{cpt}{CPTgrain}(object)
+
+cpt(object, position) <- value
+
+\method{cpt}{CPTgrain}(object, position) <- value
 
 potential(object)
 
@@ -67,6 +73,10 @@ potential(object)
 \item{nodes}{Some nodes of the object.}
 
 \item{...}{Additional arguments; currently not used.}
+
+\item{position}{Where to insert 'value'}
+
+\item{value}{Value to insert at 'position'}
 }
 \description{
 Generic functions etc for the gRain package

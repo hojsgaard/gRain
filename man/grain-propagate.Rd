@@ -4,15 +4,12 @@
 \alias{grain-propagate}
 \alias{propagate.grain}
 \alias{propagateLS}
-\alias{propagate__}
 \alias{propagateLS__}
-\alias{propagate__}
 \alias{propagateLS}
 \title{Propagate a graphical independence network (a Bayesian network)}
 \usage{
-\method{propagate}{grain}(object, details = object$details, ...)
-
-propagate__(object, details = object$details, ...)
+\method{propagate}{grain}(object, details = object$details, engine = "cpp",
+  ...)
 
 propagateLS(cqpotList, rip, initialize = TRUE, details = 0)
 }
@@ -20,6 +17,9 @@ propagateLS(cqpotList, rip, initialize = TRUE, details = 0)
 \item{object}{A grain object}
 
 \item{details}{For debugging info}
+
+\item{engine}{Either "R" or "cpp"; "cpp" is the default and the
+fastest.}
 
 \item{...}{Currently not used}
 
@@ -67,15 +67,14 @@ pnc  <- compile(pn, propagate=FALSE)
 
 if (require(microbenchmark))
     microbenchmark(
-        propagate(pnc),
-        propagate__(pnc) )
+        propagate(pnc, engine="R"),
+        propagate(pnc, engine="cpp") )
 
 }
 \references{
-Søren Højsgaard (2012). Graphical Independence
-    Networks with the gRain Package for R. Journal of Statistical
-    Software, 46(10), 1-26.
-    \url{http://www.jstatsoft.org/v46/i10/}.
+Søren Højsgaard (2012). Graphical Independence Networks
+    with the gRain Package for R. Journal of Statistical Software,
+    46(10), 1-26.  \url{http://www.jstatsoft.org/v46/i10/}.
 }
 \seealso{
 \code{\link{grain}}, \code{\link[gRbase]{compile}}

@@ -92,7 +92,7 @@ setJEvi_<- function(object, evidence=NULL, propagate=TRUE, details=0){
         if ( !inherits( evidence, "grain_jev" ) )
             evidence <- new_jev( evidence, universe( object )$levels )
         
-        if (!getgrain( object, "isCompiled"))
+        if (!.isComp(object))
             object <- compile( object )
         
         vn  <- sapply(evidence, varNames)    

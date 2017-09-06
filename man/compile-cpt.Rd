@@ -7,18 +7,24 @@
 \alias{summary.CPTspec}
 \alias{compilePOT}
 \alias{print.CPTspec}
+\alias{compile_cpt}
 \alias{compilePOT}
 \alias{compile.POT_rep}
 \alias{compile.CPT_rep}
+\alias{compileCPT}
 \title{Compile conditional probability tables / cliques potentials.}
 \usage{
 as_cptlist(x, forceCheck = FALSE)
+
+compile_cpt(x, forceCheck = TRUE)
 
 compilePOT(x)
 
 \method{compile}{POT_rep}(object, ...)
 
 \method{compile}{CPT_rep}(object, ...)
+
+compileCPT(x, forceCheck = TRUE)
 }
 \arguments{
 \item{x}{To \code{compileCPT} x is a list of conditional

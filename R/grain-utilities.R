@@ -17,13 +17,12 @@ randomCPT <- function(object, states=c("yes", "no")){
 
 
 .formula2char <- function(f) {
-	unlist(rhsf2list(f))
+    unlist(rhsf2list(f))
 }
 
 
 .namesDimnames <- function(x)
     names(dimnames(x))
-
 
 setSliceValue <- function(x, slice, complement=FALSE, value=0){
     margin <- names(slice)
@@ -73,6 +72,12 @@ getgrain<- function(object, name=c("universe", "data", "dag", "ug", "cptlist",
 }
 
 getgin <- getgrain
+
+
+
+
+
+
 
 .infoPrint <- function(details, limit=1, ...,  prefix='.'){
   if(details>=limit){
