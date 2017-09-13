@@ -36,6 +36,81 @@
 #' @keywords utilities
 #' 
 
+#' @rdname compile-cpt
+compile_cpt <- function(x, forceCheck=TRUE){
+        
+    .create_universe <- function(zz){
+        vn <- unlist(lapply(zz, "[[", "vnam"))
+        vl <- lapply(zz, "[[", "vlev")
+        di <- unlist(lapply(vl, length))
+        names(vl) <- vn
+        
+        universe  <- list(nodes = vn, levels = vl, nlev = di)
+        universe
+    }
+    
+    .create_array <- function(i, zz, universe){
+        cp <- zz[[i]]
+        dn <- universe$levels[cp$vpar]
+        di <- sapply(dn, length)
+        val <- array(rep(1.0, prod(di)), dim=di, dimnames=dn)
+        if (length(cp$values) > 0)
+            val[] <- cp$values + cp$smooth
+        val
+    }
+
+    if (!is.list(x)) stop("A list is expected")    
+    zz <- lapply(x, parse_cpt)
+    uni <- .create_universe(zz)
+
+    ## Does specification define a DAG?
+    ## FIXME what if forceCheck = FALSE???
+    vp <- lapply(zz, "[[", "vpar")
+    dg <- dagList(vp, forceCheck=forceCheck)
+
+    if (forceCheck){
+        ## Is distribution specified for all variables?
+        ss <- setdiff(unique.default(unlist(vp)),  uni$nodes)
+        if (length(ss) > 0)
+            stop(paste("distribution not specified for variable(s):", toString(ss)))
+    }
+
+    ## Need list of cpts (each represented as an array)
+    out <- lapply(seq_along(zz), .create_array, zz, uni)    
+    names(out) <- uni$nodes
+    
+    attr(out, "universe") <- uni
+    attr(out, "dag") <- dg
+    class(out) <- "CPTspec"
+    out
+}
+
+
+parse_cpt <- function(xi){
+    UseMethod("parse_cpt")
+}
+
+parse_cpt.cptable <- function(xi){
+    .parse_cpt_finalize(varNames(xi), valueLabels(xi)[[1]], as.numeric(xi), attr(xi, "smooth"))
+}
+
+parse_cpt.xtabs <- function(xi){
+    NextMethod("parse_cpt")
+}
+
+parse_cpt.default <- function(xi){
+    if (!is.named.array(xi)) stop("'xi' must be a named array")
+    .parse_cpt_finalize(varNames(xi), valueLabels(xi)[[1]], as.numeric(xi), 0)
+}
+
+.parse_cpt_finalize <- function(vpar, vlev, values, smooth){
+    out <- list(vnam=vpar[1], vlev=vlev, vpar=vpar, values=values,
+                normalize="first", smooth=smooth)
+    class(out) <- "cpt_generic"
+    out    
+}
+
+
 as_cptlist <- function(x, forceCheck=FALSE){
     if (!(inherits(x, "list") &&
           all(unlist(lapply(x, function(a) is.named.array(a))))))
@@ -56,87 +131,8 @@ as_cptlist <- function(x, forceCheck=FALSE){
     }    
 }
 
-#' @rdname compile-cpt
-compile_cpt <- function(x, forceCheck=TRUE){
-
-    if (!is.list(x)) stop("A list is expected")    
-    ## FIXME: Fragile that there is no control over input
-    zz <- lapply(x, .parseCPT_item)
-
-    vn <- unlist(lapply(zz, "[[", "vnam"))
-    vl <- lapply(zz, "[[", "vlev")
-    vd <- unlist(lapply(vl, length))
-    vp <- lapply(zz, "[[", "vpar")
-    di <- unlist(lapply(vl, length))
-    
-    names(vl) <- vn
-    names(vd) <- vn
-
-    universe  <- list(nodes = vn, levels = vl, nlev = di)
-
-    ## FIXME: Perhaps not create dag here at all unless check is required
-    dg <- dagList(vp, forceCheck = forceCheck)
-    
-    if (forceCheck){        
-        ## Distribution specified for all variables?
-        ss <- setdiff(unique.default(unlist(vp)),  vn)
-        if (length(ss) > 0)
-            stop(paste("distribution not specified for variable(s):", toString(ss)))
-
-        ## Are dimensions consistent?
-        lapply(1:length(vn), function(i){
-            ##cat(c(i, prod(vd[vp[[i]]]), length(zz[[i]]$values)), "\n")
-            if (length(zz[[i]]$values > 0)) { ## =0 can happen if cptable(..., values=NULL)
-                if (prod(vd[vp[[i]]]) != length(zz[[i]]$values)){
-                    cat(paste("problem here:\n",
-                              "cpt:", toString(vp[[i]]), "\n",
-                              "number of values given: ", length(zz[[i]]$values),"\n",
-                              "number of values expected: ", prod(vd[vp[[i]]]), "\n"))
-                    stop("can not proceed!")
-                }
-            }
-            })
-    }
-    
-    out <-
-        lapply(1:length(vn), function(i){
-            dn <- vl[vp[[i]]]
-            di <- c(vd[vp[[i]]], use.names=FALSE)
-            if (length(zz[[i]]$values) > 0)
-                ar <- array(zz[[i]]$values + zz[[i]]$smooth, dim=di, dimnames=dn)
-            else
-                ar <- array(rep(1.0, prod(di)) + zz[[i]]$smooth, dim=di, dimnames=dn)
-            ##ar <- tabNormalize(ar, type="first") ## FIXME Should happen at compile time???
-            ar
-        })
-    names(out) <- vn
-
-    attr(out, "universe") <- universe
-    attr(out, "dag") <- dg 
-    class(out) <- "CPTspec"
-    out
-}
 
 
-.parseCPT_item <- function(xi){ ## Create intermediate form of CPTs
-
-    ## cat(".parseCPT_item\n"); print(xi)
-    
-    cls <- c("cptable", "parray", "array", "matrix", "xtabs", "table") ## FIXME: Fragile
-    j   <- inherits(xi, cls, which=T)
-
-    if (!any(u <- j > 0)) stop("xi not a valid object")
-    
-    cls <- cls[u]    
-    vpar <- varNames(xi)
-    vlev <- valueLabels(xi)[[1]]
-    smooth <- if (cls[1] == "cptable") attr(xi, "smooth") else 0
-
-    
-    out <- list(vnam=vpar[1], vlev=vlev, vpar=vpar, values=as.numeric(xi),
-                normalize="first", smooth=smooth)
-    out
- }
 
 
 #' @rdname compile-cpt
@@ -310,9 +306,88 @@ compileCPT <- compile_cpt
 
 
 
+.parseCPT_item <- function(xi){ ## Create intermediate form of CPTs
+    
+    cls <- c("cptable", "parray", "array", "matrix", "xtabs", "table") ## FIXME: Fragile
+    j   <- inherits(xi, cls, which=T)
+
+    if (!any(u <- j > 0)) stop("xi not a valid object")
+    
+    cls <- cls[u]    
+    vpar <- varNames(xi)
+    vlev <- valueLabels(xi)[[1]]
+    smooth <- if (cls[1] == "cptable") attr(xi, "smooth") else 0
+    
+    out <- list(vnam=vpar[1], vlev=vlev, vpar=vpar, values=as.numeric(xi),
+                normalize="first", smooth=smooth)
+    out
+}
 
 
 
+
+
+#' @rdname compile-cpt
+.compile_cpt <- function(x, forceCheck=TRUE){
+
+    if (!is.list(x)) stop("A list is expected")    
+    ## FIXME: Fragile that there is no control over input
+    ##zz <- lapply(x, .parseCPT_item)
+    zz <- lapply(x, parse_cpt)
+
+    vn <- unlist(lapply(zz, "[[", "vnam"))
+    vl <- lapply(zz, "[[", "vlev")
+    vd <- unlist(lapply(vl, length))
+    vp <- lapply(zz, "[[", "vpar")
+    di <- unlist(lapply(vl, length))
+    
+    names(vl) <- vn
+    names(vd) <- vn
+
+    universe  <- list(nodes = vn, levels = vl, nlev = di)
+
+    ## FIXME: Perhaps not create dag here at all unless check is required
+    dg <- dagList(vp, forceCheck = forceCheck)
+    
+    if (forceCheck){        
+        ## Distribution specified for all variables?
+        ss <- setdiff(unique.default(unlist(vp)),  vn)
+        if (length(ss) > 0)
+            stop(paste("distribution not specified for variable(s):", toString(ss)))
+
+        ## Are dimensions consistent?
+        lapply(1:length(vn), function(i){
+            ##cat(c(i, prod(vd[vp[[i]]]), length(zz[[i]]$values)), "\n")
+            if (length(zz[[i]]$values > 0)) { ## =0 can happen if cptable(..., values=NULL)
+                if (prod(vd[vp[[i]]]) != length(zz[[i]]$values)){
+                    cat(paste("problem here:\n",
+                              "cpt:", toString(vp[[i]]), "\n",
+                              "number of values given: ", length(zz[[i]]$values),"\n",
+                              "number of values expected: ", prod(vd[vp[[i]]]), "\n"))
+                    stop("can not proceed!")
+                }
+            }
+            })
+    }
+    
+    out <-
+        lapply(1:length(vn), function(i){
+            dn <- vl[vp[[i]]]
+            di <- c(vd[vp[[i]]], use.names=FALSE)
+            if (length(zz[[i]]$values) > 0)
+                ar <- array(zz[[i]]$values + zz[[i]]$smooth, dim=di, dimnames=dn)
+            else
+                ar <- array(rep(1.0, prod(di)) + zz[[i]]$smooth, dim=di, dimnames=dn)
+            ##ar <- tabNormalize(ar, type="first") ## FIXME Should happen at compile time???
+            ar
+        })
+    names(out) <- vn
+
+    attr(out, "universe") <- universe
+    attr(out, "dag") <- dg 
+    class(out) <- "CPTspec"
+    out
+}
 
 
 

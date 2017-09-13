@@ -22,6 +22,16 @@ opts_chunk$set(fig.height=3,
 options("prompt"="> ","width"=85)
 @
 
+\usepackage{etoolbox} 
+\makeatletter 
+\preto{\@verbatim}{\topsep=0pt \partopsep=-25pt } 
+\makeatother
+
+\usepackage{alltt}
+\AtBeginEnvironment{alltt}{\setlength{\topsep}{-25pt}}
+
+
+
 \def\pkg#1{{\bf #1}}
 \def\grbn{{\bf gRain}}
 \def\grain{\texttt{grain}}
@@ -54,7 +64,7 @@ abbreviated BNs). The name \grbn\ is an acronym for [gra]phical
 citation("gRain")
 @
 
-Moreover, \cite{hoj:edw:lau:12} gives a broad treatment of graphical models (including these networks)
+Moreover, \cite{hoj:edw:lau:12} gives a broad treatment of graphical models (including Bayesian networks)
 More information about the package, other graphical modelling packages
 and development versions is available from
 \begin{quote}
@@ -85,7 +95,7 @@ net1
 This section reviews the chest clinic example of \cite{lau/spieg:88}
 (illustrated in Figure~\ref{fig:chest-LS}) and shows one way of
 specifying the model in \grbn{}.  \cite{lau/spieg:88} motivate the
-chest clinic example as follows:
+chest clinic example with the following narrative:
 
 \begin{quote}
   ``Shortness--of--breath (dyspnoea) may be due to tuberculosis, lung
@@ -98,17 +108,10 @@ chest clinic example as follows:
 \end{quote}
 
 
-<<chest-LS, echo=F, fig.cap="Chest clinic example from LS.">>=
+<<chest-LS, echo=F, fig.cap="Chest clinic example from Lauritzen and Spiegelhalter (1988).">>=
 require(Rgraphviz)
 plot(net1)
 @ %def
-
-% \begin{figure}[ht]
-%   \centering
-%   \includegraphics[height=5cm]{figures/graph-LS}
-%   \caption{Chest clinic example from LS.}
-%   \label{fig:chest-LS}
-% \end{figure}
 
 \subsection{Building a network}
 
@@ -126,7 +129,6 @@ Note that $\epsilon$ is a logical variable which is
 true (yes) if either $\tau$ or $\lambda$ are true (yes) and false (no) otherwise.
 The connection between the variables is displayed by the DAG (directed acyclic graph) in
 Figure~\ref{fig:chest-LS}.
-
 
 A joint probability density factorising accoring to a DAG with nodes
 $V$ can be constructed as follows: Each node $v\in V$ has a set $pa(v)$ of parents and each node
@@ -162,22 +164,25 @@ can be constructed as
 \label{sec:xxx}
 
 Suppose we are given the evidence (sometimes also called ``finding'')
-that a set of variables $E\subset V$ have a specific value $e^*$. For
+that a set of variables $E\subset V$
+have a specific value $e^*$.
+With this evidence, we are often interested in the conditional
+distribution $p(v|E=e^*)$
+for some of the variables $v \in V \setminus E$
+or in $p(U|E=e^*)$
+for a set $U\subset V \setminus E$. Interest might also be in
+calculating the probability of a specific event, e.g.\ the probability
+of seeing a specific evidence, i.e.\ $p(E=e^*)$.
+Other types of evidence (called soft evidence, virtual evidence or likelihood evidence) are discussed in
+Section~\ref{sec:hard-virt-likel}.
+
+For
 example that a person has recently visited Asia and suffers from
 dyspnoea, i.e.\ $\alpha=\mbox{yes}$ and $\delta=\mbox{yes}$.
-
-With this evidence, we are often interested in the
-conditional distribution $p(v|E=e^*)$ for some of the variables $v \in
-V \setminus E$ or in $p(U|E=e^*)$ for a set $U\subset V
-\setminus E$.
-
 In the chest clinic example, interest might be in $p(\lambda|e^*)$, $p(\tau|e^*)$
 and  $p(\beta|e^*)$, or possibly in the joint (conditional) distribution
 $p(\lambda,\tau,\beta|e^*)$.
 
-Interest might also be in
-calculating the probability of a specific event, e.g.\ the probability
-of seeing a specific evidence, i.e.\ $p(E=e^*)$.
 
 \section{A one--minute version of  \grbn{}}
 \label{sec:oneminute}
@@ -204,16 +209,30 @@ x.e  <- cptable(~xray|either, values=c(98, 2, 5, 95), levels=yn)
 d.be <- cptable(~dysp|bronc:either, values=c(9, 1, 7, 3, 8, 2, 1, 9), levels=yn)
 @ %def
 
-\item Compile list of conditional probability tables and create the network:
+\item Compile list of conditional probability tables.
 
 <<>>=
 chest_cpt <- compileCPT(list(a, t.a, s, l.s, b.s, e.lt, x.e, d.be))
-chest_cpt
+summary(chest_cpt)
+
 chest_cpt$tub
 chest_cpt$either  %>% ftable(row.vars="either") ## Notice: a logical node
+@ %def
+
+
+\item Create the network:\footnote{SH: Rethink print method}
+<< >>= 
 chest_bn <- grain(chest_cpt)
 chest_bn
-@ %def
+@
+
+Compile the network (see references for details about
+this):\footnote{SH: Maybe change so that default is that a network is
+  compiled on creation time.}
+
+<< >>= 
+chest_bn <- compile(chest_bn)
+@
 
 \end{enumerate}
 
@@ -221,16 +240,16 @@ chest_bn
 \label{sec:querying-network}
 
 \begin{enumerate}
-\item The network can be queried to give marginal probabilities:
+\item The network can be queried to give marginal probabilities:\footnote{\code{querygrain()} can be abbreviated \code{qgrain()}.}
 
 <<>>=
 querygrain(chest_bn, nodes=c("lung", "bronc"), type="marginal")
 @ %def
 
-\item Likewise, a joint distribution can be obtained:
+\item Likewise, a joint distribution can be obtained:\footnote{SH: FIXME}
 
 <<>>=
-querygrain(chest_bn,nodes=c("lung", "bronc"), type="joint")
+querygrain(chest_bn, nodes=c("lung", "bronc"), type="joint")
 @ %def
 
 \item Evidence can be entered in one of these two equivalent forms:
@@ -246,8 +265,7 @@ chest_bn2  <- setEvidence(chest_bn,
 pEvidence(chest_bn2)
 @ %def
 
-\item The network can be queried again:
-
+\item The network can be queried again:\footnote{SH: FIXME}
 <<>>=
 querygrain(chest_bn2, nodes=c("lung", "bronc"))
 querygrain(chest_bn2, nodes=c("lung", "bronc"), type="joint")
@@ -255,7 +273,13 @@ querygrain(chest_bn2, nodes=c("lung", "bronc"), type="joint")
 \end{enumerate}
 
 
-
+Notice a small shortcut: A common usage of a Bayesian network is to
+enter evidence and then ask for the conditional distribtion of some
+variables: This can be accomplished in one simple step as follows:\footnote{SH: FIXME}
+<< >>= 
+querygrain(chest_bn, evidence=list(asia="yes", dysp="yes"),
+           nodes=c("lung", "bronc"), type="joint")
+@
 
 
 
@@ -267,7 +291,9 @@ Consider setting the evidence
 chest_bn3 <- setEvidence(chest_bn, evidence=list(either="no", tub="yes"))
 @ %def
 
-Under the model, this finding has zero probability and therefore, all
+Under the model, this specific evidence has zero probability:
+\verb|either| is true if \verb|tub| is true or \verb|lung| is true (or
+both). Hence the specific evidence is impossible and therefore, all
 conditional probabilities are (under the model) undefined:
 
 <<>>=
@@ -275,18 +301,7 @@ pEvidence(chest_bn3)
 querygrain(chest_bn3, nodes=c("lung", "bronc"), type="joint")
 @ %def
 
-We can look closer into this zero--probability issue. Because the node
-\code{either} is logical, half of the configurations will have zero probability:
 
-<<>>=
-tt <- querygrain(chest_bn, type="joint")
-sum(tt == 0) / length(tt)
-@ %def
-
-In particular the configuration above has zero probability
-<<>>=
-sum(ar_slice(tt, list(either="no", tub="yes")))
-@ %def
 
 Zero probailities (or almost zero probabilities) also arise in a
 different in a different setting. Consider this example
@@ -305,7 +320,7 @@ querygrain(setEvidence(bn, evidence=list(a="no", c="yes")))
 @ %def
 
 No problem so far, but if \code{eps} is made smaller numerical
-problems arise:
+problems arise:\footnote{Her vil det netop vaere smart at laegge tabeller ind separat!!}
 <<>>=
 eps  <- 1e-200
 a    <- cptable(~a,   values=c(1, eps),levels=yn)
@@ -340,7 +355,7 @@ levels will give a joint state space with $10^{80}$
 states; that is about the number of atoms in the universe. Similarly,
 $265$
 binary variables will result in a joint state space of about the same
-size. Yey, \grbn\ has been used succesfully in models with tens of
+size. Yet, \grbn\ has been used succesfully in models with tens of
 thousand variables.  The ``trick'' in \grbn\ is to make all
 computations without ever forming the joint distribution. 
 
@@ -472,12 +487,12 @@ Suppose we want to make a diagnosis about tuberculosis given the
 evidence that a person has recently been to Asia. The functions
 \code{setFinding()} (which has been in \grbn\ for years) and
 \code{setEvidence()} (which is a recent addition to \grbn) can both be used for this
-purpose. The following forms are equivalent.
+purpose. The following forms are equivalent (\verb|setFinding()| is kept in \grbn\ for backward compatibility):
 
 <<>>=
-setFinding(chest1, nodes="asia", states="yes")
-setEvidence(chest1, nodes="asia", states="yes")
 setEvidence(chest1, evidence=list(asia="yes"))
+setEvidence(chest1, nodes="asia", states="yes")
+## setFinding(chest1, nodes="asia", states="yes")
 @ %def
 
 <<>>=
@@ -500,7 +515,7 @@ so in practice, because we may equivalently enter the virtual evidence
 in the original network.
 
 We can then introduce a new variable
-\code{guess.asia} with \code{asia} as its only parent.
+\code{guess.asia} with \code{asia} as its only parent.\footnote{FIXME: Hvorfor vil parray ikke gaa vaek...}
 
 <<>>=
 g.a <- parray(c("guess.asia", "asia"), levels=list(yn, yn),
@@ -551,7 +566,7 @@ using likelihood evidence it is possible to work with networks with
 both discrete and continuous variables (or other types of variables).
 This is possible only when he networks
 have a specific structure. This is possible when no discrete variable
-has non--discrete parents.
+has non--discrete parents.\footnote{SH: Expand this.}
 
 Take a simple example: $x$ is a discrete variable with levels $1$ and
 $2$; $y_1|x=k \sim N(\mu_k, \sigma^2_k)$ and $y_2|x=k \sim
@@ -624,7 +639,7 @@ whereas \code{gr.uG} will work, but it may not give the expected results.
 \label{sec:using-smooth}
 
 To illustrate what goes on, we can extract the distributions from data
-as follows:
+as follows:\footnote{SH: FIXME Use new functions from gRbase.}
 
 <<>>=
 p.A.g.B <- tableDiv(dat, tableMargin(dat, "B"))
@@ -750,3 +765,19 @@ querygrain(setFinding(gr.dG, nodes="B", states="B1"))
 %% \renewenvironment{Schunk}{\linespread{.90}}{}
 %% %% ------------------------
 %% 
+
+
+
+
+% We can look closer into this zero--probability issue. Because the node
+% \code{either} is logical, half of the configurations will have zero probability:
+
+% <<>>=
+% tt <- querygrain(chest_bn, type="joint")
+% sum(tt == 0) / length(tt)
+% @ %def
+
+% In particular the configuration above has zero probability
+% <<>>=
+% sum(ar_slice(tt, list(either="no", tub="yes")))
+% @ %def

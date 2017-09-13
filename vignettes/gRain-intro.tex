@@ -64,6 +64,16 @@
 
 
 
+\usepackage{etoolbox} 
+\makeatletter 
+\preto{\@verbatim}{\topsep=0pt \partopsep=-25pt } 
+\makeatother
+
+\usepackage{alltt}
+\AtBeginEnvironment{alltt}{\setlength{\topsep}{-25pt}}
+
+
+
 \def\pkg#1{{\bf #1}}
 \def\grbn{{\bf gRain}}
 \def\grain{\texttt{grain}}
@@ -74,7 +84,7 @@
 
 \author{S{\o}ren H{\o}jsgaard\\Aalborg University, Denmark}
 \title{Bayesian networks in R with the \pkg{gRain} package}
-\date{\pkg{gRain} version 1.3-1 as of 2017-09-05}
+\date{\pkg{gRain} version 1.3-1 as of 2017-09-06}
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 \maketitle
@@ -117,7 +127,7 @@ abbreviated BNs). The name \grbn\ is an acronym for [gra]phical
 \end{kframe}
 \end{knitrout}
 
-Moreover, \cite{hoj:edw:lau:12} gives a broad treatment of graphical models (including these networks)
+Moreover, \cite{hoj:edw:lau:12} gives a broad treatment of graphical models (including Bayesian networks)
 More information about the package, other graphical modelling packages
 and development versions is available from
 \begin{quote}
@@ -134,7 +144,7 @@ and development versions is available from
 This section reviews the chest clinic example of \cite{lau/spieg:88}
 (illustrated in Figure~\ref{fig:chest-LS}) and shows one way of
 specifying the model in \grbn{}.  \cite{lau/spieg:88} motivate the
-chest clinic example as follows:
+chest clinic example with the following narrative:
 
 \begin{quote}
   ``Shortness--of--breath (dyspnoea) may be due to tuberculosis, lung
@@ -149,18 +159,11 @@ chest clinic example as follows:
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}
-\includegraphics[width=\maxwidth]{figures/grain-chest-LS-1} \caption[Chest clinic example from LS]{Chest clinic example from LS.}\label{fig:chest-LS}
+\includegraphics[width=\maxwidth]{figures/grain-chest-LS-1} \caption[Chest clinic example from Lauritzen and Spiegelhalter (1988)]{Chest clinic example from Lauritzen and Spiegelhalter (1988).}\label{fig:chest-LS}
 \end{figure}
 
 
 \end{knitrout}
-
-% \begin{figure}[ht]
-%   \centering
-%   \includegraphics[height=5cm]{figures/graph-LS}
-%   \caption{Chest clinic example from LS.}
-%   \label{fig:chest-LS}
-% \end{figure}
 
 \subsection{Building a network}
 
@@ -178,7 +181,6 @@ Note that $\epsilon$ is a logical variable which is
 true (yes) if either $\tau$ or $\lambda$ are true (yes) and false (no) otherwise.
 The connection between the variables is displayed by the DAG (directed acyclic graph) in
 Figure~\ref{fig:chest-LS}.
-
 
 A joint probability density factorising accoring to a DAG with nodes
 $V$ can be constructed as follows: Each node $v\in V$ has a set $pa(v)$ of parents and each node
@@ -214,22 +216,25 @@ can be constructed as
 \label{sec:xxx}
 
 Suppose we are given the evidence (sometimes also called ``finding'')
-that a set of variables $E\subset V$ have a specific value $e^*$. For
+that a set of variables $E\subset V$
+have a specific value $e^*$.
+With this evidence, we are often interested in the conditional
+distribution $p(v|E=e^*)$
+for some of the variables $v \in V \setminus E$
+or in $p(U|E=e^*)$
+for a set $U\subset V \setminus E$. Interest might also be in
+calculating the probability of a specific event, e.g.\ the probability
+of seeing a specific evidence, i.e.\ $p(E=e^*)$.
+Other types of evidence (called soft evidence, virtual evidence or likelihood evidence) are discussed in
+Section~\ref{sec:hard-virt-likel}.
+
+For
 example that a person has recently visited Asia and suffers from
 dyspnoea, i.e.\ $\alpha=\mbox{yes}$ and $\delta=\mbox{yes}$.
-
-With this evidence, we are often interested in the
-conditional distribution $p(v|E=e^*)$ for some of the variables $v \in
-V \setminus E$ or in $p(U|E=e^*)$ for a set $U\subset V
-\setminus E$.
-
 In the chest clinic example, interest might be in $p(\lambda|e^*)$, $p(\tau|e^*)$
 and  $p(\beta|e^*)$, or possibly in the joint (conditional) distribution
 $p(\lambda,\tau,\beta|e^*)$.
 
-Interest might also be in
-calculating the probability of a specific event, e.g.\ the probability
-of seeing a specific evidence, i.e.\ $p(E=e^*)$.
 
 \section{A one--minute version of  \grbn{}}
 \label{sec:oneminute}
@@ -260,79 +265,24 @@ example is as follows.
 \end{kframe}
 \end{knitrout}
 
-\item Compile list of conditional probability tables and create the network:
+\item Compile list of conditional probability tables.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlstd{chest_cpt} \hlkwb{<-} \hlkwd{compileCPT}\hlstd{(}\hlkwd{list}\hlstd{(a, t.a, s, l.s, b.s, e.lt, x.e, d.be))}
-\hlstd{chest_cpt}
+\hlkwd{summary}\hlstd{(chest_cpt)}
 \end{alltt}
 \begin{verbatim}
-## $asia
-## asia
-## yes  no 
-##   1  99 
-## 
-## $tub
-##      asia
-## tub   yes no
-##   yes   5  1
-##   no   95 99
-## 
-## $smoke
-## smoke
-## yes  no 
-##   5   5 
-## 
-## $lung
-##      smoke
-## lung  yes no
-##   yes   1  1
-##   no    9 99
-## 
-## $bronc
-##      smoke
-## bronc yes no
-##   yes   6  3
-##   no    4  7
-## 
-## $either
-## , , tub = yes
-## 
-##       lung
-## either yes no
-##    yes   1  1
-##    no    0  0
-## 
-## , , tub = no
-## 
-##       lung
-## either yes no
-##    yes   1  0
-##    no    0  1
-## 
-## 
-## $xray
-##      either
-## xray  yes no
-##   yes  98  5
-##   no    2 95
-## 
-## $dysp
-## , , either = yes
-## 
-##      bronc
-## dysp  yes no
-##   yes   9  7
-##   no    1  3
-## 
-## , , either = no
-## 
-##      bronc
-## dysp  yes no
-##   yes   8  1
-##   no    2  9
+## CPTspec with probabilities:
+##  P( asia )
+##  P( tub | asia )
+##  P( smoke )
+##  P( lung | smoke )
+##  P( bronc | smoke )
+##  P( either | lung tub )
+##  P( xray | either )
+##  P( dysp | bronc either )
 \end{verbatim}
 \begin{alltt}
 \hlstd{chest_cpt}\hlopt{$}\hlstd{tub}
@@ -353,6 +303,13 @@ example is as follows.
 ## yes           1  1   1  0
 ## no            0  0   0  1
 \end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+
+\item Create the network:\footnote{SH: Rethink print method}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlstd{chest_bn} \hlkwb{<-} \hlkwd{grain}\hlstd{(chest_cpt)}
 \hlstd{chest_bn}
@@ -364,13 +321,25 @@ example is as follows.
 \end{kframe}
 \end{knitrout}
 
+Compile the network (see references for details about
+this):\footnote{SH: Maybe change so that default is that a network is
+  compiled on creation time.}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{chest_bn} \hlkwb{<-} \hlkwd{compile}\hlstd{(chest_bn)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
 \end{enumerate}
 
 \subsection{Querying a network}
 \label{sec:querying-network}
 
 \begin{enumerate}
-\item The network can be queried to give marginal probabilities:
+\item The network can be queried to give marginal probabilities:\footnote{\code{querygrain()} can be abbreviated \code{qgrain()}.}
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -391,12 +360,12 @@ example is as follows.
 \end{kframe}
 \end{knitrout}
 
-\item Likewise, a joint distribution can be obtained:
+\item Likewise, a joint distribution can be obtained:\footnote{SH: FIXME}
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{querygrain}\hlstd{(chest_bn,}\hlkwc{nodes}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"lung"}\hlstd{,} \hlstr{"bronc"}\hlstd{),} \hlkwc{type}\hlstd{=}\hlstr{"joint"}\hlstd{)}
+\hlkwd{querygrain}\hlstd{(chest_bn,} \hlkwc{nodes}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"lung"}\hlstd{,} \hlstr{"bronc"}\hlstd{),} \hlkwc{type}\hlstd{=}\hlstr{"joint"}\hlstd{)}
 \end{alltt}
 \begin{verbatim}
 ##      bronc
@@ -431,8 +400,7 @@ example is as follows.
 \end{kframe}
 \end{knitrout}
 
-\item The network can be queried again:
-
+\item The network can be queried again:\footnote{SH: FIXME}
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -463,7 +431,23 @@ example is as follows.
 \end{enumerate}
 
 
-
+Notice a small shortcut: A common usage of a Bayesian network is to
+enter evidence and then ask for the conditional distribtion of some
+variables: This can be accomplished in one simple step as follows:\footnote{SH: FIXME}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{querygrain}\hlstd{(chest_bn,} \hlkwc{evidence}\hlstd{=}\hlkwd{list}\hlstd{(}\hlkwc{asia}\hlstd{=}\hlstr{"yes"}\hlstd{,} \hlkwc{dysp}\hlstd{=}\hlstr{"yes"}\hlstd{),}
+           \hlkwc{nodes}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"lung"}\hlstd{,} \hlstr{"bronc"}\hlstd{),} \hlkwc{type}\hlstd{=}\hlstr{"joint"}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+##      bronc
+## lung        yes       no
+##   yes   4050000  3850000
+##   no  141277500 47385000
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
 
 
@@ -479,7 +463,9 @@ Consider setting the evidence
 \end{kframe}
 \end{knitrout}
 
-Under the model, this finding has zero probability and therefore, all
+Under the model, this specific evidence has zero probability:
+\verb|either| is true if \verb|tub| is true or \verb|lung| is true (or
+both). Hence the specific evidence is impossible and therefore, all
 conditional probabilities are (under the model) undefined:
 
 \begin{knitrout}
@@ -502,32 +488,7 @@ conditional probabilities are (under the model) undefined:
 \end{kframe}
 \end{knitrout}
 
-We can look closer into this zero--probability issue. Because the node
-\code{either} is logical, half of the configurations will have zero probability:
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{tt} \hlkwb{<-} \hlkwd{querygrain}\hlstd{(chest_bn,} \hlkwc{type}\hlstd{=}\hlstr{"joint"}\hlstd{)}
-\hlkwd{sum}\hlstd{(tt} \hlopt{==} \hlnum{0}\hlstd{)} \hlopt{/} \hlkwd{length}\hlstd{(tt)}
-\end{alltt}
-\begin{verbatim}
-## [1] 0.5
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
-
-In particular the configuration above has zero probability
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{sum}\hlstd{(}\hlkwd{ar_slice}\hlstd{(tt,} \hlkwd{list}\hlstd{(}\hlkwc{either}\hlstd{=}\hlstr{"no"}\hlstd{,} \hlkwc{tub}\hlstd{=}\hlstr{"yes"}\hlstd{)))}
-\end{alltt}
-\begin{verbatim}
-## [1] 0
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
 
 Zero probailities (or almost zero probabilities) also arise in a
 different in a different setting. Consider this example
@@ -566,7 +527,7 @@ different in a different setting. Consider this example
 \end{knitrout}
 
 No problem so far, but if \code{eps} is made smaller numerical
-problems arise:
+problems arise:\footnote{Her vil det netop vaere smart at laegge tabeller ind separat!!}
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -621,13 +582,13 @@ construct the joint distribution (an array with $2^8=256$ entries) directly as:
 \hlstd{joint}  \hlopt{%>%} \hlstd{as.data.frame.table} \hlopt{%>%} \hlstd{head}
 \end{alltt}
 \begin{verbatim}
-##   dysp bronc either lung tub xray asia smoke   Freq
-## 1  yes   yes    yes  yes yes  yes  yes   yes 132300
-## 2   no   yes    yes  yes yes  yes  yes   yes  14700
-## 3  yes    no    yes  yes yes  yes  yes   yes  68600
-## 4   no    no    yes  yes yes  yes  yes   yes  29400
-## 5  yes   yes     no  yes yes  yes  yes   yes      0
-## 6   no   yes     no  yes yes  yes  yes   yes      0
+##   dysp bronc either tub asia smoke lung xray   Freq
+## 1  yes   yes    yes yes  yes   yes  yes  yes 132300
+## 2   no   yes    yes yes  yes   yes  yes  yes  14700
+## 3  yes    no    yes yes  yes   yes  yes  yes  68600
+## 4   no    no    yes yes  yes   yes  yes  yes  29400
+## 5  yes   yes     no yes  yes   yes  yes  yes      0
+## 6   no   yes     no yes  yes   yes  yes  yes      0
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -639,7 +600,7 @@ levels will give a joint state space with $10^{80}$
 states; that is about the number of atoms in the universe. Similarly,
 $265$
 binary variables will result in a joint state space of about the same
-size. Yey, \grbn\ has been used succesfully in models with tens of
+size. Yet, \grbn\ has been used succesfully in models with tens of
 thousand variables.  The ``trick'' in \grbn\ is to make all
 computations without ever forming the joint distribution. 
 
@@ -879,12 +840,12 @@ Suppose we want to make a diagnosis about tuberculosis given the
 evidence that a person has recently been to Asia. The functions
 \code{setFinding()} (which has been in \grbn\ for years) and
 \code{setEvidence()} (which is a recent addition to \grbn) can both be used for this
-purpose. The following forms are equivalent.
+purpose. The following forms are equivalent (\verb|setFinding()| is kept in \grbn\ for backward compatibility):
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{setFinding}\hlstd{(chest1,} \hlkwc{nodes}\hlstd{=}\hlstr{"asia"}\hlstd{,} \hlkwc{states}\hlstd{=}\hlstr{"yes"}\hlstd{)}
+\hlkwd{setEvidence}\hlstd{(chest1,} \hlkwc{evidence}\hlstd{=}\hlkwd{list}\hlstd{(}\hlkwc{asia}\hlstd{=}\hlstr{"yes"}\hlstd{))}
 \end{alltt}
 \begin{verbatim}
 ## Independence network: Compiled: TRUE Propagated: TRUE 
@@ -906,16 +867,8 @@ purpose. The following forms are equivalent.
 ##   pEvidence: 100.000000
 \end{verbatim}
 \begin{alltt}
-\hlkwd{setEvidence}\hlstd{(chest1,} \hlkwc{evidence}\hlstd{=}\hlkwd{list}\hlstd{(}\hlkwc{asia}\hlstd{=}\hlstr{"yes"}\hlstd{))}
+\hlcom{## setFinding(chest1, nodes="asia", states="yes")}
 \end{alltt}
-\begin{verbatim}
-## Independence network: Compiled: TRUE Propagated: TRUE 
-##   Nodes: chr [1:2] "asia" "tub"
-##   Evidence:
-##   nodes is.hard.evidence hard.state
-## 1  asia             TRUE        yes
-##   pEvidence: 100.000000
-\end{verbatim}
 \end{kframe}
 \end{knitrout}
 
@@ -949,7 +902,7 @@ so in practice, because we may equivalently enter the virtual evidence
 in the original network.
 
 We can then introduce a new variable
-\code{guess.asia} with \code{asia} as its only parent.
+\code{guess.asia} with \code{asia} as its only parent.\footnote{FIXME: Hvorfor vil parray ikke gaa vaek...}
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -1085,7 +1038,7 @@ using likelihood evidence it is possible to work with networks with
 both discrete and continuous variables (or other types of variables).
 This is possible only when he networks
 have a specific structure. This is possible when no discrete variable
-has non--discrete parents.
+has non--discrete parents.\footnote{SH: Expand this.}
 
 Take a simple example: $x$ is a discrete variable with levels $1$ and
 $2$; $y_1|x=k \sim N(\mu_k, \sigma^2_k)$ and $y_2|x=k \sim
@@ -1119,7 +1072,7 @@ The following two graphs specify the same model:
 \hlkwd{par}\hlstd{(}\hlkwc{mfrow}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{));} \hlkwd{plot}\hlstd{( dG );} \hlkwd{plot}\hlstd{( uG )}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\maxwidth]{figures/grain-unnamed-chunk-30-1} 
+\includegraphics[width=\maxwidth]{figures/grain-unnamed-chunk-31-1} 
 
 \end{knitrout}
 
@@ -1127,7 +1080,7 @@ Suppose data is
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{dat} \hlkwb{<-} \hlkwd{newar}\hlstd{(}\hlkwd{c}\hlstd{(}\hlstr{"A"}\hlstd{,}\hlstr{"B"}\hlstd{,}\hlstr{"C"}\hlstd{),} \hlkwc{levels}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,}\hlnum{2}\hlstd{,}\hlnum{2}\hlstd{),} \hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{0}\hlstd{,}\hlnum{2}\hlstd{,}\hlnum{3}\hlstd{,}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{,}\hlnum{1}\hlstd{,}\hlnum{4}\hlstd{))}
+\hlstd{dat} \hlkwb{<-} \hlkwd{newar}\hlstd{(}\hlkwd{c}\hlstd{(}\hlstr{"A"}\hlstd{,} \hlstr{"B"}\hlstd{,} \hlstr{"C"}\hlstd{),} \hlkwc{levels}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,} \hlnum{2}\hlstd{,} \hlnum{2}\hlstd{),} \hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{2}\hlstd{,} \hlnum{3}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{2}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{4}\hlstd{))}
 \hlkwd{class}\hlstd{(dat)}
 \end{alltt}
 \begin{verbatim}
@@ -1142,10 +1095,6 @@ A network can be built from data using:
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlstd{gr.dG} \hlkwb{<-} \hlkwd{compile}\hlstd{(} \hlkwd{grain}\hlstd{( dG,} \hlkwc{data}\hlstd{=dat ) )}
-\end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in compileCPT(object): A list is expected}}\begin{alltt}
 \hlstd{gr.uG} \hlkwb{<-} \hlkwd{compile}\hlstd{(} \hlkwd{grain}\hlstd{( uG,} \hlkwc{data}\hlstd{=dat ) )}
 \end{alltt}
 \end{kframe}
@@ -1219,7 +1168,7 @@ whereas \code{gr.uG} will work, but it may not give the expected results.
 \label{sec:using-smooth}
 
 To illustrate what goes on, we can extract the distributions from data
-as follows:
+as follows:\footnote{SH: FIXME Use new functions from gRbase.}
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -1316,9 +1265,7 @@ One can do
 \begin{alltt}
 \hlstd{gr.dG} \hlkwb{<-} \hlkwd{compile}\hlstd{(}\hlkwd{grain}\hlstd{(dG,} \hlkwc{data}\hlstd{=dat,} \hlkwc{smooth}\hlstd{=e))}
 \end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in compileCPT(object): A list is expected}}\end{kframe}
+\end{kframe}
 \end{knitrout}
 
 which (internally) corresponds to
@@ -1357,9 +1304,23 @@ We get
 \begin{alltt}
 \hlkwd{querygrain}\hlstd{(gr.dG)}
 \end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in querygrain(gr.dG): object 'gr.dG' not found}}\begin{alltt}
+\begin{verbatim}
+## $A
+## A
+##        A1        A2 
+## 0.3082845 0.6917155 
+## 
+## $B
+## B
+##        B1        B2 
+## 0.2316611 0.7683389 
+## 
+## $C
+## C
+##        C1        C2 
+## 0.3847926 0.6152074
+\end{verbatim}
+\begin{alltt}
 \hlkwd{querygrain}\hlstd{(gr.uG)}
 \end{alltt}
 \begin{verbatim}
@@ -1387,9 +1348,18 @@ However, if we condition on \code{B=B1} we get:
 \begin{alltt}
 \hlkwd{querygrain}\hlstd{(}\hlkwd{setFinding}\hlstd{(gr.dG,} \hlkwc{nodes}\hlstd{=}\hlstr{"B"}\hlstd{,} \hlkwc{states}\hlstd{=}\hlstr{"B1"}\hlstd{))}
 \end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in getgin(x, "{}isCompiled"{}): object 'gr.dG' not found}}\begin{alltt}
+\begin{verbatim}
+## $A
+## A
+##        A1        A2 
+## 0.3344371 0.6655629 
+## 
+## $C
+## C
+##          C1          C2 
+## 0.003308796 0.996691204
+\end{verbatim}
+\begin{alltt}
 \hlkwd{querygrain}\hlstd{(}\hlkwd{setFinding}\hlstd{(gr.uG,} \hlkwc{nodes}\hlstd{=}\hlstr{"B"}\hlstd{,} \hlkwc{states}\hlstd{=}\hlstr{"B1"}\hlstd{))}
 \end{alltt}
 \begin{verbatim}
@@ -1465,9 +1435,23 @@ Notice that the results are not exactly identical:
 \begin{alltt}
 \hlkwd{querygrain}\hlstd{(gr.dG)}
 \end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in querygrain(gr.dG): object 'gr.dG' not found}}\end{kframe}
+\begin{verbatim}
+## $A
+## A
+##        A1        A2 
+## 0.3082845 0.6917155 
+## 
+## $B
+## B
+##        B1        B2 
+## 0.2316611 0.7683389 
+## 
+## $C
+## C
+##        C1        C2 
+## 0.3847926 0.6152074
+\end{verbatim}
+\end{kframe}
 \end{knitrout}
 
 
@@ -1490,9 +1474,18 @@ Notice that the results are not exactly identical:
 \begin{alltt}
 \hlkwd{querygrain}\hlstd{(}\hlkwd{setFinding}\hlstd{(gr.dG,} \hlkwc{nodes}\hlstd{=}\hlstr{"B"}\hlstd{,} \hlkwc{states}\hlstd{=}\hlstr{"B1"}\hlstd{))}
 \end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in getgin(x, "{}isCompiled"{}): object 'gr.dG' not found}}\end{kframe}
+\begin{verbatim}
+## $A
+## A
+##        A1        A2 
+## 0.3344371 0.6655629 
+## 
+## $C
+## C
+##          C1          C2 
+## 0.003308796 0.996691204
+\end{verbatim}
+\end{kframe}
 \end{knitrout}
 
 
@@ -1529,3 +1522,19 @@ Notice that the results are not exactly identical:
 %% \renewenvironment{Schunk}{\linespread{.90}}{}
 %% %% ------------------------
 %% 
+
+
+
+
+% We can look closer into this zero--probability issue. Because the node
+% \code{either} is logical, half of the configurations will have zero probability:
+
+% <<>>=
+% tt <- querygrain(chest_bn, type="joint")
+% sum(tt == 0) / length(tt)
+% @ %def
+
+% In particular the configuration above has zero probability
+% <<>>=
+% sum(ar_slice(tt, list(either="no", tub="yes")))
+% @ %def

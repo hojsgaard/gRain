@@ -69,6 +69,127 @@
 #' @export cptable
 #'
 
+cptable <- function(vpar, levels=NULL, values=NULL, normalize=TRUE,  smooth=0 ){
+    vpa  <- c(.formula2char(vpar))        
+    ans  <- values
+    attributes(ans) <-
+        list(vpa=vpa, normalize=normalize,
+             smooth=smooth, levels=levels)
+    #ans  <- list(vpa=vpa, levels=levels, normalize=normalize,
+    #             smooth=smooth, values=values)
+    class(ans) <- "cptable"
+    ans
+}
+
+
+## cptable <- function(vpar, levels=NULL, values=NULL, normalize=TRUE,  smooth=0 ){
+##     if (!is.list( levels )){
+##         vpa  <- c(.formula2char(vpar))        
+##         ans  <- values
+##         attributes(ans) <-
+##             list(vpa=vpa, normalize=normalize,
+##                  smooth=smooth, levels=levels)
+##         class(ans) <- "cptable"
+##         ans
+##     } else {
+##         norm <- if (normalize) "first" else "none"
+##         gRbase::tab(vpar, levels=levels, values=values, normalize=norm, smooth=smooth)
+##     }
+## }
+
+
+
+
+#' @rdname cptable
+cptab <- cptable
+
+
+cpt_domain <- function(){
+    out <- list()
+    class(out) <- "cpt_domain"
+    out
+}
+
+print.cpt_domain <- function(x, ...){
+    cat("cpt_domain\n")
+    lapply(x, function(o) cat(attr(o, "vpa"), "\n"))
+}
+
+"add_cptab<-" <- function(object, value)
+    UseMethod("add_cptab<-")
+
+"add_cptab<-.cpt_domain" <- function(object, value){
+    vn <- attr(value, "vpa")[1]
+    out <- c(object, list(value)) ## FIXME: CLUMPSY
+    names(out)[length(out)] <- vn
+    class(out) <- "cpt_domain"
+    out
+}
+
+
+
+
+
+
+print.cptable <- function(x,...){
+    v <- c(x)
+    ##xx <<- x
+    dim(v) <- c(length(attr(x,"levels")), length(v) / length(attr(x, "levels")))
+    ##dim(v) <- c(length(x,"levels")), length(v) / length(attr(x, "levels")))
+    rownames(v) <- attr(x, "levels")
+    colnames(v) <- rep(NA, ncol(v))
+    cat(sprintf("{v,pa(v)} :"))
+    str(attr(x, "vpa"))
+    print(v)
+    ## cat(sprintf("{v,pa(v)}      : %s\n", toString(x$vpa)))
+    ## cat(sprintf("levels of v    : %s\n", toString(x$levels)))
+    ## cat(sprintf("values         : %s\n", toString(x$values)))
+    ## cat(sprintf("normalize=%s, smooth=%f\n", x$normalize, x$smooth))
+    return(invisible(x))
+}
+
+
+varNames.cptable <- function(x){
+    ##x$vpa
+    attr(x, "vpa")
+}
+
+valueLabels.cptable <- function(x){
+    out <- list(attr(x, "levels"))
+    nam <- attr(x, "vpa")
+    names(out) <- attr(x, "vpa")[1] #x$vpa[1]
+    out
+}
+
+
+
+
+
+## cptab <- function(vpar, levels=NULL, values=NULL, normalize=TRUE,  smooth=0 ){
+##     vpa  <- c(.formula2char(vpar))        
+##     ans  <- list(vpa=vpa, levels=levels, normalize=normalize,
+##                  smooth=smooth, values=values)
+##     class(ans) <- "cptab"
+##     ans
+## }
+
+
+## cptable <- function(vpar, levels=NULL, values=NULL, normalize=TRUE,  smooth=0 ){
+##     if (!is.list( levels )){
+##         vpa  <- c(.formula2char(vpar))        
+##         ans  <- values
+##         attributes(ans) <-
+##             list(vpa=vpa, normalize=normalize,
+##                  smooth=smooth, levels=levels)
+##         class(ans) <- "cptable"
+##         ans
+##     } else {
+##         norm <- if (normalize) "first" else "none"
+##         gRbase::tab(vpar, levels=levels, values=values, normalize=norm, smooth=smooth)
+##     }
+## }
+
+
 ## cptable <- function(vpar, levels=NULL, values=NULL, normalize=TRUE,  smooth=0 ){
 ##     if (!is.list( levels )){
 ##         vpa  <- c(.formula2char(vpar))
@@ -81,6 +202,7 @@
 ##         gRbase::tab(vpar, levels=levels, values=values, normalize=norm, smooth=smooth)
 ##     }
 ## }
+
 
 
 ## print.cptable <- function(x,...){
@@ -109,52 +231,3 @@
 ##     names(out)<- x$vpa[1]
 ##     out
 ## }
-
-
-cptable <- function(vpar, levels=NULL, values=NULL, normalize=TRUE,  smooth=0 ){
-    if (!is.list( levels )){
-        vpa  <- c(.formula2char(vpar))        
-        ans  <- values
-        attributes(ans) <-
-            list(vpa=vpa, normalize=normalize,
-                 smooth=smooth, levels=levels)
-        class(ans) <- "cptable"
-        ans
-    } else {
-        norm <- if (normalize) "first" else "none"
-        gRbase::tab(vpar, levels=levels, values=values, normalize=norm, smooth=smooth)
-    }
-}
-
-
-print.cptable <- function(x,...){
-    v <- c(x)
-    ##xx <<- x
-    dim(v) <- c(length(attr(x,"levels")), length(v) / length(attr(x, "levels")))
-    ##dim(v) <- c(length(x,"levels")), length(v) / length(attr(x, "levels")))
-    rownames(v) <- attr(x, "levels")
-    colnames(v) <- rep(NA, ncol(v))
-    cat(sprintf("{v,pa(v)} :"))
-    str(attr(x, "vpa"))
-    print(v)
-    ## cat(sprintf("{v,pa(v)}      : %s\n", toString(x$vpa)))
-    ## cat(sprintf("levels of v    : %s\n", toString(x$levels)))
-    ## cat(sprintf("values         : %s\n", toString(x$values)))
-    ## cat(sprintf("normalize=%s, smooth=%f\n", x$normalize, x$smooth))
-  return(invisible(x))
-}
-
-
-varNames.cptable <- function(x){
-    ##x$vpa
-    attr(x, "vpa")
-}
-
-valueLabels.cptable <- function(x){
-    out <- list(attr(x, "levels"))
-    nam <- attr(x, "vpa")
-    names(out) <- attr(x, "vpa")[1] #x$vpa[1]
-    out
-}
-
-
