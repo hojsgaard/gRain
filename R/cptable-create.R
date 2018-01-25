@@ -1,3 +1,4 @@
+
 #' @title Create conditional probability tables (CPTs)
 #' 
 #' @description Creates conditional probability tables of the form
