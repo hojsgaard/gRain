@@ -1,8 +1,0 @@
-sample.interval=20000
-"tableMargin" ".nodeMarginal" "querygrain.grain" 
-".nodeMarginal" "querygrain.grain" 
-"$" "getgin" ".isComp" "querygrain.grain" 
-"rowSumsPrim" "tableMargin" ".nodeMarginal" "querygrain.grain" 
-"tableMargin" ".nodeMarginal" "querygrain.grain" 
-"unique" "tableMargin" ".nodeMarginal" "querygrain.grain" 
-"querygrain.grain" 

@@ -9,7 +9,7 @@ License: GPL (>= 2)
 Depends:
     R (>= 3.0.2),
     methods,
-    gRbase (>= 1.7-2)
+    gRbase (>= 1.8-4)
 Imports:
     igraph,
     graph,
