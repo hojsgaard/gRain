@@ -8,6 +8,8 @@ bioc_packages:
 os:
 - linux
 - osx
+r_github_packages:
+  hojsgaard/gRbase
 before_install:
 - if [ "$TRAVIS_OS_NAME" == "linux" ]; then tlmgr install boxedminipage; fi
 - if [ "$TRAVIS_OS_NAME" == "osx" ]; then sudo tlmgr install a4wide boxedminipage; fi
