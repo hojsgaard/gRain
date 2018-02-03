@@ -9,7 +9,7 @@ License: GPL (>= 2)
 Depends:
     R (>= 3.0.2),
     methods,
-    gRbase (>= 1.8-4)
+    gRbase (>= 1.8-3)
 Imports:
     igraph,
     graph,
@@ -23,6 +23,6 @@ Suggests:
     Rgraphviz,
     microbenchmark,
     knitr
-LinkingTo: Rcpp (>= 0.11.1), RcppArmadillo, RcppEigen, gRbase (>= 1.8-0)
+LinkingTo: Rcpp (>= 0.11.1), RcppArmadillo, RcppEigen, gRbase (>= 1.8-3)
 ByteCompile: Yes
 RoxygenNote: 6.0.1
