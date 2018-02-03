@@ -26,3 +26,4 @@ Suggests:
 LinkingTo: Rcpp (>= 0.11.1), RcppArmadillo, RcppEigen, gRbase (>= 1.8-3)
 ByteCompile: Yes
 RoxygenNote: 6.0.1
+Remotes: hojsgaard/gRbase
