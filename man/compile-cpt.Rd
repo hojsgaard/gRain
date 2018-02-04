@@ -2,20 +2,18 @@
 % Please edit documentation in R/CPT-POT-compile.R
 \name{compile-cpt}
 \alias{compile-cpt}
-\alias{as_cptlist}
+\alias{compile_cpt}
 \alias{compileCPT}
 \alias{summary.CPTspec}
 \alias{compilePOT}
 \alias{print.CPTspec}
-\alias{compile_cpt}
 \alias{compilePOT}
 \alias{compile.POT_rep}
 \alias{compile.CPT_rep}
 \alias{compileCPT}
+\alias{.compile_cpt}
 \title{Compile conditional probability tables / cliques potentials.}
 \usage{
-as_cptlist(x, forceCheck = FALSE)
-
 compile_cpt(x, forceCheck = TRUE)
 
 compilePOT(x)
@@ -25,6 +23,8 @@ compilePOT(x)
 \method{compile}{CPT_rep}(object, ...)
 
 compileCPT(x, forceCheck = TRUE)
+
+.compile_cpt(x, forceCheck = TRUE)
 }
 \arguments{
 \item{x}{To \code{compileCPT} x is a list of conditional

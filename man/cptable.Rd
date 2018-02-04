@@ -2,10 +2,13 @@
 % Please edit documentation in R/cptable-create.R
 \name{cptable}
 \alias{cptable}
+\alias{cptab}
 \title{Create conditional probability tables (CPTs)}
 \usage{
 cptable(vpar, levels = NULL, values = NULL, normalize = TRUE,
   smooth = 0)
+
+cptab(vpar, levels = NULL, values = NULL, normalize = TRUE, smooth = 0)
 }
 \arguments{
 \item{vpar}{Specifications of the names in P(v|pa1,...pak). See
