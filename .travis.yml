@@ -1,6 +1,7 @@
 language: R
 cache: packages
 sudo: required
+dist: trusty
 bioc_packages:
 - graph
 - RBGL
