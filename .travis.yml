@@ -2,10 +2,6 @@ language: R
 cache: packages
 sudo: required
 dist: trusty
-bioc_packages:
-- graph
-- RBGL
-- Rgraphviz
 os:
 - linux
 - osx
@@ -14,6 +10,7 @@ before_install:
 - if [ "$TRAVIS_OS_NAME" == "linux" ]; then tlmgr install boxedminipage; fi
 - if [ "$TRAVIS_OS_NAME" == "osx" ]; then sudo tlmgr install a4wide boxedminipage; fi
 - if [ "$TRAVIS_OS_NAME" == "osx" ]; then curl -O http://r.research.att.com/libs/gfortran-4.8.2-darwin13.tar.bz2; sudo tar fvxz gfortran-4.8.2-darwin13.tar.bz2 -C /; fi
+Rscript -e 'source("http://bioconductor.org/biocLite.R"); biocLite(c("graph","RBGL","Rgraphviz"))'
 after_success:
 - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then rm $PKG_TARBALL; fi
 - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then rm gfortran-4.8.2-darwin13.tar.bz2; fi
