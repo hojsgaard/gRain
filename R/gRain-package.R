@@ -51,6 +51,6 @@
 #'     setJointEvidence retractJointEvidence %>%
 #' 
 #' @keywords internal
-
+NULL
 
 
