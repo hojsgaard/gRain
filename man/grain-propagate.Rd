@@ -5,11 +5,10 @@
 \alias{propagate.grain}
 \alias{propagateLS}
 \alias{propagateLS__}
-\alias{propagateLS}
 \title{Propagate a graphical independence network (a Bayesian network)}
 \usage{
-\method{propagate}{grain}(object, details = object$details, engine = "cpp",
-  ...)
+\method{propagate}{grain}(object, details = object$details,
+  engine = "cpp", ...)
 
 propagateLS(cqpotList, rip, initialize = TRUE, details = 0)
 }

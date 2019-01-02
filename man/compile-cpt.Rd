@@ -4,27 +4,22 @@
 \alias{compile-cpt}
 \alias{compile_cpt}
 \alias{compileCPT}
-\alias{summary.CPTspec}
+\alias{summary.cpt_spec}
 \alias{compilePOT}
-\alias{print.CPTspec}
-\alias{compilePOT}
-\alias{compile.POT_rep}
-\alias{compile.CPT_rep}
-\alias{compileCPT}
-\alias{.compile_cpt}
+\alias{print.cpt_spec}
+\alias{compile.pot_rep}
+\alias{compile.cpt_rep}
 \title{Compile conditional probability tables / cliques potentials.}
 \usage{
 compile_cpt(x, forceCheck = TRUE)
 
 compilePOT(x)
 
-\method{compile}{POT_rep}(object, ...)
+\method{compile}{pot_rep}(object, ...)
 
-\method{compile}{CPT_rep}(object, ...)
+\method{compile}{cpt_rep}(object, ...)
 
 compileCPT(x, forceCheck = TRUE)
-
-.compile_cpt(x, forceCheck = TRUE)
 }
 \arguments{
 \item{x}{To \code{compileCPT} x is a list of conditional

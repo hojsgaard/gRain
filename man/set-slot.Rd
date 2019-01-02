@@ -27,9 +27,9 @@ Update components of Bayesian network.
 
 yn = c("yes", "no")
 universe = list(flu=yn, temp=yn, headache=yn)
-p.f = newar(~flu, levels=universe, values=c(.1, .9))
-p.t_f = newar(~temp|flu, levels=universe, values=c(.9, .1, .01, .99))
-p.h_t = newar(~headache|temp, levels=universe, values=c(.8, .1, .1, .9))
+p.f   = tab(~flu, levels=universe, values=c(.1, .9))
+p.t_f = tab(~temp|flu, levels=universe, values=c(.9, .1, .01, .99))
+p.h_t = tab(~headache|temp, levels=universe, values=c(.8, .1, .1, .9))
 
 pl = compileCPT(list(p.f, p.t_f, p.h_t))
 pl

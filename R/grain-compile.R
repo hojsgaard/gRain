@@ -9,7 +9,7 @@
 #'
 #' @name grain-compile
 #' 
-#' @aliases compile.grain compile.CPTgrain compile.POTgrain
+#' @aliases compile.grain compile.cpt_grain compile.pot_grain
 #' @param object A grain object.
 #' @param propagate If TRUE the network is also propagated meaning
 #'     that the cliques of the junction tree are calibrated to each
@@ -43,13 +43,13 @@ add_jtree <- function(object, root=NULL){
 }
 
 #' @rdname grain-compile
-add_jtree.CPTgrain <- function(object, root=NULL){
-    if (!inherits(object, "CPTgrain")) stop("Not a CPTgrain object\n") 
+add_jtree.cpt_grain <- function(object, root=NULL){
+    if (!inherits(object, "cpt_grain")) stop("Not a cpt_grain object\n") 
     object[c("rip", "ug")] <- .create_jtree(object, root) 
     object
 }
 #' @rdname grain-compile
-add_jtree.POTgrain <- function(object, root=NULL){
+add_jtree.pot_grain <- function(object, root=NULL){
     if (is.null(rip(object)))
         stop("No rip component in object \n")
     object
@@ -75,20 +75,20 @@ add_potential <- function(object){
 }
 
 #' @rdname grain-compile
-add_potential.CPTgrain <- function(object){
+add_potential.cpt_grain <- function(object){
     object$potential <- .create_potential(object)
     object
 }
 
 #' @rdname grain-compile
-add_potential.POTgrain <- function(object){
+add_potential.pot_grain <- function(object){
     if (is.null(object$cqpot))
         stop("No cqpot component in object \n")
     object$potential <-
         list(pot_orig=object$cqpot,
              pot_temp=object$cqpot,
              pot_equi=.initArrayList(object$cqpot, NA))
-    ##class(pot_orig) <- class(pot_temp) <- class(pot_equi) <- "POTspec"
+    ##class(pot_orig) <- class(pot_temp) <- class(pot_equi) <- "pot_spec"
     object
 }
 
@@ -104,7 +104,7 @@ add_potential.POTgrain <- function(object){
     pot_orig <- pot_temp <- .insertCPT(cpt(object), pot.1, details=0)
     pot_equi <- .initArrayList(pot.1, NA)
 
-    ##class(pot_orig) <- class(pot_temp) <- class(pot_equi) <- "POTspec"
+    ##class(pot_orig) <- class(pot_temp) <- class(pot_equi) <- "pot_spec"
     list(pot_orig=pot_orig, pot_temp=pot_temp, pot_equi=pot_equi)
 }
 
@@ -120,7 +120,7 @@ compile.grain <-
 
 
 #' @rdname grain-compile
-compile.CPTgrain <-
+compile.cpt_grain <-
     function(object, propagate=FALSE, root=NULL, control=object$control,
              details=0, ...){
         
@@ -136,7 +136,7 @@ compile.CPTgrain <-
 
 
 #' @rdname grain-compile
-compile.POTgrain <-
+compile.pot_grain <-
     function(object, propagate=FALSE, root=NULL, control=object$control,
              details=0,...) {
       

@@ -3,11 +3,6 @@
 ##
 
 plot.grain <- function(x, type, ...){
-  #cat("plot.grain; type:", type, "\n")
-   ## if (!require("Rgraphviz")){
-   ##   cat("The Rgraphviz package (from Bioconductor) must be installed to display the models\n")
-   ##   return()
-   ## }
     
    if (!requireNamespace("Rgraphviz", quietly = TRUE)) {
        cat("The Rgraphviz package (from Bioconductor) must be installed to display the models\n")
@@ -18,7 +13,7 @@ plot.grain <- function(x, type, ...){
        if (.isComp(x)){
            Rgraphviz::plot(x$ug)
        } else {
-           if ("pot-grain" %in% class(x)){
+           if ("pot_grain" %in% class(x)){
                Rgraphviz::plot(x$ug)
            } else {
                Rgraphviz::plot(x$dag)
@@ -42,7 +37,7 @@ iplot.grain <- function(x,type, ...){
     if (.isComp(x)){
       .primiplot(x$ug)
     } else {
-      if ("pot-grain" %in% class(x)){
+      if ("pot_grain" %in% class(x)){
         .primiplot(x$ug)
       } else {
         .primiplot(x$dag)

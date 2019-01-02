@@ -8,7 +8,8 @@
 cptable(vpar, levels = NULL, values = NULL, normalize = TRUE,
   smooth = 0)
 
-cptab(vpar, levels = NULL, values = NULL, normalize = TRUE, smooth = 0)
+cptab(vpar, levels = NULL, values = NULL, normalize = TRUE,
+  smooth = 0)
 }
 \arguments{
 \item{vpar}{Specifications of the names in P(v|pa1,...pak). See
@@ -42,7 +43,7 @@ Regarding the form of the argument \code{vpar}: To specify \eqn{P(a|b,c)}
 one may write \code{~a|b:c}, \code{~a:b:c}, \code{~a|b+c}, \code{~a+b+c} or
 \code{c("a","b","c")}. Internally, the last form is used. Notice that the
 \code{+} and \code{:} operator is used as a separator only. The order of the
-variables is important so the operators do not commute.
+variables IS important so the operators DO NOT commute.
 
 If \code{a} has levels \code{a1,a2} and likewise for \code{b} and \code{c}
 then the order of \code{values} corresponds to the configurations
@@ -54,25 +55,27 @@ given \code{b=b1, c=c1}.
 \examples{
 
 
-yn   <- c("yes","no")
-ynm  <- c("yes","no","maybe")
-a    <- cptable( ~ asia, values=c(1,99), levels=yn)
-t.a  <- cptable( ~ tub : asia, values=c(5,95,1,99,1,999),  levels=ynm)
-d.a  <- cptable( ~ dia : asia, values=c(5,5,1,99,100,999), levels=ynm)
-cptlist <- compileCPT(list(a,t.a,d.a))
+yn   <- c("yes", "no")
+ynm  <- c("yes", "no", "maybe")
+a    <- cptable(~ asia, values=c(1, 99), levels=yn)
+t.a  <- cptable(~ tub : asia, values=c(5, 95, 1, 99, 1, 999),  levels=ynm)
+d.a  <- cptable(~ dia : asia, values=c(5, 5, 1, 99, 100, 999), levels=ynm)
+cptlist <- compileCPT(list(a, t.a, d.a))
 grain(cptlist)
 
 ## Example: Specifying conditional probabilities as a matrix
 bayes.levels  <- c('Enzyme', 'Keratine', 'unknown')
-root.node     <- cptable( ~R, values=c( 1, 1, 1 ), levels=bayes.levels)
-cond.prob.tbl <- t(matrix( c( 1, 0, 0, 0, 1, 0, 0.5, 0.5, 0 ),
+root.node     <- cptable(~ R, values=c( 1, 1, 1 ), levels=bayes.levels)
+cond.prob.tbl <- t(matrix(c(1, 0, 0, 0, 1, 0, 0.5, 0.5, 0),
    nrow=3, ncol=3, byrow=TRUE, dimnames=list(bayes.levels, bayes.levels)))
 cond.prob.tbl
+
 ## Notice above: Columns represent parent states; rows represent child states
-query.node    <- cptable( ~ Q | R, values=cond.prob.tbl, levels=bayes.levels )
-sister.node   <- cptable( ~ S | R, values=cond.prob.tbl, levels=bayes.levels )
+query.node    <- cptable(~ Q | R, values=cond.prob.tbl, levels=bayes.levels)
+sister.node   <- cptable(~ S | R, values=cond.prob.tbl, levels=bayes.levels)
+
 ## Testing 
-compile(grain(compileCPT(list( root.node, query.node, sister.node ))), propagate=TRUE)
+compile(grain(compileCPT(list(root.node, query.node, sister.node))), propagate=TRUE)
 
 }
 \references{

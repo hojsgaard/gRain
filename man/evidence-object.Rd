@@ -20,7 +20,8 @@ is.null_ev(object)
 
 \method{varNames}{grain_ev}(x)
 
-\method{as.data.frame}{grain_ev}(x, row.names = NULL, optional = FALSE, ...)
+\method{as.data.frame}{grain_ev}(x, row.names = NULL, optional = FALSE,
+  ...)
 
 setdiff_ev(ev1, ev2)
 

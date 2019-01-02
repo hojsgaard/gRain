@@ -7,8 +7,6 @@
 \alias{ortable}
 \alias{andtab}
 \alias{ortab}
-\alias{andtable}
-\alias{ortable}
 \title{Conditional probability tables based on logical dependencies}
 \usage{
 booltab(vpa, levels = c(TRUE, FALSE), op = `&`)
@@ -62,16 +60,16 @@ ortab( c("v", "pa1", "pa2"), levels=c("yes", "no") ) \%>\% ftable(row.vars="v")
 ## Logical AND:
 
 ## Same story here:
-andtab( c("v", "pa1", "pa2") ) \%>\% ftable(row.vars="v")
-andtab( c("v", "pa1", "pa2"), levels=c("yes", "no") ) \%>\% ftable(row.vars="v")
+andtab(c("v", "pa1", "pa2") ) \%>\% ftable(row.vars="v")
+andtab(c("v", "pa1", "pa2"), levels=c("yes", "no") ) \%>\% ftable(row.vars="v")
 
 ## Combined approach
 
 booltab(c("v", "pa1", "pa2"), op=`&`) \%>\% ftable(row.vars="v") ## AND
 booltab(c("v", "pa1", "pa2"), op=`|`) \%>\% ftable(row.vars="v") ## OR
 
-booltab(~v+pa1+pa2, op=`&`) \%>\% ftable(row.vars="v") ## AND
-booltab(~v+pa1+pa2, op=`|`) \%>\% ftable(row.vars="v") ## OR
+booltab(~v + pa1 + pa2, op=`&`) \%>\% ftable(row.vars="v") ## AND
+booltab(~v + pa1 + pa2, op=`|`) \%>\% ftable(row.vars="v") ## OR
 
 }
 \references{

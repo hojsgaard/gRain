@@ -5,8 +5,9 @@
 \alias{predict.grain}
 \title{Make predictions from a probabilistic network}
 \usage{
-\method{predict}{grain}(object, response, predictors = setdiff(names(newdata),
-  response), newdata, type = "class", ...)
+\method{predict}{grain}(object, response,
+  predictors = setdiff(names(newdata), response), newdata,
+  type = "class", ...)
 }
 \arguments{
 \item{object}{A grain object}

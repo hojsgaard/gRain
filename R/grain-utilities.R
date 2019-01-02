@@ -15,6 +15,14 @@ randomCPT <- function(object, states=c("yes", "no")){
 }
 
 
+.print_probability <- function(vn){
+    if (length(vn) > 1){
+        cat(paste(" P(", vn[1], "|", paste(vn[-1], collapse=' '), ")\n"))
+    } else {
+        cat(paste(" P(", vn, ")\n"))
+    }    
+}
+
 
 .formula2char <- function(f) {
     unlist(rhsf2list(f))
@@ -144,7 +152,7 @@ splitVec.list <- function(val, lev){
 ##     UseMethod("as.grain")
 ## }
 
-## as.grain.CPTspec <- function(x, ...){
+## as.grain.cpt_spec <- function(x, ...){
 ##     grain( x )
 ## }
 

@@ -33,12 +33,12 @@
 #' 
 #' ## Version 1) Specify conditional probability tables.
 #' yn <- c("yes","no")
-#' a    <- cptable(~asia, values=c(1,99),levels=yn)
-#' t.a  <- cptable(~tub+asia, values=c(5,95,1,99),levels=yn)
+#' a    <- cptable(~asia, values=c(1,99), levels=yn)
+#' t.a  <- cptable(~tub+asia, values=c(5,95,1,99), levels=yn)
 #' s    <- cptable(~smoke, values=c(5,5), levels=yn)
 #' l.s  <- cptable(~lung+smoke, values=c(1,9,1,99), levels=yn)
 #' b.s  <- cptable(~bronc+smoke, values=c(6,4,3,7), levels=yn)
-#' e.lt <- cptable(~either+lung+tub,values=c(1,0,1,0,1,0,0,1),levels=yn)
+#' e.lt <- cptable(~either+lung+tub,values=c(1,0,1,0,1,0,0,1), levels=yn)
 #' x.e  <- cptable(~xray+either, values=c(98,2,5,95), levels=yn)
 #' d.be <- cptable(~dysp+bronc+either, values=c(9,1,7,3,8,2,1,9), levels=yn)
 #' plist <- compileCPT(list(a, t.a, s, l.s, b.s, e.lt, x.e, d.be))
@@ -92,12 +92,9 @@ extractCPT <- function(data_, graph, smooth=0){
     vpa <- vpar(graph)
     out <- .extractCPT_(data_, vpa=vpa, smooth=smooth)
     ##FIXME: Should any info be stored in the output? vpa for example?
-    class(out) <- "CPT_rep"
+    class(out) <- "cpt_rep"
     out
 }
-
-
-
 
 .is.valid.data <- function(data_){
     if ( !(is.data.frame(data_) || is.named.array(data_)) )
@@ -140,7 +137,7 @@ extractPOT <- function(data_, graph, smooth=0){
     out <- .extractPOT_(data_, rip=rp, smooth=smooth)
     attr(out, "rip")     <- rp
     
-    class(out) <- "POT_rep"
+    class(out) <- "pot_rep"
     out
 }
 
@@ -256,14 +253,14 @@ marg2pot <- function(mg){
                          tabDiv0(mg[[i]], tabMarg(mg[[i]], seps[[i]]))               
                  })
     attr(pt, "rip") <- rp
-    class(pt) <- "POT_rep"
+    class(pt) <- "pot_rep"
     pt
 }
 
 #' @rdname extract-cpt
-#' @param pt An object of class \code{POT_rep}
+#' @param pt An object of class \code{pot_rep}
 pot2marg <- function(pt){
-    if (!inherits(pt, "POT_rep")) stop("'pt' not a POT_rep object\n")    
+    if (!inherits(pt, "pot_rep")) stop("'pt' not a pot_rep object\n")    
     mg <- pt
     rp <- attr(pt, "rip")
     seps <- rp$separators

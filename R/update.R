@@ -2,7 +2,7 @@
 #' 
 #' @description Update a Bayesian network
 #' 
-#' @param object A Bayesian network of class \code{CPTgrain}
+#' @param object A Bayesian network of class \code{cpt_grain}
 #' @param \dots If \code{CPTlist} is a name in the dotted list, then
 #'     the object will be update with this value (which is assumed to
 #'     be a list of conditional probabilities). %% ~~Describe
@@ -41,8 +41,8 @@
 #' 
 #' 
 #' 
-#' @export update.CPTgrain
-"update.CPTgrain" <- function(object,  ...){
+#' @export update.cpt_grain
+"update.cpt_grain" <- function(object,  ...){
 
     if (!.isComp(object))
         object <- compile( object )

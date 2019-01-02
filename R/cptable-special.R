@@ -44,16 +44,16 @@
 #' ## Logical AND:
 #'
 #' ## Same story here:
-#' andtab( c("v", "pa1", "pa2") ) %>% ftable(row.vars="v")
-#' andtab( c("v", "pa1", "pa2"), levels=c("yes", "no") ) %>% ftable(row.vars="v")
+#' andtab(c("v", "pa1", "pa2") ) %>% ftable(row.vars="v")
+#' andtab(c("v", "pa1", "pa2"), levels=c("yes", "no") ) %>% ftable(row.vars="v")
 #'
 #' ## Combined approach
 #' 
 #' booltab(c("v", "pa1", "pa2"), op=`&`) %>% ftable(row.vars="v") ## AND
 #' booltab(c("v", "pa1", "pa2"), op=`|`) %>% ftable(row.vars="v") ## OR
 #'
-#' booltab(~v+pa1+pa2, op=`&`) %>% ftable(row.vars="v") ## AND
-#' booltab(~v+pa1+pa2, op=`|`) %>% ftable(row.vars="v") ## OR
+#' booltab(~v + pa1 + pa2, op=`&`) %>% ftable(row.vars="v") ## AND
+#' booltab(~v + pa1 + pa2, op=`|`) %>% ftable(row.vars="v") ## OR
 #'
 ## ## We use our own operator, for example "exclusive or" which is
 ## ## TRUE only if one but not both arguments are TRUE.
@@ -61,20 +61,20 @@
 ## booltab(c("v", "pa1", "pa2"), op=xor) %>% ftable(row.vars="v") ## XOR
 ## 
 
-booltab <- function(vpa, levels=c(TRUE,FALSE), op=`&`){
+booltab <- function(vpa, levels=c(TRUE, FALSE), op=`&`){
     pa=c(TRUE,FALSE)
     vpa <- c(.formula2char(vpa))
-    if (length(vpa)!=3)
+    if (length(vpa) != 3)
         stop("Must have exactly two parents!")
 
     g <- expand.grid(pa1=pa, pa2=pa)
     ch <- op( g[[1]], g[[2]] )
-    out <- c( ch, !ch ) * 1
+    out <- c(ch, !ch) * 1
     
     uni <- list( levels, levels, levels )
-    names( uni ) <- vpa[c(2,3,1)]
-    out <- array(out, dim=c(2,2,2), dimnames=uni)
-    out <- aperm(out, c(3,1,2))
+    names(uni) <- vpa[c(2, 3, 1)]
+    out <- array(out, dim=c(2, 2, 2), dimnames=uni)
+    out <- aperm(out, c(3, 1, 2))
     out  
 }
 
@@ -95,72 +95,26 @@ andtable <- andtab
 #' @rdname logical
 ortable <- ortab
 
-
-## @param v Specifications of the names in P(v|pa1,...pak). See
-##     section 'details' for information about the form of the
-##     argument.
-## @param pa1,pa2 The coding of the logical parents
-
-
-## andtable <- function(v, pa1=c(TRUE,FALSE), pa2=c(TRUE,FALSE), levels ){
-
-##   vpa <- c(.formula2char(v))
-
-##   if (length(vpa)!=3)
-##     stop("Must have exactly two parents!")
-##   lpa1 <- length(pa1)
-##   lpa2 <- length(pa2)
-##   z    <- rep(pa1,lpa2) & rep(pa2,each=lpa1)
-##   pp   <- array(c(z, !z),c(2,lpa2,lpa1))
-##   values    <- as.numeric(aperm(pp, c(3,1,2)))
-##   ans       <- list(vpa=vpa, values=values, normalize=FALSE, smooth=0, levels=levels)
-##   class(ans) <- "cptable"
-##   return(ans)
-## }
-
-##                                         #
-## #' @rdname logical 
-## ortable <- function(v, pa1=c(TRUE,FALSE), pa2=c(TRUE,FALSE), levels ){
-
-##   vpa <- c(.formula2char(v))
-
-##   if (length(vpa)!=3)
-##     stop("Must have exactly two parents!")
-##   lpa1 <- length(pa1)
-##   lpa2 <- length(pa2)
-##   z <- rep(pa1,lpa2) | rep(pa2,each=lpa1)
-##   pp <- array(c(z, !z),c(2,lpa2,lpa1))
-##   values <- as.numeric(aperm(pp, c(3,1,2)))
-##   ans <- list(vpa=vpa, values=values, normalize=FALSE, smooth=0, levels=levels)
-##   class(ans) <- "cptable"
-##   return(ans)
-## }
-
-
-
-
-
-
 #' @title Mendelian segregation
 #'
 #' @description Generate conditional probability table for mendelian
 #'     segregation.
 #' @param allele A character vector.
 #' @param names  Names of columns in dataframe.
-#'
+#' @note No error checking at all on the input.
 #' @examples
 #' ## Inheritance of the alleles "y" and "g"
 #' 
 #' men <- mendel( c("y","g"), names = c("ch", "fa", "mo") )
 #' men
 #' 
-mendel <- function(allele, names=c("child","father","mother")){
-    ## FIXME: No error checking at all!!!
-    fa   <- unique(lapply(unlist( lapply(allele, function(s) {lapply(allele, c, s)}), recursive=FALSE),
+mendel <- function(allele, names=c("child", "father", "mother")){
+    fa   <- unique(lapply(unlist(
+        lapply(allele, function(s) {lapply(allele, c, s)}), recursive=FALSE),
                           sort))
     comb <- do.call(rbind, fa)[,2:1]
     gts  <- paste(comb[,1], comb[,2], sep="")
-    tab <- expand.grid(child=gts, mother = gts, father = gts,
+    tab  <- expand.grid(child=gts, mother = gts, father = gts,
                        stringsAsFactors=FALSE)
     tab$prob <- mapply(.tgprob, tab$child, tab$mother, tab$father)
     names(tab)[1:3] <- names

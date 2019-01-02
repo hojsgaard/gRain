@@ -4,37 +4,34 @@
 \alias{grain-compile}
 \alias{add_jtree}
 \alias{compile.grain}
-\alias{compile.CPTgrain}
-\alias{compile.POTgrain}
-\alias{add_jtree.CPTgrain}
-\alias{add_jtree.POTgrain}
+\alias{compile.cpt_grain}
+\alias{compile.pot_grain}
+\alias{add_jtree.cpt_grain}
+\alias{add_jtree.pot_grain}
 \alias{add_potential}
-\alias{add_potential.CPTgrain}
-\alias{add_potential.POTgrain}
-\alias{compile.grain}
-\alias{compile.CPTgrain}
-\alias{compile.POTgrain}
+\alias{add_potential.cpt_grain}
+\alias{add_potential.pot_grain}
 \title{Compile a graphical independence network (a Bayesian network)}
 \usage{
 add_jtree(object, root = NULL)
 
-\method{add_jtree}{CPTgrain}(object, root = NULL)
+\method{add_jtree}{cpt_grain}(object, root = NULL)
 
-\method{add_jtree}{POTgrain}(object, root = NULL)
+\method{add_jtree}{pot_grain}(object, root = NULL)
 
 add_potential(object)
 
-\method{add_potential}{CPTgrain}(object)
+\method{add_potential}{cpt_grain}(object)
 
-\method{add_potential}{POTgrain}(object)
+\method{add_potential}{pot_grain}(object)
 
 \method{compile}{grain}(object, propagate = FALSE, root = NULL,
   control = object$control, details = 0, ...)
 
-\method{compile}{CPTgrain}(object, propagate = FALSE, root = NULL,
+\method{compile}{cpt_grain}(object, propagate = FALSE, root = NULL,
   control = object$control, details = 0, ...)
 
-\method{compile}{POTgrain}(object, propagate = FALSE, root = NULL,
+\method{compile}{pot_grain}(object, propagate = FALSE, root = NULL,
   control = object$control, details = 0, ...)
 }
 \arguments{

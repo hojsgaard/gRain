@@ -1,9 +1,9 @@
-## CPTspec
+## cpt_spec
 ## - universe
 ## - cptlist
 ## - dag
 ##
-## POTspec
+## pot_spec
 ## - universe
 ## - cqpot (er det egentlig ikke klike marginaler? NEJ, det er betingede fordelinger)
 ## - ug
@@ -12,12 +12,12 @@
 
 ## compile
 ## -------
-##   CPTspec
+##   cpt_spec
 ##   - rip
 ##   - ug
 ##   - potlist
 ##
-##   POTspec
+##   pot_spec
 ##   - potlist
 
 ## Efter compilering:
@@ -49,8 +49,8 @@
 ## -- man må ikke slette cpt/pot, men man må gerne give det uniform fordeling
 ##
 ## Hvis man ændrer ug:
-## -- for CPTspec: efterfølgende laves der: rip/potlist
-## -- for POTspec: ikke lovligt
+## -- for cpt_spec: efterfølgende laves der: rip/potlist
+## -- for pot_spec: ikke lovligt
 ##
 
 
@@ -84,7 +84,7 @@
 #'     zero are replaced by the value of 'smooth' - BEFORE any
 #'     normalization takes place.
 #' 
-#' @aliases grain grain.CPTspec grain.POTspec grain.graphNEL
+#' @aliases grain grain.cpt_spec grain.pot_spec grain.graphNEL
 #'     grain.dModel plot.grain iplot.grain
 #' @param x An argument to build an independence network
 #'     from. Typically a list of conditional probability tables, a DAG
@@ -176,21 +176,21 @@ grain <- function(x, control=list(), smooth=0, details=0, data=NULL, ...){
 }
 
 #' @rdname grain-main
-grain.CPTspec <- function(x, control=list(), smooth=0, details=0, ...){
-    ##cat("grain.CPTspec\n")
+grain.cpt_spec <- function(x, control=list(), smooth=0, details=0, ...){
+    ##cat("grain.cpt_spec\n")
     control  <- .setControl(control)
     out  <- c(list(universe    = attr(x, "universe"),
-                   cptlist     = as_CPTspec_simple(x), ## Strips unnecessary stuff                   
-                   dag         = attr(x, "dag")        ## FIXME Needed to save network in Hugin format                   
+                   cptlist     = as_cpt_spec_simple(x), ## Strips unnecessary stuff                   
+                   dag         = attr(x, "dag") ## FIXME Needed to save network in Hugin format                   
                    ),
               .setExtraComponents(control, details))
     ## FIXME: Generate dag if does not exist??
-    class(out) <- c("CPTgrain", "grain")
+    class(out) <- c("cpt_grain", "grain")
     out
 }
 
 #' @rdname grain-main
-grain.POTspec <- function(x, control=list(), smooth=0, details=0,...){
+grain.pot_spec <- function(x, control=list(), smooth=0, details=0,...){
     control  <- .setControl(control)
     out  <- c(list(universe    = attr(x, "universe"),              
                    cqpot       = x, ## FIXME: was c(x)...                  
@@ -199,18 +199,18 @@ grain.POTspec <- function(x, control=list(), smooth=0, details=0,...){
                    ),
               .setExtraComponents(control, details))
     ## FIXME: Generate dag if does not exist??
-    class(out) <- c("POTgrain", "grain")
+    class(out) <- c("pot_grain", "grain")
     out
 }
 
 #' @rdname grain-main
-grain.POT_rep <- function(x, ...){grain(compile(x))}
+grain.pot_rep <- function(x, ...){grain(compile(x))}
 
 #' @rdname grain-main
-grain.CPT_rep <- function(x, ...){grain(compile(x))}
+grain.cpt_rep <- function(x, ...){grain(compile(x))}
 
 
-## A graph + data (wrappers for calling grain.POTspec and grain.CPTspec)
+## A graph + data (wrappers for calling grain.pot_spec and grain.cpt_spec)
 #' @rdname grain-main
 grain.graphNEL <- function(x, control=list(), smooth=0, details=0, data=NULL, ...){
     if (is.null(data))
@@ -225,7 +225,7 @@ grain.graphNEL <- function(x, control=list(), smooth=0, details=0, data=NULL, ..
     else
         stop("graph 'x' is neither a directed acyclic graph or a triangulated undirected graph")
 
-    ## zz is either CPTspec or POTspec
+    ## zz is either cpt_spec or pot_spec
     zz <- compile(zz)
     grain(zz, data=data, control=control, details=details)
 }
@@ -290,42 +290,4 @@ print.grain <- function(x,...){
       details       = details
       )
 }
-
-
-
-
-
-    
-    
-##     if (is.DAG(x)){
-##         ans <- grain(compileCPT(extractCPT(data, x, smooth=smooth)),
-##                      data=data, control=control, details=details)
-##     } else {
-##         if (is.TUG(x)){
-##             ans <- grain(compilePOT(extractPOT(data, x, smooth=smooth)),
-##                          data=data, control=control, details=details)
-##         } else {
-##             stop("graph 'x' is neither a directed acyclic graph or a triangulated undirected graph")
-##         }
-##     }
-##     ans
-    ##
-
-
-
-
-## NOTICE:
-##
-## extractPOT() generates
-## {p(C1), p(R2|S1), ..., p(Rn|Sn)}
-## so these are clique potentials but they are not equilibrated.
-## extractPOT() also generates  {p(v|pa(v)} which is not needed except to be
-## able to save a network as a hugin net file.
-##
-## extractCPT() generates
-## {p(v|pa(v))}
-##
-## compilePOT() and compileCPT() only makes 'internal' computations/setups
-## and do not fundamentally change the above.
-##
 

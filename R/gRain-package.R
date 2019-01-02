@@ -42,8 +42,8 @@
 #' These functions should not be called directly by the user
 #' 
 #' 
-#' @aliases summary.grain print.huginNet print.cptable print.CPTspec
-#'     print.grain print.grainFinding print.POTspec randomCPT getgrain
+#' @aliases summary.grain print.huginNet print.cptable print.cpt_spec
+#'     print.grain print.grainFinding print.pot_spec randomCPT getgrain
 #'     getgin printlist printlist.default printlist.list splitVec
 #'     splitVec.default splitVec.list valueLabels.cptable
 #'     varNames.cptable valueLabels.table varNames.table setSliceValue

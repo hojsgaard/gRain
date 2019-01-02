@@ -6,9 +6,6 @@
 \alias{nodeStates}
 \alias{nodeNames.grain}
 \alias{nodeStates.grain}
-\alias{nodeNames.grain}
-\alias{nodeStates}
-\alias{nodeStates.grain}
 \alias{universe}
 \alias{universe.grain}
 \alias{varNames.grainEvidence_}
@@ -18,13 +15,13 @@
 \alias{pot}
 \alias{pot.grain}
 \alias{cpt}
-\alias{cpt.CPTgrain}
+\alias{cpt.cpt_grain}
 \alias{cpt<-}
-\alias{cpt<-.CPTgrain}
+\alias{cpt<-.cpt_grain}
 \alias{potential}
 \alias{potential.grain}
-\alias{vpar.CPTspec}
-\alias{vpar.CPTgrain}
+\alias{vpar.cpt_spec}
+\alias{vpar.cpt_grain}
 \title{gRain generics}
 \usage{
 nodeNames(x)
@@ -53,19 +50,19 @@ pot(object)
 
 cpt(object)
 
-\method{cpt}{CPTgrain}(object)
+\method{cpt}{cpt_grain}(object)
 
 cpt(object, position) <- value
 
-\method{cpt}{CPTgrain}(object, position) <- value
+\method{cpt}{cpt_grain}(object, position) <- value
 
 potential(object)
 
 \method{potential}{grain}(object)
 
-\method{vpar}{CPTspec}(object, ...)
+\method{vpar}{cpt_spec}(object, ...)
 
-\method{vpar}{CPTgrain}(object, ...)
+\method{vpar}{cpt_grain}(object, ...)
 }
 \arguments{
 \item{x, object}{A relevant object.}

@@ -15,6 +15,9 @@ mendel(allele, names = c("child", "father", "mother"))
 Generate conditional probability table for mendelian
     segregation.
 }
+\note{
+No error checking at all on the input.
+}
 \examples{
 ## Inheritance of the alleles "y" and "g"
 

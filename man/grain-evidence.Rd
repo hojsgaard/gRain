@@ -5,10 +5,6 @@
 \alias{setEvidence}
 \alias{retractEvidence}
 \alias{absorbEvidence}
-\alias{grain-evidence}
-\alias{retractEvidence}
-\alias{grain-evidence}
-\alias{absorbEvidence}
 \title{Set evidence.}
 \usage{
 setEvidence(object, nodes = NULL, states = NULL, evidence = NULL,

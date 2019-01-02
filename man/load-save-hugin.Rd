@@ -4,7 +4,6 @@
 \alias{load-save-hugin}
 \alias{loadHuginNet}
 \alias{saveHuginNet}
-\alias{saveHuginNet}
 \title{Load and save Hugin net files}
 \usage{
 loadHuginNet(file, description = rev(unlist(strsplit(file, "/")))[1],

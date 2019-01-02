@@ -37,7 +37,7 @@
 
 #' @rdname set-slot
 set_rip <- function(object, value){
-    if (!inherits(object, "CPTgrain")) stop("not a CPTgrain object\n")
+    if (!inherits(object, "cpt_grain")) stop("not a cpt_grain object\n")
     object$rip <- value
     object$ug  <- ugList(rip$cliques)
     object <- add_potential(object)
@@ -46,7 +46,7 @@ set_rip <- function(object, value){
 
 #' @rdname set-slot
 set_ug <- function(object, value){
-    if (!inherits(object, "CPTgrain")) stop("not a CPTgrain object\n")
+    if (!inherits(object, "cpt_grain")) stop("not a cpt_grain object\n")
     ## FIXME check på value
     object$rip <- rip(value)
     object$ug  <- value
@@ -56,7 +56,7 @@ set_ug <- function(object, value){
 
 #' @rdname set-slot
 set_cpt <- function(object, list, value){
-    if (!inherits(object, "CPTgrain")) stop("not a CPTgrain object\n")
+    if (!inherits(object, "cpt_grain")) stop("not a cpt_grain object\n")
     if (length(list) == 1 && !is.list(value))
         value <- list(value)
     object$cptlist[list] <- value
@@ -66,11 +66,3 @@ set_cpt <- function(object, list, value){
 
 
 
-## update.CPTgrain <- function(object, ug=NULL, evaluate=TRUE){
-##     if (!is.null(ug)){
-##         object$rip <- rip(ug)
-##         object$ug  <- ug
-##         object <- create_pot(object)
-##     }
-##     object
-## }

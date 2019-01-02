@@ -4,16 +4,15 @@
 \alias{querygrain}
 \alias{querygrain.grain}
 \alias{qgrain}
-\alias{querygrain.grain}
 \title{Query a network}
 \usage{
 querygrain(object, nodes = nodeNames(object), type = "marginal",
-  evidence = NULL, exclude = TRUE, normalize = TRUE, result = "array",
-  details = 0)
+  evidence = NULL, exclude = TRUE, normalize = TRUE,
+  result = "array", details = 0)
 
 \method{querygrain}{grain}(object, nodes = nodeNames(object),
-  type = "marginal", evidence = NULL, exclude = TRUE, normalize = TRUE,
-  result = "array", details = 0)
+  type = "marginal", evidence = NULL, exclude = TRUE,
+  normalize = TRUE, result = "array", details = 0)
 }
 \arguments{
 \item{object}{A "grain" object}

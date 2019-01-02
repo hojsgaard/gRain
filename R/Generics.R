@@ -62,7 +62,7 @@ cpt <- function(object)
     UseMethod("cpt")
 
 #' @rdname grain-generics
-cpt.CPTgrain <- function(object)
+cpt.cpt_grain <- function(object)
     getgin(object, "cptlist")
 
 #' @rdname grain-generics
@@ -73,7 +73,7 @@ cpt.CPTgrain <- function(object)
 }
 
 #' @rdname grain-generics
-"cpt<-.CPTgrain" <- function(object, position, value){
+"cpt<-.cpt_grain" <- function(object, position, value){
     object$cptlist[position] <- value
 }
 
@@ -88,12 +88,12 @@ potential.grain <- function(object)
    object$potential
 
 #' @rdname grain-generics
-vpar.CPTspec <- function(object, ...){
+vpar.cpt_spec <- function(object, ...){
     lapply(object, function(u) names(dimnames(u)))
 }
 
 #' @rdname grain-generics
-vpar.CPTgrain <- function(object, ...){
+vpar.cpt_grain <- function(object, ...){
     lapply(getgin(object, "cptlist"), function(u) names(dimnames(u)))
 }
 

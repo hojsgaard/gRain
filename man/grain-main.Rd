@@ -3,32 +3,31 @@
 \name{grain-main}
 \alias{grain-main}
 \alias{grain}
-\alias{grain.CPTspec}
-\alias{grain.POTspec}
+\alias{grain.cpt_spec}
+\alias{grain.pot_spec}
 \alias{grain.graphNEL}
 \alias{grain.dModel}
 \alias{plot.grain}
 \alias{iplot.grain}
-\alias{grain.CPTspec}
-\alias{grain.POTspec}
-\alias{grain.POT_rep}
-\alias{grain.CPT_rep}
-\alias{grain.graphNEL}
-\alias{grain.dModel}
+\alias{grain.pot_rep}
+\alias{grain.cpt_rep}
 \title{Graphical Independence Network}
 \usage{
-grain(x, control = list(), smooth = 0, details = 0, data = NULL, ...)
+grain(x, control = list(), smooth = 0, details = 0, data = NULL,
+  ...)
 
-\method{grain}{CPTspec}(x, control = list(), smooth = 0, details = 0, ...)
+\method{grain}{cpt_spec}(x, control = list(), smooth = 0,
+  details = 0, ...)
 
-\method{grain}{POTspec}(x, control = list(), smooth = 0, details = 0, ...)
+\method{grain}{pot_spec}(x, control = list(), smooth = 0,
+  details = 0, ...)
 
-\method{grain}{POT_rep}(x, ...)
+\method{grain}{pot_rep}(x, ...)
 
-\method{grain}{CPT_rep}(x, ...)
+\method{grain}{cpt_rep}(x, ...)
 
-\method{grain}{graphNEL}(x, control = list(), smooth = 0, details = 0,
-  data = NULL, ...)
+\method{grain}{graphNEL}(x, control = list(), smooth = 0,
+  details = 0, data = NULL, ...)
 
 \method{grain}{dModel}(x, control = list(), smooth = 0, details = 0,
   data = NULL, ...)
