@@ -172,7 +172,7 @@ querygrain.grain <- function(object, nodes = nodeNames(object), type = "marginal
 
     cliq  <- rip(object)$cliques
     ##idxb <- sapply(cliq, function(cq) subsetof(nodes, cq))
-    idxb <- sapply(cliq, function(cq) gRbase::is_subsetof(nodes, cq))
+    idxb <- sapply(cliq, function(cq) gRbase::is_subsetof_(nodes, cq))
 
     if (any(idxb)){
         ## cat(".Calculating directly from clique\n")
