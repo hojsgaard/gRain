@@ -191,6 +191,7 @@ grain.cpt_spec <- function(x, control=list(), smooth=0, details=0, ...){
 
 #' @rdname grain-main
 grain.pot_spec <- function(x, control=list(), smooth=0, details=0,...){
+    
     control  <- .setControl(control)
     out  <- c(list(universe    = attr(x, "universe"),              
                    cqpot       = x, ## FIXME: was c(x)...                  
