@@ -600,7 +600,7 @@ par(mfrow=c(1,2)); plot( dG ); plot( uG )
 
 Suppose data is
 <<>>=
-dat <- newar(c("A", "B", "C"), levels=c(2, 2, 2), values=c(0, 0, 2, 3, 1, 2, 1, 4))
+dat <- ar_new(c("A", "B", "C"), levels=c(2, 2, 2), values=c(0, 0, 2, 3, 1, 2, 1, 4))
 class(dat)
 @ %def
 
