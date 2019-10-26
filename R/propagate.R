@@ -45,11 +45,12 @@
 #' plist <- compileCPT(list(a, t.a, s, l.s, b.s, e.lt, x.e, d.be))
 #' pn    <- grain(plist)
 #' pnc  <- compile(pn, propagate=FALSE)
-#' 
+#'
+#' \dontrun{
 #' if (require(microbenchmark))
 #'     microbenchmark(
 #'         propagate(pnc, engine="R"),
-#'         propagate(pnc, engine="cpp") )
+#'         propagate(pnc, engine="cpp") )}
 #' 
 #' @export propagate.grain
 
@@ -86,6 +87,7 @@ propagate.grain <- function(object, details=object$details, engine="cpp", ...){
 ## Lauritzen Spiegelhalter propagation
 ##
 
+## Don't remember the idea behind the 'initialize' argument; should always be true
 #' @rdname grain-propagate
 #' @param cqpotList Clique potential list
 #' @param rip A rip ordering
@@ -94,7 +96,6 @@ propagateLS <- function(cqpotList, rip, initialize=TRUE, details=0){
     #details=20
     #cat(".Propagating BN: [propagateLS]\n")
     .infoPrint(details, 1, cat(".Propagating BN: [propagateLS]\n"))
-    ## FIXME: Don't remember the idea behind the 'initialize' argument; should always be true
 
     cliq       <- rip$cliques
     seps       <- rip$separators
@@ -180,7 +181,7 @@ propagateLS <- function(cqpotList, rip, initialize=TRUE, details=0){
     
 ##     object$isPropagated  <- TRUE
     
-##     ## FIXME: propagate.grain : Looks strange
+#####     ## FIXME: propagate.grain : Looks strange
 ##     if ( !is.null(getEvidence(object)) ){
 ##         ev <- getEvidence(object)
 ##         attr(ev, "pEvidence") <- pEvidence(object)

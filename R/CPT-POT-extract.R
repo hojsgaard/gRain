@@ -82,6 +82,28 @@
 #' @rdname extract-cpt
 
 extractCPT <- function(data_, graph, smooth=0){
+
+    .extractCPT_ <- function(data_, vpa, smooth=0){
+        
+        is.df <- is.data.frame(data_)
+        
+        out <- lapply(vpa, function(ss){.dataMarg(data_, ss, is.df)})
+        
+        ## FIXME : Get rid of this parray stuff (at least as a class)
+        ## NOTE: Normalization takes place here
+        out <- lapply(out, as.parray, normalize="first", smooth=smooth)
+        
+        chk <- unlist(lapply(out, function(zz) any(is.na(zz))))
+        nnn <- names(chk)[which(chk)]
+        if (length(nnn) > 0){
+            cat(sprintf("NAs found in conditional probability table(s) for nodes: %s\n",
+                        toString(nnn)))
+            cat(sprintf("  ... consider using the smooth argument\n"))
+        }
+        out
+    }
+    
+
     .is.valid.data(data_)
 
     if (inherits(graph, c("formula", "list")))
@@ -101,134 +123,77 @@ extractCPT <- function(data_, graph, smooth=0){
         stop("'data_' must be dataframe or array.")
 }
 
-.extractCPT_ <- function(data_, vpa, smooth=0){
 
-    if (is.data.frame(data_)){
-        out <- lapply(vpa,
-                      function(ss){ xtabs(~., data=data_[, ss, drop=FALSE]) })
-    } else {
-        out <- lapply(vpa,
-                      function(ss){ tabMarg(data_, ss) })
-    }
-    
-    ## FIXME : Get rid of this parray stuff (at least as a class)
-    ## FIXME: Normalization takes place here
-    out <- lapply(out, as.parray, normalize="first", smooth=smooth)
-    
-    chk <- unlist(lapply(out, function(zz) any(is.na(zz))))
-    nnn <- names(chk)[which(chk)]
-    if (length(nnn) > 0){
-        cat(sprintf("NAs found in conditional probability table(s) for nodes: %s\n", toString(nnn)))
-        cat(sprintf("  ... consider using the smooth argument\n"))
-    }
-    out
-}
+
+
+
 
 #' @rdname extract-cpt
 extractPOT <- function(data_, graph, smooth=0){
+
+    .extractPOT_primitive <- function(data_, cliq, seps=NULL, smooth=0){        
+        
+        .normalize <- function(tt, sp){
+            if (length(sp) > 0) tabDiv0(tt, tabMarg(tt, sp))
+            else tt / sum(tt)        
+        }
+        
+        out <- vector("list", length(cliq))
+        is.df <- is.data.frame(data_)
+        for ( i  in seq_along(cliq)){
+            cq   <- cliq[[ i ]]
+            sp   <- seps[[ i ]]
+            t.cq <- .dataMarg(data_, cq, is.df) + smooth       
+            ##str(list(cq=cq, sp=sp))
+            out[[i]] <- .normalize(t.cq, sp)
+        }
+        out
+    }
+    
     .is.valid.data(data_)
 
     if (inherits(graph, c("formula", "list")))
         graph <- ug(graph)
     
     if (!is.TUG(graph)) stop("'graph' not undirected and triangulated")
-    rp  <- rip( graph )
+    rip_  <- rip( graph )
     
-    out <- .extractPOT_(data_, rip=rp, smooth=smooth)
-    attr(out, "rip")     <- rp
-    
+    out <- .extractPOT_primitive(data_, rip_$cliques, rip_$sep, smooth=smooth)
+    attr(out, "rip")     <- rip_
     class(out) <- "pot_rep"
     out
 }
 
-.extractPOT_ <- function(data_, rip, smooth=0){
 
-    .normalize <- function(tt, sp){
-        if (length(sp) > 0) tabDiv0(tt, tabMarg(tt, sp))
-        else tt / sum(tt)        
-    }
-    
-    .extractPOT_table <- function(data_, cliq, seps=NULL, smooth=0){
-        out <- vector("list", length(cliq))
-        for ( i  in seq_along(cliq)){
-            cq    <- cliq[[ i ]]
-            sp    <- seps[[ i ]]
-            ##str(list(cq=cq, sp=sp))
-            t.cq  <- tabMarg(data_, cq) + smooth
-            out[[i]] <- .normalize(t.cq, sp)
-        }
-        out
-    }
-    
-    .extractPOT_dataframe <- function(data_, cliq, seps=NULL, smooth=0){        
-        out <- vector("list", length(cliq))
-        for ( i  in seq_along(cliq)){
-            cq   <- cliq[[ i ]]
-            sp   <- seps[[ i ]]
-            ##str(list(cq=cq, sp=sp))
-            
-            t.cq  <- xtabs(~., data=data_[ , cq, drop=FALSE]) + smooth                       
-            out[[i]] <- .normalize(t.cq, sp)
-        }
-        out
-    }
-    
-
-    if (is.data.frame(data_)){
-        .extractPOT_dataframe(data_, rip$cliques, rip$sep, smooth=smooth)
-    } else {
-        .extractPOT_table(data_, rip$cliques, rip$sep, smooth=smooth)
-    }
-}
 
 #' @rdname extract-cpt
 extractMARG <- function(data_, graph, smooth=0){
+
+    .extractMARG_primitive <- function(data_, cliq, seps=NULL, smooth=0){        
+        out <- vector("list", length(cliq))
+        is.df <- is.data.frame(data_)
+        
+        for (i in seq_along(cliq)){
+            cq   <- cliq[[ i ]]
+            t.cq <- .dataMarg(data_, cq, is.df) + smooth       
+            out[[i]] <- t.cq / sum(t.cq)
+        }
+        out
+    }
+
     .is.valid.data(data_)
     if (!is.TUG(graph))
         stop("'graph' not undirected and triangulated")
     
-    rp  <- rip( graph )
+    rip_  <- rip(graph)
 
-    out <- .extractMARG_(data_, rip=rp, smooth=smooth)
-    attr(out, "rip")     <- rp
-        
-    class(out) <- "MARG_rep"
+    out <- .extractMARG_primitive(data_, rip_$cliques, rip_$sep, smooth=smooth)
+    attr(out, "rip")     <- rip_      
+    class(out) <- "marg_rep"
     out
 }
 
 
-.extractMARG_ <- function(data_, rip, smooth=0){
-
-    .extractMARG_table <- function(data_, cliq, seps=NULL, smooth=0){
-        out <- vector("list", length(cliq))
-        for ( i  in seq_along(cliq)){
-            cq    <- cliq[[ i ]]
-            t.cq  <- tabMarg(data_, cq) + smooth
-            out[[i]] <- t.cq / sum(t.cq)
-        }
-        out
-    }
-
-    
-    .extractMARG_dataframe <- function(data_, cliq, seps=NULL, smooth=0){        
-        out <- vector("list", length(cliq))
-        for ( i  in seq_along(cliq)){
-            cq   <- cliq[[ i ]]
-            t.cq  <- xtabs(~., data=data_[ , cq, drop=FALSE]) + smooth
-            out[[i]] <- t.cq / sum(t.cq)
-        }
-        out
-    }
-            
-    if (is.data.frame(data_)){
-        .extractMARG_dataframe(data_, rip$cliques, rip$sep, smooth=smooth)
-    } else {
-        .extractMARG_table(data_, rip$cliques, rip$sep, smooth=smooth)
-    }
-}
-
-
-## FIXME: or cpt_from_data
 #' @rdname extract-cpt
 data2cpt <- extractCPT
 
@@ -239,20 +204,21 @@ data2pot <- extractPOT
 data2marg <- extractMARG
 
 
+
 #' @rdname extract-cpt
-#' @param mg An object of class \code{MARG_rep}
+#' @param mg An object of class \code{marg_rep}
 marg2pot <- function(mg){
-    if (!inherits(mg, "MARG_rep")) stop("'mg' not a MARG_rep object\n")
-    rp <- attr(mg, "rip")
-    seps <- rp$separators
-    pt <- lapply(seq_along(rp$cliques),
+    if (!inherits(mg, "marg_rep")) stop("'mg' not a marg_rep object\n")
+    rip_ <- attr(mg, "rip")
+    seps <- rip_$separators
+    pt <- lapply(seq_along(rip_$cliques),
                  function(i){
                      if (length(seps[[i]]) == 0)
                          mg[[i]]
                      else
                          tabDiv0(mg[[i]], tabMarg(mg[[i]], seps[[i]]))               
                  })
-    attr(pt, "rip") <- rp
+    attr(pt, "rip") <- rip_
     class(pt) <- "pot_rep"
     pt
 }
@@ -262,11 +228,11 @@ marg2pot <- function(mg){
 pot2marg <- function(pt){
     if (!inherits(pt, "pot_rep")) stop("'pt' not a pot_rep object\n")    
     mg <- pt
-    rp <- attr(pt, "rip")
-    seps <- rp$separators
-    par  <- rp$parents
+    rip_ <- attr(pt, "rip")
+    seps <- rip_$separators
+    par  <- rip_$parents
     
-    for (i in 2:length(rp$cliques)){
+    for (i in 2:length(rip_$cliques)){
         if (par[i] > 0){
             mg[[i]] <- tabMult(mg[[i]], tabMarg(mg[[par[i]]], seps[[i]]))
         }
@@ -274,6 +240,35 @@ pot2marg <- function(pt){
     class(mg) <- "MARG_rep"
     mg
 }
+
+
+
+
+
+
+## helper function; can possibly be made faster
+.dataMarg <- function(data_, cq, is.df=NULL){
+
+    ## .dfMarg can possibly be made faster
+    .dfMarg <- function(data_, cq){
+        xtabs(~., data=data_[ , cq, drop=FALSE])
+    }
+
+    if (is.null(is.df))
+        is.df <- is.data.frame(data_)
+
+    if (is.df) .dfMarg(data_, cq)
+    else tabMarg(data_, cq)
+        
+}
+
+
+
+
+
+
+
+
 
 
 

@@ -67,7 +67,6 @@
 #' @export repeatPattern
 #' 
 repeatPattern <- function(plist, instances, unlist=TRUE){
-    ##ans <- list() ## FIXME: Ugly
     ans <- vector("list", length(instances))
     for (i in seq_along(instances)){
         ans[[ i ]] <- .do.one(plist, instances[[ i ]])

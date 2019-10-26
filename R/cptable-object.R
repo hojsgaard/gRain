@@ -1,17 +1,18 @@
 #' @title Object oriented specification of Bayesian network
 #' 
-#' @description FIXME write.
+#' @description Object oriented specification of Bayesian
+#'     network. This is experimental and may well change.
 #'
 #' @name object-cptable
 #' 
 #' @param object An object to be given a value.
-#'
+#' @param bn A Bayesian network
 #' @param value A value to be added to an object.
 #'
 #' @param x  An object
 #' @param ... Additional arguments
 #'
-#' @details FIXME to be written. This is all experimental and may well change soon.
+#' @details This is all experimental and may well change soon.
 #'
 #' @examples
 #'
@@ -37,8 +38,6 @@
 #' add_cpt(bn) <- cptable(~GrassWet|Sprinkler:Rain, levels=ssp,
 #'    values=c(.99, .01, .8, .2, .9, .1, 0, 1))
 #'
-
-
 
 #' @rdname object-cptable
 cpt_domain <- function(){
@@ -77,10 +76,6 @@ add_cpt <- function(object, value){
 "add_cpt<-.cpt_domain" <- function(object, value){
     add_cpt(object, value)
 }
-
-
-
-
 
 
 #' @rdname object-cptable

@@ -4,7 +4,7 @@
 #'     potentials as a preprocessing step for creating a graphical
 #'     independence network
 #'
-#' @name compile-cpt
+#' @name compile_potentials
 #' 
 #' @aliases compileCPT summary.cpt_spec compilePOT print.cpt_spec
 #'     summary.cpt_spec
@@ -14,8 +14,6 @@
 #' @param object A list of potentials or of CPTs.
 #' @param forceCheck Controls if consistency checks of the probability
 #'     tables should be made.
-#' @param details Controls amount of print out. Mainly for debugging
-#'     purposes.
 #' @param ... Additional arguments; currently not used.
 #' 
 #' @return \code{compileCPT} returns a list of class 'cptspec'
@@ -30,7 +28,7 @@
 #' @keywords utilities
 #' 
 
-#' @rdname compile-cpt
+#' @rdname compile_potentials
 compile_cpt <- function(x, forceCheck=TRUE){
         
     .create_universe <- function(zz){
@@ -46,7 +44,6 @@ compile_cpt <- function(x, forceCheck=TRUE){
         cp <- zz[[i]]
         dn <- universe$levels[cp$vpar]
         di <- sapply(dn, length)
-        ## FIXME: Potentially expensive in memory
         val <- array(rep(1.0, prod(di)), dim=di, dimnames=dn)
         if (length(cp$values) > 0)
             val[] <- cp$values + cp$smooth
@@ -86,36 +83,9 @@ compile_cpt <- function(x, forceCheck=TRUE){
 }
 
 
-parse_cpt <- function(xi){
-    UseMethod("parse_cpt")
-}
 
-parse_cpt.cptable <- function(xi){
-    .parse_cpt_finalize(varNames(xi), valueLabels(xi)[[1]],
-                        as.numeric(xi), attr(xi, "smooth"))
-}
-
-parse_cpt.xtabs <- function(xi){
-    NextMethod("parse_cpt")
-}
-   
-parse_cpt.default <- function(xi){
-    if (!is.named.array(xi)) stop("'xi' must be a named array")
-    .parse_cpt_finalize(varNames(xi), valueLabels(xi)[[1]],
-                        as.numeric(xi), 0)
-}
-
-.parse_cpt_finalize <- function(vpar, vlev, values, smooth){
-    out <- list(vnam=vpar[1], vlev=vlev, vpar=vpar, values=values,
-                normalize="first", smooth=smooth)
-    class(out) <- "cpt_generic"
-    out    
-}
-
-
-
-#' @rdname compile-cpt
-compilePOT <- function(x){
+#' @rdname compile_potentials
+compile_pot <- function(x){
     
     .make.universe <- function(x){
         lll       <- unlist(lapply(x, dimnames), recursive=FALSE)
@@ -138,13 +108,64 @@ compilePOT <- function(x){
     x
 }
 
-#' @rdname compile-cpt
-compile.pot_rep <- function(object, ...)
-    compilePOT(object)
+## ##################################################################
 
-#' @rdname compile-cpt
+## OLD NAMES - KEEP THESE 
+#' @rdname compile_potentials
+compileCPT <- compile_cpt
+
+#' @rdname compile_potentials
+compilePOT <- compile_pot
+
+
+## ##################################################################
+
+#' @rdname compile_potentials
+parse_cpt <- function(xi){
+    UseMethod("parse_cpt")
+}
+
+#' @rdname compile_potentials
+parse_cpt.cptable_class <- function(xi){
+    .parse_cpt_finalize(varNames(xi), valueLabels(xi)[[1]],
+                        as.numeric(xi), attr(xi, "smooth"))
+}
+
+#' @rdname compile_potentials
+#' @param xi Conditional probability table
+parse_cpt.xtabs <- function(xi){
+    NextMethod("parse_cpt")
+}
+
+#' @rdname compile_potentials
+parse_cpt.default <- function(xi){
+    if (!is.named.array(xi)) stop("'xi' must be a named array")
+    .parse_cpt_finalize(varNames(xi), valueLabels(xi)[[1]],
+                        as.numeric(xi), 0)
+}
+
+.parse_cpt_finalize <- function(vpar, vlev, values, smooth){
+    out <- list(vnam=vpar[1], vlev=vlev, vpar=vpar, values=values,
+                normalize="first", smooth=smooth)
+    class(out) <- "cpt_generic"
+    out    
+}
+
+## ##################################################################
+
+#' @rdname compile_potentials
+compile.pot_rep <- function(object, ...)
+    compile_pot(object)
+
+#' @rdname compile_potentials
 compile.cpt_rep <- function(object, ...)
-    compileCPT(object)
+    compile_cpt(object)
+
+
+## ##################################################################
+
+
+
 
 print.cpt_spec <- function(x,...){
     cat("cpt_spec with probabilities:\n")
@@ -156,9 +177,15 @@ print.cpt_spec <- function(x,...){
   invisible(x)
 }
 
-#print.cpt_spec <- function(x, ...){
-#    print.default(c(x))
-#}
+print.pot_spec <- function(x,...){
+    cat("pot_spec with potentials:\n")
+    lapply(x,
+           function(xx){
+               vn <- names(dimnames(xx))
+               cat("(", paste(vn, collapse=' '),") \n")
+           })    
+  invisible(x)
+}
 
 summary.cpt_spec <- function(object, ...){
     cat("cpt_spec with probabilities:\n")
@@ -187,48 +214,12 @@ print.cpt_spec_simple <- function(x,...){
   invisible(x)
 }
 
-print.pot_spec <- function(x,...){
-    cat("pot_spec with potentials:\n")
-    lapply(x,
-           function(xx){
-               vn <- names(dimnames(xx))
-               cat("(", paste(vn, collapse=' '),") \n")
-           })    
-  invisible(x)
-}
-
-#' @rdname compile-cpt
-compileCPT <- compile_cpt
 
 
 
 
 
 
-
-
-
-
-
-## as_cptlist <- function(x, forceCheck=FALSE){
-##     if (!(inherits(x, "list") &&
-##           all(unlist(lapply(x, function(a) is.named.array(a))))))
-##         stop("input must be named list of named arrays")
-    
-##     if (forceCheck){
-##         compile_cpt(x, forceCheck=TRUE)
-##     } else {
-##         out <- x
-##         vl  <- lapply(out, function(g) dimnames(g)[[1]])
-##         vn  <- names(vl)
-##         di  <- unlist(lapply(vl, length))
-##         universe   <- list(nodes = vn, levels = vl, nlev = di)
-##         attr(out, "universe") <- universe
-##         ## FIXME do we need dag here????
-##         class(out) <- "cpt_spec_simple"
-##         out
-##     }    
-## }
 
 
 

@@ -39,7 +39,7 @@ options("prompt"="> ","width"=85)
 \def\R{\texttt{R}}
 
 <<echo=FALSE>>=
-require( gRain )
+require(gRain)
 prettyVersion <- packageDescription("gRain")$Version
 prettyDate <- format(Sys.Date())
 @
@@ -732,7 +732,7 @@ querygrain(setFinding(gr.dG, nodes="B", states="B1"))
 @ %def
 
 
-\bibliography{gRain}
+\bibliography{grain}
 
 \end{document}
 

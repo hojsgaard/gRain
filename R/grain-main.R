@@ -56,30 +56,15 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-### #####################################################
-###
-### Creating grain objects
-###
-### #####################################################
-
+## ###################################################################
+##
 #' @title Graphical Independence Network
-#' 
-#' @description The 'grain' builds a graphical independence network.
-#'
+#' @description Creating grain objects (graphical independence network).
 #' @name grain-main
-#' 
+#' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
+##
+## ###################################################################
+
 #' @details If 'smooth' is non-zero then entries of 'values' which a
 #'     zero are replaced by the value of 'smooth' - BEFORE any
 #'     normalization takes place.
@@ -97,7 +82,6 @@
 #' @param details Debugging information.
 #' @param ... Additional arguments, currently not used.
 #' @return An object of class "grain"
-#' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
 #' @seealso \code{\link{cptable}}, \code{\link{compile.grain}},
 #'     \code{\link{propagate.grain}}, \code{\link{setFinding}},
 #'     \code{\link{setEvidence}}, \code{\link{getFinding}},
@@ -133,22 +117,23 @@
 #' 
 #' bnc2 <- compile(bn, root=c("lung", "bronc", "tub"), propagate=TRUE)
 #'
+#' \dontrun{
 #' if (require(microbenchmark)){
 #' microbenchmark(
 #'   querygrain(bnc, nodes=c("lung","bronc", "tub"), type="joint"),
 #'   querygrain(bnc2, nodes=c("lung","bronc", "tub"), type="joint")
-#' )}
+#' )}}
 #' 
 #'
 #' ## Simple example - one clique only in triangulated graph:
-#' plist.s <- compileCPT( list(a, t.a) )
-#' bn.s <- grain( plist.s )
-#' querygrain( bn.s )
+#' plist.s <- compileCPT(list(a, t.a))
+#' bn.s <- grain(plist.s)
+#' querygrain(bn.s)
 #' 
 #' ## Simple example - disconnected network:
-#' plist.d <- compileCPT( list(a, t.a, s) )
-#' bn.d <- grain( plist.d )
-#' querygrain( bn.d )
+#' plist.d <- compileCPT(list(a, t.a, s))
+#' bn.d <- grain(plist.d)
+#' querygrain(bn.d)
 #' 
 #' ## Create network from data and graph specification.
 #' ## There are different ways:
@@ -177,6 +162,7 @@ grain <- function(x, control=list(), smooth=0, details=0, data=NULL, ...){
 
 #' @rdname grain-main
 grain.cpt_spec <- function(x, control=list(), smooth=0, details=0, ...){
+
     ##cat("grain.cpt_spec\n")
     control  <- .setControl(control)
     out  <- c(list(universe    = attr(x, "universe"),
@@ -233,13 +219,12 @@ grain.graphNEL <- function(x, control=list(), smooth=0, details=0, data=NULL, ..
 
 #' @rdname grain-main
 grain.dModel <- function(x, control=list(), smooth=0, details=0, data=NULL, ...){
-
     if (!x$isDecomposable)
         stop("Model must be decompsable\n")
     if (is.null(data)) ## FIXME grain.dModel: Need to check data
         data <- x$datainfo$data
 
-    gg <- ugList( terms( x ) )
+    gg <- ugList(terms(x))
     grain(gg, data=data, smooth=smooth, details=details, ...)
 }
 
@@ -274,16 +259,9 @@ print.grain <- function(x,...){
     invisible(x)
 }
 
-.setControl <- function(control){
-  con <- list(timing = 0)
-  con[(namc <- names(control))] <- control
-  con
-}
 
 .setExtraComponents <- function(control, details){
   list(
-      ## FIXME Do we isInitialized? I doubt! Status: Now removed!
-      ## isInitialized = FALSE,
       isCompiled    = FALSE,
       isPropagated  = FALSE,
       evidence      = NULL,
@@ -292,3 +270,8 @@ print.grain <- function(x,...){
       )
 }
 
+.setControl <- function(control){
+  con <- list(timing = 0)
+  con[(namc <- names(control))] <- control
+  con
+}

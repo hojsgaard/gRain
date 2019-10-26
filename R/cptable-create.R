@@ -72,8 +72,6 @@
 #' @export cptable
 #'
 
-## FIXME cptable -> cptable_class
-
 cptable <- function(vpar, levels=NULL, values=NULL, normalize=TRUE,  smooth=0 ){
     vpa  <- c(.formula2char(vpar))        
     if (is.list(levels))
@@ -84,17 +82,13 @@ cptable <- function(vpar, levels=NULL, values=NULL, normalize=TRUE,  smooth=0 ){
     attributes(out) <-
         list(vpa=vpa, normalize=normalize,
              smooth=smooth, levels=levels)
-    class(out) <- "cptable"
+    class(out) <- "cptable_class"
     out
 }
 
 
 #' @rdname cptable
 cptab <- cptable
-
-
-
-
 
 
 ## NORMAL
@@ -110,11 +104,7 @@ cdist <- function(vpar, parm=list()){
 
 
 
-
-
-
-
-print.cptable <- function(x, ...){
+print.cptable_class <- function(x, ...){
     ## "print.cptable\n" %>% cat
     v <- c(x)
     dim(v) <- c(length(attr(x,"levels")), length(v) / length(attr(x, "levels")))
@@ -127,18 +117,18 @@ print.cptable <- function(x, ...){
 }
 
 
-summary.cptable <- function(object, ...){
+summary.cptable_class <- function(object, ...){
     print(object)
     str(attributes(object))
     invisible(object)
 }
 
-varNames.cptable <- function(x){
+varNames.cptable_class <- function(x){
     ##x$vpa
     attr(x, "vpa")
 }
 
-valueLabels.cptable <- function(x){
+valueLabels.cptable_class <- function(x){
     out <- list(attr(x, "levels"))
     nam <- attr(x, "vpa")
     names(out) <- attr(x, "vpa")[1] #x$vpa[1]

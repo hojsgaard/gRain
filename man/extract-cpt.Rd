@@ -43,7 +43,7 @@ extractPOT, graph must be/define undirected triangulated graph.}
 
 \item{smooth}{See 'details' below.}
 
-\item{mg}{An object of class \code{MARG_rep}}
+\item{mg}{An object of class \code{marg_rep}}
 
 \item{pt}{An object of class \code{pot_rep}}
 }

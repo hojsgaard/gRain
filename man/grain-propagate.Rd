@@ -64,10 +64,11 @@ plist <- compileCPT(list(a, t.a, s, l.s, b.s, e.lt, x.e, d.be))
 pn    <- grain(plist)
 pnc  <- compile(pn, propagate=FALSE)
 
+\dontrun{
 if (require(microbenchmark))
     microbenchmark(
         propagate(pnc, engine="R"),
-        propagate(pnc, engine="cpp") )
+        propagate(pnc, engine="cpp") )}
 
 }
 \references{

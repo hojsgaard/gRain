@@ -122,14 +122,13 @@ setEvi_ <- function(object, evidence=NULL, propagate=TRUE, details=0){
     } else {
         if (!.isComp(object)){
             object <- compile(object)
-            object$isInitialized  <- FALSE
             object$isPropagated   <- FALSE            
         } 
         
         oe <- getEvidence( object ) # Der er noget med typen (old/new)
-        if (details>0){ print("old.evidence"); print(oe) }
+        if (details > 0){ print("old.evidence"); print(oe) }
         ne <- new_ev( evidence, universe(object)$levels ) 
-        if (details>0){ print("new evidence"); print( ne ) }
+        if (details > 0){ print("new evidence"); print( ne ) }
         
         ## Hvis der er eksisterende evidens, så skal det tages ud af det nye
         if (!is.null_ev( oe ) ){
@@ -137,19 +136,15 @@ setEvi_ <- function(object, evidence=NULL, propagate=TRUE, details=0){
             if (details>0) { print("new evidence - after modif"); print( ne ) }
         }
 
-        if ( length( varNames( ne ) ) > 0 ){
-            # host  <- .get.host.clique( ne$evidence, object$rip )
-            # object$temppot <- .insert.evidence.in.potential( object$temppot, ne, host )
-            # str(list(host=host))
-            ## FIXME: 3 lines: Replaces .get.host.clique
+        if (length(varNames(ne)) > 0){
             rp  <- getgrain(object, "rip")    
-            host  <- getHostClique(varNames( ne ), rp$cliques)
+            host  <- getHostClique(varNames(ne), rp$cliques)
             #str(list(ne, host))
             #pot.b <<- object$temppot
-            object$potential$pot_temp <- insertEvi( ne, pot(object)$pot_temp, host )
+            object$potential$pot_temp <- insertEvi(ne, pot(object)$pot_temp, host)
             #pot.a <<- object$temppot
             
-            te <- if (is.null_ev( oe )) ne else union_ev( oe, ne )
+            te <- if (is.null_ev(oe)) ne else union_ev(oe, ne)
             ##te <- union_ev( oe, ne )
             if (details>0) {print("total evidence"); print( te )}
             object$evidence <- te
@@ -350,16 +345,7 @@ insertEvi <- function(evi.list, pot, hostclique){
     }
 }
 
-## Bruges af setEvi; FIXME: lav om så vi bruger synlig funktion
-## .get.host.clique <- function(evidence, rip){
-##     unlist(lapply(evidence,
-##                   function(x){
-##                       n <- names(dimnames(x))
-##                       gRbase::get_superset_(n, rip$cliques, all=FALSE)
-##                   }),
-##                   use.names = FALSE)
-## }
-
+## FIXME: getHostClique : Same as .get_hosts ???
 #' @rdname grain-evi
 #' @param set.list A list of sets (a set is a character vector).
 #' @param cliques A list of sets (a set is a character vector).

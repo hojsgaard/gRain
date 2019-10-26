@@ -111,9 +111,10 @@ querygrain.grain <- function(object, nodes = nodeNames(object), type = "marginal
 
     if (is.null(nodes)) return(invisible(NULL))
     else if (inherits(nodes, "formula")) nodes <- unlist(rhsf2list(nodes))
+        ## nodes <- unlist(gRbase::rhsf2list(nodes))
 
 
-    if (!.isComp(object)){ ## FIXME This is a mess...
+    if (!.isComp(object)){ 
         if (details >= 1) cat("  Compiling (and propagating) model ...\n")
         object <- compile(object, propagate=TRUE)
     } else {
@@ -184,25 +185,24 @@ querygrain.grain <- function(object, nodes = nodeNames(object), type = "marginal
         }
     } else {
         ## cat(".Calculating brute force\n")
-        nnodes <- length( nodes )
-        dn    <- uni(object)$levels[nodes]
-        value <- tab(names(dn), dn) ## FIXME what is tab???
+        nnodes <- length(nodes)
+        dn     <- uni(object)$levels[nodes]
+        value  <- tab(names(dn), dn) ## FIXME gRbase::tab is unfortunate name;  ar_new is available
 
-        nodes2  <- nodes[2:nnodes]
+        nodes2 <- nodes[2:nnodes]
         dn2   <- uni(object)$levels[nodes2]
         gr2   <- as.matrix( expand.grid( dn2 ) )
 
         object  <- absorbEvidence( object )
         zz <- lapply(1:nrow(gr2), function(i){
             tmp <- setFinding(object, nodes=nodes2, states=gr2[i,])
-            r <- .nodeMarginal( tmp, nodes[1] )
+            r <- .nodeMarginal(tmp, nodes[1])
             v <- r[[1]] * pEvidence(tmp)
             v
         })
         zz <- unlist(zz, use.names=FALSE)
-        zz[ is.na( zz )] <- 0
-        if (normalize)
-            zz <- zz / sum( zz )
+        zz[is.na( zz )] <- 0
+        if (normalize) zz <- zz / sum( zz )
         value[] <- zz
     }
     return(value)

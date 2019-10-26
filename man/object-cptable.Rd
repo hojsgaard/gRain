@@ -51,12 +51,15 @@ compileMVN(bn, ...)
 \item{object}{An object to be given a value.}
 
 \item{value}{A value to be added to an object.}
+
+\item{bn}{A Bayesian network}
 }
 \description{
-FIXME write.
+Object oriented specification of Bayesian
+    network. This is experimental and may well change.
 }
 \details{
-FIXME to be written. This is all experimental and may well change soon.
+This is all experimental and may well change soon.
 }
 \examples{
 
@@ -76,8 +79,10 @@ add_cpt(bn) <- p.G_SR
 grain(compileCPT(bn))
 
 bn <- cpt_domain()
-add_cpt(bn) <- cptable(~rain, levels=ssp, values=c(.2, .8))
-add_cpt(bn) <- cptable(~sprinkler|rain, levels=ssp, values=c(.01, .99, .4, .6))
-add_cpt(bn) <- cptable(~GrassWet|Sprinkler:Rain, levels=ssp, values=c(.99, .01, .8, .2, .9, .1, 0, 1))
+add_cpt(bn) <- cptable(~Rain, levels=ssp, values=c(.2, .8))
+add_cpt(bn) <- cptable(~Sprinkler|Rain, levels=ssp,
+   values=c(.01, .99, .4, .6))
+add_cpt(bn) <- cptable(~GrassWet|Sprinkler:Rain, levels=ssp,
+   values=c(.99, .01, .8, .2, .9, .1, 0, 1))
 
 }

@@ -25,7 +25,7 @@ randomCPT <- function(object, states=c("yes", "no")){
 
 
 .formula2char <- function(f) {
-    unlist(rhsf2list(f))
+    unlist(gRbase::rhsf2list(f))
 }
 
 

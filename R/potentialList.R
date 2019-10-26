@@ -8,6 +8,8 @@
     for ( i in seq_along(cliques)){
         cq    <- cliques[[ i ]]
         vlab  <- universe$levels[cq]
+
+        ## september 2019: tab() is gRbase; should be ar_new or something
         potlist[[ i ]] <- tab(cq, vlab, values)
     }
     potlist
@@ -29,8 +31,7 @@
     APnames <- lapply(potlist, function(x) names(dimnames(x)))
     CPnames <- unname(lapply(cptlist, function(x) varNames(x)))
 
-    ## FIXME .findHost can be replaced by gRbase::get_superset_
-    hosts    <- .findHosts( CPnames, APnames )
+    hosts    <- .get_hosts(CPnames, APnames)
 
     for (i in 1:length(cptlist)) {
             cptc <- cptlist[[ i ]]
@@ -44,29 +45,15 @@
 
 
 
-
-## FIXME .findHosts can be replaced by gRbase::get_superset_
-.findHosts <- function( xx, yy ){
-  unlist(lapply(1:length(xx), function( i ) which(isin(yy, xx[[  i  ]], index=T)>0)[1]))
+## For each element (vector) x in xx.set, find the element (vector) y in
+## yy.set such that x is contained in y
+.get_hosts <- function(xx.set, yy.set){
+    unlist(lapply(1:length(xx.set), function(i) which(is_inset(xx.set[[i]], yy.set, index=TRUE) > 0)[1]))
+    ## Alternative:
+    ## v <- lapply(xx.set, get_superset, yy.set, all=FALSE)
+    ## v[lapply(v, length) == 0] <- NA
+    ## unlist(v)
 }
-
-
-
-
-## .insertNA <- function(list.of.tables)
-## {
-##     lapply(list.of.tables,
-##            function(xxx)
-##            {
-##                xxx[] <- NA
-##                xxx
-##            } )
-## }
-##
-
-
-
-
 
 
 

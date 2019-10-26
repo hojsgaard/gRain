@@ -35,7 +35,7 @@ absorbEvidence(object, propagate = TRUE)
 A list of tables with potentials.
 }
 \description{
-Set, update and remove evidence..
+Set, update and remove evidence.
 }
 \note{
 \code{setEvidence()} is an improvement of \code{setFinding()}

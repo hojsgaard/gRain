@@ -53,7 +53,7 @@ table if the grain is built from a graph plus a dataset.}
 An object of class "grain"
 }
 \description{
-The 'grain' builds a graphical independence network.
+Creating grain objects (graphical independence network).
 }
 \details{
 If 'smooth' is non-zero then entries of 'values' which a
@@ -84,22 +84,23 @@ bnc <- compile(bn, propagate=TRUE)
 
 bnc2 <- compile(bn, root=c("lung", "bronc", "tub"), propagate=TRUE)
 
+\dontrun{
 if (require(microbenchmark)){
 microbenchmark(
   querygrain(bnc, nodes=c("lung","bronc", "tub"), type="joint"),
   querygrain(bnc2, nodes=c("lung","bronc", "tub"), type="joint")
-)}
+)}}
 
 
 ## Simple example - one clique only in triangulated graph:
-plist.s <- compileCPT( list(a, t.a) )
-bn.s <- grain( plist.s )
-querygrain( bn.s )
+plist.s <- compileCPT(list(a, t.a))
+bn.s <- grain(plist.s)
+querygrain(bn.s)
 
 ## Simple example - disconnected network:
-plist.d <- compileCPT( list(a, t.a, s) )
-bn.d <- grain( plist.d )
-querygrain( bn.d )
+plist.d <- compileCPT(list(a, t.a, s))
+bn.d <- grain(plist.d)
+querygrain(bn.d)
 
 ## Create network from data and graph specification.
 ## There are different ways:
