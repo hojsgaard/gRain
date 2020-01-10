@@ -47,15 +47,16 @@
 #' golf2 <- loadHuginNet(paste(td,"/golf.net",sep=''))
 #' 
 #' @export loadHuginNet
-loadHuginNet <- function(file, description=rev(unlist(strsplit(file, "/")))[1],
-                         details=0){
+loadHuginNet <- function(file, description=NULL, details=0){
 
-  xxx      <-.readHuginNet(file,details)
-  yyy      <-.transformHuginNet2internal(xxx)
-  universe <- .asUniverse(yyy)
-  plist    <- lapply(yyy$potentialList, .hpot2cptable, universe)
-  value    <- grain(compileCPT(plist))
-  return(value)
+    if (is.null(description))
+        description <- rev(unlist(strsplit(file, "/")))[1]
+    xxx      <-.readHuginNet(file,details)
+    yyy      <-.transformHuginNet2internal(xxx)
+    universe <- .asUniverse(yyy)
+    plist    <- lapply(yyy$potentialList, .hpot2cptable, universe)
+    value    <- grain(compileCPT(plist))
+    return(value)
 }
 
 

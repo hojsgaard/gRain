@@ -52,7 +52,7 @@ removed. Otherwise \code{items} is a numeric vector.}
 Setting and removing joint evidence in grain objects.
 }
 \note{
-All the joint evidence functionality should be used *with great care*.
+All the joint evidence functionality should be used \emph{with great care}.
 }
 \examples{
 
@@ -122,12 +122,12 @@ evidence( bn3 )
 }
 \references{
 Søren Højsgaard (2012). Graphical Independence Networks
-    with the gRain Package for R. Journal of Statistical Software,
-    46(10), 1-26.  \url{http://www.jstatsoft.org/v46/i10/}.
+with the gRain Package for R. Journal of Statistical Software,
+46(10), 1-26.  \url{http://www.jstatsoft.org/v46/i10/}.
 }
 \seealso{
 \code{\link{setFinding}} \code{\link{getFinding}}
-    \code{\link{retractFinding}} \code{\link{pFinding}}
+\code{\link{retractFinding}} \code{\link{pFinding}}
 }
 \author{
 Søren Højsgaard, \email{sorenh@math.aau.dk}

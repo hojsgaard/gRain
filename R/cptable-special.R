@@ -10,7 +10,7 @@
 #'     \code{~a|b:c} or \code{~a:b:c} or \code{c("a","b","c")}.
 #'     Internally, the last form is used. Notice that the \code{+} and
 #'     \code{:} operator are used as separators only. The order of the
-#'     variables is important so \code{+} does not commute.
+#'     variables is important so \code{+} and \code{:} DO NOT commute.
 #' 
 #' @aliases andtable ortable
 #' @param vpa Node and two parents; as a formula or a character

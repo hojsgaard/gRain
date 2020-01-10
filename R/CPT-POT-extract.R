@@ -4,31 +4,43 @@
 #' @description Extract list of conditional probability tables and
 #'     list of clique potentials from data.
 #'
-#' @name extract-cpt
+#' @name extract_components
 #' 
-#' @details If \code{smooth} is non--zero then \code{smooth} is added
+#' @details If \code{smooth} is non-zero then \code{smooth} is added
 #'     to all cell counts before normalization takes place.
 #' 
-#' @aliases extractCPT extractCPT.table extractCPT.data.frame
-#'     extractPOT extractPOT.table extractPOT.data.frame
+#' @aliases extractCPT extractPOT extractMARG
+#' 
 #' @param data_ A named array or a dataframe.
-#' @param graph A graphNEL object or a list or formula which can be
-#'     turned into a graphNEL object by calling \code{ug} or
-#'     \code{dag}. For extractCPT, graph must be/define a DAG while for
-#'     extractPOT, graph must be/define undirected triangulated graph.
+#'
+#' @param graph A \code{graphNEL} object or a list or formula which can be
+#'     turned into a \code{graphNEL} object by calling \code{ug} or
+#'     \code{dag}. For \code{extract_cpt}, graph must be/define a DAG while for
+#'     \code{extract_pot}, graph must be/define undirected triangulated graph.
+#' 
 #' @param smooth See 'details' below.
-#' @return extractCPT: A list of conditional probability tables
-#'     extractPOT: A list of clique potentials.
+#' 
+#' @return
+#'   * \code{extract_cpt}: A list of conditional probability tables.
+#'   * \code{extract_pot}: A list of clique potentials.
+#'
+#' @details \code{extractCPT} is alias for \code{extract_cpt}
+#'     \code{extractPOT} is alias for \code{extract_pot} and
+#'     \code{extractMARG} is alias for \code{extract_marg}; retained
+#'     for backward compatibility.
+#' 
 #' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
-#' @seealso \code{\link{compileCPT}}, \code{\link{compilePOT}},
+#'
+#' @seealso \code{\link{compile_cpt}}, \code{\link{compile_pot}},
 #'     \code{\link{grain}}
+#'
 #' @references Søren Højsgaard (2012). Graphical Independence Networks
 #'     with the gRain Package for R. Journal of Statistical Software,
 #'     46(10), 1-26.  \url{http://www.jstatsoft.org/v46/i10/}.
 #' @keywords utilities
 #' @examples
 #' 
-#' 
+#' ## FIXME: Review example 
 #' ## Asia (chest clinic) example:
 #' 
 #' ## Version 1) Specify conditional probability tables.
@@ -51,7 +63,7 @@
 #'          bronc * smoke + either * tub * lung +
 #'          xray * either + dysp * bronc * either
 #' dg    <- dag(dgf)
-#' pp    <- extractCPT(chestSim100000, dg)
+#' pp    <- extract_cpt(chestSim100000, dg)
 #'
 #' pn2   <- grain(pp)
 #' ## Same as:
@@ -65,7 +77,7 @@
 #'     c("either", "xray"), c("either", "dysp", "bronc"), c("smoke", 
 #'     "lung", "bronc"), c("asia", "tub"))
 #' gg    <- ug(ugf)
-#' pp    <- extractPOT(chestSim100000, gg)
+#' pp    <- extract_pot(chestSim100000, gg)
 #'
 #' pn3   <- grain(pp)
 #' ## Same as:
@@ -79,14 +91,15 @@
 #' str(q2[names(q1)])
 #' str(q3[names(q1)])
 #' 
-#' @rdname extract-cpt
+#' @rdname extract_components
 
-extractCPT <- function(data_, graph, smooth=0){
 
-    .extractCPT_ <- function(data_, vpa, smooth=0){
+
+extract_cpt <- function(data_, graph, smooth=0){
+
+    .extract_cpt_primitive <- function(data_, vpa, smooth=0){
         
         is.df <- is.data.frame(data_)
-        
         out <- lapply(vpa, function(ss){.dataMarg(data_, ss, is.df)})
         
         ## FIXME : Get rid of this parray stuff (at least as a class)
@@ -109,29 +122,21 @@ extractCPT <- function(data_, graph, smooth=0){
     if (inherits(graph, c("formula", "list")))
         graph <- dag(graph)
 
-    if (!is.DAG(graph)) stop("'graph' not a DAG")
+    if (!is_dag(graph)) stop("'graph' not a DAG")
 
     vpa <- vpar(graph)
-    out <- .extractCPT_(data_, vpa=vpa, smooth=smooth)
+    out <- .extract_cpt_primitive(data_, vpa=vpa, smooth=smooth)
     ##FIXME: Should any info be stored in the output? vpa for example?
     class(out) <- "cpt_rep"
     out
 }
 
-.is.valid.data <- function(data_){
-    if ( !(is.data.frame(data_) || is.named.array(data_)) )
-        stop("'data_' must be dataframe or array.")
-}
 
 
+#' @rdname extract_components
+extract_pot <- function(data_, graph, smooth=0){
 
-
-
-
-#' @rdname extract-cpt
-extractPOT <- function(data_, graph, smooth=0){
-
-    .extractPOT_primitive <- function(data_, cliq, seps=NULL, smooth=0){        
+    .extract_pot_primitive <- function(data_, cliq, seps=NULL, smooth=0){        
         
         .normalize <- function(tt, sp){
             if (length(sp) > 0) tabDiv0(tt, tabMarg(tt, sp))
@@ -155,10 +160,10 @@ extractPOT <- function(data_, graph, smooth=0){
     if (inherits(graph, c("formula", "list")))
         graph <- ug(graph)
     
-    if (!is.TUG(graph)) stop("'graph' not undirected and triangulated")
+    if (!is_tug(graph)) stop("'graph' not undirected and triangulated")
     rip_  <- rip( graph )
     
-    out <- .extractPOT_primitive(data_, rip_$cliques, rip_$sep, smooth=smooth)
+    out <- .extract_pot_primitive(data_, rip_$cliques, rip_$sep, smooth=smooth)
     attr(out, "rip")     <- rip_
     class(out) <- "pot_rep"
     out
@@ -166,8 +171,9 @@ extractPOT <- function(data_, graph, smooth=0){
 
 
 
-#' @rdname extract-cpt
-extractMARG <- function(data_, graph, smooth=0){
+
+#' @rdname extract_components
+extract_marg <- function(data_, graph, smooth=0){
 
     .extractMARG_primitive <- function(data_, cliq, seps=NULL, smooth=0){        
         out <- vector("list", length(cliq))
@@ -182,7 +188,7 @@ extractMARG <- function(data_, graph, smooth=0){
     }
 
     .is.valid.data(data_)
-    if (!is.TUG(graph))
+    if (!is_tug(graph))
         stop("'graph' not undirected and triangulated")
     
     rip_  <- rip(graph)
@@ -194,18 +200,25 @@ extractMARG <- function(data_, graph, smooth=0){
 }
 
 
-#' @rdname extract-cpt
-data2cpt <- extractCPT
 
-#' @rdname extract-cpt
-data2pot <- extractPOT
+#' @rdname extract_components
+data2cpt <- extract_cpt
 
-#' @rdname extract-cpt
-data2marg <- extractMARG
+#' @rdname extract_components
+data2pot <- extract_pot
+
+#' @rdname extract_components
+data2marg <- extract_marg
 
 
+## OLD NAMES - KEEP THESE 
 
-#' @rdname extract-cpt
+extractCPT <- extract_cpt
+extractPOT <- extract_pot
+extractMARG <- extract_marg
+
+
+#' @rdname extract_components
 #' @param mg An object of class \code{marg_rep}
 marg2pot <- function(mg){
     if (!inherits(mg, "marg_rep")) stop("'mg' not a marg_rep object\n")
@@ -223,7 +236,7 @@ marg2pot <- function(mg){
     pt
 }
 
-#' @rdname extract-cpt
+#' @rdname extract_components 
 #' @param pt An object of class \code{pot_rep}
 pot2marg <- function(pt){
     if (!inherits(pt, "pot_rep")) stop("'pt' not a pot_rep object\n")    
@@ -237,13 +250,9 @@ pot2marg <- function(pt){
             mg[[i]] <- tabMult(mg[[i]], tabMarg(mg[[par[i]]], seps[[i]]))
         }
     }
-    class(mg) <- "MARG_rep"
+    class(mg) <- "marg_rep"
     mg
 }
-
-
-
-
 
 
 ## helper function; can possibly be made faster
@@ -262,14 +271,9 @@ pot2marg <- function(pt){
         
 }
 
-
-
-
-
-
-
-
-
-
+.is.valid.data <- function(data_){
+    if (!(is.data.frame(data_) || is.named.array(data_)))
+        stop("'data_' must be dataframe or array.")
+}
 
 

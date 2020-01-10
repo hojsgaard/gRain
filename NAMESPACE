@@ -34,18 +34,23 @@ importFrom(graph, edges, nodes)
 importMethodsFrom(Rgraphviz, plot)
 exportMethods(plot) 
 
-
-importFrom("functional", "Curry")
-export("Curry")
+## importFrom("functional", "Curry")
+## export("Curry")
 
 ##exportPattern("^[[:alpha:]]+")
 
-export(cptable, compileCPT, parse_cpt, grain, querygrain, qgrain,
-       setEvidence, pEvidence, extractCPT, extractPOT, setFinding,
+export(cptable, compileCPT,
+       grain, querygrain, qgrain,
+       setEvidence, pEvidence,
+       extractCPT, extractPOT,
+       extract_cpt, extract_pot,
+       ##parse_cpt, 
+       setFinding,
        getFinding, pFinding, retractFinding, setCPT, new_ev,
        setdiff_ev, union_ev, compilePOT, compileCPT, setEvi, evidence,
        "evidence<-", loadHuginNet, saveHuginNet, ortab, andtab, booltab, mendel,
-       cpt_domain, "add_cpt<-", repeatPattern, setJEvi, getgrain, retractJEvi,
+       ###cpt_domain, "add_cpt<-",
+       repeatPattern, setJEvi, getgrain, retractJEvi,
        getEvidence, new_jev, cpt,
        propagateLS)
 
@@ -53,7 +58,7 @@ S3method(parse_cpt, cptable_class)
 S3method(parse_cpt, xtabs)
 S3method(parse_cpt, default)
 
-S3method("add_cpt<-", cpt_domain)
+##S3method("add_cpt<-", cpt_domain)
 S3method(setCPT, grain)
 
 S3method(compile, grain)

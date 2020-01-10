@@ -3,39 +3,36 @@
 #### Bristol, March 2008
 ####
 
+## ##################################################################
+##
 #' @title Simulate from an independence network
-#' 
 #' @description Simulate data from an independence network.
-#'
+#' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
 #' @name grain-simulate
-#' 
-#' @param object An inpendence network
+##
+## ##################################################################
+#'
+#' @param object An independence network
 #' @param nsim Number of cases to simulate
 #' @param seed An optional integer controlling the random number
 #'     generatation
 #' @param \dots Not used...
 #' @return A data frame
-#' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
+
 #' @references Søren Højsgaard (2012). Graphical Independence Networks
 #'     with the gRain Package for R. Journal of Statistical Software,
 #'     46(10), 1-26.  \url{http://www.jstatsoft.org/v46/i10/}.
 #' @keywords models
 #' @examples
 #' 
-#' 
-#' \dontrun{
-#' 
 #' tf <- system.file("huginex", "chest_clinic.net", package = "gRain")
-#' chest <- loadHuginNet(tf, details=1)
 #' 
-#' simulate(chest,n=10)
+#' chest <- loadHuginNet(tf, details=1)
+#' simulate(chest,n=10) 
 #' 
 #' chest2 <- setFinding(chest, c("VisitToAsia", "Dyspnoea"),
-#' c("yes","yes"))
-#' 
+#'                             c("yes", "yes"))
 #' simulate(chest2, n=10)
-#' }
-#' 
 #' 
 #' @export simulate.grain
 simulate.grain <- function(object, nsim=1, seed=NULL, ...){

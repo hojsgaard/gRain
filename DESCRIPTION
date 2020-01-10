@@ -1,5 +1,5 @@
 Package: gRain
-Version: 1.3-0.1
+Version: 1.3-1
 Title: Graphical Independence Networks
 Author: Søren Højsgaard <sorenh@math.aau.dk>
 Maintainer: Søren Højsgaard <sorenh@math.aau.dk> 
@@ -9,7 +9,7 @@ License: GPL (>= 2)
 Depends:
     R (>= 3.6.0),
     methods,
-    gRbase (>= 1.8-4)
+    gRbase (>= 1.8-5)
 Imports:
     graph,
     Rgraphviz,
@@ -23,8 +23,8 @@ VignetteBuilder: knitr
 Suggests:
     microbenchmark,
     knitr
-LinkingTo: Rcpp (>= 0.11.1), RcppArmadillo, RcppEigen, gRbase (>= 1.8-4)
+LinkingTo: Rcpp (>= 0.11.1), RcppArmadillo, RcppEigen, gRbase (>= 1.8-5)
 ByteCompile: Yes
 biocViews:
-RoxygenNote: 6.1.1
-
+RoxygenNote: 7.0.2
+Roxygen: list(markdown = TRUE)

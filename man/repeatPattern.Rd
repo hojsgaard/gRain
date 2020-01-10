@@ -20,7 +20,7 @@ applying \code{unlist()}.}
 }
 \description{
 Repeated patterns is a useful model specification
-    short cut for Bayesian networks
+short cut for Bayesian networks
 }
 \examples{
 
@@ -70,9 +70,9 @@ if (interactive()) iplot(hmm)
 }
 \references{
 Søren Højsgaard (2012). Graphical Independence
-    Networks with the gRain Package for R. Journal of Statistical
-    Software, 46(10), 1-26.
-    \url{http://www.jstatsoft.org/v46/i10/}.
+Networks with the gRain Package for R. Journal of Statistical
+Software, 46(10), 1-26.
+\url{http://www.jstatsoft.org/v46/i10/}.
 }
 \seealso{
 \code{\link{grain}}, \code{\link{compileCPT}}

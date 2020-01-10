@@ -86,7 +86,6 @@
 #'     \code{\link{propagate.grain}}, \code{\link{setFinding}},
 #'     \code{\link{setEvidence}}, \code{\link{getFinding}},
 #'     \code{\link{pFinding}}, \code{\link{retractFinding}}
-#'     %\code{\link[gRbase]{gmData}}
 #' @references Søren Højsgaard (2012). Graphical Independence
 #'     Networks with the gRain Package for R. Journal of Statistical
 #'     Software, 46(10), 1-26.
@@ -160,9 +159,11 @@ grain <- function(x, control=list(), smooth=0, details=0, data=NULL, ...){
   UseMethod("grain")
 }
 
+
 #' @rdname grain-main
 grain.cpt_spec <- function(x, control=list(), smooth=0, details=0, ...){
 
+        
     ##cat("grain.cpt_spec\n")
     control  <- .setControl(control)
     out  <- c(list(universe    = attr(x, "universe"),
@@ -205,10 +206,10 @@ grain.graphNEL <- function(x, control=list(), smooth=0, details=0, data=NULL, ..
     if (!(is.named.array(data) || is.data.frame(data)))
         stop("Data must be an array or a dataframe\n")
 
-    if (is.DAG(x))
-        zz <- extractCPT(data, x, smooth=smooth)
-    else if (is.TUG(x))
-        zz <- extractPOT(data, x, smooth=smooth)
+    if (is_dag(x))
+        zz <- extract_cpt(data, x, smooth=smooth)
+    else if (is_tug(x))
+        zz <- extract_pot(data, x, smooth=smooth)
     else
         stop("graph 'x' is neither a directed acyclic graph or a triangulated undirected graph")
 
@@ -275,3 +276,6 @@ print.grain <- function(x,...){
   con[(namc <- names(control))] <- control
   con
 }
+
+
+

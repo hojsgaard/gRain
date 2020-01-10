@@ -7,8 +7,7 @@
 \alias{propagateLS__}
 \title{Propagate a graphical independence network (a Bayesian network)}
 \usage{
-\method{propagate}{grain}(object, details = object$details,
-  engine = "cpp", ...)
+\method{propagate}{grain}(object, details = object$details, engine = "cpp", ...)
 
 propagateLS(cqpotList, rip, initialize = TRUE, details = 0)
 }
@@ -33,13 +32,13 @@ A compiled and propagated grain object.
 }
 \description{
 Propagation refers to calibrating the cliques of the
-    junction tree so that the clique potentials are consistent on
-    their intersections
+junction tree so that the clique potentials are consistent on
+their intersections
 }
 \details{
 The \code{propagate} method invokes \code{propagateLS}
-    which is a pure R implementation of the Lauritzen-Spiegelhalter
-    algorithm.
+which is a pure R implementation of the Lauritzen-Spiegelhalter
+algorithm.
 
 The function \code{propagate__} invokes \code{propagateLS__} which
 is a c++ implementation of the Lauritzen-Spiegelhalter algorithm.
@@ -73,8 +72,8 @@ if (require(microbenchmark))
 }
 \references{
 Søren Højsgaard (2012). Graphical Independence Networks
-    with the gRain Package for R. Journal of Statistical Software,
-    46(10), 1-26.  \url{http://www.jstatsoft.org/v46/i10/}.
+with the gRain Package for R. Journal of Statistical Software,
+46(10), 1-26.  \url{http://www.jstatsoft.org/v46/i10/}.
 }
 \seealso{
 \code{\link{grain}}, \code{\link[gRbase]{compile}}

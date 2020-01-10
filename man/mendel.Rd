@@ -13,7 +13,7 @@ mendel(allele, names = c("child", "father", "mother"))
 }
 \description{
 Generate conditional probability table for mendelian
-    segregation.
+segregation.
 }
 \note{
 No error checking at all on the input.

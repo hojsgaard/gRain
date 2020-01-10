@@ -41,8 +41,8 @@
 #' The syntax of \code{setEvidence()} may change in the future.
 #' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
 #' 
-#' @seealso \code{\link{setEvidence}} \code{\link{getEvidence}}
-#' \code{\link{retractEvidence}} \code{\link{pEvidence}}
+#' @seealso \code{\link{setEvidence}}, \code{\link{getEvidence}},
+#' \code{\link{retractEvidence}}, \code{\link{pEvidence}},
 #' \code{\link{querygrain}}
 #'
 #' @references Søren Højsgaard (2012). Graphical Independence Networks

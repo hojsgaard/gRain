@@ -8,7 +8,7 @@
 \method{simulate}{grain}(object, nsim = 1, seed = NULL, ...)
 }
 \arguments{
-\item{object}{An inpendence network}
+\item{object}{An independence network}
 
 \item{nsim}{Number of cases to simulate}
 
@@ -25,26 +25,20 @@ Simulate data from an independence network.
 }
 \examples{
 
-
-\dontrun{
-
 tf <- system.file("huginex", "chest_clinic.net", package = "gRain")
-chest <- loadHuginNet(tf, details=1)
 
-simulate(chest,n=10)
+chest <- loadHuginNet(tf, details=1)
+simulate(chest,n=10) 
 
 chest2 <- setFinding(chest, c("VisitToAsia", "Dyspnoea"),
-c("yes","yes"))
-
+                            c("yes", "yes"))
 simulate(chest2, n=10)
-}
-
 
 }
 \references{
 Søren Højsgaard (2012). Graphical Independence Networks
-    with the gRain Package for R. Journal of Statistical Software,
-    46(10), 1-26.  \url{http://www.jstatsoft.org/v46/i10/}.
+with the gRain Package for R. Journal of Statistical Software,
+46(10), 1-26.  \url{http://www.jstatsoft.org/v46/i10/}.
 }
 \author{
 Søren Højsgaard, \email{sorenh@math.aau.dk}

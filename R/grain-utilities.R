@@ -2,8 +2,8 @@
 randomCPT <- function(object, states=c("yes", "no")){
 
     if (!inherits(object, "graphNEL"))
-        stop("'object' must be a graphNEL object\n")
-    if (!is.DAG(object))
+        stop("'object' must be a graphNEL\n")
+    if (!is_dag(object))
         stop("'object' is not a DAG\n")
 
     vpa <- vpar( object )
@@ -23,11 +23,9 @@ randomCPT <- function(object, states=c("yes", "no")){
     }    
 }
 
-
 .formula2char <- function(f) {
     unlist(gRbase::rhsf2list(f))
 }
-
 
 .namesDimnames <- function(x)
     names(dimnames(x))
@@ -40,7 +38,6 @@ setSliceValue <- function(x, slice, complement=FALSE, value=0){
     x[idx] <- value
     x
 }
-
 
 getgrain<- function(object, name=c("universe", "data", "dag", "ug", "cptlist",
                                    "origpot", "temppot", "equipot",

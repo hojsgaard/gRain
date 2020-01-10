@@ -5,11 +5,9 @@
 \alias{cptab}
 \title{Create conditional probability tables (CPTs)}
 \usage{
-cptable(vpar, levels = NULL, values = NULL, normalize = TRUE,
-  smooth = 0)
+cptable(vpar, levels = NULL, values = NULL, normalize = TRUE, smooth = 0)
 
-cptab(vpar, levels = NULL, values = NULL, normalize = TRUE,
-  smooth = 0)
+cptab(vpar, levels = NULL, values = NULL, normalize = TRUE, smooth = 0)
 }
 \arguments{
 \item{vpar}{Specifications of the names in P(v|pa1,...pak). See
@@ -30,7 +28,7 @@ A \code{cptable} object (a list).
 }
 \description{
 Creates conditional probability tables of the form
-    p(v|pa(v)).
+p(v|pa(v)).
 }
 \details{
 If \code{normalize=TRUE} then for each configuration of the parents
@@ -80,15 +78,15 @@ compile(grain(compileCPT(list(root.node, query.node, sister.node))), propagate=T
 }
 \references{
 Søren Højsgaard (2012). Graphical Independence
-    Networks with the gRain Package for R. Journal of Statistical
-    Software, 46(10), 1-26.
-    \url{http://www.jstatsoft.org/v46/i10/}.
+Networks with the gRain Package for R. Journal of Statistical
+Software, 46(10), 1-26.
+\url{http://www.jstatsoft.org/v46/i10/}.
 }
 \seealso{
 \code{\link{andtable}}, \code{\link{ortable}},
-    \code{\link{extractCPT}}, \code{\link{compileCPT}},
-    \code{\link{extractPOT}}, \code{\link{compilePOT}},
-    \code{\link{grain}}
+\code{\link{extract_cpt}}, \code{\link{compile_cpt}},
+\code{\link{extract_pot}}, \code{\link{compile_pot}},
+\code{\link{grain}}
 }
 \author{
 Søren Højsgaard, \email{sorenh@math.aau.dk}

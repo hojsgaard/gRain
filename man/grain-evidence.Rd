@@ -7,8 +7,15 @@
 \alias{absorbEvidence}
 \title{Set evidence.}
 \usage{
-setEvidence(object, nodes = NULL, states = NULL, evidence = NULL,
-  nslist = NULL, propagate = TRUE, details = 0)
+setEvidence(
+  object,
+  nodes = NULL,
+  states = NULL,
+  evidence = NULL,
+  nslist = NULL,
+  propagate = TRUE,
+  details = 0
+)
 
 retractEvidence(object, nodes = NULL, propagate = TRUE)
 
@@ -39,8 +46,8 @@ Set, update and remove evidence.
 }
 \note{
 \code{setEvidence()} is an improvement of \code{setFinding()}
-    (and as such \code{setFinding} is obsolete). Users are
-    recommended to use \code{setEvidence()} in the future.
+(and as such \code{setFinding} is obsolete). Users are
+recommended to use \code{setEvidence()} in the future.
 
 \code{setEvidence()} allows to specification of "hard evidence" (specific
 values for variables) and likelihood evidence (also known as virtual
@@ -95,12 +102,12 @@ setEvidence(chest, evidence=list("asia"=c(1, 0), "xray"="yes"))
 }
 \references{
 Søren Højsgaard (2012). Graphical Independence Networks
-    with the gRain Package for R. Journal of Statistical Software,
-    46(10), 1-26.  \url{http://www.jstatsoft.org/v46/i10/}.
+with the gRain Package for R. Journal of Statistical Software,
+46(10), 1-26.  \url{http://www.jstatsoft.org/v46/i10/}.
 }
 \seealso{
-\code{\link{setFinding}} \code{\link{getFinding}}
-    \code{\link{retractFinding}} \code{\link{pFinding}}
+\code{\link{setFinding}}, \code{\link{getFinding}},
+\code{\link{retractFinding}}, \code{\link{pFinding}}
 }
 \author{
 Søren Højsgaard, \email{sorenh@math.aau.dk}

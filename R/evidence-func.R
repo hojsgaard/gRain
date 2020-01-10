@@ -1,14 +1,11 @@
 ## ###############################################################
 ##
 #' @title Evidence objects
-#'
 #' @description Functions for defining and manipulating evidence.
-#'
 #' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
-#' 
+#' @name evidence_object
+##
 ## ###############################################################
-#'
-#' @name evidence-object
 #'
 #' @aliases subset.grain_ev
 #' 
@@ -33,9 +30,9 @@
 #' eo1.2 <- new_ev( e1.2, levels=uni )
 #' eo1.2
 #'
-#' # Notice that in \code{eo1.2}, \code{xray} is not regarded as hard
-#' # evidence but as a weight on each level. Other than that \code{eo1.2}
-#' # and \code{eo1} are equivalent here. This is used in connection
+#' # Notice that in eo1.2, xray is not regarded as hard
+#' # evidence but as a weight on each level. Other than that, eo1.2
+#' # and eo1 are equivalent here. This is used in connection
 #' # with specifying likelihood evidence. 
 #' 
 #' e2 <- list(dysp="yes", asia="yes")
@@ -43,10 +40,10 @@
 #'
 #' # If evidence 'e1' is already set in the network and new evidence
 #' # 'e2' emerges, the evidence in the network must be updated. But
-#' # there is a conflict in that \code{dysp="yes"} in 'e1' and
-#' # \code{dysp="no"} in 'e2'. The (arbitrary) convention is that
+#' # there is a conflict in that dysp="yes" in 'e1' and
+#' # dysp="no" in 'e2'. The (arbitrary) convention is that
 #' # existsting evidence overrides new evidence so that the only new
-#' # evidence in 'e2' is really \code{asia="yes"}.
+#' # evidence in 'e2' is really asia="yes".
 #'
 #' # To subtract existing evidence from new evidence we can do:
 #' setdiff_ev( eo2, eo1 )
@@ -55,7 +52,7 @@
 #' union_ev( eo2, eo1 )
 #'
 #' 
-#' @rdname evidence-object
+#' @rdname evidence_object
 #' @param evi.list A named list with evidence; see 'examples' below.
 #' @param levels A named list with the levels of all variables. 
 new_ev <- function(evi.list=NULL, levels){
@@ -120,7 +117,7 @@ new_ev <- function(evi.list=NULL, levels){
     out
 }
 
-#' @rdname evidence-object
+#' @rdname evidence_object
 #' @param object Some R object.
 is.null_ev <- function(object){
     if (missing(object)) TRUE
@@ -130,17 +127,17 @@ is.null_ev <- function(object){
 
 }
 
-#' @rdname evidence-object
+#' @rdname evidence_object
 #' @param x Evidence object
 print.grain_ev <- function(x, ...){
     print( as.data.frame(x[1:3]) )
 }
 
 
-#' @rdname evidence-object
+#' @rdname evidence_object
 varNames.grain_ev <- function(x) x$nodes
 
-#' @rdname evidence-object
+#' @rdname evidence_object
 #' @param row.names Not used.
 #' @param optional Not used.
 #' @param ... Not used. 
@@ -158,7 +155,7 @@ as.data.frame.grain_ev <-
         out
     }
 
-#' @rdname evidence-object
+#' @rdname evidence_object
 #' @param ev1,ev2 Evidence.
 setdiff_ev <- function(ev1, ev2){
     if (length(ev1)==0) ev1 <- new_ev( ev1 )
@@ -169,7 +166,7 @@ setdiff_ev <- function(ev1, ev2){
     out
 }
 
-#' @rdname evidence-object
+#' @rdname evidence_object
 union_ev <- function(ev1, ev2){
     if (length(ev1)==0) ev1 <- new_ev( ev1 )
     if (length(ev2)==0) ev2 <- new_ev( ev2 )

@@ -19,10 +19,10 @@
 #' @param propagate Should the network be propagated?
 #' @param details Debugging information
 #'
-#' @seealso \code{\link{setEvidence}} \code{\link{getEvidence}}
-#'     \code{\link{retractEvidence}} \code{\link{pEvidence}}
-#'     \code{\link{setFinding}} \code{\link{getFinding}}
-#'     \code{\link{retractFinding}} \code{\link{pFinding}}
+#' @seealso \code{\link{setEvidence}}, \code{\link{getEvidence}},
+#'     \code{\link{retractEvidence}}, \code{\link{pEvidence}},
+#'     \code{\link{setFinding}}, \code{\link{getFinding}},
+#'     \code{\link{retractFinding}}, \code{\link{pFinding}},
 #' @references Søren Højsgaard (2012). Graphical Independence Networks
 #'     with the gRain Package for R. Journal of Statistical Software,
 #'     46(10), 1-26.  \url{http://www.jstatsoft.org/v46/i10/}.

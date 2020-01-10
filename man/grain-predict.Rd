@@ -5,9 +5,14 @@
 \alias{predict.grain}
 \title{Make predictions from a probabilistic network}
 \usage{
-\method{predict}{grain}(object, response,
-  predictors = setdiff(names(newdata), response), newdata,
-  type = "class", ...)
+\method{predict}{grain}(
+  object,
+  response,
+  predictors = setdiff(names(newdata), response),
+  newdata,
+  type = "class",
+  ...
+)
 }
 \arguments{
 \item{object}{A grain object}
@@ -28,19 +33,19 @@ responses.}
 }
 \value{
 A list with components \item{pred}{A list with the
-    predictions} \item{pFinding}{A vector with the probability of
-    the finding (evidence) on which the prediction is based}
+predictions} \item{pFinding}{A vector with the probability of
+the finding (evidence) on which the prediction is based}
 }
 \description{
 Makes predictions (either as the most likely state or
-    as the conditional distributions) of variables conditional on
-    finding (evidence) on other variables in an independence
-    network.
+as the conditional distributions) of variables conditional on
+finding (evidence) on other variables in an independence
+network.
 }
 \references{
 Søren Højsgaard (2012). Graphical Independence Networks
-    with the gRain Package for R. Journal of Statistical Software,
-    46(10), 1-26.  \url{http://www.jstatsoft.org/v46/i10/}.
+with the gRain Package for R. Journal of Statistical Software,
+46(10), 1-26.  \url{http://www.jstatsoft.org/v46/i10/}.
 }
 \seealso{
 \code{\link{grain}}

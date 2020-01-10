@@ -11,22 +11,21 @@
 
 \item{\dots}{If \code{CPTlist} is a name in the dotted list, then
 the object will be update with this value (which is assumed to
-be a list of conditional probabilities). %% ~~Describe
-\code{\dots} here~~}
+be a list of conditional probabilities).}
 }
 \value{
-A new Bayesian network.  %% ~Describe the value returned %%
-    If it is a LIST, use %% \item{comp1 }{Description of 'comp1'}
-    %% \item{comp2 }{Description of 'comp2'} %% ...
+A Bayesian network.
 }
 \description{
 Update a Bayesian network
 }
 \note{
 There is NO checking that the input matches the settings in
-    the Bayesian network.
+the Bayesian network.
 }
 \examples{
+
+## FIXME : Improve example; avoid compileCPT
 
 ## Network for Bernulli experiment; two nodes: X and thetaX
 yn  <- c("yes", "no")    # Values for X
@@ -35,7 +34,6 @@ prX.val <- rep(1, length(thX.val)) # Probabilities for thetaX values
 
 thX <- cptable(~thetaX, values=prX.val, levels=thX.val)
 X   <- cptable(~X|thetaX, values=rbind(thX.val,1-thX.val), levels=yn)
-
 
 cptlist <- compileCPT( list(thX, X) )
 bn  <- compile( grain( cptlist ) )
@@ -48,13 +46,11 @@ thX2 <- cptable(~thetaX, values=prX.val2, levels=thX.val)
 bn2 <- update(bn, CPTlist=compileCPT( list(thX2, X)))
 querygrain( setEvidence(bn2, nodes="X", states="yes") )
 
-
-
 }
 \references{
 Søren Højsgaard (2012). Graphical Independence Networks
-    with the gRain Package for R. Journal of Statistical Software,
-    46(10), 1-26.  \url{http://www.jstatsoft.org/v46/i10/}.
+with the gRain Package for R. Journal of Statistical Software,
+46(10), 1-26.  \url{http://www.jstatsoft.org/v46/i10/}.
 }
 \author{
 Søren Højsgaard, \email{sorenh@math.aau.dk}

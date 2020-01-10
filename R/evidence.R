@@ -33,7 +33,9 @@
 #' @param nslist deprecated
 #' @param propagate Should the network be propagated?
 #' @param details Debugging information
+#'
 #' @return A list of tables with potentials.
+#'
 #' @note \code{setEvidence()} is an improvement of \code{setFinding()}
 #'     (and as such \code{setFinding} is obsolete). Users are
 #'     recommended to use \code{setEvidence()} in the future.
@@ -43,9 +45,10 @@
 #' evidence) for variables.
 #' 
 #' The syntax of \code{setEvidence()} may change in the future.
+#'
 #' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
-#' @seealso \code{\link{setFinding}} \code{\link{getFinding}}
-#'     \code{\link{retractFinding}} \code{\link{pFinding}}
+#' @seealso \code{\link{setFinding}}, \code{\link{getFinding}},
+#'     \code{\link{retractFinding}}, \code{\link{pFinding}}
 #' @references Søren Højsgaard (2012). Graphical Independence Networks
 #'     with the gRain Package for R. Journal of Statistical Software,
 #'     46(10), 1-26.  \url{http://www.jstatsoft.org/v46/i10/}.
@@ -95,7 +98,7 @@
 #' setEvidence(chest, evidence=list("asia"=c(1, 0), "xray"="yes"))
 #' 
 
-#' @name grain-evidence
+#' @rdname grain-evidence
 setEvidence <- function(object, nodes=NULL, states=NULL, evidence=NULL, nslist=NULL,
                         propagate=TRUE, details=0){
     
@@ -113,13 +116,13 @@ setEvidence <- function(object, nodes=NULL, states=NULL, evidence=NULL, nslist=N
     
 }
 
-#' @name grain-evidence
+#' @rdname grain-evidence
 retractEvidence <- function(object, nodes=NULL, propagate=TRUE){
     ##.retractEvidence_internal(object, nodes=nodes, propagate=propagate)
     retractEvi_(object, items=nodes, propagate=propagate)
 }
 
-#' @name grain-evidence
+#' @rdname grain-evidence
 absorbEvidence <- function(object, propagate=TRUE ){
     absorbEvi( object, propagate=propagate )
 }

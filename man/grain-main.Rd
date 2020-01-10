@@ -13,24 +13,19 @@
 \alias{grain.cpt_rep}
 \title{Graphical Independence Network}
 \usage{
-grain(x, control = list(), smooth = 0, details = 0, data = NULL,
-  ...)
+grain(x, control = list(), smooth = 0, details = 0, data = NULL, ...)
 
-\method{grain}{cpt_spec}(x, control = list(), smooth = 0,
-  details = 0, ...)
+\method{grain}{cpt_spec}(x, control = list(), smooth = 0, details = 0, ...)
 
-\method{grain}{pot_spec}(x, control = list(), smooth = 0,
-  details = 0, ...)
+\method{grain}{pot_spec}(x, control = list(), smooth = 0, details = 0, ...)
 
 \method{grain}{pot_rep}(x, ...)
 
 \method{grain}{cpt_rep}(x, ...)
 
-\method{grain}{graphNEL}(x, control = list(), smooth = 0,
-  details = 0, data = NULL, ...)
+\method{grain}{graphNEL}(x, control = list(), smooth = 0, details = 0, data = NULL, ...)
 
-\method{grain}{dModel}(x, control = list(), smooth = 0, details = 0,
-  data = NULL, ...)
+\method{grain}{dModel}(x, control = list(), smooth = 0, details = 0, data = NULL, ...)
 }
 \arguments{
 \item{x}{An argument to build an independence network
@@ -57,8 +52,8 @@ Creating grain objects (graphical independence network).
 }
 \details{
 If 'smooth' is non-zero then entries of 'values' which a
-    zero are replaced by the value of 'smooth' - BEFORE any
-    normalization takes place.
+zero are replaced by the value of 'smooth' - BEFORE any
+normalization takes place.
 }
 \examples{
 ## Asia (chest clinic) example:
@@ -125,16 +120,15 @@ compile(bn.ug)
 }
 \references{
 Søren Højsgaard (2012). Graphical Independence
-    Networks with the gRain Package for R. Journal of Statistical
-    Software, 46(10), 1-26.
-    \url{http://www.jstatsoft.org/v46/i10/}.
+Networks with the gRain Package for R. Journal of Statistical
+Software, 46(10), 1-26.
+\url{http://www.jstatsoft.org/v46/i10/}.
 }
 \seealso{
 \code{\link{cptable}}, \code{\link{compile.grain}},
-    \code{\link{propagate.grain}}, \code{\link{setFinding}},
-    \code{\link{setEvidence}}, \code{\link{getFinding}},
-    \code{\link{pFinding}}, \code{\link{retractFinding}}
-    %\code{\link[gRbase]{gmData}}
+\code{\link{propagate.grain}}, \code{\link{setFinding}},
+\code{\link{setEvidence}}, \code{\link{getFinding}},
+\code{\link{pFinding}}, \code{\link{retractFinding}}
 }
 \author{
 Søren Højsgaard, \email{sorenh@math.aau.dk}

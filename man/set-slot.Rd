@@ -42,14 +42,14 @@ cp1
 }
 \references{
 Søren Højsgaard (2012). Graphical Independence
-    Networks with the gRain Package for R. Journal of Statistical
-    Software, 46(10), 1-26.
-    \url{http://www.jstatsoft.org/v46/i10/}.
+Networks with the gRain Package for R. Journal of Statistical
+Software, 46(10), 1-26.
+\url{http://www.jstatsoft.org/v46/i10/}.
 }
 \seealso{
 \code{\link{grain}}, \code{\link[gRbase]{propagate}},
-    \code{\link[gRbase]{triangulate}}, \code{\link[gRbase]{rip}},
-    \code{\link[gRbase]{junctionTree}}
+\code{\link[gRbase]{triangulate}}, \code{\link[gRbase]{rip}},
+\code{\link[gRbase]{junctionTree}}
 }
 \author{
 Søren Højsgaard, \email{sorenh@math.aau.dk}

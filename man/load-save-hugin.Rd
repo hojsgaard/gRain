@@ -6,8 +6,7 @@
 \alias{saveHuginNet}
 \title{Load and save Hugin net files}
 \usage{
-loadHuginNet(file, description = rev(unlist(strsplit(file, "/")))[1],
-  details = 0)
+loadHuginNet(file, description = NULL, details = 0)
 
 saveHuginNet(gin, file, details = 0)
 }
@@ -27,8 +26,8 @@ An object (a list) of class "huginNet".
 }
 \description{
 These functions can load a net file saved in the
-    'Hugin format' into R and save a network in R as a file in the
-    'Hugin format'.
+'Hugin format' into R and save a network in R as a file in the
+'Hugin format'.
 }
 \examples{
 
@@ -54,9 +53,9 @@ golf2 <- loadHuginNet(paste(td,"/golf.net",sep=''))
 }
 \references{
 Søren Højsgaard (2012). Graphical Independence
-    Networks with the gRain Package for R. Journal of Statistical
-    Software, 46(10), 1-26.
-    \url{http://www.jstatsoft.org/v46/i10/}.
+Networks with the gRain Package for R. Journal of Statistical
+Software, 46(10), 1-26.
+\url{http://www.jstatsoft.org/v46/i10/}.
 }
 \seealso{
 \code{\link{grain}}

@@ -33,20 +33,20 @@ An array.
 }
 \description{
 Generate conditional probability tables based on the
-    logical expressions AND and OR.
+logical expressions AND and OR.
 }
 \details{
 Regarding the form of the argument \code{vpa}: To specify
-    \eqn{P(a|b,c)} one may write \code{~a|b+c} or \code{~a+b+c} or
-    \code{~a|b:c} or \code{~a:b:c} or \code{c("a","b","c")}.
-    Internally, the last form is used. Notice that the \code{+} and
-    \code{:} operator are used as separators only. The order of the
-    variables is important so \code{+} does not commute.
+\eqn{P(a|b,c)} one may write \code{~a|b+c} or \code{~a+b+c} or
+\code{~a|b:c} or \code{~a:b:c} or \code{c("a","b","c")}.
+Internally, the last form is used. Notice that the \code{+} and
+\code{:} operator are used as separators only. The order of the
+variables is important so \code{+} and \code{:} DO NOT commute.
 }
 \note{
 \code{andtable} and \code{ortable} are aliases for
-    \code{andtab} and \code{ortab} and are kept for backward
-    compatibility.
+\code{andtab} and \code{ortab} and are kept for backward
+compatibility.
 }
 \examples{
 
@@ -74,8 +74,8 @@ booltab(~v + pa1 + pa2, op=`|`) \%>\% ftable(row.vars="v") ## OR
 }
 \references{
 Søren Højsgaard (2012). Graphical Independence Networks
-    with the gRain Package for R. Journal of Statistical Software,
-    46(10), 1-26.  \url{http://www.jstatsoft.org/v46/i10/}.
+with the gRain Package for R. Journal of Statistical Software,
+46(10), 1-26.  \url{http://www.jstatsoft.org/v46/i10/}.
 }
 \seealso{
 \code{\link{cptable}}

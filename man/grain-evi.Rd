@@ -24,8 +24,14 @@
 \alias{getHostClique}
 \title{Set evidence in grain objects}
 \usage{
-setEvi(object, nodes = NULL, states = NULL, evidence = NULL,
-  propagate = TRUE, details = 0)
+setEvi(
+  object,
+  nodes = NULL,
+  states = NULL,
+  evidence = NULL,
+  propagate = TRUE,
+  details = 0
+)
 
 setEvi_(object, evidence = NULL, propagate = TRUE, details = 0)
 
@@ -55,8 +61,14 @@ evidence(object) <- value
 
 \method{evidence}{grain}(object) <- value
 
-addEvi(object, nodes = NULL, states = NULL, evidence = NULL,
-  propagate = TRUE, details = 0)
+addEvi(
+  object,
+  nodes = NULL,
+  states = NULL,
+  evidence = NULL,
+  propagate = TRUE,
+  details = 0
+)
 
 dropEvi(object, items = NULL, propagate = TRUE)
 
@@ -171,14 +183,14 @@ as.data.frame( evidence( b ) )
 }
 \references{
 Søren Højsgaard (2012). Graphical Independence Networks
-    with the gRain Package for R. Journal of Statistical Software,
-    46(10), 1-26.  \url{http://www.jstatsoft.org/v46/i10/}.
+with the gRain Package for R. Journal of Statistical Software,
+46(10), 1-26.  \url{http://www.jstatsoft.org/v46/i10/}.
 }
 \seealso{
-\code{\link{setEvidence}} \code{\link{getEvidence}}
-    \code{\link{retractEvidence}} \code{\link{pEvidence}}
-    \code{\link{setFinding}} \code{\link{getFinding}}
-    \code{\link{retractFinding}} \code{\link{pFinding}}
+\code{\link{setEvidence}}, \code{\link{getEvidence}},
+\code{\link{retractEvidence}}, \code{\link{pEvidence}},
+\code{\link{setFinding}}, \code{\link{getFinding}},
+\code{\link{retractFinding}}, \code{\link{pFinding}},
 }
 \author{
 Søren Højsgaard, \email{sorenh@math.aau.dk}

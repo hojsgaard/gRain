@@ -36,8 +36,8 @@
 #' @return A \code{cptable} object (a list).
 #' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
 #' @seealso \code{\link{andtable}}, \code{\link{ortable}},
-#'     \code{\link{extractCPT}}, \code{\link{compileCPT}},
-#'     \code{\link{extractPOT}}, \code{\link{compilePOT}},
+#'     \code{\link{extract_cpt}}, \code{\link{compile_cpt}},
+#'     \code{\link{extract_pot}}, \code{\link{compile_pot}},
 #'     \code{\link{grain}}
 #' @references Søren Højsgaard (2012). Graphical Independence
 #'     Networks with the gRain Package for R. Journal of Statistical

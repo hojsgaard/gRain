@@ -4,22 +4,29 @@
 #'     potentials as a preprocessing step for creating a graphical
 #'     independence network
 #'
-#' @name compile_potentials
+#' @name compile_components
 #' 
-#' @aliases compileCPT summary.cpt_spec compilePOT print.cpt_spec
-#'     summary.cpt_spec
-#' @param x To \code{compileCPT} x is a list of conditional
-#'     probability tables; to \code{compilePOT}, x is a list of clique
+#' @aliases compileCPT compilePOT
+#' 
+#' @param x To \code{compile_cpt} x is a list of conditional
+#'     probability tables; to \code{compile_pot}, x is a list of clique
 #'     potentials.
-#' @param object A list of potentials or of CPTs.
+#'
+## #' @param object A list of potentials or of CPTs.
+#'
 #' @param forceCheck Controls if consistency checks of the probability
 #'     tables should be made.
 #' @param ... Additional arguments; currently not used.
 #' 
-#' @return \code{compileCPT} returns a list of class 'cptspec'
-#'     \code{compilePOT} returns a list of class 'potspec'
+#' @details \code{compileCPT}, \code{compilePOT} are wrappers for
+#'     \code{compile_cpt} and \code{compile_pot} and are kept for
+#'     backward compatibility.
+#'
+#' @return A list with a class attribute.
+#' 
 #' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
-#' @seealso \code{\link{extractCPT}}, \code{\link{extractPOT}}
+#'
+#' @seealso \code{\link{extract_cpt}}, \code{\link{extract_pot}}
 #' 
 #' @references Søren Højsgaard (2012). Graphical Independence Networks
 #'     with the gRain Package for R. Journal of Statistical Software,
@@ -28,7 +35,7 @@
 #' @keywords utilities
 #' 
 
-#' @rdname compile_potentials
+#' @rdname compile_components
 compile_cpt <- function(x, forceCheck=TRUE){
         
     .create_universe <- function(zz){
@@ -83,8 +90,7 @@ compile_cpt <- function(x, forceCheck=TRUE){
 }
 
 
-
-#' @rdname compile_potentials
+#' @rdname compile_components
 compile_pot <- function(x){
     
     .make.universe <- function(x){
@@ -108,36 +114,25 @@ compile_pot <- function(x){
     x
 }
 
-## ##################################################################
-
-## OLD NAMES - KEEP THESE 
-#' @rdname compile_potentials
-compileCPT <- compile_cpt
-
-#' @rdname compile_potentials
-compilePOT <- compile_pot
 
 
 ## ##################################################################
+## These parse_cpt functions are used only in compile_cpt
+## ##################################################################
 
-#' @rdname compile_potentials
 parse_cpt <- function(xi){
     UseMethod("parse_cpt")
 }
 
-#' @rdname compile_potentials
+parse_cpt.xtabs <- function(xi){
+    NextMethod("parse_cpt")
+}
+
 parse_cpt.cptable_class <- function(xi){
     .parse_cpt_finalize(varNames(xi), valueLabels(xi)[[1]],
                         as.numeric(xi), attr(xi, "smooth"))
 }
 
-#' @rdname compile_potentials
-#' @param xi Conditional probability table
-parse_cpt.xtabs <- function(xi){
-    NextMethod("parse_cpt")
-}
-
-#' @rdname compile_potentials
 parse_cpt.default <- function(xi){
     if (!is.named.array(xi)) stop("'xi' must be a named array")
     .parse_cpt_finalize(varNames(xi), valueLabels(xi)[[1]],
@@ -151,23 +146,9 @@ parse_cpt.default <- function(xi){
     out    
 }
 
-## ##################################################################
+## #############################################################
 
-#' @rdname compile_potentials
-compile.pot_rep <- function(object, ...)
-    compile_pot(object)
-
-#' @rdname compile_potentials
-compile.cpt_rep <- function(object, ...)
-    compile_cpt(object)
-
-
-## ##################################################################
-
-
-
-
-print.cpt_spec <- function(x,...){
+print.cpt_spec <- function(x, ...){
     cat("cpt_spec with probabilities:\n")
     lapply(x,
            function(xx){
@@ -177,7 +158,7 @@ print.cpt_spec <- function(x,...){
   invisible(x)
 }
 
-print.pot_spec <- function(x,...){
+print.pot_spec <- function(x, ...){
     cat("pot_spec with potentials:\n")
     lapply(x,
            function(xx){
@@ -187,6 +168,11 @@ print.pot_spec <- function(x,...){
   invisible(x)
 }
 
+## FIXME: print.marg_spec missing
+## FIXME: summary.pot_spec missing
+## FIXME: summary.marg_spec missing
+
+
 summary.cpt_spec <- function(object, ...){
     cat("cpt_spec with probabilities:\n")
     lapply(object,
@@ -194,9 +180,12 @@ summary.cpt_spec <- function(object, ...){
                vn <- varNames(xx)
                .print_probability(vn)               
            })
-  invisible(object)
+    invisible(object)
 }
 
+## ###########################################################
+## Helper functions  -- used only in grain-main.R
+## ###########################################################
 as_cpt_spec_simple <- function(x){
     z <- c(x)
     attr(z, "universe") <- attr(x, "universe")
@@ -215,6 +204,20 @@ print.cpt_spec_simple <- function(x,...){
 }
 
 
+## ##################################################################
+
+compile.cpt_rep <- function(object, ...)
+    compile_cpt(object)
+
+compile.pot_rep <- function(object, ...)
+    compile_pot(object)
+
+
+## #################################################################
+
+## For bacward compatibility (book, paper etc)
+compileCPT <- compile_cpt
+compilePOT <- compile_pot
 
 
 

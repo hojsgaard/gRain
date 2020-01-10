@@ -7,7 +7,7 @@
 #' @description Compiles a Bayesian network. This means creating a
 #'     junction tree and establishing clique potentials.
 #'
-#' @name grain-compile
+#' @name grain_compile
 #' 
 #' @aliases compile.grain compile.cpt_grain compile.pot_grain
 #' @param object A grain object.
@@ -37,18 +37,18 @@
 
 
 
-#' @rdname grain-compile
+#' @rdname grain_compile
 add_jtree <- function(object, root=NULL){
     UseMethod("add_jtree")
 }
 
-#' @rdname grain-compile
+#' @rdname grain_compile
 add_jtree.cpt_grain <- function(object, root=NULL){
     if (!inherits(object, "cpt_grain")) stop("Not a cpt_grain object\n") 
     object[c("rip", "ug")] <- .create_jtree(object, root) 
     object
 }
-#' @rdname grain-compile
+#' @rdname grain_compile
 add_jtree.pot_grain <- function(object, root=NULL){
     if (is.null(rip(object)))
         stop("No rip component in object \n")
@@ -69,18 +69,18 @@ add_jtree.pot_grain <- function(object, root=NULL){
 }
 
 
-#' @rdname grain-compile
+#' @rdname grain_compile
 add_potential <- function(object){
     UseMethod("add_potential")
 }
 
-#' @rdname grain-compile
+#' @rdname grain_compile
 add_potential.cpt_grain <- function(object){
     object$potential <- .create_potential(object)
     object
 }
 
-#' @rdname grain-compile
+#' @rdname grain_compile
 add_potential.pot_grain <- function(object){
     if (is.null(object$cqpot))
         stop("No cqpot component in object \n")
@@ -108,21 +108,16 @@ add_potential.pot_grain <- function(object){
     list(pot_orig=pot_orig, pot_temp=pot_temp, pot_equi=pot_equi)
 }
 
-
-
-
-#' @rdname grain-compile
-compile.grain <-
-  function(object, propagate=FALSE, root=NULL,
+#' @rdname grain_compile
+compile.grain <- function(object, propagate=FALSE, root=NULL,
            control=object$control, details=0, ...) {    
     NextMethod("compile")
 }
 
 
-#' @rdname grain-compile
-compile.cpt_grain <-
-    function(object, propagate=FALSE, root=NULL, control=object$control,
-             details=0, ...){
+#' @rdname grain_compile
+compile.cpt_grain <- function(object, propagate=FALSE, root=NULL, control=object$control,
+                              details=0, ...){
         
         object <- add_jtree(object, root)
         object <- add_potential(object)
@@ -135,7 +130,7 @@ compile.cpt_grain <-
     }
 
 
-#' @rdname grain-compile
+#' @rdname grain_compile
 compile.pot_grain <-
     function(object, propagate=FALSE, root=NULL, control=object$control,
              details=0,...) {

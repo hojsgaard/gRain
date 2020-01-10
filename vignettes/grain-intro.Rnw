@@ -1,4 +1,4 @@
-%\VignetteIndexEntry{gRain-intro}
+%\VignetteIndexEntry{grain-intro}
 %\VignetteDepends{gRbase}
 %\VignetteKeyword{Bayesian networks}
 %\VignetteKeyword{Graphical Models}
