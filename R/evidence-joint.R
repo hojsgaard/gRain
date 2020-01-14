@@ -8,9 +8,7 @@
 #' 
 ## ###############################################################
 #'
-#' @name set-jevidence
-#'
-#' @aliases setJEvi_
+#' @name joint_evidence
 #'
 #' @note All the joint evidence functionality should be used *with great care*.
 #' 
@@ -39,7 +37,7 @@
 #'            tab("dysp", levels=uni, values=c(1,0)),
 #'            tab(c("dysp","bronc"), levels=uni, values=c(.1, .2, .9, .8)) )
 #'
-#' bn2 <- setJEvi(bn, evidence=ev)
+#' bn2 <- setJEvidence(bn, evidence=ev)
 #' bn2
 #'
 #' ## Notice: The evidence is defined on (subsets of) cliques of the junction tree
@@ -52,36 +50,34 @@
 #'
 #' \dontrun{
 #' ev.fail <- list(tab(c("dysp","smoke"), levels=uni, values=c(.1, .2, .9, .8)) )
-#' setJEvi(bn, evidence=ev.fail)
+#' setJEvidence(bn, evidence=ev.fail)
 #' }
 #'
 #' ## Evidence can be removed with
 #'
-#' retractJEvi(bn2)    ## All evidence removed.
-#' retractJEvi(bn2, 0) ## No evidence removed.
-#' retractJEvi(bn2, 1:2) ## Evidence items 1 and 2 are removed.
+#' retractJEvidence(bn2)    ## All evidence removed.
+#' retractJEvidence(bn2, 0) ## No evidence removed.
+#' retractJEvidence(bn2, 1:2) ## Evidence items 1 and 2 are removed.
 #' 
 #' ## Setting additional joint evidence to an object where joint
 #' # evidence already is set will cause an error. Hence this will fail:
 #' \dontrun{
 #'   ev2 <- list(smoke="yes")
-#'   setJEvi(bn2, evidence=ev2)
+#'   setJEvidence(bn2, evidence=ev2)
 #' }
 #'
 #' ## Instead we can do
-#' new.ev <- c( getEvidence(bn2), list(smoke="yes") )
-#' setJEvi( bn, evidence=new.ev )
+#' new.ev <- c(getEvidence(bn2), list(smoke="yes"))
+#' setJEvidence(bn, evidence=new.ev)
 #' 
 
-
-#' @rdname set-jevidence
-#' 
-setJEvi <- function(object, evidence=NULL, propagate=TRUE, details=0){
+#' @rdname joint_evidence
+setJEvidence <- function(object, evidence=NULL, propagate=TRUE, details=0){
     
-    setJEvi_( object, evidence=evidence, propagate=propagate, details=details)
+    setJEvidence_(object, evidence=evidence, propagate=propagate, details=details)
 }
 
-setJEvi_<- function(object, evidence=NULL, propagate=TRUE, details=0){
+setJEvidence_<- function(object, evidence=NULL, propagate=TRUE, details=0){
 
     if (!inherits(object, "grain")) stop("'object' is not a grain object")
     
@@ -101,7 +97,7 @@ setJEvi_<- function(object, evidence=NULL, propagate=TRUE, details=0){
         pot <- pot(object)$pot_temp
 #        str(evidence, hc)
 #        pot.b <<-pot
-        pot2 <- insertJEvi(evidence, pot, hc)
+        pot2 <- insertJEvidence(evidence, pot, hc)
 #        pot.a <<- pot2
         object$potential$pot_temp <- pot2
         object$evidence <- evidence
@@ -110,12 +106,13 @@ setJEvi_<- function(object, evidence=NULL, propagate=TRUE, details=0){
     object
 }
 
-#' @rdname set-jevidence
-#' @param evi.list A "grain_jev" object.
-#' @param pot A list of clique potentials (a potential is an array).
-#' @param hostclique A numerical vector indicating in which element of
-#'     'pot' each eviendence item in 'evi.list' should be inserted in.
-insertJEvi <- function(evi.list, pot, hostclique){
+## #' @rdname joint_evidence
+## #' @param evi.list A "grain_jev" object.
+## #' @param pot A list of clique potentials (a potential is an array).
+## #' @param hostclique A numerical vector indicating in which element of
+## #'     'pot' each eviendence item in 'evi.list' should be inserted in.
+
+insertJEvidence <- function(evi.list, pot, hostclique){
     if ( !inherits(evi.list, "grain_jev") )
         stop("'object' is not a 'grain_jev' object")
     #ee <<- evi.list
@@ -130,12 +127,12 @@ insertJEvi <- function(evi.list, pot, hostclique){
 
 
 
-#' @rdname set-jevidence
+#' @rdname joint_evidence
 #' @param items Items in the evidence list to be removed. Here,
 #'     \code{NULL} means remove everything, \code{0} means nothing is
 #'     removed. Otherwise \code{items} is a numeric vector.
 #' 
-retractJEvi <- function(object, items=NULL, propagate=TRUE, details=0){
+retractJEvidence <- function(object, items=NULL, propagate=TRUE, details=0){
     if (! (is.numeric(items) || is.null(items) ))
         stop("'items' must be  numeric or NULL")            
 
@@ -162,7 +159,7 @@ retractJEvi <- function(object, items=NULL, propagate=TRUE, details=0){
     object
 }
 
-#' @rdname set-jevidence
+#' @rdname joint_evidence
 #'
 #' @param ev A named list.
 #' @param levels A named list.
@@ -184,7 +181,7 @@ retractJEvi <- function(object, items=NULL, propagate=TRUE, details=0){
 #' jevi
 #'
 #'
-#' bn3 <- setJEvi( bn, evidence=jevi)
+#' bn3 <- setJEvidence( bn, evidence=jevi)
 #' evidence( bn3 )
 #' 
 new_jev <- function(ev, levels){
@@ -230,7 +227,7 @@ new_jev <- function(ev, levels){
     ev
 }
 
-#' @rdname set-jevidence
+#' @rdname joint_evidence
 #' @param x A "grain_jev" object.
 #' @param ... Additional arguments; currently not used.
 print.grain_jev <- function(x, ...){

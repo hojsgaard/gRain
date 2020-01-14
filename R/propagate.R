@@ -1,3 +1,6 @@
+## FIXME: documentation: propagate description is pointless unless you know what it
+## means already
+
 #' @title Propagate a graphical independence network (a Bayesian network)
 #' 
 #' @description Propagation refers to calibrating the cliques of the

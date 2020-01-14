@@ -47,11 +47,17 @@ export(cptable, compileCPT,
        ##parse_cpt, 
        setFinding,
        getFinding, pFinding, retractFinding, setCPT, new_ev,
-       setdiff_ev, union_ev, compilePOT, compileCPT, setEvi, evidence,
-       "evidence<-", loadHuginNet, saveHuginNet, ortab, andtab, booltab, mendel,
+       setdiff_ev, union_ev, compilePOT, compileCPT, ##setEvi,
+       evidence,
+       "evidence<-",
+       loadHuginNet, saveHuginNet, ortab, andtab, booltab, mendel,
        ###cpt_domain, "add_cpt<-",
-       repeatPattern, setJEvi, getgrain, retractJEvi,
-       getEvidence, new_jev, cpt,
+       repeatPattern,
+       setJEvidence, 
+       retractJEvidence,
+       new_jev, 
+       getgrain,
+       getEvidence, cpt,
        propagateLS)
 
 S3method(parse_cpt, cptable_class)
@@ -118,9 +124,9 @@ S3method(potential, grain)
 S3method(pot, grain)
 
 S3method(rip, grain)
-S3method("rip<-", grain)
+##S3method("rip<-", grain)
 S3method(setCPT, grain)
-S3method("setcpt<-", grain)
+##S3method("setcpt<-", grain)
     
 S3method(add_jtree, cpt_grain)
 S3method(add_jtree, pot_grain)

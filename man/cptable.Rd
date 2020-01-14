@@ -24,18 +24,18 @@ order, please see section 'details' and the examples.}
 \item{smooth}{See 'details' below.}
 }
 \value{
-A \code{cptable} object (a list).
+A \code{cptable} object (a numeric vector with various attributes).
 }
 \description{
 Creates conditional probability tables of the form
 p(v|pa(v)).
 }
 \details{
-If \code{normalize=TRUE} then for each configuration of the parents
-the probabilities are normalized to sum to one.
+If \code{normalize=TRUE} then the probabilities are normalized to sum to one
+for each configuration of the parents.
 
 If \code{smooth} is non--zero then zero entries of \code{values} are
-replaced with \code{smooth} before normalization takes place.
+replaced with \code{smooth} \strong{before} normalization takes place.
 
 Regarding the form of the argument \code{vpar}: To specify \eqn{P(a|b,c)}
 one may write \code{~a|b:c}, \code{~a:b:c}, \code{~a|b+c}, \code{~a+b+c} or
@@ -60,20 +60,6 @@ t.a  <- cptable(~ tub : asia, values=c(5, 95, 1, 99, 1, 999),  levels=ynm)
 d.a  <- cptable(~ dia : asia, values=c(5, 5, 1, 99, 100, 999), levels=ynm)
 cptlist <- compileCPT(list(a, t.a, d.a))
 grain(cptlist)
-
-## Example: Specifying conditional probabilities as a matrix
-bayes.levels  <- c('Enzyme', 'Keratine', 'unknown')
-root.node     <- cptable(~ R, values=c( 1, 1, 1 ), levels=bayes.levels)
-cond.prob.tbl <- t(matrix(c(1, 0, 0, 0, 1, 0, 0.5, 0.5, 0),
-   nrow=3, ncol=3, byrow=TRUE, dimnames=list(bayes.levels, bayes.levels)))
-cond.prob.tbl
-
-## Notice above: Columns represent parent states; rows represent child states
-query.node    <- cptable(~ Q | R, values=cond.prob.tbl, levels=bayes.levels)
-sister.node   <- cptable(~ S | R, values=cond.prob.tbl, levels=bayes.levels)
-
-## Testing 
-compile(grain(compileCPT(list(root.node, query.node, sister.node))), propagate=TRUE)
 
 }
 \references{

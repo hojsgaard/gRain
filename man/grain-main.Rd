@@ -19,13 +19,13 @@ grain(x, control = list(), smooth = 0, details = 0, data = NULL, ...)
 
 \method{grain}{pot_spec}(x, control = list(), smooth = 0, details = 0, ...)
 
-\method{grain}{pot_rep}(x, ...)
-
-\method{grain}{cpt_rep}(x, ...)
-
 \method{grain}{graphNEL}(x, control = list(), smooth = 0, details = 0, data = NULL, ...)
 
 \method{grain}{dModel}(x, control = list(), smooth = 0, details = 0, data = NULL, ...)
+
+\method{grain}{pot_rep}(x, ...)
+
+\method{grain}{cpt_rep}(x, ...)
 }
 \arguments{
 \item{x}{An argument to build an independence network
@@ -85,7 +85,6 @@ microbenchmark(
   querygrain(bnc, nodes=c("lung","bronc", "tub"), type="joint"),
   querygrain(bnc2, nodes=c("lung","bronc", "tub"), type="joint")
 )}}
-
 
 ## Simple example - one clique only in triangulated graph:
 plist.s <- compileCPT(list(a, t.a))

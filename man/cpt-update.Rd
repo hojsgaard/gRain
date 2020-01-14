@@ -2,35 +2,29 @@
 % Please edit documentation in R/grain-setcpt.R
 \name{cpt-update}
 \alias{cpt-update}
-\alias{setcpt<-}
-\alias{setcpt<-.grain}
 \alias{setCPT}
 \alias{setCPT.grain}
 \title{Update components of Bayesian network}
 \usage{
-setcpt(object) <- value
-
-\method{setcpt}{grain}(object) <- value
-
 setCPT(object, value)
 
 \method{setCPT}{grain}(object, value)
 }
 \arguments{
-\item{object}{A grain object}
+\item{object}{A \code{grain} object.}
 
-\item{value}{A named list}
+\item{value}{A named list, see examples below.}
 }
 \description{
 Update components of Bayesian network.
 }
 \examples{
 
-yn   <- c("yes","no")
-a    <- cptable(~asia,        values=c(1,99), levels=yn)
-t.a  <- cptable(~tub + asia,  values=c(5,95,1,99), levels=yn)
+yn   <- c("yes", "no")
+a    <- cptable(~asia,       values=c(1, 99), levels=yn)
+t.a  <- cptable(~tub + asia, values=c(5, 95, 1, 99), levels=yn)
 
-plist <- compileCPT(list(a, t.a )) 
+plist <- compileCPT(list(a, t.a)) 
 bn    <- grain(plist)
 bnc   <- compile(bn, propagate=FALSE)
 bncp  <- compile(bn, propagate=TRUE)

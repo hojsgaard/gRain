@@ -122,7 +122,6 @@
 #'   querygrain(bnc, nodes=c("lung","bronc", "tub"), type="joint"),
 #'   querygrain(bnc2, nodes=c("lung","bronc", "tub"), type="joint")
 #' )}}
-#' 
 #'
 #' ## Simple example - one clique only in triangulated graph:
 #' plist.s <- compileCPT(list(a, t.a))
@@ -162,8 +161,6 @@ grain <- function(x, control=list(), smooth=0, details=0, data=NULL, ...){
 
 #' @rdname grain-main
 grain.cpt_spec <- function(x, control=list(), smooth=0, details=0, ...){
-
-        
     ##cat("grain.cpt_spec\n")
     control  <- .setControl(control)
     out  <- c(list(universe    = attr(x, "universe"),
@@ -183,20 +180,12 @@ grain.pot_spec <- function(x, control=list(), smooth=0, details=0,...){
     out  <- c(list(universe    = attr(x, "universe"),              
                    cqpot       = x, ## FIXME: was c(x)...                  
                    ug          = attr(x, "ug"),
-                   rip         = attr(x, "rip")
-                   ),
+                   rip         = attr(x, "rip")),
               .setExtraComponents(control, details))
     ## FIXME: Generate dag if does not exist??
     class(out) <- c("pot_grain", "grain")
     out
 }
-
-#' @rdname grain-main
-grain.pot_rep <- function(x, ...){grain(compile(x))}
-
-#' @rdname grain-main
-grain.cpt_rep <- function(x, ...){grain(compile(x))}
-
 
 ## A graph + data (wrappers for calling grain.pot_spec and grain.cpt_spec)
 #' @rdname grain-main
@@ -228,6 +217,20 @@ grain.dModel <- function(x, control=list(), smooth=0, details=0, data=NULL, ...)
     gg <- ugList(terms(x))
     grain(gg, data=data, smooth=smooth, details=details, ...)
 }
+
+#' @rdname grain-main
+grain.pot_rep <- function(x, ...){grain(compile(x))}
+
+#' @rdname grain-main
+grain.cpt_rep <- function(x, ...){grain(compile(x))}
+
+
+
+
+
+
+
+
 
 
 ## Printing grain

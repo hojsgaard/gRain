@@ -22,7 +22,7 @@ extension '.net'}
 \item{gin}{An independence network}
 }
 \value{
-An object (a list) of class "huginNet".
+An object of class \code{grain}.
 }
 \description{
 These functions can load a net file saved in the

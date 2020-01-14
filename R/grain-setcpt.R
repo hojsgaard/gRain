@@ -1,13 +1,18 @@
+## ##############################################################
+##
 #' @title Update components of Bayesian network
 #'
 #' @description Update components of Bayesian network.
 #'
 #' @name cpt-update
-#' 
-#' @param object A grain object
-#' @param value A named list
-#' 
 #' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
+#' 
+##
+## ##############################################################
+#'
+#' @param object A `grain` object.
+#' @param value A named list, see examples below.
+#' 
 #' @seealso \code{\link{grain}}, \code{\link[gRbase]{propagate}},
 #'     \code{\link[gRbase]{triangulate}}, \code{\link[gRbase]{rip}},
 #'     \code{\link[gRbase]{junctionTree}}
@@ -16,14 +21,16 @@
 #'     Software, 46(10), 1-26.
 #'     \url{http://www.jstatsoft.org/v46/i10/}.
 #' @keywords utilities models
-#'
+
+## FIXME setCPT: Maybe better example.
+
 #' @examples
 #'
-#' yn   <- c("yes","no")
-#' a    <- cptable(~asia,        values=c(1,99), levels=yn)
-#' t.a  <- cptable(~tub + asia,  values=c(5,95,1,99), levels=yn)
+#' yn   <- c("yes", "no")
+#' a    <- cptable(~asia,       values=c(1, 99), levels=yn)
+#' t.a  <- cptable(~tub + asia, values=c(5, 95, 1, 99), levels=yn)
 #'
-#' plist <- compileCPT(list(a, t.a )) 
+#' plist <- compileCPT(list(a, t.a)) 
 #' bn    <- grain(plist)
 #' bnc   <- compile(bn, propagate=FALSE)
 #' bncp  <- compile(bn, propagate=TRUE)
@@ -35,16 +42,6 @@
 #' bnc2   <- setCPT(bnc, list(tub=z))
 #' bncp2   <- setCPT(bncp, list(tub=z))
 #' 
-
-#' @rdname cpt-update
-"setcpt<-" <- function(object, value){
-    UseMethod("setcpt<-")
-}
-
-#' @rdname cpt-update
-"setcpt<-.grain" <- function(object, value){
-    setCPT(object, value)
-}
 
 #' @rdname cpt-update
 setCPT <- function(object, value){
@@ -74,18 +71,22 @@ setCPT.grain <- function(object, value){
 
     object$isCompiled <- object$isPropagated <- FALSE
     object
-    
-    ## if (!getgin(object, "isCompiled")){
-    ##     ##cat("object is not compiled\n")
-    ##     object
-    ## } else {
-    ##     isp <- getgin(object, "isPropagated")
-    ##     ##cat("object IS compiled; propated?", isp, "\n")
-    ##     ## RIP exists; just need to update potentials
-    ##     object <- update_pot(object)
-        
-    ##     if (isp)
-    ##         object <- propagate(object)
-    ##     object
-    ## } 
 }
+
+
+
+
+
+
+## #' @rdname cpt-update
+## "setcpt<-" <- function(object, value){
+##     UseMethod("setcpt<-")
+## }
+
+## #' @rdname cpt-update
+## "setcpt<-.grain" <- function(object, value){
+##     setCPT(object, value)
+## }
+
+
+

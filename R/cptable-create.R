@@ -1,7 +1,12 @@
+## FIXME: cptable example to be improved
+## FIXME: cptable -> CPTable, CPTable, newCPT ???
+
 #' @title Create conditional probability tables (CPTs)
 #' 
 #' @description Creates conditional probability tables of the form
 #'     p(v|pa(v)).
+#'
+#' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
 #' 
 #' @param vpar Specifications of the names in P(v|pa1,...pak). See
 #'     section 'details' for information about the form of the
@@ -14,11 +19,11 @@
 #'
 #' @details
 #' 
-#' If \code{normalize=TRUE} then for each configuration of the parents
-#' the probabilities are normalized to sum to one.
+#' If \code{normalize=TRUE} then the probabilities are normalized to sum to one
+#' for each configuration of the parents.
 #' 
 #' If \code{smooth} is non--zero then zero entries of \code{values} are
-#' replaced with \code{smooth} before normalization takes place.
+#' replaced with \code{smooth} __before__ normalization takes place.
 #' 
 #' Regarding the form of the argument \code{vpar}: To specify \eqn{P(a|b,c)}
 #' one may write \code{~a|b:c}, \code{~a:b:c}, \code{~a|b+c}, \code{~a+b+c} or
@@ -33,8 +38,8 @@
 #' elements in \code{values} will be the conditional probabilities of \code{a}
 #' given \code{b=b1, c=c1}.
 #' 
-#' @return A \code{cptable} object (a list).
-#' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
+#' @return A \code{cptable} object (a numeric vector with various attributes).
+#' 
 #' @seealso \code{\link{andtable}}, \code{\link{ortable}},
 #'     \code{\link{extract_cpt}}, \code{\link{compile_cpt}},
 #'     \code{\link{extract_pot}}, \code{\link{compile_pot}},
@@ -55,20 +60,20 @@
 #' cptlist <- compileCPT(list(a, t.a, d.a))
 #' grain(cptlist)
 #' 
-#' ## Example: Specifying conditional probabilities as a matrix
-#' bayes.levels  <- c('Enzyme', 'Keratine', 'unknown')
-#' root.node     <- cptable(~ R, values=c( 1, 1, 1 ), levels=bayes.levels)
-#' cond.prob.tbl <- t(matrix(c(1, 0, 0, 0, 1, 0, 0.5, 0.5, 0),
-#'    nrow=3, ncol=3, byrow=TRUE, dimnames=list(bayes.levels, bayes.levels)))
-#' cond.prob.tbl
-#' 
-#' ## Notice above: Columns represent parent states; rows represent child states
-#' query.node    <- cptable(~ Q | R, values=cond.prob.tbl, levels=bayes.levels)
-#' sister.node   <- cptable(~ S | R, values=cond.prob.tbl, levels=bayes.levels)
-#'
-#' ## Testing 
-#' compile(grain(compileCPT(list(root.node, query.node, sister.node))), propagate=TRUE)
-#' 
+## #' ## Example: Specifying conditional probabilities as a matrix
+## #' bayes.levels  <- c('Enzyme', 'Keratine', 'unknown')
+## #' root.node     <- cptable(~ R, values=c( 1, 1, 1 ), levels=bayes.levels)
+## #' cond.prob.tbl <- t(matrix(c(1, 0, 0, 0, 1, 0, 0.5, 0.5, 0),
+## #'    nrow=3, ncol=3, byrow=TRUE, dimnames=list(bayes.levels, bayes.levels)))
+## #' cond.prob.tbl
+## #' 
+## #' ## Notice above: Columns represent parent states; rows represent child states
+## #' query.node    <- cptable(~ Q | R, values=cond.prob.tbl, levels=bayes.levels)
+## #' sister.node   <- cptable(~ S | R, values=cond.prob.tbl, levels=bayes.levels)
+## #'
+## #' ## Testing 
+## #' compile(grain(compileCPT(list(root.node, query.node, sister.node))), propagate=TRUE)
+## #' 
 #' @export cptable
 #'
 

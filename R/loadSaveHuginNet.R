@@ -17,7 +17,7 @@
 #' @param description A text describing the network, defaults to
 #'     \code{file}
 #' @param details Debugging information
-#' @return An object (a list) of class "huginNet".
+#' @return An object of class `grain`.
 #' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
 #' @seealso \code{\link{grain}}
 #' @references Søren Højsgaard (2012). Graphical Independence
@@ -47,6 +47,7 @@
 #' golf2 <- loadHuginNet(paste(td,"/golf.net",sep=''))
 #' 
 #' @export loadHuginNet
+
 loadHuginNet <- function(file, description=NULL, details=0){
 
     if (is.null(description))

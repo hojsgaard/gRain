@@ -8,10 +8,10 @@
 \alias{nodeStates.grain}
 \alias{universe}
 \alias{universe.grain}
-\alias{varNames.grainEvidence_}
-\alias{rip.grain}
 \alias{uni}
 \alias{uni.grain}
+\alias{varNames.grainEvidence_}
+\alias{rip.grain}
 \alias{pot}
 \alias{pot.grain}
 \alias{cpt}
@@ -36,13 +36,13 @@ universe(object, ...)
 
 \method{universe}{grain}(object, ...)
 
-\method{varNames}{grainEvidence_}(x)
-
-\method{rip}{grain}(object, ...)
-
 uni(object)
 
 \method{uni}{grain}(object)
+
+\method{varNames}{grainEvidence_}(x)
+
+\method{rip}{grain}(object, ...)
 
 pot(object)
 

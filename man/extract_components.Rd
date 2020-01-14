@@ -67,7 +67,6 @@ for backward compatibility.
 }
 \examples{
 
-## FIXME: Review example 
 ## Asia (chest clinic) example:
 
 ## Version 1) Specify conditional probability tables.

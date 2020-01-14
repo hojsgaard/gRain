@@ -35,6 +35,10 @@ independence network
 \code{compile_cpt} and \code{compile_pot} and are kept for
 backward compatibility.
 }
+\examples{
+
+## FIXME: compile_cpt/compile_pot examples missing.
+}
 \references{
 Søren Højsgaard (2012). Graphical Independence Networks
 with the gRain Package for R. Journal of Statistical Software,
