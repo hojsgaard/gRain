@@ -41,8 +41,8 @@
 #' @return A \code{cptable} object (a numeric vector with various attributes).
 #' 
 #' @seealso \code{\link{andtable}}, \code{\link{ortable}},
-#'     \code{\link{extract_cpt}}, \code{\link{compile_cpt}},
-#'     \code{\link{extract_pot}}, \code{\link{compile_pot}},
+#'     \code{\link{extractCPT}}, \code{\link{compileCPT}},
+#'     \code{\link{extractPOT}}, \code{\link{compilePOT}},
 #'     \code{\link{grain}}
 #' @references Søren Højsgaard (2012). Graphical Independence
 #'     Networks with the gRain Package for R. Journal of Statistical
@@ -79,8 +79,13 @@
 
 cptable <- function(vpar, levels=NULL, values=NULL, normalize=TRUE,  smooth=0 ){
     vpa  <- c(.formula2char(vpar))        
-    if (is.list(levels))
-        levels <- levels[[vpa[1]]]
+    if (is.list(levels)){
+        v <- vpa[1]
+        if (!(v %in% names(levels)))
+            stop(paste0("Name ", v, " is not in the 'levels' list\n"))
+        levels <- levels[[v]]
+    }
+    ##str(list(vpa=vpa, xlevels=levels))
     ## if (is.null(values))
     ##     values <- rep(1.0, length(levels))
     out  <- values

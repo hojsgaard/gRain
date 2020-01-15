@@ -196,9 +196,9 @@ grain.graphNEL <- function(x, control=list(), smooth=0, details=0, data=NULL, ..
         stop("Data must be an array or a dataframe\n")
 
     if (is_dag(x))
-        zz <- extract_cpt(data, x, smooth=smooth)
+        zz <- extractCPT(data, x, smooth=smooth)
     else if (is_tug(x))
-        zz <- extract_pot(data, x, smooth=smooth)
+        zz <- extractPOT(data, x, smooth=smooth)
     else
         stop("graph 'x' is neither a directed acyclic graph or a triangulated undirected graph")
 

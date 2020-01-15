@@ -14,7 +14,6 @@ randomCPT <- function(object, states=c("yes", "no")){
     compileCPT( cpt )
 }
 
-
 .print_probability <- function(vn){
     if (length(vn) > 1){
         cat(paste(" P(", vn[1], "|", paste(vn[-1], collapse=' '), ")\n"))
@@ -38,6 +37,13 @@ setSliceValue <- function(x, slice, complement=FALSE, value=0){
     x[idx] <- value
     x
 }
+
+
+listify_dots <- function(args){
+    args <- lapply(args, function(a) if (!is.list(a)) list(a) else a)
+    unlist(args, recursive=FALSE)    
+}
+
 
 getgrain<- function(object, name=c("universe", "data", "dag", "ug", "cptlist",
                                    "origpot", "temppot", "equipot",

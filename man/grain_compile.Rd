@@ -2,29 +2,11 @@
 % Please edit documentation in R/grain-compile.R
 \name{grain_compile}
 \alias{grain_compile}
-\alias{add_jtree}
 \alias{compile.grain}
 \alias{compile.cpt_grain}
 \alias{compile.pot_grain}
-\alias{add_jtree.cpt_grain}
-\alias{add_jtree.pot_grain}
-\alias{add_potential}
-\alias{add_potential.cpt_grain}
-\alias{add_potential.pot_grain}
 \title{Compile a graphical independence network (a Bayesian network)}
 \usage{
-add_jtree(object, root = NULL)
-
-\method{add_jtree}{cpt_grain}(object, root = NULL)
-
-\method{add_jtree}{pot_grain}(object, root = NULL)
-
-add_potential(object)
-
-\method{add_potential}{cpt_grain}(object)
-
-\method{add_potential}{pot_grain}(object)
-
 \method{compile}{grain}(
   object,
   propagate = FALSE,
@@ -55,12 +37,12 @@ add_potential(object)
 \arguments{
 \item{object}{A grain object.}
 
-\item{root}{A set of variables which must be in the root of the
-junction tree}
-
 \item{propagate}{If TRUE the network is also propagated meaning
 that the cliques of the junction tree are calibrated to each
 other.}
+
+\item{root}{A set of variables which must be in the root of the
+junction tree}
 
 \item{control}{Controlling the compilation process.}
 

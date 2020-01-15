@@ -3,12 +3,12 @@
 \name{cpt-update}
 \alias{cpt-update}
 \alias{setCPT}
-\alias{setCPT.grain}
+\alias{setCPT.cpt_grain}
 \title{Update components of Bayesian network}
 \usage{
 setCPT(object, value)
 
-\method{setCPT}{grain}(object, value)
+\method{setCPT}{cpt_grain}(object, value)
 }
 \arguments{
 \item{object}{A \code{grain} object.}
@@ -19,22 +19,26 @@ setCPT(object, value)
 Update components of Bayesian network.
 }
 \examples{
+## See the wet grass example at
+## https://en.wikipedia.org/wiki/Bayesian_network
 
-yn   <- c("yes", "no")
-a    <- cptable(~asia,       values=c(1, 99), levels=yn)
-t.a  <- cptable(~tub + asia, values=c(5, 95, 1, 99), levels=yn)
+yn <- c("yes", "no")
+p.R <- cptable(~R, values=c(.2, .8), levels=yn)
+p.S_R <- cptable(~S:R, values=c(.01, .99, .4, .6), levels=yn)
+p.G_SR <- cptable(~G:S:R, values=c(.99, .01, .8, .2, .9, .1, 0, 1), levels=yn)
 
-plist <- compileCPT(list(a, t.a)) 
-bn    <- grain(plist)
-bnc   <- compile(bn, propagate=FALSE)
-bncp  <- compile(bn, propagate=TRUE)
+x <- collectCPT(p.R, p.S_R, p.G_SR)
+x
+bn <- grain(x)
 
-## New p(tub | asia)
-z <- c(20, 80, 1, 99) 
+getgrain(bn, "cpt")
+getgrain(bn, "cpt")$R
+getgrain(bn, "cpt")$S
 
-bn2   <- setCPT(bn, list(tub=z))
-bnc2   <- setCPT(bnc, list(tub=z))
-bncp2   <- setCPT(bncp, list(tub=z))
+bn2 <- setCPT(bn, list(R=c(.3, .7), S=c(.1, .9, .7, .3)))
+
+getgrain(bn2, "cpt")$R
+getgrain(bn2, "cpt")$S
 
 }
 \references{

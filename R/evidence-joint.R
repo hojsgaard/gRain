@@ -8,7 +8,7 @@
 #' 
 ## ###############################################################
 #'
-#' @name joint_evidence
+#' @name grain_jevidence
 #'
 #' @note All the joint evidence functionality should be used *with great care*.
 #' 
@@ -71,7 +71,7 @@
 #' setJEvidence(bn, evidence=new.ev)
 #' 
 
-#' @rdname joint_evidence
+#' @rdname grain_jevidence
 setJEvidence <- function(object, evidence=NULL, propagate=TRUE, details=0){
     
     setJEvidence_(object, evidence=evidence, propagate=propagate, details=details)
@@ -94,7 +94,7 @@ setJEvidence_<- function(object, evidence=NULL, propagate=TRUE, details=0){
         vn  <- sapply(evidence, varNames)    
         rp  <- getgrain(object, "rip")    
         hc  <- getHostClique(vn, rp$cliques)
-        pot <- pot(object)$pot_temp
+        pot <- getgrain(object, "pot_temp")
 #        str(evidence, hc)
 #        pot.b <<-pot
         pot2 <- insertJEvidence(evidence, pot, hc)
@@ -106,7 +106,7 @@ setJEvidence_<- function(object, evidence=NULL, propagate=TRUE, details=0){
     object
 }
 
-## #' @rdname joint_evidence
+## #' @rdname grain_jevidence
 ## #' @param evi.list A "grain_jev" object.
 ## #' @param pot A list of clique potentials (a potential is an array).
 ## #' @param hostclique A numerical vector indicating in which element of
@@ -127,7 +127,7 @@ insertJEvidence <- function(evi.list, pot, hostclique){
 
 
 
-#' @rdname joint_evidence
+#' @rdname grain_jevidence
 #' @param items Items in the evidence list to be removed. Here,
 #'     \code{NULL} means remove everything, \code{0} means nothing is
 #'     removed. Otherwise \code{items} is a numeric vector.
@@ -159,7 +159,7 @@ retractJEvidence <- function(object, items=NULL, propagate=TRUE, details=0){
     object
 }
 
-#' @rdname joint_evidence
+#' @rdname grain_jevidence
 #'
 #' @param ev A named list.
 #' @param levels A named list.
@@ -227,7 +227,7 @@ new_jev <- function(ev, levels){
     ev
 }
 
-#' @rdname joint_evidence
+#' @rdname grain_jevidence
 #' @param x A "grain_jev" object.
 #' @param ... Additional arguments; currently not used.
 print.grain_jev <- function(x, ...){

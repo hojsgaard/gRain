@@ -177,7 +177,9 @@ querygrain.grain <- function(object, nodes = nodeNames(object), type = "marginal
 
     if (any(idxb)){
         ## cat(".Calculating directly from clique\n")
-        tab   <- pot(object)$pot_equi[[ which(idxb)[1] ]]
+        ##tab   <- pot(object)$pot_equi[[ which(idxb)[1] ]]
+        tab   <- getgrain(object, "pot_equi")[[ which(idxb)[1] ]]
+        
         value <- tableMargin(tab, nodes)  ## FIXME tableMargin
         ##vv <<- value ## FIXHACK
         if (!normalize){
@@ -234,7 +236,8 @@ querygrain.grain <- function(object, nodes = nodeNames(object), type = "marginal
             cvert  <- nodes[i]
             idx    <- host.cq[i]
             ## querygrain - .nodeMarginal: Calculations based on equipot
-            cpot   <- pot(object)$pot_equi[[ idx ]]
+                                        #cpot   <- pot(object)$pot_equi[[ idx ]]
+            cpot   <- getgrain(object, "pot_equi")[[ idx ]]
             ##mtab   <- tableMargin( cpot, cvert ) ## FIX tableMargin replaced
             mtab <- tabMarg(cpot, cvert)
             

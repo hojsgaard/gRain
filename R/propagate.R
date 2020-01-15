@@ -72,7 +72,8 @@ propagate.grain <- function(object, details=object$details, engine="cpp", ...){
                    "cpp"={propagateLS__})
 
     object$potential$pot_equi <-
-        pfun(pot(object)$pot_temp, rip=rip(object))
+        pfun(getgrain(object, "pot_temp"), rip=rip(object))
+        ##pfun(pot(object)$pot_temp, rip=rip(object))
            
     object$isPropagated  <- TRUE
     

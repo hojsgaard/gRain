@@ -47,7 +47,8 @@ simulate.grain <- function(object, nsim=1, seed=NULL, ...){
         }
     }
     
-    plist  <- pot(object)$pot_equi
+    ##plist  <- pot(object)$pot_equi
+    plist  <- getgrain(object, "pot_equi")
     cqlist <- rip(object)$cliques
     splist <- rip(object)$separators
     

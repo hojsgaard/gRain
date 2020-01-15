@@ -52,7 +52,8 @@
     if ("CPTlist" %in% arg.names){
         object$cptlist[names(args$CPTlist)] <- args$CPTlist
         pot.with.1        <- .mkArrayList( rip(object), uni(object) )
-        newpot            <- .insertCPT(object$cptlist, pot.with.1, details=0)
+        ##newpot            <- .insertCPT(object$cptlist, pot.with.1, details=0)
+        newpot            <- .insertCPT(getgrain(object, "cpt"), pot.with.1, details=0)
         object$potential <-
             list(pot_orig=newpot,
                  pot_temp=newpot,

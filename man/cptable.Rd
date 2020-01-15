@@ -70,8 +70,8 @@ Software, 46(10), 1-26.
 }
 \seealso{
 \code{\link{andtable}}, \code{\link{ortable}},
-\code{\link{extract_cpt}}, \code{\link{compile_cpt}},
-\code{\link{extract_pot}}, \code{\link{compile_pot}},
+\code{\link{extractCPT}}, \code{\link{compileCPT}},
+\code{\link{extractPOT}}, \code{\link{compilePOT}},
 \code{\link{grain}}
 }
 \author{

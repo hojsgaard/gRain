@@ -2,36 +2,36 @@
 ## FIXME: summary.pot_spec missing
 ## FIXME: summary.marg_spec missing
 
-
 #' @title Compile conditional probability tables / cliques potentials.
 #' 
 #' @description Compile conditional probability tables / cliques
 #'     potentials as a preprocessing step for creating a graphical
 #'     independence network
 #'
-#' @name compile_components
+#' @name components_compile
 #' 
 #' @aliases compileCPT compilePOT
 #' 
-#' @param x To \code{compile_cpt} x is a list of conditional
-#'     probability tables; to \code{compile_pot}, x is a list of clique
+#' @param x To \code{compileCPT} x is a list of conditional
+#'     probability tables; to \code{compilePOT}, x is a list of clique
 #'     potentials.
 #'
 ## #' @param object A list of potentials or of CPTs.
 #'
 #' @param forceCheck Controls if consistency checks of the probability
 #'     tables should be made.
+#' 
 #' @param ... Additional arguments; currently not used.
 #' 
-#' @details \code{compileCPT}, \code{compilePOT} are wrappers for
-#'     \code{compile_cpt} and \code{compile_pot} and are kept for
-#'     backward compatibility.
-#'
+## #' @details \code{compileCPT}, \code{compilePOT} are wrappers for
+## #'     \code{compileCPT} and \code{compilePOT} and are kept for
+## #'     backward compatibility.
+## #'
 #' @return A list with a class attribute.
 #' 
 #' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
 #'
-#' @seealso \code{\link{extract_cpt}}, \code{\link{extract_pot}}
+#' @seealso \code{\link{extractCPT}}, \code{\link{extractPOT}}
 #' 
 #' @references Søren Højsgaard (2012). Graphical Independence Networks
 #'     with the gRain Package for R. Journal of Statistical Software,
@@ -39,14 +39,90 @@
 #'
 #' @keywords utilities
 #'
-#'
 #' @examples
 #'
-#' ## FIXME: compile_cpt/compile_pot examples missing.
+#' ## FIXME: compileCPT/compilePOT examples missing.
 
-#' @rdname compile_components
-compile_cpt <- function(x, forceCheck=TRUE){
-        
+## foo <- function(x, ..., z){
+##     args <- c(list(x), list(...))
+##     listify_dots(args)
+## }
+
+#' @rdname components_compile
+compileCPT <- function(x, ..., forceCheck=TRUE){
+    args <- c(list(x), list(...))
+    args <- listify_dots(args)
+    .compileCPT(args, forceCheck=forceCheck)
+}
+
+
+.compileCPT <- function(x, forceCheck=TRUE){
+    ## x: A list of cpts (arrays)
+
+    type <- is.list(x) ##&& all(sapply(x, is.named.array))
+    if (!type) stop("A list of named arrays is expected")    
+    ## FIXME Can also be cptable_class...
+    
+    ## zz: Internal representation of cpts
+    zz  <- lapply(x, .parse_cpt)
+    universe <- .create_universe(zz)
+
+    ## Given node names; need to check that they are not replicated
+    vn_given <- sapply(zz, "[[", "vnam")
+    if (length(vn_given) != length(unique(vn_given)))
+        stop("Some nodes specified more than once: ", toString(vn_given))
+    
+    ## Are all cpts defined?
+    ss <- setdiff(unique(unlist(vn_given)),  universe$nodes)
+    if (length(ss) > 0)
+        stop(paste("Distribution not specified for nodes(s):", toString(ss)))
+    
+    ## Does specification define a DAG? If x is cpt_rep the answer is yes
+    if (inherits(x, "cpt_rep")){
+        graph <- attr(x, "graph")
+    } else {
+        vp <- lapply(zz, "[[", "vpar")
+        graph <- dagList(vp, forceCheck=forceCheck)
+    }
+    ## Need list of cpts (each represented as an array)
+    out <- lapply(seq_along(zz), .create_array, zz, universe)    
+    names(out) <- universe$nodes
+
+    attr(out, "universe") <- universe
+    attr(out, "dag")    <- graph
+    class(out)            <- "cpt_spec"
+    out
+}
+
+#' @rdname components_compile
+compilePOT <- function(x, ..., forceCheck=TRUE){
+    args <- c(list(x), list(...))
+    args <- listify_dots(args)
+    .compilePOT(args, forceCheck=forceCheck)   
+}
+
+
+.compilePOT <- function(x, ...){
+    ## x: a list of arrays, and a rip attribute
+
+    type <- is.list(x) && all(sapply(x, is.named.array))
+    if (!type) stop("A list of named arrays is expected")    
+
+    universe  <- .make.universe(x)
+    
+    if (inherits(x, "pot_rep")){ ## Result of extractPOT
+        graph <- attr(x, "graph")
+    } else {
+        graph <- lapply(xxx, .namesDimnames)
+        graph <- ug(graph)        
+    }
+    
+    attr(x, "universe") <- universe
+    attr(x, "ug")    <- graph ## ug(attr(x, "rip")$cliques)
+    class(x) <- "pot_spec"
+    x
+}
+
     .create_universe <- function(zz){
         vn <- unlist(lapply(zz, "[[", "vnam"))
         vl <- lapply(zz, "[[", "vlev")
@@ -66,41 +142,7 @@ compile_cpt <- function(x, forceCheck=TRUE){
         val
     }
 
-    if (!is.list(x)) stop("A list is expected")    
 
-    ## zz: Internal representation of cpts
-    zz  <- lapply(x, .parse_cpt)
-
-    uni <- .create_universe(zz)
-
-    ## Given node names; need to check that they are not replicated
-    vn_given <- sapply(zz, "[[", "vnam")
-    if (length(vn_given) != length(unique(vn_given)))
-        stop("Some nodes specified more than once: ", toString(vn_given))
-    
-    ## Are all cpts defined?
-    ss <- setdiff(unique(unlist(vn_given)),  uni$nodes)
-    if (length(ss) > 0)
-        stop(paste("Distribution not specified for nodes(s):", toString(ss)))
-    
-    ## Does specification define a DAG?
-    vp <- lapply(zz, "[[", "vpar")
-    dg <- dagList(vp, forceCheck=forceCheck)
-
-    ## Need list of cpts (each represented as an array)
-    out <- lapply(seq_along(zz), .create_array, zz, uni)    
-    names(out) <- uni$nodes
-
-    ## Wrap it up
-    attr(out, "universe") <- uni
-    attr(out, "dag") <- dg
-    class(out) <- "cpt_spec"
-    out
-}
-
-
-#' @rdname compile_components
-compile_pot <- function(x, ...){
     
     .make.universe <- function(x){
         lll       <- unlist(lapply(x, dimnames), recursive=FALSE)
@@ -114,14 +156,9 @@ compile_pot <- function(x, ...){
         universe
     }
 
-    if (!inherits(x, "pot_rep")) stop("can not compile 'x'\n")
-    if (is.null(attr(x, "rip"))) stop("no rip attribute; not a proper POT_spec object")
 
-    attr(x, "universe") <- .make.universe(x)
-    attr(x, "ug")       <- ug(attr(x, "rip")$cliques)
-    class(x) <- "pot_spec"
-    x
-}
+
+
 
 
 
@@ -182,33 +219,24 @@ print.cpt_spec_simple <- function(x,...){
 
 ## ##################################################################
 ##
-## Extend compilation function FIXME Perhaps not...
+## Extend compilation function 
 ##
 ## ##################################################################
 
+## compile.cpt_rep <- function(object, ...)
+##     compileCPT(object, ...)
 
-compile.cpt_rep <- function(object, ...)
-    compile_cpt(object, ...)
-
-compile.pot_rep <- function(object, ...)
-    compile_pot(object, ...)
+## compile.pot_rep <- function(object, ...)
+##     compilePOT(object, ...)
 
 ## #################################################################
-
-##
-## FIXME compileCPT etc For bacward compatibility (book, paper etc)
-##
-compileCPT <- compile_cpt
-compilePOT <- compile_pot
-
-
 
 
 ## ##################################################################
 ##
 ## INTERNAL UTILITIES
 ##
-## The .parse_cpt functions are used only in compile_cpt
+## The .parse_cpt functions are used only in compileCPT
 ##
 ## ##################################################################
 
@@ -244,6 +272,33 @@ compilePOT <- compile_pot
 
 
 
+
+
+
+
+## compilePOT <- function(x, ...){
+##     ## x: a list of arrays, and a rip attribute
+    
+##     .make.universe <- function(x){
+##         lll       <- unlist(lapply(x, dimnames), recursive=FALSE)
+##         nnn       <- names(lll)
+##         iii       <- match(unique(nnn), nnn)
+##         levels    <- lll[iii]
+##         vn        <- nnn[iii]
+##         di        <- c(lapply(levels, length), recursive=TRUE)
+##         names(di) <- vn
+##         universe  <- list(nodes = vn, levels = levels, nlev   = di)
+##         universe
+##     }
+
+##     if (!inherits(x, "pot_rep")) stop("can not compile 'x'\n")
+##     if (is.null(attr(x, "rip"))) stop("no rip attribute; not a proper POT_spec object")
+
+##     attr(x, "universe") <- .make.universe(x)
+##     attr(x, "ug")       <- ug(attr(x, "rip")$cliques)
+##     class(x) <- "pot_spec"
+##     x
+## }
 
 
 

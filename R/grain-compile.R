@@ -35,79 +35,6 @@
 #' ## To be written
 #' 
 
-
-
-#' @rdname grain_compile
-add_jtree <- function(object, root=NULL){
-    UseMethod("add_jtree")
-}
-
-#' @rdname grain_compile
-add_jtree.cpt_grain <- function(object, root=NULL){
-    if (!inherits(object, "cpt_grain")) stop("Not a cpt_grain object\n") 
-    object[c("rip", "ug")] <- .create_jtree(object, root) 
-    object
-}
-#' @rdname grain_compile
-add_jtree.pot_grain <- function(object, root=NULL){
-    if (is.null(rip(object)))
-        stop("No rip component in object \n")
-    object
-}
-
-
-.create_jtree <- function(object, root=NULL, update=TRUE){
-
-    mdag <- moralize(getgin(object, "dag"), result="dgCMatrix")
-    if (length(root) > 1) mdag <- .setRoot(mdag, root)
-        
-    ug_   <- triangulateMAT(mdag)  ## FIXME : Coercions are a MESS
-    rp_   <- ripMAT( ug_ )
-    ug_   <- as(ug_, "graphNEL")
-
-    list(rip=rp_, ug=ug_)
-}
-
-
-#' @rdname grain_compile
-add_potential <- function(object){
-    UseMethod("add_potential")
-}
-
-#' @rdname grain_compile
-add_potential.cpt_grain <- function(object){
-    object$potential <- .create_potential(object)
-    object
-}
-
-#' @rdname grain_compile
-add_potential.pot_grain <- function(object){
-    if (is.null(object$cqpot))
-        stop("No cqpot component in object \n")
-    object$potential <-
-        list(pot_orig=object$cqpot,
-             pot_temp=object$cqpot,
-             pot_equi=.initArrayList(object$cqpot, NA))
-    ##class(pot_orig) <- class(pot_temp) <- class(pot_equi) <- "pot_spec"
-    object
-}
-
-
-.create_potential <- function(object){
-
-    if (is.null(rip(object)))
-        stop("No rip slot (junction tree) in object\n")
-    if (is.null(cpt(object)))
-        stop("No cpt slot in object\n")
-    
-    pot.1    <- .mkArrayList(rip(object), universe(object))
-    pot_orig <- pot_temp <- .insertCPT(cpt(object), pot.1, details=0)
-    pot_equi <- .initArrayList(pot.1, NA)
-
-    ##class(pot_orig) <- class(pot_temp) <- class(pot_equi) <- "pot_spec"
-    list(pot_orig=pot_orig, pot_temp=pot_temp, pot_equi=pot_equi)
-}
-
 #' @rdname grain_compile
 compile.grain <- function(object, propagate=FALSE, root=NULL,
            control=object$control, details=0, ...) {    
@@ -119,8 +46,8 @@ compile.grain <- function(object, propagate=FALSE, root=NULL,
 compile.cpt_grain <- function(object, propagate=FALSE, root=NULL, control=object$control,
                               details=0, ...){
         
-        object <- add_jtree(object, root)
-        object <- add_potential(object)
+        object <- .add_jtree(object, root)
+        object <- .add_potential(object)
         
         object$isCompiled   <- TRUE
         object$isPropagated <- FALSE
@@ -135,8 +62,8 @@ compile.pot_grain <-
     function(object, propagate=FALSE, root=NULL, control=object$control,
              details=0,...) {
       
-        object <- add_jtree(object, root)
-        object <- add_potential(object)
+        object <- .add_jtree(object, root)
+        object <- .add_potential(object)
         
         object$isCompiled   <- TRUE
         object$isPropagated <- FALSE
@@ -183,17 +110,91 @@ compile.pot_grain <-
     mdagM
 }
 
-
-
-
-
-
     ##gg <- as(getgin(object, "dag"), "dgCMatrix")
     ##dagList(vpar(getgin(object, "cptlist")), result="dgCMatrix")
     ##gg <- moralizeMAT(gg)
     ##mdagM <- moralizeMAT( as(object$dag, "dgCMatrix") )
     ## Force variables in <root> to be complete in mdagM
     ## if (length(root) > 1) mdagM <- .setRoot( mdagM, root )
+
+
+## #' @rdname grain_compile
+
+
+.add_jtree <- function(object, root=NULL){
+    UseMethod(".add_jtree")
+}
+
+## #' @rdname grain_compile
+.add_jtree.cpt_grain <- function(object, root=NULL){
+    if (!inherits(object, "cpt_grain")) stop("Not a cpt_grain object\n") 
+    object[c("rip", "ug")] <- .create_jtree(object, root) 
+    object
+}
+
+## #' @rdname grain_compile
+.add_jtree.pot_grain <- function(object, root=NULL){
+    if (is.null(rip(object)))
+        stop("No rip component in object \n")
+    object
+}
+
+
+.create_jtree <- function(object, root=NULL, update=TRUE){
+
+    mdag <- moralize(getgin(object, "dag"), result="dgCMatrix")
+    if (length(root) > 1) mdag <- .setRoot(mdag, root)
+        
+    ug_   <- triangulateMAT(mdag)  ## FIXME : Coercions are a MESS
+    rp_   <- ripMAT( ug_ )
+    ug_   <- as(ug_, "graphNEL")
+
+    list(rip=rp_, ug=ug_)
+}
+
+
+## #' @rdname grain_compile
+.add_potential <- function(object){
+    UseMethod(".add_potential")
+}
+
+## #' @rdname grain_compile
+.add_potential.cpt_grain <- function(object){
+    object$potential <- .create_potential(object)
+    object
+}
+
+## #' @rdname grain_compile
+.add_potential.pot_grain <- function(object){
+    if (is.null(object$cqpot))
+        stop("No cqpot component in object \n")
+    object$potential <-
+        list(pot_orig=object$cqpot,
+             pot_temp=object$cqpot,
+             pot_equi=.initArrayList(object$cqpot, NA))
+    ##class(pot_orig) <- class(pot_temp) <- class(pot_equi) <- "pot_spec"
+    object
+}
+
+
+.create_potential <- function(object){
+
+    if (is.null(rip(object)))
+        stop("No rip slot (junction tree) in object\n")
+    ##if (is.null(cpt(object)))
+    if (is.null(getgrain(object, "cpt")))
+        stop("No cpt slot in object\n")
+    
+    pot.1    <- .mkArrayList(rip(object), universe(object))
+    ##pot_orig <- pot_temp <- .insertCPT(cpt(object), pot.1, details=0)
+    pot_orig <- pot_temp <- .insertCPT(getgrain(object, "cpt"), pot.1, details=0)
+    pot_equi <- .initArrayList(pot.1, NA)
+
+    ##class(pot_orig) <- class(pot_temp) <- class(pot_equi) <- "pot_spec"
+    list(pot_orig=pot_orig, pot_temp=pot_temp, pot_equi=pot_equi)
+}
+
+
 
 
 

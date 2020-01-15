@@ -43,7 +43,7 @@ export(cptable, compileCPT,
        grain, querygrain, qgrain,
        setEvidence, pEvidence,
        extractCPT, extractPOT,
-       extract_cpt, extract_pot,
+       ##extract_cpt, extract_pot,
        ##parse_cpt, 
        setFinding,
        getFinding, pFinding, retractFinding, setCPT, new_ev,
@@ -57,21 +57,21 @@ export(cptable, compileCPT,
        retractJEvidence,
        new_jev, 
        getgrain,
-       getEvidence, cpt,
+       getEvidence, ##cpt,
        propagateLS)
 
-S3method(parse_cpt, cptable_class)
-S3method(parse_cpt, xtabs)
-S3method(parse_cpt, default)
+S3method(.parse_cpt, cptable_class)
+S3method(.parse_cpt, xtabs)
+S3method(.parse_cpt, default)
 
 ##S3method("add_cpt<-", cpt_domain)
-S3method(setCPT, grain)
+S3method(setCPT, cpt_grain)
 
 S3method(compile, grain)
 S3method(compile, cpt_grain)
 S3method(compile, pot_grain)
-S3method(compile, cpt_rep)
-S3method(compile, pot_rep)
+## S3method(compile, cpt_rep)
+## S3method(compile, pot_rep)
 
 S3method(grain, cpt_spec)
 S3method(grain, pot_spec)
@@ -120,22 +120,21 @@ S3method(subset, grain_ev)
 
 S3method(universe, grain)
 S3method(uni, grain)
-S3method(potential, grain)
-S3method(pot, grain)
+##S3method(potential, grain)
+##S3method(pot, grain)
 
 S3method(rip, grain)
 ##S3method("rip<-", grain)
-S3method(setCPT, grain)
 ##S3method("setcpt<-", grain)
     
-S3method(add_jtree, cpt_grain)
-S3method(add_jtree, pot_grain)
-S3method(add_potential, cpt_grain)
-S3method(add_potential, pot_grain)
+## S3method(add_jtree, cpt_grain)
+## S3method(add_jtree, pot_grain)
+## S3method(add_potential, cpt_grain)
+## S3method(add_potential, pot_grain)
 S3method(vpar, cpt_grain)
 S3method(vpar, cpt_spec)
 
-S3method(cpt, cpt_grain)
-S3method("cpt<-", cpt_grain)
+##S3method(cpt, cpt_grain)
+##S3method("cpt<-", cpt_grain)
 S3method(print, cpt_spec_simple)
 

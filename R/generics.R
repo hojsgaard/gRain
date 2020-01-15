@@ -49,45 +49,43 @@ varNames.grainEvidence_ <- function(x) x$summary$nodes
 rip.grain <- function(object, ...)
     getgin(object, "rip")
 
-#' @rdname generics
-pot <- function(object)
-    UseMethod("pot")
+## #' @rdname generics
+## pot <- function(object)
+##     UseMethod("pot")
 
-#' @rdname generics
-pot.grain <- function(object)
-    getgin(object, "potential")
-
-
+## #' @rdname generics
+## pot.grain <- function(object)
+##     getgin(object, "potential")
 
 
-#' @rdname generics
-cpt <- function(object)
-    UseMethod("cpt")
+## #' @rdname generics
+## cpt <- function(object)
+##     UseMethod("cpt")
 
-#' @rdname generics
-cpt.cpt_grain <- function(object)
-    getgin(object, "cptlist")
+## #' @rdname generics
+## cpt.cpt_grain <- function(object)
+##     getgin(object, "cptlist")
 
-#' @rdname generics
-#' @param position Where to insert 'value'
-#' @param value Value to insert at 'position'
-"cpt<-" <- function(object, position, value){
-    UseMethod("cpt<-")
-}
+## #' @rdname generics
+## #' @param position Where to insert 'value'
+## #' @param value Value to insert at 'position'
+## "cpt<-" <- function(object, position, value){
+##     UseMethod("cpt<-")
+## }
 
-#' @rdname generics
-"cpt<-.cpt_grain" <- function(object, position, value){
-    object$cptlist[position] <- value
-}
+## #' @rdname generics
+## "cpt<-.cpt_grain" <- function(object, position, value){
+##     object$cptlist[position] <- value
+## }
 
 
-#' @rdname generics
-potential <- function(object)
-   UseMethod("potential")
+## #' @rdname generics
+## potential <- function(object)
+##    UseMethod("potential")
 
-#' @rdname generics
-potential.grain <- function(object)
-   object$potential
+## #' @rdname generics
+## potential.grain <- function(object)
+##    object$potential
 
 #' @rdname generics
 vpar.cpt_spec <- function(object, ...){
@@ -100,8 +98,18 @@ vpar.cpt_grain <- function(object, ...){
 }
 
 
-
 .isComp <- function(x) getgin(x, "isCompiled")
 
 .isProp <- function(x) getgin(x, "isPropagated")
+
+
+".isComp<-" <- function(object, value){
+    object$isCompiled <- value
+    object
+}
+
+".isProp<-" <- function(object, value){
+    object$isPropagated <- value
+    object
+}
 
