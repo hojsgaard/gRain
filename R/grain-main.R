@@ -195,15 +195,16 @@ grain.graphNEL <- function(x, control=list(), smooth=0, details=0, data=NULL, ..
     if (!(is.named.array(data) || is.data.frame(data)))
         stop("Data must be an array or a dataframe\n")
 
-    if (is_dag(x))
+    if (is_dag(x)){
         zz <- extractCPT(data, x, smooth=smooth)
-    else if (is_tug(x))
+        zz <- compileCPT(zz)
+    } else if (is_tug(x)){
         zz <- extractPOT(data, x, smooth=smooth)
+        zz <- compilePOT(zz)
+    }
     else
         stop("graph 'x' is neither a directed acyclic graph or a triangulated undirected graph")
 
-    ## zz is either cpt_spec or pot_spec
-    zz <- compile(zz)
     grain(zz, data=data, control=control, details=details)
 }
 
@@ -219,10 +220,10 @@ grain.dModel <- function(x, control=list(), smooth=0, details=0, data=NULL, ...)
 }
 
 #' @rdname grain-main
-grain.pot_rep <- function(x, ...){grain(compile(x))}
+grain.pot_rep <- function(x, ...){grain(compilePOT(x))}
 
 #' @rdname grain-main
-grain.cpt_rep <- function(x, ...){grain(compile(x))}
+grain.cpt_rep <- function(x, ...){grain(compileCPT(x))}
 
 
 

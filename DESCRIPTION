@@ -15,7 +15,6 @@ Imports:
     Rgraphviz,
     igraph,
     magrittr,
-    functional,
     Rcpp (>= 0.11.1)
 URL: http://people.math.aau.dk/~sorenh/software/gR/
 Encoding: UTF-8

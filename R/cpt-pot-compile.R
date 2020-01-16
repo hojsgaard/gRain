@@ -112,49 +112,50 @@ compilePOT <- function(x, ..., forceCheck=TRUE){
     
     if (inherits(x, "pot_rep")){ ## Result of extractPOT
         graph <- attr(x, "graph")
+        rp    <- attr(x, "rip")
     } else {
-        graph <- lapply(xxx, .namesDimnames)
-        graph <- ug(graph)        
+        graph <- lapply(x, .namesDimnames)
+        graph <- ug(graph)
+        rp    <- rip(graph)
     }
     
     attr(x, "universe") <- universe
-    attr(x, "ug")    <- graph ## ug(attr(x, "rip")$cliques)
+    attr(x, "ug")    <- graph 
+    attr(x, "rip")   <- rp
     class(x) <- "pot_spec"
     x
 }
 
-    .create_universe <- function(zz){
-        vn <- unlist(lapply(zz, "[[", "vnam"))
-        vl <- lapply(zz, "[[", "vlev")
-        di <- unlist(lapply(vl, length))
-        names(vl) <- vn        
-        universe  <- list(nodes = vn, levels = vl, nlev = di)
-        universe
-    }
-    
-    .create_array <- function(i, zz, universe){
-        cp <- zz[[i]]
-        dn <- universe$levels[cp$vpar]
-        di <- sapply(dn, length)
-        val <- array(rep(1.0, prod(di)), dim=di, dimnames=dn)
-        if (length(cp$values) > 0)
-            val[] <- cp$values + cp$smooth
-        val
-    }
+.create_universe <- function(zz){
+    vn <- unlist(lapply(zz, "[[", "vnam"))
+    vl <- lapply(zz, "[[", "vlev")
+    di <- unlist(lapply(vl, length))
+    names(vl) <- vn        
+    universe  <- list(nodes = vn, levels = vl, nlev = di)
+    universe
+}
 
+.create_array <- function(i, zz, universe){
+    cp <- zz[[i]]
+    dn <- universe$levels[cp$vpar]
+    di <- sapply(dn, length)
+    val <- array(rep(1.0, prod(di)), dim=di, dimnames=dn)
+    if (length(cp$values) > 0)
+        val[] <- cp$values + cp$smooth
+    val
+}
 
-    
-    .make.universe <- function(x){
-        lll       <- unlist(lapply(x, dimnames), recursive=FALSE)
-        nnn       <- names(lll)
-        iii       <- match(unique(nnn), nnn)
-        levels    <- lll[iii]
-        vn        <- nnn[iii]
-        di        <- c(lapply(levels, length), recursive=TRUE)
-        names(di) <- vn
-        universe  <- list(nodes = vn, levels = levels, nlev   = di)
-        universe
-    }
+.make.universe <- function(x){
+    lll       <- unlist(lapply(x, dimnames), recursive=FALSE)
+    nnn       <- names(lll)
+    iii       <- match(unique(nnn), nnn)
+    levels    <- lll[iii]
+    vn        <- nnn[iii]
+    di        <- c(lapply(levels, length), recursive=TRUE)
+    names(di) <- vn
+    universe  <- list(nodes = vn, levels = levels, nlev   = di)
+    universe
+}
 
 
 

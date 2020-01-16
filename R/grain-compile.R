@@ -61,7 +61,7 @@ compile.cpt_grain <- function(object, propagate=FALSE, root=NULL, control=object
 compile.pot_grain <-
     function(object, propagate=FALSE, root=NULL, control=object$control,
              details=0,...) {
-      
+        
         object <- .add_jtree(object, root)
         object <- .add_potential(object)
         

@@ -27,7 +27,7 @@ p.R <- cptable(~R, values=c(.2, .8), levels=yn)
 p.S_R <- cptable(~S:R, values=c(.01, .99, .4, .6), levels=yn)
 p.G_SR <- cptable(~G:S:R, values=c(.99, .01, .8, .2, .9, .1, 0, 1), levels=yn)
 
-x <- collectCPT(p.R, p.S_R, p.G_SR)
+x <- compileCPT(p.R, p.S_R, p.G_SR)
 x
 bn <- grain(x)
 
@@ -35,6 +35,7 @@ getgrain(bn, "cpt")
 getgrain(bn, "cpt")$R
 getgrain(bn, "cpt")$S
 
+# Now update some cpt's
 bn2 <- setCPT(bn, list(R=c(.3, .7), S=c(.1, .9, .7, .3)))
 
 getgrain(bn2, "cpt")$R
