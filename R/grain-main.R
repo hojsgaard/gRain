@@ -82,10 +82,14 @@
 #' @param details Debugging information.
 #' @param ... Additional arguments, currently not used.
 #' @return An object of class "grain"
+#' 
 #' @seealso \code{\link{cptable}}, \code{\link{compile.grain}},
 #'     \code{\link{propagate.grain}}, \code{\link{setFinding}},
 #'     \code{\link{setEvidence}}, \code{\link{getFinding}},
-#'     \code{\link{pFinding}}, \code{\link{retractFinding}}
+#'     \code{\link{pFinding}}, \code{\link{retractFinding}},
+#'     \code{\link{extractCPT}}, \code{\link{extractPOT}},
+#'     \code{\link{compileCPT}}, \code{\link{compilePOT}}
+#' 
 #' @references Søren Højsgaard (2012). Graphical Independence
 #'     Networks with the gRain Package for R. Journal of Statistical
 #'     Software, 46(10), 1-26.
@@ -93,6 +97,7 @@
 #' @keywords models
 #' 
 #' @examples
+#' 
 #' ## Asia (chest clinic) example:
 #' yn   <- c("yes","no")
 #' a    <- cptable(~asia,              values=c(1,99), levels=yn)
@@ -103,56 +108,47 @@
 #' e.lt <- cptable(~either+lung+tub,   values=c(1,0,1,0,1,0,0,1), levels=yn)
 #' x.e  <- cptable(~xray+either,       values=c(98,2,5,95), levels=yn)
 #' d.be <- cptable(~dysp+bronc+either, values=c(9,1,7,3,8,2,1,9), levels=yn)
-#' plist <- compileCPT(list(a, t.a, s, l.s, b.s, e.lt, x.e, d.be))
+#' plist <- compileCPT(a, t.a, s, l.s, b.s, e.lt, x.e, d.be)
 #' bn    <- grain(plist)
 #' bn
 #' summary(bn)
 #' plot(bn)
 #' bnc <- compile(bn, propagate=TRUE)
 #' 
-#' ## If we want to query the joint distribution of the disease nodes,
-#' ## computations can be speeded up by forcing these nodes to be in
-#' ## the same clique of the junction tree:
-#' 
-#' bnc2 <- compile(bn, root=c("lung", "bronc", "tub"), propagate=TRUE)
-#'
-#' \dontrun{
-#' if (require(microbenchmark)){
-#' microbenchmark(
-#'   querygrain(bnc, nodes=c("lung","bronc", "tub"), type="joint"),
-#'   querygrain(bnc2, nodes=c("lung","bronc", "tub"), type="joint")
-#' )}}
-#'
-#' ## Simple example - one clique only in triangulated graph:
-#' plist.s <- compileCPT(list(a, t.a))
-#' bn.s <- grain(plist.s)
-#' querygrain(bn.s)
-#' 
-#' ## Simple example - disconnected network:
-#' plist.d <- compileCPT(list(a, t.a, s))
-#' bn.d <- grain(plist.d)
-#' querygrain(bn.d)
-#' 
 #' ## Create network from data and graph specification.
 #' ## There are different ways:
+#'
+#' data(lizard, package="gRbase")
 #' 
-#' data(HairEyeColor)
-#' hec <- HairEyeColor
-#' daG <- dag(~Hair + Eye:Hair + Sex:Hair)
-#' class(daG)
-#' uG <- ug( ~Eye:Hair + Sex:Hair)
-#' class(uG)
+#' daG <- dag(~species + height:species + diam:species)
+#' uG  <- ug(~height:species + diam:species)
 #' 
-#' ## Create directly from dag:
-#' bn.dag  <- grain(daG, data=hec)
-#' class(bn.dag)
-#' compile(bn.dag)
+#' bn.uG   <- grain(uG, data=lizard)
+#' bn.daG  <- grain(daG, data=lizard)
 #' 
-#' ## Build model from undirected (decomposable) graph
-#' bn.ug  <- grain(uG, data=hec)
-#' class(bn.ug)
-#' compile(bn.ug)
+#' plot(bn.uG)
+#' plot(bn.daG)
 #' 
+#' querygrain(bn.uG)
+#' querygrain(bn.daG)
+#' 
+#' # Sanity: Are the distributions identical?
+#' t1 <- querygrain(bn.uG, type="joint")
+#' t2 <- querygrain(bn.daG, type="joint")
+#' t1 %a/% t2
+#' 
+#' # At a lower level
+#' bn2.uG <- extractPOT(lizard, ~height:species + diam:species)  %>% grain
+#' bn2.daG <- extractCPT(lizard, ~species + height:species + diam:species)  %>% grain
+#' 
+#' plot(bn2.uG)
+#' plot(bn2.daG)
+#' 
+#' t1 <- querygrain(bn2.uG, type="joint")
+#' t2 <- querygrain(bn2.daG, type="joint")
+#' t1 %a/% t2
+#' 
+
 #' @export grain
 grain <- function(x, control=list(), smooth=0, details=0, data=NULL, ...){
   UseMethod("grain")

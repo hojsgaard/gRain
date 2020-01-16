@@ -56,7 +56,7 @@ b.s  <- cptable(~bronc+smoke, values=c(6,4,3,7), levels=yn)
 e.lt <- cptable(~either+lung+tub,values=c(1,0,1,0,1,0,0,1),levels=yn)
 x.e  <- cptable(~xray+either, values=c(98,2,5,95), levels=yn)
 d.be <- cptable(~dysp+bronc+either, values=c(9,1,7,3,8,2,1,9), levels=yn)
-plist <- compileCPT(list(a, t.a, s, l.s, b.s, e.lt, x.e, d.be))
+plist <- compileCPT(a, t.a, s, l.s, b.s, e.lt, x.e, d.be)
 chest <- grain(plist)
 
 ## These two forms are equivalent

@@ -5,9 +5,6 @@
 \alias{extractCPT}
 \alias{extractPOT}
 \alias{extractMARG}
-\alias{data2cpt}
-\alias{data2pot}
-\alias{data2marg}
 \alias{marg2pot}
 \alias{pot2marg}
 \title{Extract conditional probabilities and clique potentials from
@@ -18,12 +15,6 @@ extractCPT(data_, graph, smooth = 0)
 extractPOT(data_, graph, smooth = 0)
 
 extractMARG(data_, graph, smooth = 0)
-
-data2cpt(data_, graph, smooth = 0)
-
-data2pot(data_, graph, smooth = 0)
-
-data2marg(data_, graph, smooth = 0)
 
 marg2pot(mg)
 

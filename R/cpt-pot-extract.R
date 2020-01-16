@@ -10,7 +10,8 @@
 #' @name components_extract
 #' 
 #' @details If \code{smooth} is non-zero then \code{smooth} is added
-#'     to all cell counts before normalization takes place.
+#'     to all cell counts before normalization takes place. 
+#' 
 #' 
 #' @aliases extractCPT extractPOT extractMARG
 #' 
@@ -193,14 +194,14 @@ extractMARG <- function(data_, graph, smooth=0){
     }
 
 
-#' @rdname components_extract
-data2cpt <- extractCPT
+## #' @rdname components_extract
+## data2cpt <- extractCPT
 
-#' @rdname components_extract
-data2pot <- extractPOT
+## #' @rdname components_extract
+## data2pot <- extractPOT
 
-#' @rdname components_extract
-data2marg <- extractMARG
+## #' @rdname components_extract
+## data2marg <- extractMARG
 
 
 
