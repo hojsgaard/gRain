@@ -21,7 +21,7 @@ No error checking at all on the input.
 \examples{
 ## Inheritance of the alleles "y" and "g"
 
-men <- mendel( c("y","g"), names = c("ch", "fa", "mo") )
+men <- mendel(c("y","g"), names=c("ch", "fa", "mo"))
 men
 
 }

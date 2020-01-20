@@ -5,6 +5,7 @@
 \alias{compile.grain}
 \alias{compile.cpt_grain}
 \alias{compile.pot_grain}
+\alias{fit.grain}
 \title{Compile a graphical independence network (a Bayesian network)}
 \usage{
 \method{compile}{grain}(
@@ -16,18 +17,9 @@
   ...
 )
 
-\method{compile}{cpt_grain}(
+\method{fit}{grain}(
   object,
-  propagate = FALSE,
-  root = NULL,
-  control = object$control,
-  details = 0,
-  ...
-)
-
-\method{compile}{pot_grain}(
-  object,
-  propagate = FALSE,
+  propagate = TRUE,
   root = NULL,
   control = object$control,
   details = 0,
@@ -56,11 +48,8 @@ A compiled Bayesian network; an object of class
 }
 \description{
 Compiles a Bayesian network. This means creating a
-junction tree and establishing clique potentials.
-}
-\examples{
-## To be written
-
+junction tree and establishing clique potentials; ; refer to
+the reference below for details.
 }
 \references{
 Søren Højsgaard (2012). Graphical Independence
@@ -70,6 +59,7 @@ Software, 46(10), 1-26.
 }
 \seealso{
 \code{\link{grain}}, \code{\link[gRbase]{propagate}},
+\code{\link{propagate.grain}},
 \code{\link[gRbase]{triangulate}}, \code{\link[gRbase]{rip}},
 \code{\link[gRbase]{junctionTree}}
 }

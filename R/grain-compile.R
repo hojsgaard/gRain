@@ -2,10 +2,13 @@
 ## These are not used for any calculations; only used for saving
 ## the network in Hugin format...
 
+## FIXME compile examples to be written
+
 #' @title Compile a graphical independence network (a Bayesian network)
 #' 
 #' @description Compiles a Bayesian network. This means creating a
-#'     junction tree and establishing clique potentials.
+#'     junction tree and establishing clique potentials; ; refer to
+#'     the reference below for details.
 #'
 #' @name grain_compile
 #' 
@@ -22,56 +25,48 @@
 #' @return A compiled Bayesian network; an object of class
 #'     \code{grain}.
 #' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
+#' 
 #' @seealso \code{\link{grain}}, \code{\link[gRbase]{propagate}},
+#'     \code{\link{propagate.grain}},
 #'     \code{\link[gRbase]{triangulate}}, \code{\link[gRbase]{rip}},
 #'     \code{\link[gRbase]{junctionTree}}
+#'
 #' @references Søren Højsgaard (2012). Graphical Independence
 #'     Networks with the gRain Package for R. Journal of Statistical
 #'     Software, 46(10), 1-26.
 #'     \url{http://www.jstatsoft.org/v46/i10/}.
 #' @keywords utilities models
-#'
-#' @examples
-#' ## To be written
-#' 
 
 #' @rdname grain_compile
 compile.grain <- function(object, propagate=FALSE, root=NULL,
            control=object$control, details=0, ...) {    
-    NextMethod("compile")
+    
+    object <- .add_jtree(object, root)
+    object <- .add_potential(object)
+    
+    is_compiled(object) <- TRUE
+    is_propagated(object) <- FALSE
+    
+    object$control      <- control
+    
+    if (propagate) propagate(object) else object
+}
+
+#' @rdname grain_compile
+fit.grain <- function(object, propagate=TRUE, root=NULL,
+           control=object$control, details=0, ...) {    
+    cl <- match.call(expand.dots = TRUE)
+    cl[[1]] <- as.name("compile.grain")
+    eval(cl)
 }
 
 
-#' @rdname grain_compile
-compile.cpt_grain <- function(object, propagate=FALSE, root=NULL, control=object$control,
-                              details=0, ...){
-        
-        object <- .add_jtree(object, root)
-        object <- .add_potential(object)
-        
-        object$isCompiled   <- TRUE
-        object$isPropagated <- FALSE
-        object$control      <- control
-        
-        if (propagate) propagate(object) else object
-    }
 
-
-#' @rdname grain_compile
-compile.pot_grain <-
-    function(object, propagate=FALSE, root=NULL, control=object$control,
-             details=0,...) {
-        
-        object <- .add_jtree(object, root)
-        object <- .add_potential(object)
-        
-        object$isCompiled   <- TRUE
-        object$isPropagated <- FALSE
-        object$control      <- control
-        
-        if (propagate) propagate(object) else object
-    }
-
+## #############################################
+##
+## dot-functions only below here
+##
+## #############################################
 
 .createJTreeGraph <- function(rip){
     if (length(rip$cliques) > 1){
@@ -97,7 +92,6 @@ compile.pot_grain <-
 }
 
 
-
 ## setRoot: Completes the variables in <root> in the graph,
 ## FIXME: setRoot: Assumes sparse matrix. A MESS
 .setRoot <- function(mdagM, root){
@@ -109,17 +103,6 @@ compile.pot_grain <-
     dimnames(mdagM) <- dn
     mdagM
 }
-
-    ##gg <- as(getgin(object, "dag"), "dgCMatrix")
-    ##dagList(vpar(getgin(object, "cptlist")), result="dgCMatrix")
-    ##gg <- moralizeMAT(gg)
-    ##mdagM <- moralizeMAT( as(object$dag, "dgCMatrix") )
-    ## Force variables in <root> to be complete in mdagM
-    ## if (length(root) > 1) mdagM <- .setRoot( mdagM, root )
-
-
-## #' @rdname grain_compile
-
 
 .add_jtree <- function(object, root=NULL){
     UseMethod(".add_jtree")
@@ -138,7 +121,6 @@ compile.pot_grain <-
         stop("No rip component in object \n")
     object
 }
-
 
 .create_jtree <- function(object, root=NULL, update=TRUE){
 
@@ -168,33 +150,27 @@ compile.pot_grain <-
 .add_potential.pot_grain <- function(object){
     if (is.null(object$cqpot))
         stop("No cqpot component in object \n")
+
     object$potential <-
         list(pot_orig=object$cqpot,
              pot_temp=object$cqpot,
              pot_equi=.initArrayList(object$cqpot, NA))
-    ##class(pot_orig) <- class(pot_temp) <- class(pot_equi) <- "pot_spec"
     object
 }
-
 
 .create_potential <- function(object){
 
     if (is.null(rip(object)))
         stop("No rip slot (junction tree) in object\n")
-    ##if (is.null(cpt(object)))
     if (is.null(getgrain(object, "cpt")))
         stop("No cpt slot in object\n")
     
     pot.1    <- .mkArrayList(rip(object), universe(object))
-    ##pot_orig <- pot_temp <- .insertCPT(cpt(object), pot.1, details=0)
     pot_orig <- pot_temp <- .insertCPT(getgrain(object, "cpt"), pot.1, details=0)
     pot_equi <- .initArrayList(pot.1, NA)
 
-    ##class(pot_orig) <- class(pot_temp) <- class(pot_equi) <- "pot_spec"
     list(pot_orig=pot_orig, pot_temp=pot_temp, pot_equi=pot_equi)
 }
-
-
 
 
 

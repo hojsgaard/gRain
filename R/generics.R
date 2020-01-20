@@ -33,13 +33,13 @@ universe <- function(object, ...) UseMethod("universe")
 #' @rdname generics
 universe.grain <- function(object, ...) object$universe
 
-#' @rdname generics
-uni <- function(object)
-    UseMethod("uni")
+## #' @rdname generics
+## uni <- function(object)
+##     UseMethod("uni")
 
-#' @rdname generics
-uni.grain <- function(object)
-    getgin(object, "universe")
+## #' @rdname generics
+## uni.grain <- function(object)
+##     getgin(object, "universe")
 
 
 #' @rdname generics
@@ -98,18 +98,19 @@ vpar.cpt_grain <- function(object, ...){
 }
 
 
-.isComp <- function(x) getgin(x, "isCompiled")
 
-.isProp <- function(x) getgin(x, "isPropagated")
+is_compiled <- function(x) getgin(x, "is_compiled")
+
+is_propagated <- function(x) getgin(x, "is_propagated")
 
 
-".isComp<-" <- function(object, value){
-    object$isCompiled <- value
+"is_compiled<-" <- function(object, value){
+    object$is_compiled <- value
     object
 }
 
-".isProp<-" <- function(object, value){
-    object$isPropagated <- value
+"is_propagated<-" <- function(object, value){
+    object$is_propagated <- value
     object
 }
 

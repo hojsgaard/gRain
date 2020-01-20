@@ -29,17 +29,17 @@ p.G_SR <- cptable(~G:S:R, values=c(.99, .01, .8, .2, .9, .1, 0, 1), levels=yn)
 
 x <- compileCPT(p.R, p.S_R, p.G_SR)
 x
-bn <- grain(x)
+wet.bn <- grain(x)
 
-getgrain(bn, "cpt")
-getgrain(bn, "cpt")$R
-getgrain(bn, "cpt")$S
+getgrain(wet.bn, "cpt")
+getgrain(wet.bn, "cpt")$R
+getgrain(wet.bn, "cpt")$S
 
 # Now update some cpt's
-bn2 <- setCPT(bn, list(R=c(.3, .7), S=c(.1, .9, .7, .3)))
+wet.bn2 <- setCPT(wet.bn, list(R=c(.3, .7), S=c(.1, .9, .7, .3)))
 
-getgrain(bn2, "cpt")$R
-getgrain(bn2, "cpt")$S
+getgrain(wet.bn2, "cpt")$R
+getgrain(wet.bn2, "cpt")$S
 
 }
 \references{

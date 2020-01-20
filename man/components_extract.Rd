@@ -38,6 +38,7 @@ turned into a \code{graphNEL} object by calling \code{ug} or
 \itemize{
 \item \code{extractCPT}: A list of conditional probability tables.
 \item \code{extractPOT}: A list of clique potentials.
+\item \code{extractMARG}: A list of clique marginals.
 }
 }
 \description{
@@ -50,56 +51,37 @@ to all cell counts before normalization takes place.
 }
 \examples{
 
-## Asia (chest clinic) example:
+## Extract cpts / clique potentials from data and graph
+# specification and create network. There are different ways:
 
-## Version 1) Specify conditional probability tables.
-yn <- c("yes","no")
-a    <- cptable(~asia, values=c(1,99), levels=yn)
-t.a  <- cptable(~tub+asia, values=c(5,95,1,99), levels=yn)
-s    <- cptable(~smoke, values=c(5,5), levels=yn)
-l.s  <- cptable(~lung+smoke, values=c(1,9,1,99), levels=yn)
-b.s  <- cptable(~bronc+smoke, values=c(6,4,3,7), levels=yn)
-e.lt <- cptable(~either+lung+tub,values=c(1,0,1,0,1,0,0,1), levels=yn)
-x.e  <- cptable(~xray+either, values=c(98,2,5,95), levels=yn)
-d.be <- cptable(~dysp+bronc+either, values=c(9,1,7,3,8,2,1,9), levels=yn)
-plist <- compileCPT(list(a, t.a, s, l.s, b.s, e.lt, x.e, d.be))
-pn1 <- grain(plist)
-q1 <- querygrain(pn1)
+data(lizard, package="gRbase")
 
-## Version 2) Specify DAG and data
-data(chestSim100000, package="gRbase")
-dgf   <- ~asia + tub * asia + smoke + lung * smoke +
-         bronc * smoke + either * tub * lung +
-         xray * either + dysp * bronc * either
-dg    <- dag(dgf)
-pp    <- extractCPT(chestSim100000, dg)
+# DAG: height <- species -> diam
+daG <- dag(~species + height:species + diam:species)
 
-pn2   <- grain(pp)
-## Same as:
-cpp2  <- compileCPT(pp)
-pn2   <- grain(cpp2)
+# UG : [height:species][diam:species]
+uG  <- ug(~height:species + diam:species)
 
-q2    <- querygrain(pn2)
+pt <- extractPOT(lizard, ~height:species + diam:species) 
+cp <- extractCPT(lizard, ~species + height:species + diam:species)
 
-## Version 2) Specify triangulated undirected graph and data
-ugf <- list(c("either", "lung", "tub"), c("either", "lung", "bronc"), 
-    c("either", "xray"), c("either", "dysp", "bronc"), c("smoke", 
-    "lung", "bronc"), c("asia", "tub"))
-gg    <- ug(ugf)
-pp    <- extractPOT(chestSim100000, gg)
+pt
+cp
 
-pn3   <- grain(pp)
-## Same as:
-cpp3  <- compilePOT(pp)
-pn3   <- grain(cpp3)
+# Both specify the same probability distribution
+tabListMult(pt) \%>\% as.data.frame.table
+tabListMult(cp) \%>\% as.data.frame.table
 
-q3    <- querygrain(pn3)
+\dontrun{
+# Bayesian networks can be created as
+bn.uG   <- grain(pt)
+bn.daG  <- grain(cp)
 
-## Compare results:
-str(q1)
-str(q2[names(q1)])
-str(q3[names(q1)])
-
+# The steps above are wrapped into a convenience method which
+# builds a network from at graph and data.
+bn.uG   <- grain(uG, data=lizard)
+bn.daG  <- grain(daG, data=lizard)
+}
 }
 \references{
 Søren Højsgaard (2012). Graphical Independence Networks

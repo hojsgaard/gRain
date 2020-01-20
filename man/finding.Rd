@@ -47,7 +47,7 @@ The syntax of \code{setEvidence()} may change in the future.
 
 
 ## setFindings
-yn <- c("yes","no")
+yn <- c("yes", "no")
 a    <- cptable(~asia, values=c(1,99),levels=yn)
 t.a  <- cptable(~tub+asia, values=c(5,95,1,99),levels=yn)
 s    <- cptable(~smoke, values=c(5,5), levels=yn)
@@ -56,12 +56,12 @@ b.s  <- cptable(~bronc+smoke, values=c(6,4,3,7), levels=yn)
 e.lt <- cptable(~either+lung+tub,values=c(1,0,1,0,1,0,0,1),levels=yn)
 x.e  <- cptable(~xray+either, values=c(98,2,5,95), levels=yn)
 d.be <- cptable(~dysp+bronc+either, values=c(9,1,7,3,8,2,1,9), levels=yn)
-plist <- compileCPT(a, t.a, s, l.s, b.s, e.lt, x.e, d.be)
-chest <- grain(plist)
+chest.cpt <- compileCPT(a, t.a, s, l.s, b.s, e.lt, x.e, d.be)
+chest.bn <- grain(chest.cpt)
 
 ## These two forms are equivalent
-bn1 <- setFinding(chest, nodes=c("asia","xray"), states=c("yes", "yes"))
-bn2 <- setFinding(chest, flist=list(c("asia","yes"), c("xray", "yes")))
+bn1 <- setFinding(chest.bn, nodes=c("chest", "xray"), states=c("yes", "yes"))
+bn2 <- setFinding(chest.bn, flist=list(c("chest", "yes"), c("xray", "yes")))
 
 getFinding(bn1)
 getFinding(bn2)

@@ -46,23 +46,28 @@ List propagateLS__(List cqpotList_, List rip){
       tmpd = zd * tmpd;
       cqpotList[0] = tmpd;
       tmpd = cqpotList[i];
-      tmpd = tmpd / zd;
+      tmpd = tmpd / zd; 
       cqpotList[i] = tmpd;
     }
   }
-  
+
+  //Rcout << "JJJJJJJJJJJJJJJJJJJJ" << std::endl;
   tmpd = cqpotList[0];
+  //Rf_PrintValue(tmpd);
   normConst = sum( tmpd );
+  tmpd = tmpd / normConst;
+  cqpotList[0] = tmpd;
+  //Rf_PrintValue(tmpd);	
   
   for (i=0; i < ncliq; ++i){
     // std::cout << " distribute i= " << i << std::endl;
     ch  = childList[i];
     nch = ch.size();
-    if (nch>0){
+    if (nch > 0){
       for (j=0; j < nch; ++j){
 	idx = ch[ j ] - 1;
 	sp  = seps[ idx ];
-	if( sp.size() > 0){
+	if(sp.size() > 0){
 	  // Rf_PrintValue(sp);
 	  sp_pot = tabMarg__(cqpotList[i], sp);
 	  cqpotList[ idx ] = tabMult__( cqpotList[ idx ], sp_pot);

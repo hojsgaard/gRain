@@ -1,19 +1,16 @@
-## FIXME: cpt-pot-extract Review example
-
-
+## ######################################################################
 #' @title Extract conditional probabilities and clique potentials from
 #'     data.
-#' 
 #' @description Extract list of conditional probability tables and
 #'     list of clique potentials from data.
-#'
+#' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
 #' @name components_extract
-#' 
+## ######################################################################
+#'
 #' @details If \code{smooth} is non-zero then \code{smooth} is added
-#'     to all cell counts before normalization takes place. 
+#'     to all cell counts before normalization takes place.
 #' 
-#' 
-#' @aliases extractCPT extractPOT extractMARG
+## #' @aliases extractCPT extractPOT extractMARG
 #' 
 #' @param data_ A named array or a dataframe.
 #'
@@ -27,13 +24,14 @@
 #' @return
 #'   * \code{extractCPT}: A list of conditional probability tables.
 #'   * \code{extractPOT}: A list of clique potentials.
+#'   * \code{extractMARG}: A list of clique marginals. 
 #'
 ## #' @details \code{extractCPT} is alias for \code{extractCPT}
 ## #'     \code{extractPOT} is alias for \code{extractPOT} and
 ## #'     \code{extractMARG} is alias for \code{extract_marg}; retained
 ## #'     for backward compatibility.
 ## #' 
-#' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
+
 #'
 #' @seealso \code{\link{compileCPT}}, \code{\link{compilePOT}},
 #'     \code{\link{grain}}
@@ -43,59 +41,40 @@
 #'     46(10), 1-26.  \url{http://www.jstatsoft.org/v46/i10/}.
 #' @keywords utilities
 #' @examples
+#' 
+#' ## Extract cpts / clique potentials from data and graph
+#' # specification and create network. There are different ways:
 #'
-#' ## Asia (chest clinic) example:
-#' 
-#' ## Version 1) Specify conditional probability tables.
-#' yn <- c("yes","no")
-#' a    <- cptable(~asia, values=c(1,99), levels=yn)
-#' t.a  <- cptable(~tub+asia, values=c(5,95,1,99), levels=yn)
-#' s    <- cptable(~smoke, values=c(5,5), levels=yn)
-#' l.s  <- cptable(~lung+smoke, values=c(1,9,1,99), levels=yn)
-#' b.s  <- cptable(~bronc+smoke, values=c(6,4,3,7), levels=yn)
-#' e.lt <- cptable(~either+lung+tub,values=c(1,0,1,0,1,0,0,1), levels=yn)
-#' x.e  <- cptable(~xray+either, values=c(98,2,5,95), levels=yn)
-#' d.be <- cptable(~dysp+bronc+either, values=c(9,1,7,3,8,2,1,9), levels=yn)
-#' plist <- compileCPT(list(a, t.a, s, l.s, b.s, e.lt, x.e, d.be))
-#' pn1 <- grain(plist)
-#' q1 <- querygrain(pn1)
-#' 
-#' ## Version 2) Specify DAG and data
-#' data(chestSim100000, package="gRbase")
-#' dgf   <- ~asia + tub * asia + smoke + lung * smoke +
-#'          bronc * smoke + either * tub * lung +
-#'          xray * either + dysp * bronc * either
-#' dg    <- dag(dgf)
-#' pp    <- extractCPT(chestSim100000, dg)
+#' data(lizard, package="gRbase")
 #'
-#' pn2   <- grain(pp)
-#' ## Same as:
-#' cpp2  <- compileCPT(pp)
-#' pn2   <- grain(cpp2)
-#' 
-#' q2    <- querygrain(pn2)
-#' 
-#' ## Version 2) Specify triangulated undirected graph and data
-#' ugf <- list(c("either", "lung", "tub"), c("either", "lung", "bronc"), 
-#'     c("either", "xray"), c("either", "dysp", "bronc"), c("smoke", 
-#'     "lung", "bronc"), c("asia", "tub"))
-#' gg    <- ug(ugf)
-#' pp    <- extractPOT(chestSim100000, gg)
+#' # DAG: height <- species -> diam
+#' daG <- dag(~species + height:species + diam:species)
 #'
-#' pn3   <- grain(pp)
-#' ## Same as:
-#' cpp3  <- compilePOT(pp)
-#' pn3   <- grain(cpp3)
+#' # UG : [height:species][diam:species]
+#' uG  <- ug(~height:species + diam:species)
+#' 
+#' pt <- extractPOT(lizard, ~height:species + diam:species) 
+#' cp <- extractCPT(lizard, ~species + height:species + diam:species)
 #'
-#' q3    <- querygrain(pn3)
-#' 
-#' ## Compare results:
-#' str(q1)
-#' str(q2[names(q1)])
-#' str(q3[names(q1)])
-#' 
-#' @rdname components_extract
+#' pt
+#' cp
+#'
+#' # Both specify the same probability distribution
+#' tabListMult(pt) %>% as.data.frame.table
+#' tabListMult(cp) %>% as.data.frame.table
+#'
+#' \dontrun{
+#' # Bayesian networks can be created as
+#' bn.uG   <- grain(pt)
+#' bn.daG  <- grain(cp)
+#'
+#' # The steps above are wrapped into a convenience method which
+#' # builds a network from at graph and data.
+#' bn.uG   <- grain(uG, data=lizard)
+#' bn.daG  <- grain(daG, data=lizard)
+#' }
 
+#' @rdname components_extract
 extractCPT <- function(data_, graph, smooth=0){
 
     .is.valid.data(data_)
@@ -139,6 +118,51 @@ extractMARG <- function(data_, graph, smooth=0){
     out
 }
 
+
+#' @rdname components_extract
+#' @param mg An object of class \code{marg_rep}
+marg2pot <- function(mg){
+    if (!inherits(mg, "marg_rep")) stop("'mg' not a marg_rep object\n")
+    rip_ <- attr(mg, "rip")
+    seps <- rip_$separators
+    pt <- lapply(seq_along(rip_$cliques),
+                 function(i){
+                     if (length(seps[[i]]) == 0)
+                         mg[[i]]
+                     else
+                         tabDiv0(mg[[i]], tabMarg(mg[[i]], seps[[i]]))               
+                 })
+    attr(pt, "rip") <- rip_
+    class(pt) <- "pot_rep"
+    pt
+}
+
+#' @rdname components_extract 
+#' @param pt An object of class \code{pot_rep}
+pot2marg <- function(pt){
+    if (!inherits(pt, "pot_rep")) stop("'pt' not a pot_rep object\n")    
+    mg <- pt
+    rip_ <- attr(pt, "rip")
+    seps <- rip_$separators
+    par  <- rip_$parents
+    
+    for (i in 2:length(rip_$cliques)){
+        if (par[i] > 0){
+            mg[[i]] <- tabMult(mg[[i]], tabMarg(mg[[par[i]]], seps[[i]]))
+        }
+    }
+    class(mg) <- "marg_rep"
+    mg
+}
+
+
+## ##################################################################
+##
+## dot functions below here
+##
+## ##################################################################
+
+
 .extractCPT_primitive <- function(data_, vpa, smooth=0){
         
     is.df <- is.data.frame(data_)
@@ -147,6 +171,7 @@ extractMARG <- function(data_, graph, smooth=0){
     ## FIXME : Get rid of this parray stuff (at least as a class)
     ## NOTE: Normalization takes place here
     out <- lapply(out, as.parray, normalize="first", smooth=smooth)
+    
     
     chk <- unlist(lapply(out, function(zz) any(is.na(zz))))
     nnn <- names(chk)[which(chk)]
@@ -206,42 +231,6 @@ extractMARG <- function(data_, graph, smooth=0){
 
 
 
-#' @rdname components_extract
-#' @param mg An object of class \code{marg_rep}
-marg2pot <- function(mg){
-    if (!inherits(mg, "marg_rep")) stop("'mg' not a marg_rep object\n")
-    rip_ <- attr(mg, "rip")
-    seps <- rip_$separators
-    pt <- lapply(seq_along(rip_$cliques),
-                 function(i){
-                     if (length(seps[[i]]) == 0)
-                         mg[[i]]
-                     else
-                         tabDiv0(mg[[i]], tabMarg(mg[[i]], seps[[i]]))               
-                 })
-    attr(pt, "rip") <- rip_
-    class(pt) <- "pot_rep"
-    pt
-}
-
-#' @rdname components_extract 
-#' @param pt An object of class \code{pot_rep}
-pot2marg <- function(pt){
-    if (!inherits(pt, "pot_rep")) stop("'pt' not a pot_rep object\n")    
-    mg <- pt
-    rip_ <- attr(pt, "rip")
-    seps <- rip_$separators
-    par  <- rip_$parents
-    
-    for (i in 2:length(rip_$cliques)){
-        if (par[i] > 0){
-            mg[[i]] <- tabMult(mg[[i]], tabMarg(mg[[par[i]]], seps[[i]]))
-        }
-    }
-    class(mg) <- "marg_rep"
-    mg
-}
-
 
 ## helper function; can possibly be made faster
 .dataMarg <- function(data_, cq, is.df=NULL){
@@ -267,3 +256,26 @@ pot2marg <- function(pt){
 }
 
 
+## #' 
+## #' plot(bn.uG)
+## #' plot(bn.daG)
+## #' 
+## #' querygrain(bn.uG)
+## #' querygrain(bn.daG)
+## #' 
+## #' # Sanity: Are the distributions identical?
+## #' t1 <- querygrain(bn.uG, type="joint")
+## #' t2 <- querygrain(bn.daG, type="joint")
+## #' t1 %a/% t2
+## #' 
+## #' # At a lower level
+## #' bn2.uG <- extractPOT(lizard, ~height:species + diam:species)  %>% grain
+## #' bn2.daG <- extractCPT(lizard, ~species + height:species + diam:species)  %>% grain
+## #' 
+## #' plot(bn2.uG)
+## #' plot(bn2.daG)
+## #' 
+## #' t1 <- querygrain(bn2.uG, type="joint")
+## #' t2 <- querygrain(bn2.daG, type="joint")
+## #' t1 %a/% t2
+## #' 

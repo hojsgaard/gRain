@@ -2,12 +2,9 @@
 % Please edit documentation in R/cptable-create.R
 \name{cptable}
 \alias{cptable}
-\alias{cptab}
 \title{Create conditional probability tables (CPTs)}
 \usage{
 cptable(vpar, levels = NULL, values = NULL, normalize = TRUE, smooth = 0)
-
-cptab(vpar, levels = NULL, values = NULL, normalize = TRUE, smooth = 0)
 }
 \arguments{
 \item{vpar}{Specifications of the names in P(v|pa1,...pak). See
@@ -57,25 +54,29 @@ given \code{b=b1, c=c1}.
 ## https://en.wikipedia.org/wiki/Bayesian_network
 
 yn <- c("yes", "no")
-p.R <- cptable(~R, values=c(.2, .8), levels=yn)
-p.S_R <- cptable(~S:R, values=c(.01, .99, .4, .6), levels=yn)
+p.R    <- cptable(~R, values=c(.2, .8), levels=yn)
+p.S_R  <- cptable(~S:R, values=c(.01, .99, .4, .6), levels=yn)
 p.G_SR <- cptable(~G:S:R, values=c(.99, .01, .8, .2, .9, .1, 0, 1), levels=yn)
 
 # or
 ssp <- list(R=yn, S=yn, G=yn) # state space
-p.R <- cptable(~R, values=c(.2, .8), levels=ssp)
-p.S_R <- cptable(~S:R, values=c(.01, .99, .4, .6), levels=ssp)
+p.R    <- cptable(~R, values=c(.2, .8), levels=ssp)
+p.S_R  <- cptable(~S:R, values=c(.01, .99, .4, .6), levels=ssp)
 p.G_SR <- cptable(~G:S:R, values=c(.99, .01, .8, .2, .9, .1, 0, 1), levels=ssp)
 
 # components above are "intermediate representations" and are turned into arrays with
-x <- compileCPT(p.R, p.S_R, p.G_SR)
-x
-x$S # etc
+wet.cpt <- compileCPT(p.R, p.S_R, p.G_SR)
+wet.cpt
+wet.cpt$S # etc
 
-# Can also work with arrays directly
+# A Bayesian network is created with:
+wet.bn <- grain(wet.cpt)
+
+# Can also create arrays directly
+\dontrun{
 ssp <- list(R=yn, S=yn, G=yn) # state space
-p.R <- c(.2, .8)
-p.S_R <- c(.01, .99, .4, .6)
+p.R    <- c(.2, .8)
+p.S_R  <- c(.01, .99, .4, .6)
 p.G_SR <- c(.99, .01, .8, .2, .9, .1, 0, 1)
 dim(p.R) <- 2
 dimnames(p.R) <- ssp["R"]
@@ -83,19 +84,12 @@ dim(p.S_R) <- c(2, 2)
 dimnames(p.S_R) <- ssp[c("S", "R")]
 dim(p.G_SR) <- c(2, 2, 2)
 dimnames(p.G_SR) <- ssp[c("G", "S", "R")]
-x <- compileCPT(p.R, p.S_R, p.G_SR)
-x
 
-# Arrays can be created (easier?) with
-p.R <- parray("R", levels=ssp, values=c(.2, .8))
-p.S_R <- parray(c("S", "R"), levels = ssp, values=c(.01, .99, .4, .6))
+# Arrays can be created (easier?) with parray() from gRbase
+p.R    <- parray("R", levels=ssp, values=c(.2, .8))
+p.S_R  <- parray(c("S", "R"), levels = ssp, values=c(.01, .99, .4, .6))
 p.G_SR <- parray(~ G:S:R, levels = ssp, values=c(.99, .01, .8, .2, .9, .1, 0, 1))
-
-x <- compileCPT(p.R, p.S_R, p.G_SR)
-x
-
-bn <- grain(x)
-
+}
 }
 \references{
 Søren Højsgaard (2012). Graphical Independence

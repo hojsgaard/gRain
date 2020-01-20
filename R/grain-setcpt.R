@@ -23,8 +23,6 @@
 #' 
 #' @keywords utilities models
 
-## FIXME setCPT: Maybe better example.
-
 #' @examples
 #' ## See the wet grass example at
 #' ## https://en.wikipedia.org/wiki/Bayesian_network
@@ -36,17 +34,17 @@
 #' 
 #' x <- compileCPT(p.R, p.S_R, p.G_SR)
 #' x
-#' bn <- grain(x)
+#' wet.bn <- grain(x)
 #' 
-#' getgrain(bn, "cpt")
-#' getgrain(bn, "cpt")$R
-#' getgrain(bn, "cpt")$S
+#' getgrain(wet.bn, "cpt")
+#' getgrain(wet.bn, "cpt")$R
+#' getgrain(wet.bn, "cpt")$S
 #'
 #' # Now update some cpt's
-#' bn2 <- setCPT(bn, list(R=c(.3, .7), S=c(.1, .9, .7, .3)))
+#' wet.bn2 <- setCPT(wet.bn, list(R=c(.3, .7), S=c(.1, .9, .7, .3)))
 #' 
-#' getgrain(bn2, "cpt")$R
-#' getgrain(bn2, "cpt")$S
+#' getgrain(wet.bn2, "cpt")$R
+#' getgrain(wet.bn2, "cpt")$S
 #' 
 
 #' @rdname cpt-update
@@ -70,7 +68,8 @@ setCPT.cpt_grain <- function(object, value){
             stop("replacement value not correct length")                    
         object$cptlist[[v]][] <- z               
     }
-    object$isCompiled <- object$isPropagated <- FALSE
+    is_compiled(object) <- FALSE
+    is_propagated(object) <- FALSE
     object
 }
 

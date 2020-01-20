@@ -8,9 +8,7 @@
 #'     potentials as a preprocessing step for creating a graphical
 #'     independence network
 #'
-#' @name components_compile
-#' 
-#' @aliases compileCPT compilePOT
+#' @name components_gather
 #' 
 #' @param x To \code{compileCPT} x is a list of conditional
 #'     probability tables; to \code{compilePOT}, x is a list of clique
@@ -27,11 +25,26 @@
 ## #'     \code{compileCPT} and \code{compilePOT} and are kept for
 ## #'     backward compatibility.
 ## #'
+#'
+#' @details
+#'     * `compileCPT` is relevant for turning a collection of
+#'     cptable's into an object from which a network can be built. For
+#'     example, when specification of a cpt is made with cptable then
+#'     the levels of the node is given but not the levels of the
+#'     parents. `compileCPT` checks that the levels of variables in
+#'     the cpt's are consistent and also that the specifications
+#'     define a dag.
+#' 
+#'     * `compilePOT` is not of direct relevance for the
+#'     user for the moment. However, the elements of the input should
+#'     be arrays which define a chordal undirected graph and the
+#'     arrays should, if multiplied, form a valid probability density.
+#'  
 #' @return A list with a class attribute.
 #' 
 #' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
 #'
-#' @seealso \code{\link{extractCPT}}, \code{\link{extractPOT}}
+#' @seealso \code{\link{extractCPT}}, \code{\link{extractPOT}}, \code{\link{extractMARG}}
 #' 
 #' @references Søren Højsgaard (2012). Graphical Independence Networks
 #'     with the gRain Package for R. Journal of Statistical Software,
@@ -41,6 +54,11 @@
 #'
 #' @examples
 #'
+#' data(chest_cpt)
+#' x <- compileCPT(chest_cpt)
+#' class(x)
+#' grain(x)
+#' 
 #' ## FIXME: compileCPT/compilePOT examples missing.
 
 ## foo <- function(x, ..., z){
@@ -48,23 +66,22 @@
 ##     listify_dots(args)
 ## }
 
-#' @rdname components_compile
+#' @rdname components_gather
 compileCPT <- function(x, ..., forceCheck=TRUE){
     args <- c(list(x), list(...))
     args <- listify_dots(args)
     .compileCPT(args, forceCheck=forceCheck)
 }
 
-
 .compileCPT <- function(x, forceCheck=TRUE){
     ## x: A list of cpts (arrays)
 
     type <- is.list(x) ##&& all(sapply(x, is.named.array))
-    if (!type) stop("A list of named arrays is expected")    
-    ## FIXME Can also be cptable_class...
+    if (!type) stop("A list of named arrays is expected")        ## FIXME Can also be cptable_class...
     
     ## zz: Internal representation of cpts
     zz  <- lapply(x, .parse_cpt)
+
     universe <- .create_universe(zz)
 
     ## Given node names; need to check that they are not replicated
@@ -94,13 +111,74 @@ compileCPT <- function(x, ..., forceCheck=TRUE){
     out
 }
 
-#' @rdname components_compile
+#' @rdname components_gather
 compilePOT <- function(x, ..., forceCheck=TRUE){
     args <- c(list(x), list(...))
     args <- listify_dots(args)
     .compilePOT(args, forceCheck=forceCheck)   
 }
 
+
+## #############################################################
+
+print.cpt_spec <- function(x, ...){
+    cat("cpt_spec with probabilities:\n")
+    lapply(x,
+           function(xx){
+               vn <- varNames(xx)
+               .print_probability(vn)
+           })
+    invisible(x)
+}
+
+print.pot_spec <- function(x, ...){
+    cat("pot_spec with potentials:\n")
+    lapply(x,
+           function(xx){
+               vn <- names(dimnames(xx))
+               cat("(", paste(vn, collapse=' '),") \n")
+           })    
+    invisible(x)
+}
+
+summary.cpt_spec <- function(object, ...){
+    cat("cpt_spec with probabilities:\n")
+    lapply(object,
+           function(xx){
+               vn <- varNames(xx)
+               .print_probability(vn)               
+           })
+    invisible(object)
+
+}
+
+## ###########################################################
+## Helper functions  -- used only in grain-main.R
+## ###########################################################
+as_cpt_spec_simple <- function(x){
+    z <- c(x)
+    attr(z, "universe") <- attr(x, "universe")
+    class(z) <- "cpt_spec_simple"
+    z
+}
+
+print.cpt_spec_simple <- function(x,...){
+    cat("cpt_spec_simple with probabilities:\n")
+    lapply(x,
+           function(xx){
+               vn <- varNames(xx)
+               .print_probability(vn)               
+           })
+  invisible(x)
+}
+
+
+
+## ###################################################
+##
+## dot functions below here
+##
+## ###################################################
 
 .compilePOT <- function(x, ...){
     ## x: a list of arrays, and a rip attribute
@@ -164,59 +242,6 @@ compilePOT <- function(x, ..., forceCheck=TRUE){
 
 
 
-## #############################################################
-
-print.cpt_spec <- function(x, ...){
-    cat("cpt_spec with probabilities:\n")
-    lapply(x,
-           function(xx){
-               vn <- varNames(xx)
-               .print_probability(vn)
-           })
-    invisible(x)
-}
-
-print.pot_spec <- function(x, ...){
-    cat("pot_spec with potentials:\n")
-    lapply(x,
-           function(xx){
-               vn <- names(dimnames(xx))
-               cat("(", paste(vn, collapse=' '),") \n")
-           })    
-    invisible(x)
-}
-
-summary.cpt_spec <- function(object, ...){
-    cat("cpt_spec with probabilities:\n")
-    lapply(object,
-           function(xx){
-               vn <- varNames(xx)
-               .print_probability(vn)               
-           })
-    invisible(object)
-
-}
-
-## ###########################################################
-## Helper functions  -- used only in grain-main.R
-## ###########################################################
-as_cpt_spec_simple <- function(x){
-    z <- c(x)
-    attr(z, "universe") <- attr(x, "universe")
-    class(z) <- "cpt_spec_simple"
-    z
-}
-
-print.cpt_spec_simple <- function(x,...){
-    cat("cpt_spec_simple with probabilities:\n")
-    lapply(x,
-           function(xx){
-               vn <- varNames(xx)
-               .print_probability(vn)               
-           })
-  invisible(x)
-}
-
 
 ## ##################################################################
 ##
@@ -261,6 +286,13 @@ print.cpt_spec_simple <- function(x,...){
 }
 
 .parse_cpt_finalize <- function(vpar, vlev, values, smooth){
+
+    ## Normalization of CPTs happen here
+    values <- matrix(values, nrow=length(vlev))
+    s  <- colSums(values)
+    for (j in 1:ncol(values)) values[, j] <- values[, j] / s[j]
+    values <- as.numeric(values)
+
     out <- list(vnam=vpar[1], vlev=vlev, vpar=vpar, values=values,
                 normalize="first", smooth=smooth)
     class(out) <- "cpt_generic"

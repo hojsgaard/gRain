@@ -7,7 +7,7 @@
 
 \documentclass[10pt]{article}
 \usepackage{boxedminipage,color,a4wide,url}
-\usepackage[latin1]{inputenc}
+\usepackage[utf8]{inputenc}
 
 \usepackage[authoryear,round]{natbib}
 \bibliographystyle{plainnat}
@@ -15,7 +15,7 @@
 <<include=FALSE,echo=FALSE,warning=FALSE>>=
 library(knitr)
 dir.create("figures")
-opts_chunk$set(fig.height=3,
+opts_chunk$set(fig.height=2.5,
                fig.path='figures/grain-',
                warning=FALSE, message=FALSE
 )
@@ -64,15 +64,43 @@ abbreviated BNs). The name \grbn\ is an acronym for [gra]phical
 citation("gRain")
 @
 
-Moreover, \cite{hoj:edw:lau:12} gives a broad treatment of graphical models (including Bayesian networks)
-More information about the package, other graphical modelling packages
-and development versions is available from
+Moreover, \cite{hoj:edw:lau:12} gives a broad treatment of graphical
+models (including Bayesian networks) More information about the
+package, other graphical modelling packages and development versions
+is available from
+
 \begin{quote}
 \url{http://people.math.aau.dk/~sorenh/software/gR}
 \end{quote}
 
+%% \section{Two worked examples}
+%% \label{sec:two-worked-examples}
 
-\section{A worked example: chest clinic}
+%% \subsection{Wet grass}
+%% \label{sec:wet-grass}
+
+%% The `wet grass` example is motivated by the following narrative (taken from 
+%% \url{https://en.wikipedia.org/wiki/Bayesian_network})
+%% \begin{quote}
+%%   Two events can cause grass to be wet: an active sprinkler or
+%%   rain. Rain has a direct effect on the use of the sprinkler (namely
+%%   that when it rains, the sprinkler usually is not active).
+%% \end{quote}
+
+%% <<echo=F, results='hide'>>=
+%% p.R    <- cptable(~R, values=c(2, 8), levels=yn)
+%% p.S_R  <- cptable(~S:R, values=c(1, 99, 4, 6), levels=yn)
+%% p.G_SR <- cptable(~G:S:R, values=c(99, 1, 8, 2, 9, 1, 0, 1), levels=yn)
+%% grass_bn <- compileCPT(p.R, p.S_R, p.G_SR)  %>% grain
+%% @ 
+
+%% <<chest-grass, fig.height=2, echo=F, fig.cap="Wet graph example; taken from Wikipedia.">>=
+%% plot(grass_bn)
+%% @ %def
+
+
+\section{Example: Chest clinic}
+\label{sec:chest-clinic}
 \label{sec:chest}
 
 <<echo=F, results='hide'>>=
@@ -87,10 +115,9 @@ x.e  <- cptable(~xray|either, values=c(98,2,5,95), levels=yn)
 d.be <- cptable(~dysp|bronc:either, values=c(9,1,7,3,8,2,1,9), levels=yn)
 plist <- compileCPT(list(a, t.a, s, l.s, b.s, e.lt, x.e, d.be))
 plist
-net1 <- grain(plist)
-net1
+chest_bn <- grain(plist)
+chest_bn
 @ %def
-
 
 This section reviews the chest clinic example of \cite{lau/spieg:88}
 (illustrated in Figure~\ref{fig:chest-LS}) and shows one way of
@@ -109,8 +136,7 @@ chest clinic example with the following narrative:
 
 
 <<chest-LS, echo=F, fig.cap="Chest clinic example from Lauritzen and Spiegelhalter (1988).">>=
-require(Rgraphviz)
-plot(net1)
+plot(chest_bn)
 @ %def
 
 \subsection{Building a network}
@@ -195,7 +221,8 @@ example is as follows.
 
 \begin{enumerate}
 \item Specify conditional probability tables (with values as given in
-  \cite{lau/spieg:88}):
+  \cite{lau/spieg:88}) (there are other ways of specifying conditional
+  probability tables, see the package documentation):
 
 <<>>=
 yn <- c("yes", "no")
@@ -212,12 +239,20 @@ d.be <- cptable(~dysp|bronc:either, values=c(9, 1, 7, 3, 8, 2, 1, 9), levels=yn)
 \item Compile list of conditional probability tables.
 
 <<>>=
-chest_cpt <- compileCPT(list(a, t.a, s, l.s, b.s, e.lt, x.e, d.be))
+chest_cpt <- compileCPT(a, t.a, s, l.s, b.s, e.lt, x.e, d.be)
 summary(chest_cpt)
-
-chest_cpt$tub
-chest_cpt$either  %>% ftable(row.vars="either") ## Notice: a logical node
 @ %def
+
+The components are arrays, but coercion into dataframes sometimes makes it easier to digest the components.
+<<>>=
+chest_cpt$tub
+chest_cpt$tub  %>% as.data.frame.table
+@ 
+
+Notice: \code{either} is a logical node
+<<>>=
+chest_cpt$either  %>% as.data.frame.table
+@ 
 
 
 \item Create the network:\footnote{SH: Rethink print method}
@@ -240,13 +275,19 @@ chest_bn <- compile(chest_bn)
 \label{sec:querying-network}
 
 \begin{enumerate}
-\item The network can be queried to give marginal probabilities:\footnote{\code{querygrain()} can be abbreviated \code{qgrain()}.}
+\item The network can be queried to give marginal
+  probabilities:\footnote{\code{querygrain()} can be abbreviated
+    \code{qgrain()}.}
 
 <<>>=
 querygrain(chest_bn, nodes=c("lung", "bronc"), type="marginal")
 @ %def
 
-\item Likewise, a joint distribution can be obtained:\footnote{SH: FIXME}
+%% <<>>=
+%% querygrain(chest_bn, nodes=c("lung", "bronc"), type="marginal")  %>% lapply(as.data.frame.table) 
+%% @ %def
+
+\item Likewise, a joint distribution can be obtained:
 
 <<>>=
 querygrain(chest_bn, nodes=c("lung", "bronc"), type="joint")
@@ -265,7 +306,7 @@ chest_bn2  <- setEvidence(chest_bn,
 pEvidence(chest_bn2)
 @ %def
 
-\item The network can be queried again:\footnote{SH: FIXME}
+\item The network can be queried again:\footnote{SH: FIXME; joint is wrong}
 <<>>=
 querygrain(chest_bn2, nodes=c("lung", "bronc"))
 querygrain(chest_bn2, nodes=c("lung", "bronc"), type="joint")

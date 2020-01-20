@@ -16,20 +16,9 @@ querygrain(
   result = "array",
   details = 0
 )
-
-\method{querygrain}{grain}(
-  object,
-  nodes = nodeNames(object),
-  type = "marginal",
-  evidence = NULL,
-  exclude = TRUE,
-  normalize = TRUE,
-  result = "array",
-  details = 0
-)
 }
 \arguments{
-\item{object}{A "grain" object}
+\item{object}{A \code{grain} object.}
 
 \item{nodes}{A vector of nodes; those nodes for which the
 (conditional) distribution is requested.}
@@ -82,40 +71,6 @@ qb
 
 lapply(qb, as.numeric) # Safe
 sapply(qb, as.numeric) # Risky
-
-## setFinding / setEvidence
-
-yn <- c("yes","no")
-a    <- cptable(~asia, values=c(1,99),levels=yn)
-t.a  <- cptable(~tub+asia, values=c(5,95,1,99),levels=yn)
-s    <- cptable(~smoke, values=c(5,5), levels=yn)
-l.s  <- cptable(~lung+smoke, values=c(1,9,1,99), levels=yn)
-b.s  <- cptable(~bronc+smoke, values=c(6,4,3,7), levels=yn)
-e.lt <- cptable(~either+lung+tub,values=c(1,0,1,0,1,0,0,1),levels=yn)
-x.e  <- cptable(~xray+either, values=c(98,2,5,95), levels=yn)
-d.be <- cptable(~dysp+bronc+either, values=c(9,1,7,3,8,2,1,9), levels=yn)
-plist <- compileCPT(list(a, t.a, s, l.s, b.s, e.lt, x.e, d.be))
-chest <- grain(plist)
-
-
-## 1) These two forms are identical
-setEvidence(chest, c("asia","xray"), c("yes", "yes"))
-setFinding(chest, c("asia","xray"), c("yes", "yes"))
-
-## 2) Suppose we do not know with certainty whether a patient has
-## recently been to Asia. We can then introduce a new variable
-## "guess.asia" with "asia" as its only parent. Suppose
-## p(guess.asia=yes|asia=yes)=.8 and p(guess.asia=yes|asia=no)=.1
-## If the patient is e.g. unusually tanned we may set
-## guess.asia=yes and propagate. This corresponds to modifying the
-## model by the likelihood (0.8, 0.1) as
-setEvidence(chest, c("asia","xray"), list(c(0.8,0.1), "yes"))
-
-## 3) Hence, the same result as in 1) can be obtained with
-setEvidence(chest, c("asia","xray"), list(c(1, 0), "yes"))
-
-## 4) An alternative specification using evidence is
-setEvidence(chest, evidence=list("asia"=c(1, 0), "xray"="yes"))
 
 }
 \references{

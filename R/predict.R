@@ -5,7 +5,7 @@
 #'     finding (evidence) on other variables in an independence
 #'     network.
 #'
-#' @name grain-predict
+#' @name grain_predict
 #' 
 #' @param object A grain object
 #' @param response A vector of response variables to make predictions
@@ -26,12 +26,22 @@
 #'     with the gRain Package for R. Journal of Statistical Software,
 #'     46(10), 1-26.  \url{http://www.jstatsoft.org/v46/i10/}.
 #' @keywords models
-#' 
+#'
+#' @examples
+#' data(chest_cpt)
+#' data(chestSim500)
+#'
+#' chest.bn <- grain(compileCPT(chest_cpt))
+#' nd <- chestSim500[1:4]
+#'
+#' predict(chest.bn, response="bronc", newdata=nd)
+#' predict(chest.bn, response="bronc", newdata=nd, type="distribution")
+#'
 predict.grain <- function(object, response, predictors=setdiff(names(newdata), response),
                           newdata, type="class", ...){
 
     ## cat("+++ predict.grain\n")
-    if (!.isComp(object)){
+    if (!is_compiled(object)){
         object <- compile(object, propagate=TRUE)
     }
 

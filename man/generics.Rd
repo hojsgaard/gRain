@@ -8,8 +8,6 @@
 \alias{nodeStates.grain}
 \alias{universe}
 \alias{universe.grain}
-\alias{uni}
-\alias{uni.grain}
 \alias{varNames.grainEvidence_}
 \alias{rip.grain}
 \alias{vpar.cpt_spec}
@@ -27,10 +25,6 @@ nodeStates(x, nodes = nodeNames(x))
 universe(object, ...)
 
 \method{universe}{grain}(object, ...)
-
-uni(object)
-
-\method{uni}{grain}(object)
 
 \method{varNames}{grainEvidence_}(x)
 

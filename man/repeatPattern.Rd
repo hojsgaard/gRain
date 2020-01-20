@@ -80,4 +80,4 @@ Software, 46(10), 1-26.
 \author{
 Søren Højsgaard, \email{sorenh@math.aau.dk}
 }
-\keyword{utils}
+\keyword{models}

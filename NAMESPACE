@@ -42,7 +42,7 @@ exportMethods(plot)
 export(cptable, compileCPT,
        grain, querygrain, qgrain,
        setEvidence, pEvidence,
-       extractCPT, extractPOT,
+       extractCPT, extractPOT, extractMARG,
        ##extract_cpt, extract_pot,
        ##parse_cpt, 
        setFinding,
@@ -68,8 +68,8 @@ S3method(.parse_cpt, default)
 S3method(setCPT, cpt_grain)
 
 S3method(compile, grain)
-S3method(compile, cpt_grain)
-S3method(compile, pot_grain)
+## S3method(compile, cpt_grain)
+## S3method(compile, pot_grain)
 ## S3method(compile, cpt_rep)
 ## S3method(compile, pot_rep)
 
@@ -103,7 +103,7 @@ S3method(splitVec, list)
 
 S3method(summary, cpt_spec)
 S3method(summary, grain)
-S3method(update, cpt_grain)
+##S3method(update, cpt_grain)
 S3method(valueLabels, cptable_class)
 
 S3method(varNames, cptable_class)
@@ -119,7 +119,7 @@ S3method(print, grain_ev )
 S3method(subset, grain_ev)
 
 S3method(universe, grain)
-S3method(uni, grain)
+##S3method(uni, grain)
 ##S3method(potential, grain)
 ##S3method(pot, grain)
 

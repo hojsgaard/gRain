@@ -49,7 +49,7 @@ getgrain<- function(object, name=c("universe", "data", "dag", "ug", "cptlist",
                                    "origpot", "temppot", "equipot",
                                    "pot_orig", "pot_temp", "pot_equi",
                                    "rip",
-                                   "isCompiled", "isPropagated",
+                                   "is_compiled", "is_propagated",
                                    "evidence", "pEvidence",
                                    "control", "details")){
 
@@ -72,8 +72,8 @@ getgrain<- function(object, name=c("universe", "data", "dag", "ug", "cptlist",
 
            rip              = object$rip,
 
-           isCompiled       = object$isCompiled,
-           isPropagated     = object$isPropagated,
+           is_compiled       = object$is_compiled,
+           is_propagated     = object$is_propagated,
            
            evidence         = object$evidence,
            pEvidence        = object$pEvidence,

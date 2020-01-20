@@ -57,6 +57,7 @@
 #'
 ## ## We use our own operator, for example "exclusive or" which is
 ## ## TRUE only if one but not both arguments are TRUE.
+
 ## xor <- function(e1,e2){!mapply(all, e1, e2) & mapply(any, e1, e2)}
 ## booltab(c("v", "pa1", "pa2"), op=xor) %>% ftable(row.vars="v") ## XOR
 ## 
@@ -105,7 +106,7 @@ ortable <- ortab
 #' @examples
 #' ## Inheritance of the alleles "y" and "g"
 #' 
-#' men <- mendel( c("y","g"), names = c("ch", "fa", "mo") )
+#' men <- mendel(c("y","g"), names=c("ch", "fa", "mo"))
 #' men
 #' 
 mendel <- function(allele, names=c("child", "father", "mother")){

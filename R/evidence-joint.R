@@ -1,33 +1,32 @@
 ## ###############################################################
 ##
 #' @title Set joint evidence in grain objects
-#'
 #' @description Setting and removing joint evidence in grain objects. 
-#'
 #' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
 #' 
 ## ###############################################################
 #'
 #' @name grain_jevidence
 #'
-#' @note All the joint evidence functionality should be used *with great care*.
-#' 
-#' @param object A "grain" object
+#' @param object A "grain" object.
 #' @param evidence A list of evidence. Each element is a named array.
-#' @param propagate Should the network be propagated?
-#' @param details Debugging information
+#' @param propagate Should evidence be absorbed once entered; defaults
+#'     to TRUE.
+#' @param details Amount of printing; for debugging.
+#' @param ev A named list.
+#' @param levels A named list.
 #'
-#' @seealso \code{\link{setFinding}} \code{\link{getFinding}}
-#'     \code{\link{retractFinding}} \code{\link{pFinding}}
-#' @references Søren Højsgaard (2012). Graphical Independence Networks
-#'     with the gRain Package for R. Journal of Statistical Software,
-#'     46(10), 1-26.  \url{http://www.jstatsoft.org/v46/i10/}.
-#' @keywords models utilities
-#' 
+#' @note All the joint evidence functionality should be used with
+#'     great care.
+#'
+#' @aliases print.grain_jev
+#'
 #' @examples
 #'
-#' example("grain")
-#'
+#' data(chest_cpt)
+#' chest.bn <- grain(compileCPT(chest_cpt))
+#' chest.bn <- compile(chest.bn)
+#' 
 #' uni <- list(asia = c("yes", "no"), tub = c("yes", "no"),
 #'             smoke = c("yes", "no"), lung = c("yes", "no"),
 #'             bronc = c("yes", "no"), either = c("yes", "no"),
@@ -37,39 +36,58 @@
 #'            tab("dysp", levels=uni, values=c(1,0)),
 #'            tab(c("dysp","bronc"), levels=uni, values=c(.1, .2, .9, .8)) )
 #'
-#' bn2 <- setJEvidence(bn, evidence=ev)
-#' bn2
+#' chest.bn
+#' chest.bn2 <- setJEvidence(chest.bn, evidence=ev)
+#' chest.bn2
 #'
-#' ## Notice: The evidence is defined on (subsets of) cliques of the junction tree
+#' # Notice: The evidence is defined on (subsets of) cliques of the junction tree
 #' # and therefore evidence can readily be absorbed:
-#' getgrain(bn, "rip")$cliques  %>% str
+#' getgrain(chest.bn, "rip")$cliques  %>% str
 #'
-#' ## On the other hand, below evidence is not defined cliques of the
-#' # junction tree and therefore evidence can not easily be absorbed.
-#' # Hence this will fail:
+#' # On the other hand, below is evidence which is not defined cliques
+#' # of the junction tree and therefore evidence can not easily be
+#' # absorbed.  Hence this will fail:
 #'
 #' \dontrun{
 #' ev.fail <- list(tab(c("dysp","smoke"), levels=uni, values=c(.1, .2, .9, .8)) )
-#' setJEvidence(bn, evidence=ev.fail)
+#' setJEvidence(chest.bn, evidence=ev.fail)
 #' }
 #'
 #' ## Evidence can be removed with
 #'
-#' retractJEvidence(bn2)    ## All evidence removed.
-#' retractJEvidence(bn2, 0) ## No evidence removed.
-#' retractJEvidence(bn2, 1:2) ## Evidence items 1 and 2 are removed.
+#' retractJEvidence(chest.bn2)      ## All evidence removed.
+#' retractJEvidence(chest.bn2, 0)   ## No evidence removed.
+#' retractJEvidence(chest.bn2, 1:2) ## Evidence items 1 and 2 are removed.
 #' 
-#' ## Setting additional joint evidence to an object where joint
+#' # Setting additional joint evidence to an object where joint
 #' # evidence already is set will cause an error. Hence this will fail:
+#'
 #' \dontrun{
 #'   ev2 <- list(smoke="yes")
-#'   setJEvidence(bn2, evidence=ev2)
+#'   setJEvidence(chest.bn2, evidence=ev2)
 #' }
 #'
 #' ## Instead we can do
-#' new.ev <- c(getEvidence(bn2), list(smoke="yes"))
-#' setJEvidence(bn, evidence=new.ev)
+#' new.ev <- c(getEvidence(chest.bn2), list(smoke="yes"))
+#' chest.bn
+#' setJEvidence(chest.bn, evidence=new.ev)
 #' 
+#' ## Create joint evidence object:
+#' yn <- c("yes", "no")
+#' db <- parray(c("dysp", "bronc"), list(yn, yn), values=c(.1, .2, .9, .8))
+#' db
+#' ev   <- list(asia=c(1, 0), dysp="yes", db)
+#'
+#' jevi <- new_jev(ev, levels=uni)
+#' jevi
+#'
+#' chest.bn3 <- setJEvidence(chest.bn, evidence=jevi)
+#' evidence(chest.bn3)
+#'
+
+
+
+
 
 #' @rdname grain_jevidence
 setJEvidence <- function(object, evidence=NULL, propagate=TRUE, details=0){
@@ -88,17 +106,14 @@ setJEvidence_<- function(object, evidence=NULL, propagate=TRUE, details=0){
         if ( !inherits( evidence, "grain_jev" ) )
             evidence <- new_jev( evidence, universe( object )$levels )
         
-        if (!.isComp(object))
+        if (!is_compiled(object))
             object <- compile( object )
         
         vn  <- sapply(evidence, varNames)    
         rp  <- getgrain(object, "rip")    
         hc  <- getHostClique(vn, rp$cliques)
         pot <- getgrain(object, "pot_temp")
-#        str(evidence, hc)
-#        pot.b <<-pot
         pot2 <- insertJEvidence(evidence, pot, hc)
-#        pot.a <<- pot2
         object$potential$pot_temp <- pot2
         object$evidence <- evidence
     }
@@ -159,31 +174,8 @@ retractJEvidence <- function(object, items=NULL, propagate=TRUE, details=0){
     object
 }
 
+
 #' @rdname grain_jevidence
-#'
-#' @param ev A named list.
-#' @param levels A named list.
-#'
-#' @examples
-#'
-#' ## Create joint evidence object:
-#' 
-#' db <- parray(c("dysp","bronc"), list(yn,yn), values=c(.1,.2,.9,.8))
-#' db
-#' ev   <- list(asia=c(1,0), dysp="yes", db)
-#'
-#' uni <- list(asia = c("yes", "no"), tub = c("yes", "no"),
-#'   smoke = c("yes", "no"), lung = c("yes", "no"),
-#'   bronc = c("yes", "no"), either = c("yes", "no"),
-#'   xray = c("yes", "no"), dysp = c("yes", "no"))
-#'
-#' jevi <- new_jev( ev, levels=uni )
-#' jevi
-#'
-#'
-#' bn3 <- setJEvidence( bn, evidence=jevi)
-#' evidence( bn3 )
-#' 
 new_jev <- function(ev, levels){
     if (inherits(ev, "grain_jev")) return( ev )
 
@@ -227,9 +219,9 @@ new_jev <- function(ev, levels){
     ev
 }
 
-#' @rdname grain_jevidence
-#' @param x A "grain_jev" object.
-#' @param ... Additional arguments; currently not used.
+## #' @rdname grain_jevidence
+## #' @param x A "grain_jev" object.
+## #' @param ... Additional arguments; currently not used.
 print.grain_jev <- function(x, ...){
     vn <- lapply(x, varNames)
     str(vn)

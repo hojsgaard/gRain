@@ -349,7 +349,7 @@ saveHuginNet <- function(gin, file, details=0){
 
     if (is.null(cptlist <- getgin(gin, "cptlist"))){
         cat("Object does not have 'cptlist' component; creating one for you...\n")
-        cptlist <- mkcptlist(gin)
+        cptlist <- make_cptlist(gin)
     }
         
     vlab <- gmd$levels
