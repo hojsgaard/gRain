@@ -18,7 +18,7 @@ importFrom("graphics", "plot")
 
 importFrom(igraph, igraph.from.graphNEL, V, "V<-", layout.graphopt)
 importFrom(Rcpp, evalCpp)
-importFrom(stats, simulate)
+importFrom(stats, simulate, predict)
 
 import(methods)
 import(gRbase)
@@ -34,12 +34,15 @@ importFrom(graph, edges, nodes)
 importMethodsFrom(Rgraphviz, plot)
 exportMethods(plot) 
 
+##exportMethods(predict)
+
 ## importFrom("functional", "Curry")
 ## export("Curry")
 
 ##exportPattern("^[[:alpha:]]+")
 
 export(cptable, compileCPT,
+#       predict,
        grain, querygrain, qgrain,
        setEvidence, pEvidence,
        extractCPT, extractPOT, extractMARG,
@@ -85,6 +88,9 @@ S3method(nodeNames, grain)
 S3method(nodeStates, grain)
 S3method(plot, grain)
 S3method(predict, grain)
+S3method(simulate, grain)
+
+
 
 S3method(print, cpt_spec)
 S3method(print, pot_spec)
@@ -110,7 +116,6 @@ S3method(varNames, cptable_class)
 S3method(varNames, grainEvidence_)
 S3method(varNames, grain_ev)
 
-S3method(simulate, grain)
 
 S3method(as.data.frame, grain_ev)
 S3method(print, grain_jev )
