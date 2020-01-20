@@ -10,8 +10,10 @@ Depends:
     R (>= 3.6.0),
     methods,
     gRbase
-Suggested:
-    testthat
+Suggests:
+    microbenchmark,
+    knitr,
+    testthat (>= 2.1.0)
 Imports:
     graph,
     Rgraphviz,
@@ -21,9 +23,6 @@ Imports:
 URL: http://people.math.aau.dk/~sorenh/software/gR/
 Encoding: UTF-8
 VignetteBuilder: knitr
-Suggests:
-    microbenchmark,
-    knitr
 LinkingTo: Rcpp (>= 0.11.1), RcppArmadillo, RcppEigen, gRbase
 ByteCompile: Yes
 biocViews:
