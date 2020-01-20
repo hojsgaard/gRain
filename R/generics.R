@@ -4,9 +4,6 @@
 #'
 #' @name generics
 #' 
-#' @aliases nodeNames nodeStates nodeNames.grain
-#'     nodeStates.grain
-#'
 #' @param x,object A relevant object.
 #' @param nodes Some nodes of the object.
 #' @param ... Additional arguments; currently not used.
@@ -17,21 +14,59 @@ nodeNames  <- function(x) UseMethod("nodeNames")
 
 #' @rdname generics
 nodeNames.grain  <- function(x)
-  x$universe$nodes
+  getgrain(x, "universe")$nodes
 
 #' @rdname generics
 nodeStates <- function(x, nodes=nodeNames(x)) UseMethod("nodeStates")
 
 #' @rdname generics
 nodeStates.grain <- function(x, nodes=nodeNames(x)){
-  x$universe$levels[nodes]
+  getgrain(x, "universe")$levels[nodes]
 }
 
 #' @rdname generics
 universe <- function(object, ...) UseMethod("universe")
 
 #' @rdname generics
-universe.grain <- function(object, ...) object$universe
+universe.grain <- function(object, ...)
+    getgrain(object, "universe")
+
+#' @rdname generics
+varNames.grainEvidence_ <- function(x)
+    getgrain(x, "summary")$nodes
+
+#' @rdname generics
+rip.grain <- function(object, ...)
+    getgin(object, "rip")
+
+
+
+#' @rdname generics
+vpar.cpt_spec <- function(object, ...){
+    lapply(object, function(u) names(dimnames(u)))
+}
+
+#' @rdname generics 
+vpar.cpt_grain <- function(object, ...){
+    lapply(getgin(object, "cptlist"), function(u) names(dimnames(u)))
+}
+
+is_compiled <- function(x) getgin(x, "is_compiled")
+
+is_propagated <- function(x) getgin(x, "is_propagated")
+
+"is_compiled<-" <- function(object, value){
+    object$is_compiled <- value
+    object
+}
+
+"is_propagated<-" <- function(object, value){
+    object$is_propagated <- value
+    object
+}
+
+
+
 
 ## #' @rdname generics
 ## uni <- function(object)
@@ -40,14 +75,6 @@ universe.grain <- function(object, ...) object$universe
 ## #' @rdname generics
 ## uni.grain <- function(object)
 ##     getgin(object, "universe")
-
-
-#' @rdname generics
-varNames.grainEvidence_ <- function(x) x$summary$nodes
-
-#' @rdname generics
-rip.grain <- function(object, ...)
-    getgin(object, "rip")
 
 ## #' @rdname generics
 ## pot <- function(object)
@@ -86,31 +113,4 @@ rip.grain <- function(object, ...)
 ## #' @rdname generics
 ## potential.grain <- function(object)
 ##    object$potential
-
-#' @rdname generics
-vpar.cpt_spec <- function(object, ...){
-    lapply(object, function(u) names(dimnames(u)))
-}
-
-#' @rdname generics 
-vpar.cpt_grain <- function(object, ...){
-    lapply(getgin(object, "cptlist"), function(u) names(dimnames(u)))
-}
-
-
-
-is_compiled <- function(x) getgin(x, "is_compiled")
-
-is_propagated <- function(x) getgin(x, "is_propagated")
-
-
-"is_compiled<-" <- function(object, value){
-    object$is_compiled <- value
-    object
-}
-
-"is_propagated<-" <- function(object, value){
-    object$is_propagated <- value
-    object
-}
 

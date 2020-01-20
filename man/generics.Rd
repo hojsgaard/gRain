@@ -3,8 +3,8 @@
 \name{generics}
 \alias{generics}
 \alias{nodeNames}
-\alias{nodeStates}
 \alias{nodeNames.grain}
+\alias{nodeStates}
 \alias{nodeStates.grain}
 \alias{universe}
 \alias{universe.grain}

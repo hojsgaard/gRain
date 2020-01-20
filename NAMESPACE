@@ -34,15 +34,13 @@ importFrom(graph, edges, nodes)
 importMethodsFrom(Rgraphviz, plot)
 exportMethods(plot) 
 
-##exportMethods(predict)
-
 ## importFrom("functional", "Curry")
 ## export("Curry")
 
 ##exportPattern("^[[:alpha:]]+")
 
 export(cptable, compileCPT,
-#       predict,
+       nodeNames, nodeStates,
        grain, querygrain, qgrain,
        setEvidence, pEvidence,
        extractCPT, extractPOT, extractMARG,
@@ -69,7 +67,6 @@ S3method(.parse_cpt, default)
 
 ##S3method("add_cpt<-", cpt_domain)
 S3method(setCPT, cpt_grain)
-
 S3method(compile, grain)
 ## S3method(compile, cpt_grain)
 ## S3method(compile, pot_grain)
@@ -84,7 +81,7 @@ S3method(grain, dModel)
 S3method(grain, graphNEL)
 
 S3method(iplot, grain)
-S3method(nodeNames, grain)
+S3method(nodeNames,  grain)
 S3method(nodeStates, grain)
 S3method(plot, grain)
 S3method(predict, grain)

@@ -10,6 +10,8 @@ Depends:
     R (>= 3.6.0),
     methods,
     gRbase
+Suggested:
+    testthat
 Imports:
     graph,
     Rgraphviz,
