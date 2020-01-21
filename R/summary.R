@@ -1,3 +1,4 @@
+#' @export
 summary.grain <- function(object, type='std', ...){
 
     type <- match.arg(type, c("std", "cliques", "rip", "configurations"))

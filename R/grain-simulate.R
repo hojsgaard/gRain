@@ -35,6 +35,8 @@
 #' simulate(chest2, n=10)
 #' 
 #' @export simulate.grain
+
+#' @export 
 simulate.grain <- function(object, nsim=1, seed=NULL, ...){
 
     if (!is_compiled(object)){

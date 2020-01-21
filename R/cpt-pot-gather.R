@@ -66,7 +66,9 @@
 ##     listify_dots(args)
 ## }
 
+
 #' @rdname components_gather
+#' @export
 compileCPT <- function(x, ..., forceCheck=TRUE){
     args <- c(list(x), list(...))
     args <- listify_dots(args)
@@ -270,15 +272,17 @@ print.cpt_spec_simple <- function(x,...){
     UseMethod(".parse_cpt")
 }
 
+#' @export
 .parse_cpt.xtabs <- function(xi){
     NextMethod(".parse_cpt")
 }
 
+#' @export
 .parse_cpt.cptable_class <- function(xi){
     .parse_cpt_finalize(varNames(xi), valueLabels(xi)[[1]],
                         as.numeric(xi), attr(xi, "smooth"))
 }
-
+#' @export
 .parse_cpt.default <- function(xi){
     if (!is.named.array(xi)) stop("'xi' must be a named array")
     .parse_cpt_finalize(varNames(xi), valueLabels(xi)[[1]],

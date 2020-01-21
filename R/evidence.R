@@ -83,6 +83,7 @@
 #' 
 
 #' @rdname grain_evidence
+#' @export 
 setEvidence <- function(object, nodes=NULL, states=NULL, evidence=NULL, nslist=NULL,
                         propagate=TRUE, details=0){
     
@@ -100,10 +101,12 @@ setEvidence <- function(object, nodes=NULL, states=NULL, evidence=NULL, nslist=N
 }
 
 #' @rdname grain_evidence
+#' @export 
 retractEvidence <- function(object, nodes=NULL, propagate=TRUE){
     retractEvi_(object, items=nodes, propagate=propagate)
 }
 
+#' @export 
 #' @rdname grain_evidence
 absorbEvidence <- function(object, propagate=TRUE ){
     absorbEvi( object, propagate=propagate )
@@ -231,6 +234,7 @@ absorbEvi_<- function(object, propagate=TRUE ){
     if (propagate) propagate(object) else object
 }
 
+#' @export 
 #' @name grain_evidence
 pEvidence <- function(object){
     if ( !inherits(object, "grain") )
@@ -243,6 +247,7 @@ pEvidence <- function(object){
 pEvi <- function(object)
     pEvidence(object)
 
+#' @export 
 #' @name grain_evidence
 getEvidence <- function(object){
     if ( !inherits(object, "grain") )
@@ -260,12 +265,13 @@ getEvidence <- function(object){
     setEvi(object, value)
 }
 
+#' @export 
 #' @name grain_evidence
 evidence <- function(object){
     UseMethod("evidence")
-    
 }
 
+#' @export 
 #' @name grain_evidence
 evidence.grain <- function(object){
     getEvidence( object )

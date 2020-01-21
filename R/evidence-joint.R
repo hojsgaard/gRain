@@ -88,12 +88,13 @@
 
 
 
-
+#' @export 
 #' @rdname grain_jevidence
 setJEvidence <- function(object, evidence=NULL, propagate=TRUE, details=0){
     
     setJEvidence_(object, evidence=evidence, propagate=propagate, details=details)
 }
+
 
 setJEvidence_<- function(object, evidence=NULL, propagate=TRUE, details=0){
 
@@ -142,6 +143,7 @@ insertJEvidence <- function(evi.list, pot, hostclique){
 
 
 
+#' @export 
 #' @rdname grain_jevidence
 #' @param items Items in the evidence list to be removed. Here,
 #'     \code{NULL} means remove everything, \code{0} means nothing is
@@ -174,7 +176,7 @@ retractJEvidence <- function(object, items=NULL, propagate=TRUE, details=0){
     object
 }
 
-
+#' @export 
 #' @rdname grain_jevidence
 new_jev <- function(ev, levels){
     if (inherits(ev, "grain_jev")) return( ev )

@@ -75,6 +75,7 @@
 #' }
 
 #' @rdname components_extract
+#' @export 
 extractCPT <- function(data_, graph, smooth=0){
 
     .is.valid.data(data_)
@@ -88,6 +89,8 @@ extractCPT <- function(data_, graph, smooth=0){
     out
 }
 
+
+#' @export
 #' @rdname components_extract
 extractPOT <- function(data_, graph, smooth=0){
     
@@ -103,6 +106,7 @@ extractPOT <- function(data_, graph, smooth=0){
     out
 }
 
+#' @export 
 #' @rdname components_extract
 extractMARG <- function(data_, graph, smooth=0){
 
@@ -119,6 +123,7 @@ extractMARG <- function(data_, graph, smooth=0){
 }
 
 
+#' @export 
 #' @rdname components_extract
 #' @param mg An object of class \code{marg_rep}
 marg2pot <- function(mg){
@@ -137,6 +142,7 @@ marg2pot <- function(mg){
     pt
 }
 
+#' @export 
 #' @rdname components_extract 
 #' @param pt An object of class \code{pot_rep}
 pot2marg <- function(pt){

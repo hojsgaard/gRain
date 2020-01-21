@@ -37,6 +37,8 @@
 #' predict(chest.bn, response="bronc", newdata=nd)
 #' predict(chest.bn, response="bronc", newdata=nd, type="distribution")
 #'
+
+#' @export
 predict.grain <- function(object, response, predictors=setdiff(names(newdata), response),
                           newdata, type="class", ...){
 

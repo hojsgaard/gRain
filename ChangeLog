@@ -1,9 +1,9 @@
 2020-01-14 Søren Højsgaard <sorenh@math.aau.dk>
 
 	* Cleaning up experimental features
-
+	* NAMESPACE file now generated automatically
 	* Added testthat
-
+	* Bug in propagateLS (cpp version) fixed
 	* Version 1.3-3 uploaded	
 
 2016-10-15 Søren Højsgaard <sorenh@math.aau.dk>

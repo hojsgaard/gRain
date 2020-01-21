@@ -2,6 +2,9 @@
 ## plot (gRain)
 ##
 
+
+#' @method plot grain
+#' @export
 plot.grain <- function(x, type, ...){
     
    if (!requireNamespace("Rgraphviz", quietly = TRUE)) {
@@ -30,6 +33,7 @@ plot.grain <- function(x, type, ...){
    }
 }
 
+#' @export
 iplot.grain <- function(x,type, ...){
   #.primiplot(x$dag)
 

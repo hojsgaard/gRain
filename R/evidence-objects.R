@@ -51,7 +51,7 @@
 #' # Likewise the 'union' is
 #' union_ev( eo2, eo1 )
 #'
-#' 
+#' @export 
 #' @rdname evidence_object
 #' @param evi.list A named list with evidence; see 'examples' below.
 #' @param levels A named list with the levels of all variables. 
@@ -117,6 +117,7 @@ new_ev <- function(evi.list=NULL, levels){
     out
 }
 
+#' @export 
 #' @rdname evidence_object
 #' @param object Some R object.
 is.null_ev <- function(object){
@@ -146,7 +147,7 @@ varNames.grain_ev <- function(x) x$nodes
 #' @param optional Not used.
 #' @param x An evidence object.
 #' @param ... Not used.
-
+#' @export 
 as.data.frame.grain_ev <-
     function (x, row.names = NULL, optional = FALSE, ...) {
         is.atom <- sapply(x, is.atomic)
@@ -161,6 +162,7 @@ as.data.frame.grain_ev <-
         out
     }
 
+#' @export 
 #' @rdname evidence_object
 #' @param ev1,ev2 Evidence.
 setdiff_ev <- function(ev1, ev2){
@@ -172,6 +174,7 @@ setdiff_ev <- function(ev1, ev2){
     out
 }
 
+#' @export 
 #' @rdname evidence_object
 union_ev <- function(ev1, ev2){
     if (length(ev1)==0) ev1 <- new_ev( ev1 )
@@ -183,6 +186,7 @@ union_ev <- function(ev1, ev2){
     out
 }
 
+#' @export 
 subset.grain_ev <- function(x, subset, select, drop = FALSE, ...){
     if (missing(select)) x
     else if (length(select)==0) new_ev(list())

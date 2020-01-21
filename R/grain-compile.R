@@ -38,6 +38,7 @@
 #' @keywords utilities models
 
 #' @rdname grain_compile
+#' @export
 compile.grain <- function(object, propagate=FALSE, root=NULL,
            control=object$control, details=0, ...) {    
     

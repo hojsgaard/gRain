@@ -2,3 +2,4 @@
 .gitignore
 LICENSE
 ^appveyor\.yml$
+NAMESPACE_OLD

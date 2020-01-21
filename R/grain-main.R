@@ -67,7 +67,7 @@
 #'     normalization takes place.
 #' 
 #' @aliases grain grain.cpt_spec grain.pot_spec grain.graphNEL
-#'     grain.dModel plot.grain iplot.grain
+#'     grain.dModel 
 #' @param x An argument to build an independence network
 #'     from. Typically a list of conditional probability tables, a DAG
 #'     or an undirected graph. In the two latter cases, data must also
@@ -134,6 +134,7 @@ grain <- function(x, ...){
 }
 
 #' @rdname grain_main
+#' @export
 grain.cpt_spec <- function(x, control=list(), smooth=0, compile=TRUE, details=0, ...){
     ##cat("grain.cpt_spec\n")
     control  <- .setControl(control)
@@ -145,6 +146,7 @@ grain.cpt_spec <- function(x, control=list(), smooth=0, compile=TRUE, details=0,
     if (compile) compile(out) else out
 }
 
+#' @export
 #' @rdname grain_main
 grain.pot_spec <- function(x, control=list(), smooth=0, compile=TRUE, details=0,...){
     
@@ -160,6 +162,7 @@ grain.pot_spec <- function(x, control=list(), smooth=0, compile=TRUE, details=0,
 }
 
 ## A graph + data (wrappers for calling grain.pot_spec and grain.cpt_spec)
+#' @export
 #' @rdname grain_main
 grain.graphNEL <- function(x, control=list(), smooth=0, compile=TRUE, details=0, data=NULL, ...){
     if (is.null(data))
@@ -180,6 +183,7 @@ grain.graphNEL <- function(x, control=list(), smooth=0, compile=TRUE, details=0,
     grain(zz, data=data, control=control, compile=compile, details=details)
 }
 
+#' @export
 #' @rdname grain_main
 grain.dModel <- function(x, control=list(), smooth=0, compile=TRUE, details=0, data=NULL, ...){
     if (!x$isDecomposable)
@@ -191,9 +195,11 @@ grain.dModel <- function(x, control=list(), smooth=0, compile=TRUE, details=0, d
     grain(graph_, data=data, smooth=smooth, compile=compile, details=details, ...)
 }
 
+#' @export
 #' @rdname grain_main
 grain.pot_rep <- function(x, ...){grain(compilePOT(x))}
 
+#' @export
 #' @rdname grain_main
 grain.cpt_rep <- function(x, ...){grain(compileCPT(x))}
 

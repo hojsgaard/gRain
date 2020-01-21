@@ -45,6 +45,7 @@ listify_dots <- function(args){
 }
 
 
+#' @export 
 getgrain<- function(object, name=c("universe", "data", "dag", "ug", "cptlist",
                                    "origpot", "temppot", "equipot",
                                    "pot_orig", "pot_temp", "pot_equi",
@@ -82,6 +83,7 @@ getgrain<- function(object, name=c("universe", "data", "dag", "ug", "cptlist",
            )
 }
 
+#' @export 
 getgin <- getgrain
 
 
@@ -116,12 +118,15 @@ getgin <- getgrain
 }
 
 
+#' @export
 printlist <- function(x,d=0) UseMethod("printlist")
 
+#' @export
 printlist.default <- function(x,d=0){
   paste("(", paste(x,collapse=' '),")",sep='')
 }
 
+#' @export
 printlist.list <- function(x,d=0){
   tmp     <- unlist(lapply(x, printlist, d+2),recursive=FALSE)
   prefix  <- as.list(c("(",rep(" ",length(tmp)-1)))
@@ -129,14 +134,17 @@ printlist.list <- function(x,d=0){
   as.list(mapply(function(l,x,r) {paste(l,x,r,sep='')}, prefix, tmp, posfix))
 }
 
+#' @export
 splitVec <- function(val, lev) UseMethod("splitVec")
 
+#' @export
 splitVec.default <- function(val, lev){
   m    <- matrix(val,ncol=lev)
   cval <- unlist(apply(m,2,list),recursive=FALSE)
   cval
 }
 
+#' @export
 splitVec.list <- function(val, lev){
   lapply(val, splitVec, lev)
 }

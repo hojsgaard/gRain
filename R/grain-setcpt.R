@@ -47,11 +47,13 @@
 #' getgrain(wet.bn2, "cpt")$S
 #' 
 
+#' @export 
 #' @rdname cpt-update
 setCPT <- function(object, value){
     UseMethod("setCPT")
 }
 
+#' @export 
 #' @rdname cpt-update
 setCPT.cpt_grain <- function(object, value){
     if (!.is.named.list(value))

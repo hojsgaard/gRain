@@ -7,8 +7,6 @@
 \alias{grain.pot_spec}
 \alias{grain.graphNEL}
 \alias{grain.dModel}
-\alias{plot.grain}
-\alias{iplot.grain}
 \alias{grain.pot_rep}
 \alias{grain.cpt_rep}
 \title{Graphical Independence Network}

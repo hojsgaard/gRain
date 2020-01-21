@@ -47,7 +47,6 @@
 #' golf2 <- loadHuginNet(paste(td,"/golf.net",sep=''))
 #' 
 #' @export loadHuginNet
-
 loadHuginNet <- function(file, description=NULL, details=0){
 
     if (is.null(description))
@@ -338,6 +337,8 @@ loadHuginNet <- function(file, description=NULL, details=0){
 }
 
 
+
+#' @export
 #' @rdname load-save-hugin
 saveHuginNet <- function(gin, file, details=0){
 

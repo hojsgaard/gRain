@@ -53,7 +53,7 @@
 #' lapply(qb, as.numeric) # Safe
 #' sapply(qb, as.numeric) # Risky
 #' 
-#' @export querygrain
+#' @export
 querygrain <- function(object, nodes=nodeNames(object), type="marginal",
                        evidence=NULL, exclude=TRUE, normalize=TRUE,
                        result="array", details=0)
@@ -61,9 +61,10 @@ querygrain <- function(object, nodes=nodeNames(object), type="marginal",
   UseMethod("querygrain")
 }
 
+#' @export 
 qgrain <- querygrain
 
-
+#' @export
 querygrain.grain <- function(object, nodes = nodeNames(object), type = "marginal",
                              evidence=NULL, exclude=TRUE, normalize=TRUE,
                              result="array", details=0){

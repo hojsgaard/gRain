@@ -96,10 +96,12 @@ setFinding <- function(object, nodes=NULL, states=NULL, flist=NULL, propagate=TR
     setEvidence(object, nodes=nodes, states=states, propagate=propagate)
 }
 
-
+#' @export 
 retractFinding <- retractEvidence
 
+#' @export 
 pFinding <- pEvidence
 
+#' @export 
 getFinding <- getEvidence
 

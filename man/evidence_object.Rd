@@ -85,7 +85,6 @@ setdiff_ev( eo2, eo1 )
 # Likewise the 'union' is
 union_ev( eo2, eo1 )
 
-
 }
 \author{
 Søren Højsgaard, \email{sorenh@math.aau.dk}

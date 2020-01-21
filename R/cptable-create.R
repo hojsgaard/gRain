@@ -92,7 +92,7 @@
 
 
 
-#' @export cptable
+#' @export
 cptable <- function(vpar, levels=NULL, values=NULL, normalize=TRUE,  smooth=0 ){
     vpa  <- c(.formula2char(vpar))        
     if (is.list(levels)){

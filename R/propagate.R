@@ -49,6 +49,7 @@
 ## object$equipot <- propagateLS(object$temppot,
 ##                               rip=object$rip, initialize=TRUE, details=details)
 
+#' @export 
 propagate.grain <- function(object, details=object$details, engine="cpp", ...){
 
     t0 <- proc.time()
@@ -77,10 +78,13 @@ propagate.grain <- function(object, details=object$details, engine="cpp", ...){
 ##
 
 ## Don't remember the idea behind the 'initialize' argument; should always be true
+
+
 #' @rdname grain_propagate
 #' @param cqpotList Clique potential list
 #' @param rip A rip ordering
 #' @param initialize Always true
+#' @export
 propagateLS <- function(cqpotList, rip, initialize=TRUE, details=0){
     #details=20
     #cat(".Propagating BN: [propagateLS]\n")
