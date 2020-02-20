@@ -23,7 +23,7 @@ randomCPT <- function(object, states=c("yes", "no")){
 }
 
 .formula2char <- function(f) {
-    unlist(gRbase::rhsf2list(f))
+    unlist(rhsf2list(f))
 }
 
 .namesDimnames <- function(x)
@@ -50,7 +50,7 @@ getgrain<- function(object, name=c("universe", "data", "dag", "ug", "cptlist",
                                    "origpot", "temppot", "equipot",
                                    "pot_orig", "pot_temp", "pot_equi",
                                    "rip",
-                                   "is_compiled", "is_propagated",
+                                   "isCompiled", "isPropagated",
                                    "evidence", "pEvidence",
                                    "control", "details")){
 
@@ -73,8 +73,8 @@ getgrain<- function(object, name=c("universe", "data", "dag", "ug", "cptlist",
 
            rip              = object$rip,
 
-           is_compiled       = object$is_compiled,
-           is_propagated     = object$is_propagated,
+           isCompiled       = object$isCompiled,
+           isPropagated     = object$isPropagated,
            
            evidence         = object$evidence,
            pEvidence        = object$pEvidence,

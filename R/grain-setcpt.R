@@ -70,8 +70,8 @@ setCPT.cpt_grain <- function(object, value){
             stop("replacement value not correct length")                    
         object$cptlist[[v]][] <- z               
     }
-    is_compiled(object) <- FALSE
-    is_propagated(object) <- FALSE
+    isCompiled(object) <- FALSE
+    isPropagated(object) <- FALSE
     object
 }
 

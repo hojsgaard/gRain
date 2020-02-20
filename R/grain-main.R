@@ -1,63 +1,8 @@
-## cpt_spec
-## - universe
-## - cptlist
-## - dag
-##
-## pot_spec
-## - universe
-## - cqpot (er det egentlig ikke klike marginaler? NEJ, det er betingede fordelinger)
-## - ug
-## - rip
-##
-
-## compile
-## -------
-##   cpt_spec
-##   - rip
-##   - ug
-##   - potlist
-##
-##   pot_spec
-##   - potlist
-
-## Efter compilering:
-## ------------------
-## cptspec findes slet ikke, men selve cpt'erne er i et slot for sig selv (cpt)
-## - cptlist (kopi)
-## - dag (kopi)
-##
-## - universe (kopi)
-## - ug (compile result)
-## - rip (compile result)
-## - potlist (compile result)
-##
-## cqpot findes slet ikke, men selve pot'erne er i et slot for sig selv (cqpot)
-## - cqpot  (kopi)
-##
-## - universe  (kopi)
-## - ug  (kopi)
-## - rip  (kopi)
-## - potlist (compile result)
-##
-## Der skal være metoder
-##   get_dag, der tager en hvis den findes og ellers laver den
-##   get_cqpot (get_cqmarg) der tager en hvis den findes og ellers laver den
-##
-## Hvis man ændrer cpt/pot:
-## -- indenfor univers er det ok
-## -- man må ændre værdi af cpt/pot men ikke ændre retning på pile / ikke ændre domæne
-## -- man må ikke slette cpt/pot, men man må gerne give det uniform fordeling
-##
-## Hvis man ændrer ug:
-## -- for cpt_spec: efterfølgende laves der: rip/potlist
-## -- for pot_spec: ikke lovligt
-##
-
 ## ###################################################################
 ##
 #' @title Graphical Independence Network
 #' @description Creating grain objects (graphical independence network).
-#' @name grain_main
+#' @name grain-main
 #' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
 ##
 ## ###################################################################
@@ -66,8 +11,6 @@
 #'     zero are replaced by the value of 'smooth' - BEFORE any
 #'     normalization takes place.
 #' 
-#' @aliases grain grain.cpt_spec grain.pot_spec grain.graphNEL
-#'     grain.dModel 
 #' @param x An argument to build an independence network
 #'     from. Typically a list of conditional probability tables, a DAG
 #'     or an undirected graph. In the two latter cases, data must also
@@ -127,13 +70,12 @@
 #' bn.uG   <- grain(uG, data=lizard)
 #' bn.daG  <- grain(daG, data=lizard)
 
-#' @export grain
-##grain <- function(x, control=list(), smooth=0, compile=TRUE, details=0, data=NULL, ...){
+#' @export 
 grain <- function(x, ...){
   UseMethod("grain")
 }
 
-#' @rdname grain_main
+#' @rdname grain-main
 #' @export
 grain.cpt_spec <- function(x, control=list(), smooth=0, compile=TRUE, details=0, ...){
     ##cat("grain.cpt_spec\n")
@@ -146,8 +88,15 @@ grain.cpt_spec <- function(x, control=list(), smooth=0, compile=TRUE, details=0,
     if (compile) compile(out) else out
 }
 
+
+## For backward compatibility with bnlearn who calls methods and not generic functions...
+## #' @method grain CPTspec
+
+#' @export grain.CPTspec
+grain.CPTspec <- grain.cpt_spec
+
 #' @export
-#' @rdname grain_main
+#' @rdname grain-main
 grain.pot_spec <- function(x, control=list(), smooth=0, compile=TRUE, details=0,...){
     
     control  <- .setControl(control)
@@ -163,7 +112,7 @@ grain.pot_spec <- function(x, control=list(), smooth=0, compile=TRUE, details=0,
 
 ## A graph + data (wrappers for calling grain.pot_spec and grain.cpt_spec)
 #' @export
-#' @rdname grain_main
+#' @rdname grain-main
 grain.graphNEL <- function(x, control=list(), smooth=0, compile=TRUE, details=0, data=NULL, ...){
     if (is.null(data))
         stop("Data must be given to create grain from graph\n")
@@ -184,7 +133,7 @@ grain.graphNEL <- function(x, control=list(), smooth=0, compile=TRUE, details=0,
 }
 
 #' @export
-#' @rdname grain_main
+#' @rdname grain-main
 grain.dModel <- function(x, control=list(), smooth=0, compile=TRUE, details=0, data=NULL, ...){
     if (!x$isDecomposable)
         stop("Model must be decompsable\n")
@@ -196,19 +145,20 @@ grain.dModel <- function(x, control=list(), smooth=0, compile=TRUE, details=0, d
 }
 
 #' @export
-#' @rdname grain_main
+## #' @rdname grain-main
 grain.pot_rep <- function(x, ...){grain(compilePOT(x))}
 
 #' @export
-#' @rdname grain_main
+## #' @rdname grain-main
 grain.cpt_rep <- function(x, ...){grain(compileCPT(x))}
 
-## #' @rdname grain_main
+## #' @rdname grain-main    
 ## grain.marg_rep <- function(x, ...){grain(compileCPT(x))} FIXME to implement
 
+#' @export
 print.grain <- function(x,...){
-    cat("Independence network: Compiled:", is_compiled(x),
-        "Propagated:", is_propagated(x), "\n")
+    cat("Independence network: Compiled:", isCompiled(x),
+        "Propagated:", isPropagated(x), "\n")
     cat("  Nodes:"); str(unname(nodeNames(x)))
     if ( !is.null((ev <- evidence(x))) ){
         cat("  Evidence:\n");
@@ -224,8 +174,8 @@ print.grain <- function(x,...){
 
 .setExtraComponents <- function(control, details){
   list(
-      is_compiled    = FALSE,
-      is_propagated  = FALSE,
+      isCompiled    = FALSE,
+      isPropagated  = FALSE,
       evidence      = NULL,
       control       = .setControl(control),
       details       = details
@@ -237,6 +187,63 @@ print.grain <- function(x,...){
   con[(namc <- names(control))] <- control
   con
 }
+
+
+## cpt_spec
+## - universe
+## - cptlist
+## - dag
+##
+## pot_spec
+## - universe
+## - cqpot (er det egentlig ikke klike marginaler? NEJ, det er betingede fordelinger)
+## - ug
+## - rip
+##
+
+## compile
+## -------
+##   cpt_spec
+##   - rip
+##   - ug
+##   - potlist
+##
+##   pot_spec
+##   - potlist
+
+## Efter compilering:
+## ------------------
+## cptspec findes slet ikke, men selve cpt'erne er i et slot for sig selv (cpt)
+## - cptlist (kopi)
+## - dag (kopi)
+##
+## - universe (kopi)
+## - ug (compile result)
+## - rip (compile result)
+## - potlist (compile result)
+##
+## cqpot findes slet ikke, men selve pot'erne er i et slot for sig selv (cqpot)
+## - cqpot  (kopi)
+##
+## - universe  (kopi)
+## - ug  (kopi)
+## - rip  (kopi)
+## - potlist (compile result)
+##
+## Der skal være metoder
+##   get_dag, der tager en hvis den findes og ellers laver den
+##   get_cqpot (get_cqmarg) der tager en hvis den findes og ellers laver den
+##
+## Hvis man ændrer cpt/pot:
+## -- indenfor univers er det ok
+## -- man må ændre værdi af cpt/pot men ikke ændre retning på pile / ikke ændre domæne
+## -- man må ikke slette cpt/pot, men man må gerne give det uniform fordeling
+##
+## Hvis man ændrer ug:
+## -- for cpt_spec: efterfølgende laves der: rip/potlist
+## -- for pot_spec: ikke lovligt
+##
+
 
 
 

@@ -43,7 +43,7 @@ predict.grain <- function(object, response, predictors=setdiff(names(newdata), r
                           newdata, type="class", ...){
 
     ## cat("+++ predict.grain\n")
-    if (!is_compiled(object)){
+    if (!isCompiled(object)){
         object <- compile(object, propagate=TRUE)
     }
 

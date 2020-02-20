@@ -129,7 +129,7 @@ cdist <- function(vpar, parm=list()){
 }
 
 
-
+#' @export
 print.cptable_class <- function(x, ...){
     ## "print.cptable\n" %>% cat
     v <- c(x)

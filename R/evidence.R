@@ -137,7 +137,7 @@ setEvi_ <- function(object, evidence=NULL, propagate=TRUE, details=0){
     if (is.null_ev( evidence )){
         cat("Nothing to do\n")
     } else {
-        if (!is_compiled(object)){
+        if (!isCompiled(object)){
             object <- compile(object)
         } 
         
@@ -182,7 +182,7 @@ retractEvi_ <- function(object, items=NULL, propagate=TRUE){
         ##x$potential$pot_temp       <- pot(x)$pot_orig
         x$potential$pot_temp       <- getgrain(x, "pot_orig")
         x$evidence       <- NULL
-        is_propagated(x) <- FALSE
+        isPropagated(x) <- FALSE
         x
     }
 
@@ -229,7 +229,7 @@ absorbEvi_<- function(object, propagate=TRUE ){
     object$potential$pot_orig <-  ## FRAGILE assignment
         getgrain(object, "pot_temp")
     object$evidence <- NULL
-    is_propagated(object) <- FALSE
+    isPropagated(object) <- FALSE
 
     if (propagate) propagate(object) else object
 }
@@ -318,7 +318,7 @@ insertEvi <- function(evi.list, pot, hostclique){
         #print(p)
         j <- hostclique[ i ]
         #print( j )
-        pot[[j]] <- tabMult__( pot[[ j ]], p )
+        pot[[j]] <- tabMult( pot[[ j ]], p )
     }
     pot
 }
@@ -337,7 +337,7 @@ insertEvi <- function(evi.list, pot, hostclique){
 getHostClique <- function(set.list, cliques){
     out <- lapply(set.list,
                   function(x){
-                      gRbase::get_superset_( x, cliques, all=FALSE)
+                      get_superset_(x, cliques, all=FALSE)
                   })
     len <- sapply(out, length)
     if (any( len == 0)){

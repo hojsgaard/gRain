@@ -2,7 +2,7 @@
 make_cptlist <- function(object){
     if (!inherits(object, "grain"))
         stop("Object is not a 'grain' object\n")
-    if (!is_compiled(object)) 
+    if (!isCompiled(object)) 
         object <- compile(object)
     dg <- ug2dag(getgin(object, "ug"))
     vp <- vpar(dg)

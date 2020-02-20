@@ -8,9 +8,7 @@
     for ( i in seq_along(cliques)){
         cq    <- cliques[[ i ]]
         vlab  <- universe$levels[cq]
-
-        ## september 2019: tab() is gRbase; should be ar_new or something
-        potlist[[ i ]] <- tab(cq, vlab, values)
+        potlist[[ i ]] <- tabNew(cq, vlab, values)
     }
     potlist
 }

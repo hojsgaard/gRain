@@ -62,7 +62,7 @@ propagate.grain <- function(object, details=object$details, engine="cpp", ...){
     object$potential$pot_equi <- ## FRAGILE assignment
         propfun(getgrain(object, "pot_temp"), rip=rip(object))
 
-    is_propagated(object) <- TRUE
+    isPropagated(object) <- TRUE
     
     ## FIXME: propagate.grain : Looks strange
     if (!is.null((ev <- getEvidence(object)))){

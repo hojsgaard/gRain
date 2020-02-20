@@ -21,10 +21,6 @@
 #' 
 #' @param ... Additional arguments; currently not used.
 #' 
-## #' @details \code{compileCPT}, \code{compilePOT} are wrappers for
-## #'     \code{compileCPT} and \code{compilePOT} and are kept for
-## #'     backward compatibility.
-## #'
 #'
 #' @details
 #'     * `compileCPT` is relevant for turning a collection of
@@ -65,6 +61,14 @@
 ##     args <- c(list(x), list(...))
 ##     listify_dots(args)
 ## }
+## listify_dots <- function(args){
+##     args <- lapply(args, function(a) if (!is.list(a)) list(a) else a)
+##     unlist(args, recursive=FALSE)    
+## }
+## #' @details \code{compileCPT}, \code{compilePOT} are wrappers for
+## #'     \code{compileCPT} and \code{compilePOT} and are kept for
+## #'     backward compatibility.
+## #'
 
 
 #' @rdname components_gather
@@ -123,6 +127,7 @@ compilePOT <- function(x, ..., forceCheck=TRUE){
 
 ## #############################################################
 
+#' @export
 print.cpt_spec <- function(x, ...){
     cat("cpt_spec with probabilities:\n")
     lapply(x,
@@ -133,6 +138,7 @@ print.cpt_spec <- function(x, ...){
     invisible(x)
 }
 
+#' @export
 print.pot_spec <- function(x, ...){
     cat("pot_spec with potentials:\n")
     lapply(x,

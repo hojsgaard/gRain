@@ -8,7 +8,7 @@
 #' @title Simulate from an independence network
 #' @description Simulate data from an independence network.
 #' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
-#' @name grain_simulate
+#' @name grain-simulate
 ##
 ## ##################################################################
 #'
@@ -39,11 +39,11 @@
 #' @export 
 simulate.grain <- function(object, nsim=1, seed=NULL, ...){
 
-    if (!is_compiled(object)){
+    if (!isCompiled(object)){
         ##cat("Compiling (and propagating) model ...\n")
         object <- compile(object, propagate=TRUE)
     } else {
-        if (!is_propagated(object)){
+        if (!isPropagated(object)){
             ## cat("Propagating model...\n")
             object <- propagate(object)
         }
@@ -51,16 +51,17 @@ simulate.grain <- function(object, nsim=1, seed=NULL, ...){
     
     ##plist  <- pot(object)$pot_equi
     plist  <- getgrain(object, "pot_equi")
-    cqlist <- rip(object)$cliques
-    splist <- rip(object)$separators
+    rp <- rip(object)
+    cqlist <- rp$cliques
+    splist <- rp$separators
     
     ## Init
     ans           <- matrix(0, nrow=nsim, ncol=length(nodeNames(object)))
     colnames(ans) <- nodeNames(object)
     
     ctab  <- plist[[1]]
-    res   <- simulateArray(x=ctab, nsim=nsim)
-    ans[,colnames(res)] <- res
+    res   <- simulateArray(ctab, nsim=nsim)
+    ans[, colnames(res)] <- res
     
     ## Iterate
     if (length(cqlist) > 1){
@@ -87,11 +88,11 @@ simulate.grain <- function(object, nsim=1, seed=NULL, ...){
                 ##cat(sprintf("key=%s\n", toString(key)))  #browser()
         for(kk in unique(key)){
             nn   <- sum(kk == key)
-            idx  <- un[match(kk, key),]
-            res[kk==key,] <- simulateArray(ctab, nsim=nn, margin=spidx, value.margin=idx)
+            idx  <- un[match(kk, key), ]
+            res[kk == key, ] <- simulateArray(ctab, nsim=nn, margin=spidx, value.margin=idx)
         }
             } else {
-                res <- simulateArray(x=ctab, nsim=nsim)
+                res <- simulateArray(ctab, nsim=nsim)
             }
             ans[, colnames(res)] <- res
         }

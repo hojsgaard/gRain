@@ -38,6 +38,8 @@
 
 #' @importMethodsFrom Rgraphviz plot
 
+## bnlearn hack
+
 
 .dumfunction_afterimportFrom <- function(){}
 

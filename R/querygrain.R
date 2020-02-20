@@ -80,14 +80,12 @@ querygrain.grain <- function(object, nodes = nodeNames(object), type = "marginal
 
     if (is.null(nodes)) return(invisible(NULL))
     else if (inherits(nodes, "formula")) nodes <- unlist(rhsf2list(nodes))
-        ## nodes <- unlist(gRbase::rhsf2list(nodes))
 
-
-    if (!is_compiled(object)){ 
+    if (!isCompiled(object)){ 
         if (details >= 1) cat("  Compiling (and propagating) model ...\n")
         object <- compile(object, propagate=TRUE)
     } else {
-        if (!is_propagated(object)){
+        if (!isPropagated(object)){
             if (details>=1) cat("  Propagating model...\n")
             object <- propagate(object)
         }
@@ -131,7 +129,7 @@ querygrain.grain <- function(object, nodes = nodeNames(object), type = "marginal
         nodes <- setdiff(nodes, getEvidence(object)$nodes)
 
     cliq  <- rip(object)$cliques
-    idxb <- sapply(cliq, function(cq) gRbase::is_subsetof_(nodes, cq)) ## FIXME gRbase::
+    idxb <- sapply(cliq, function(cq) is_subsetof_(nodes, cq)) 
 
     if (any(idxb)){
         ##cat(".Calculating joint directly from clique\n")
@@ -147,7 +145,7 @@ querygrain.grain <- function(object, nodes = nodeNames(object), type = "marginal
         ##cat(".Calculating marginal brute force\n")
         nnodes <- length(nodes)
         dn     <- universe(object)$levels[nodes]
-        value  <- tab(names(dn), dn) ## FIXME gRbase::tab is unfortunate name;  ar_new is available
+        value  <- tabNew(names(dn), dn) 
 
         nodes2 <- nodes[2:nnodes]
         dn2    <- universe(object)$levels[nodes2]

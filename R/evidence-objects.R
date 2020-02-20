@@ -131,6 +131,7 @@ is.null_ev <- function(object){
 ## #' @rdname evidence_object
 ## #' @param x Evidence object
 
+#' @export
 print.grain_ev <- function(x, ...){
     print( as.data.frame(x[1:3]) )
 }

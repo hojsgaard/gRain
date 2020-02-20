@@ -107,7 +107,7 @@ setJEvidence_<- function(object, evidence=NULL, propagate=TRUE, details=0){
         if ( !inherits( evidence, "grain_jev" ) )
             evidence <- new_jev( evidence, universe( object )$levels )
         
-        if (!is_compiled(object))
+        if (!isCompiled(object))
             object <- compile( object )
         
         vn  <- sapply(evidence, varNames)    
@@ -135,8 +135,7 @@ insertJEvidence <- function(evi.list, pot, hostclique){
     for (i in seq_along( evi.list ) ){
         p <- evi.list[[ i ]]
         j <- hostclique[ i ]
-        #print(j)
-        pot[[j]] <- tabMult__( pot[[ j ]], p )
+        pot[[j]] <- tabMult( pot[[ j ]], p )
     }
     pot
 }

@@ -5,21 +5,11 @@
 \alias{compile.grain}
 \alias{compile.cpt_grain}
 \alias{compile.pot_grain}
-\alias{fit.grain}
 \title{Compile a graphical independence network (a Bayesian network)}
 \usage{
 \method{compile}{grain}(
   object,
   propagate = FALSE,
-  root = NULL,
-  control = object$control,
-  details = 0,
-  ...
-)
-
-\method{fit}{grain}(
-  object,
-  propagate = TRUE,
   root = NULL,
   control = object$control,
   details = 0,

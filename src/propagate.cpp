@@ -37,9 +37,12 @@ List propagateLS__(List cqpotList_, List rip){
     if (sp.size() >= 1){
       idx    = pa[ i ] - 1;
       pa_pot = cqpotList[ idx ];           //Rprintf("pa_pot\n"); Rf_PrintValue(pa_pot);
-      sp_pot = tabMarg__(cq_pot, sp);     //Rprintf("sp_pot\n"); Rf_PrintValue(sp_pot);
-      cqpotList[ i ]   = tabDiv0__(cq_pot, sp_pot);
-      cqpotList[ idx ] = tabMult__(pa_pot, sp_pot);
+      //sp_pot = tabMarg__(cq_pot, sp);     //Rprintf("sp_pot\n"); Rf_PrintValue(sp_pot);
+      sp_pot = tab_marg_(cq_pot, sp);     //Rprintf("sp_pot\n"); Rf_PrintValue(sp_pot);
+      //cqpotList[ i ]   = tabDiv0__(cq_pot, sp_pot);
+      cqpotList[ i ]   = tab_div0_(cq_pot, sp_pot);
+      //cqpotList[ idx ] = tabMult__(pa_pot, sp_pot);
+      cqpotList[ idx ] = tab_mult_(pa_pot, sp_pot);
     } else {
       zd = sum( cq_pot );
       tmpd = cqpotList[0];
@@ -69,8 +72,10 @@ List propagateLS__(List cqpotList_, List rip){
 	sp  = seps[ idx ];
 	if(sp.size() > 0){
 	  // Rf_PrintValue(sp);
-	  sp_pot = tabMarg__(cqpotList[i], sp);
-	  cqpotList[ idx ] = tabMult__( cqpotList[ idx ], sp_pot);
+	  //sp_pot = tabMarg__(cqpotList[i], sp);
+	  sp_pot = tab_marg_(cqpotList[i], sp);
+	  //cqpotList[ idx ] = tabMult__( cqpotList[ idx ], sp_pot);
+	  cqpotList[ idx ] = tab_mult_( cqpotList[ idx ], sp_pot);
 	}
       }
     }

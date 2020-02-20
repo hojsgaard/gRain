@@ -51,17 +51,17 @@ vpar.cpt_grain <- function(object, ...){
     lapply(getgin(object, "cptlist"), function(u) names(dimnames(u)))
 }
 
-is_compiled <- function(x) getgin(x, "is_compiled")
+isCompiled <- function(x) getgin(x, "isCompiled")
 
-is_propagated <- function(x) getgin(x, "is_propagated")
+isPropagated <- function(x) getgin(x, "isPropagated")
 
-"is_compiled<-" <- function(object, value){
-    object$is_compiled <- value
+"isCompiled<-" <- function(object, value){
+    object$isCompiled <- value
     object
 }
 
-"is_propagated<-" <- function(object, value){
-    object$is_propagated <- value
+"isPropagated<-" <- function(object, value){
+    object$isPropagated <- value
     object
 }
 

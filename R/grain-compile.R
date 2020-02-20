@@ -45,21 +45,21 @@ compile.grain <- function(object, propagate=FALSE, root=NULL,
     object <- .add_jtree(object, root)
     object <- .add_potential(object)
     
-    is_compiled(object) <- TRUE
-    is_propagated(object) <- FALSE
+    isCompiled(object) <- TRUE
+    isPropagated(object) <- FALSE
     
     object$control      <- control
     
     if (propagate) propagate(object) else object
 }
 
-#' @rdname grain_compile
-fit.grain <- function(object, propagate=TRUE, root=NULL,
-           control=object$control, details=0, ...) {    
-    cl <- match.call(expand.dots = TRUE)
-    cl[[1]] <- as.name("compile.grain")
-    eval(cl)
-}
+## #' @rdname grain_compile
+## fit.grain <- function(object, propagate=TRUE, root=NULL,
+##            control=object$control, details=0, ...) {    
+##     cl <- match.call(expand.dots = TRUE)
+##     cl[[1]] <- as.name("compile.grain")
+##     eval(cl)
+## }
 
 
 
