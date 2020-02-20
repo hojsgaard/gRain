@@ -95,6 +95,10 @@ grain.cpt_spec <- function(x, control=list(), smooth=0, compile=TRUE, details=0,
 #' @export grain.CPTspec
 grain.CPTspec <- grain.cpt_spec
 
+#' @rdname grain-main
+#' @export
+grain.CPTspec <- grain.cpt_spec
+
 #' @export
 #' @rdname grain-main
 grain.pot_spec <- function(x, control=list(), smooth=0, compile=TRUE, details=0,...){

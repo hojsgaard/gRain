@@ -4,6 +4,7 @@
 \alias{grain-main}
 \alias{grain}
 \alias{grain.cpt_spec}
+\alias{grain.CPTspec}
 \alias{grain.pot_spec}
 \alias{grain.graphNEL}
 \alias{grain.dModel}
@@ -12,6 +13,8 @@
 grain(x, ...)
 
 \method{grain}{cpt_spec}(x, control = list(), smooth = 0, compile = TRUE, details = 0, ...)
+
+\method{grain}{CPTspec}(x, control = list(), smooth = 0, compile = TRUE, details = 0, ...)
 
 \method{grain}{pot_spec}(x, control = list(), smooth = 0, compile = TRUE, details = 0, ...)
 
