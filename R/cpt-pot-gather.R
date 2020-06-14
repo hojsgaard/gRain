@@ -21,7 +21,8 @@
 #' 
 #' @param ... Additional arguments; currently not used.
 #' 
-#'
+#' @aliases parse_cpt, parse_cpt.xtabs,parse_cpt.cptable_class, parse_cpt.default
+#' 
 #' @details
 #'     * `compileCPT` is relevant for turning a collection of
 #'     cptable's into an object from which a network can be built. For
@@ -86,7 +87,7 @@ compileCPT <- function(x, ..., forceCheck=TRUE){
     if (!type) stop("A list of named arrays is expected")        ## FIXME Can also be cptable_class...
     
     ## zz: Internal representation of cpts
-    zz  <- lapply(x, .parse_cpt)
+    zz  <- lapply(x, parse_cpt)
 
     universe <- .create_universe(zz)
 
@@ -274,22 +275,26 @@ print.cpt_spec_simple <- function(x,...){
 ##
 ## ##################################################################
 
-.parse_cpt <- function(xi){
-    UseMethod(".parse_cpt")
+#' @rdname components_gather
+#' @param xi cpt in some representation
+#' @export
+parse_cpt <- function(xi){
+    UseMethod("parse_cpt")
 }
 
 #' @export
-.parse_cpt.xtabs <- function(xi){
-    NextMethod(".parse_cpt")
+parse_cpt.xtabs <- function(xi){
+    NextMethod("parse_cpt")
 }
 
 #' @export
-.parse_cpt.cptable_class <- function(xi){
+parse_cpt.cptable_class <- function(xi){
     .parse_cpt_finalize(varNames(xi), valueLabels(xi)[[1]],
                         as.numeric(xi), attr(xi, "smooth"))
 }
+
 #' @export
-.parse_cpt.default <- function(xi){
+parse_cpt.default <- function(xi){
     if (!is.named.array(xi)) stop("'xi' must be a named array")
     .parse_cpt_finalize(varNames(xi), valueLabels(xi)[[1]],
                         as.numeric(xi), 0)

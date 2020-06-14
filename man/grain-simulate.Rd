@@ -8,14 +8,14 @@
 \method{simulate}{grain}(object, nsim = 1, seed = NULL, ...)
 }
 \arguments{
-\item{object}{An independence network}
+\item{object}{An independence network.}
 
-\item{nsim}{Number of cases to simulate}
+\item{nsim}{Number of cases to simulate.}
 
 \item{seed}{An optional integer controlling the random number
-generatation}
+generatation.}
 
-\item{\dots}{Not used...}
+\item{\dots}{Not used.}
 }
 \value{
 A data frame

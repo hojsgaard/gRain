@@ -55,8 +55,22 @@ loadHuginNet <- function(file, description=NULL, details=0){
     yyy      <-.transformHuginNet2internal(xxx)
     universe <- .asUniverse(yyy)
     plist    <- lapply(yyy$potentialList, .hpot2cptable, universe)
+    ##return(plist)
     value    <- grain(compileCPT(plist))
+    
     return(value)
+}
+
+#' @export loadHuginNet
+loadHuginNet2 <- function(file, description=NULL, details=0){
+
+    if (is.null(description))
+        description <- rev(unlist(strsplit(file, "/")))[1]
+    xxx      <-.readHuginNet(file,details)
+    yyy      <-.transformHuginNet2internal(xxx)
+    universe <- .asUniverse(yyy)
+    plist    <- lapply(yyy$potentialList, .hpot2cptable, universe)
+    plist
 }
 
 

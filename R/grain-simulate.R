@@ -12,11 +12,11 @@
 ##
 ## ##################################################################
 #'
-#' @param object An independence network
-#' @param nsim Number of cases to simulate
+#' @param object An independence network.
+#' @param nsim Number of cases to simulate.
 #' @param seed An optional integer controlling the random number
-#'     generatation
-#' @param \dots Not used...
+#'     generatation.
+#' @param \dots Not used.
 #' @return A data frame
 
 #' @references Søren Højsgaard (2012). Graphical Independence Networks
@@ -40,66 +40,60 @@
 simulate.grain <- function(object, nsim=1, seed=NULL, ...){
 
     if (!isCompiled(object)){
-        ##cat("Compiling (and propagating) model ...\n")
         object <- compile(object, propagate=TRUE)
     } else {
         if (!isPropagated(object)){
-            ## cat("Propagating model...\n")
             object <- propagate(object)
         }
     }
     
-    ##plist  <- pot(object)$pot_equi
     plist  <- getgrain(object, "pot_equi")
-    rp <- rip(object)
+    rp     <- rip(object)
     cqlist <- rp$cliques
-    splist <- rp$separators
-    
+    seplist <- rp$separators
+
     ## Init
     ans           <- matrix(0, nrow=nsim, ncol=length(nodeNames(object)))
     colnames(ans) <- nodeNames(object)
-    
-    ctab  <- plist[[1]]
-    res   <- simulateArray(ctab, nsim=nsim)
-    ans[, colnames(res)] <- res
-    
+        
     ## Iterate
-    if (length(cqlist) > 1){
-        for (ii in 2:length(cqlist)){
-            ctab <- plist[[ii]]
-            vn   <- names(dimnames(ctab))
-            sp   <- splist[[ii]] ## What we condition on
-            if (length(sp) > 0){
-                mtab <- tableMargin(ctab, sp)     ## FIXME: Old table-function
-                ctab <- tableOp2(ctab, mtab, `/`) ## FIXME: Old table-function
+    for (ii in seq_along(cqlist)){
+        ctab <- plist[[ii]]
+        sep  <- seplist[[ii]]    ## What we condition on
+        if (length(sep) == 0)
+            res <- simulateArray(ctab, nsim=nsim)
+        else {                            
+            mtab <- tableMargin(ctab, sep)     ## FIXME: Old table-function
+            ctab <- tableOp2(ctab, mtab, `/`)  ## FIXME: Old table-function
+
+            vn   <- varNames(ctab)
+            rest <- setdiff(vn, sep) ## Variables to be simulated
+            ## cat(" ii: ", ii, " vn: ", vn, " rest:", rest, " sep:", sep, "\n")
+           
+            sepidx <- match(sep, vn) ## NOTE: Must do after table-division.
+            res    <- matrix(0, nrow=nsim, ncol=length(rest))
+            colnames(res) <- rest
+           
+            given    <- ans[, sep, drop=FALSE]
+            ##cat("given:\n"); print(given)
+            vals  <- unique(given)
+            sc    <- cumprod(apply(vals, 2, max) )
+            sc    <- c(1, sc)[1:length(sc)]
+            key   <- ((given - 1) %*% sc) + 1
+            ##cat(sprintf("key=%s\n", toString(key)));  browser()
+            for(kk in unique(key)){
+                n_sim   <- sum(kk == key)
+                idx  <- given[match(kk, key), ]
+                ## dd <<- list(x=ctab, nsim=n_sim, margin=sepidx, value.margin=idx)
+                res[kk == key, ] <- simulateArray(ctab, nsim=n_sim,
+                                                  margin=sepidx, value.margin=idx)
             }
-            rr   <- setdiff(vn, sp) ## Variables to be simulated
-            ##cat("r:", rr, "s:", sp, "\n")
-            if (length(sp)){
-                spidx <- match(sp, vn)
-                res   <- matrix(0, nrow=nsim, ncol=length(rr))
-                colnames(res) <- rr
-                un    <- ans[, sp, drop=FALSE]
-                ##cat("un:\n"); print(un)
-                vals  <- unique(un)
-                sc    <- cumprod(apply(vals, 2, max) )
-                sc    <- c(1, sc)[1:length(sc)]
-                key   <- ((un - 1) %*% sc) + 1
-                ##cat(sprintf("key=%s\n", toString(key)))  #browser()
-        for(kk in unique(key)){
-            nn   <- sum(kk == key)
-            idx  <- un[match(kk, key), ]
-            res[kk == key, ] <- simulateArray(ctab, nsim=nn, margin=spidx, value.margin=idx)
-        }
-            } else {
-                res <- simulateArray(ctab, nsim=nsim)
-            }
-            ans[, colnames(res)] <- res
-        }
-    }
+        }         
+        ans[, colnames(res)] <- res
+    } ## for
     
-    ns <- nodeStates(object)
-    vn <- colnames(ans)
+    ns  <- nodeStates(object)
+    vn  <- colnames(ans)
     out <- vector("list", ncol(ans))
     names(out) <- vn
     for (jj in 1:ncol(ans)){
@@ -110,22 +104,3 @@ simulate.grain <- function(object, nsim=1, seed=NULL, ...){
     names(out) <- vn
     out
 }
-
-
-
-##   ans <- as.data.frame(ans)
-##   vn <- names(ans)
-
-##   for (jj in 1:ncol(ans)){
-##     #match(vn[jj], names(ns))
-##     ans[,jj] <- factor(ans[,jj], levels=seq(ns[[jj]]))
-##     levels(ans[,jj]) <- ns[[jj]]
-##   }
-
-  #return(ans)
-
-
-      ##cat(sprintf("vn=%s sp=%s\n", toString(vn), toString(sp)))
-      ##cat("ctab:\n");  print(ctab)
-      ##cat("mtab:\n"); print(mtab)
-      ##cat("ctab (updated):\n"); print(ctab)

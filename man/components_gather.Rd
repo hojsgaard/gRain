@@ -3,12 +3,18 @@
 \name{components_gather}
 \alias{components_gather}
 \alias{compileCPT}
+\alias{parse_cpt,}
+\alias{parse_cpt.xtabs,parse_cpt.cptable_class,}
+\alias{parse_cpt.default}
 \alias{compilePOT}
+\alias{parse_cpt}
 \title{Compile conditional probability tables / cliques potentials.}
 \usage{
 compileCPT(x, ..., forceCheck = TRUE)
 
 compilePOT(x, ..., forceCheck = TRUE)
+
+parse_cpt(xi)
 }
 \arguments{
 \item{x}{To \code{compileCPT} x is a list of conditional
@@ -19,6 +25,8 @@ potentials.}
 
 \item{forceCheck}{Controls if consistency checks of the probability
 tables should be made.}
+
+\item{xi}{cpt in some representation}
 }
 \value{
 A list with a class attribute.

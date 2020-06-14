@@ -11,7 +11,7 @@
 #' @importFrom utils combn str
 #'
 #' @importMethodsFrom stats4 plot
-#' @exportMethod plot
+
 #' 
 ## To make available in vignette 
 #' @importFrom magrittr   "%>%"
@@ -29,7 +29,6 @@
 #'     get.adjacency V "V<-" E "E<-" is.directed layout.lgl
 #'     layout.graphopt plot.igraph graph.adjacency is.dag
 
-
 ## Bioconductor imports/exports
 ## ----------------------------
 
@@ -37,9 +36,6 @@
 #' @importFrom graph edges nodes
 
 #' @importMethodsFrom Rgraphviz plot
-
-## bnlearn hack
-
 
 .dumfunction_afterimportFrom <- function(){}
 
