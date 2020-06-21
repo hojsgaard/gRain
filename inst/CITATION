@@ -8,6 +8,7 @@ citEntry(entry = "Article",
   volume       = "46",
   number       = "10",
   pages        = "1--26",
+  doi          = "10.18637/jss.v046.i10",
   url          = "http://www.jstatsoft.org/v46/i10/",
 
   textVersion  =

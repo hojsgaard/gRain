@@ -4,7 +4,10 @@ Title: Graphical Independence Networks
 Author: Søren Højsgaard <sorenh@math.aau.dk>
 Maintainer: Søren Højsgaard <sorenh@math.aau.dk> 
 Description: Probability propagation in graphical independence networks, also
-    known as Bayesian networks or probabilistic expert systems. 
+    known as Bayesian networks or probabilistic expert systems. Documentation
+    of the package is provided in vignettes included in the package and in
+    the paper by Højsgaard (2012, <doi:10.18637/jss.v046.i10>).
+    See 'citation("gRain")' for details. 
 License: GPL (>= 2)
 Depends:
     R (>= 3.6.0),
