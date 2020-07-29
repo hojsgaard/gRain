@@ -50,9 +50,9 @@ uni <- list(asia = c("yes", "no"), tub = c("yes", "no"),
             bronc = c("yes", "no"), either = c("yes", "no"),
             xray = c("yes", "no"), dysp = c("yes", "no"))
 
-ev <- list(tab("asia", levels=uni, values=c(1,0)),
-           tab("dysp", levels=uni, values=c(1,0)),
-           tab(c("dysp","bronc"), levels=uni, values=c(.1, .2, .9, .8)) )
+ev <- list(tabNew("asia", levels=uni, values=c(1,0)),
+           tabNew("dysp", levels=uni, values=c(1,0)),
+           tabNew(c("dysp","bronc"), levels=uni, values=c(.1, .2, .9, .8)) )
 
 chest.bn
 chest.bn2 <- setJEvidence(chest.bn, evidence=ev)

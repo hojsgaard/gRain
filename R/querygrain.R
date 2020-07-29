@@ -129,7 +129,8 @@ querygrain.grain <- function(object, nodes = nodeNames(object), type = "marginal
         nodes <- setdiff(nodes, getEvidence(object)$nodes)
 
     cliq  <- rip(object)$cliques
-    idxb <- sapply(cliq, function(cq) is_subsetof_(nodes, cq)) 
+    ##idxb <- sapply(cliq, function(cq) is_subsetof_(nodes, cq))
+    idxb <- sapply(cliq, function(cq) is_subsetof(nodes, cq)) 
 
     if (any(idxb)){
         ##cat(".Calculating joint directly from clique\n")

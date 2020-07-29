@@ -337,7 +337,8 @@ insertEvi <- function(evi.list, pot, hostclique){
 getHostClique <- function(set.list, cliques){
     out <- lapply(set.list,
                   function(x){
-                      get_superset_(x, cliques, all=FALSE)
+                      ##get_superset_(x, cliques, all=FALSE)
+                      get_superset(x, cliques, all=FALSE)
                   })
     len <- sapply(out, length)
     if (any( len == 0)){

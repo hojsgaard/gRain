@@ -384,7 +384,7 @@ very efficient way; please see the references.  However, it is in this
 small example also possible to make the computations directly: We can
 construct the joint distribution (an array with $2^8=256$ entries) directly as:
 << >>= 
-joint <- ar_prod_list(chest_cpt)
+joint <- tabListMult(chest_cpt)
 dim(joint)
 joint  %>% as.data.frame.table %>% head
 @
@@ -406,27 +406,27 @@ illustrate here:
 
 Marginal distributions are
 << >>= 
-ar_marg(joint, "lung")
-ar_marg(joint, "bronc")
+tabMarg(joint, "lung")
+tabMarg(joint, "bronc")
 @
 
 Conditioning on evidence can be done in different ways: The conditional density is a $6$--way slice of the original $8$--way joint distribution:
 << >>= 
 ev <- list(asia="yes", dysp="yes")
-cond1 <- ar_slice(joint, slice=ev)
+cond1 <- tabSlice(joint, slice=ev)
 cond1 <- cond1 / sum(cond1)
 dim(cond1)
-ar_marg(cond1, "lung")
-ar_marg(cond1, "bronc")
+tabMarg(cond1, "lung")
+tabMarg(cond1, "bronc")
 @
 
 Alternatively, multiply all entries not consistent by zero and all other entries by one and then marginalize:
 << >>= 
-cond2 <- ar_slice_mult(joint, slice=ev)
+cond2 <- tabSliceMult(joint, slice=ev)
 cond2 <- cond2 / sum(cond2)
 dim(cond2)
-ar_marg(cond2, "lung")
-ar_marg(cond2, "bronc")
+tabMarg(cond2, "lung")
+tabMarg(cond2, "bronc")
 @
 
 
@@ -436,13 +436,13 @@ ar_marg(cond2, "bronc")
 %     cond1 <- ar_slice(joint, slice=ev)
 %     cond1 <- cond1 / sum(cond1)
 %     dim(cond1)
-%     ar_marg(cond1, "lung")    
+%     tabMarg(cond1, "lung")    
 % }
 % f2 <- function(){
 %     cond2 <- ar_slice_mult(joint, slice=ev)
 %     cond2 <- cond2 / sum(cond2)
 %     dim(cond2)
-%     ar_marg(cond2, "lung")    
+%     tabMarg(cond2, "lung")    
 % }
 % f1()
 % f2()
@@ -641,7 +641,7 @@ par(mfrow=c(1,2)); plot( dG ); plot( uG )
 
 Suppose data is
 <<>>=
-dat <- ar_new(c("A", "B", "C"), levels=c(2, 2, 2), values=c(0, 0, 2, 3, 1, 2, 1, 4))
+dat <- tabNew(c("A", "B", "C"), levels=c(2, 2, 2), values=c(0, 0, 2, 3, 1, 2, 1, 4))
 class(dat)
 @ %def
 
