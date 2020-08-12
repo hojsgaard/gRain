@@ -29,6 +29,5 @@ Encoding: UTF-8
 VignetteBuilder: knitr
 LinkingTo: Rcpp (>= 0.11.1), RcppArmadillo, RcppEigen, gRbase
 ByteCompile: Yes
-biocViews:
 RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)
