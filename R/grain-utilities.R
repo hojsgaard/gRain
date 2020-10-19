@@ -29,6 +29,7 @@ randomCPT <- function(object, states=c("yes", "no")){
 .namesDimnames <- function(x)
     names(dimnames(x))
 
+#' @export 
 setSliceValue <- function(x, slice, complement=FALSE, value=0){
     margin <- names(slice)
     level  <- unlist(slice, use.names=FALSE)
