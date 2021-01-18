@@ -129,8 +129,8 @@ setEvi <- function(object, nodes=NULL, states=NULL, evidence=NULL,
 }
 
 setEvi_ <- function(object, evidence=NULL, propagate=TRUE, details=0){
-#    details=0
-#    cat("++++ setEvi_ input evidence: \n"); str(evidence)
+    ##    details=0
+    ##    cat("++++ setEvi_ input evidence: \n"); str(evidence)
 
     ## If object is not compiled then do so
     
