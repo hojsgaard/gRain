@@ -123,7 +123,7 @@ new_ev <- function(evi.list=NULL, levels){
 is.null_ev <- function(object){
     if (missing(object)) TRUE
     else if (length(object)==0) TRUE
-    else if (class(object)=="grain_ev" && length(varNames(object))==0) TRUE
+    else if (inherits(object, "grain_ev") && length(varNames(object)) == 0) TRUE
     else FALSE
 
 }

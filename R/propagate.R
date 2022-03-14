@@ -94,16 +94,15 @@ propagateLS <- function(cqpotList, rip, initialize=TRUE, details=0){
     seps       <- rip$separators
     pa         <- rip$parent
     childList  <- rip$childList
-
     ncliq      <- length(cliq)
 
     ## This assignment is needed because RIP now returns 0 as the
     ## parent index for the first clique
-    pa[pa==0]<-NA
+    pa[pa==0] <- NA
 
     ## Backward propagation (collect evidence) towards root of junction tree
     ##
-    .infoPrint(details,2, cat("..BACKWARD:\n"))
+    .infoPrint(details, 2, cat("..BACKWARD:\n"))
     t0 <- proc.time()
     if (ncliq > 1){
         for (i in ncliq:2){
@@ -113,7 +112,7 @@ propagateLS <- function(cqpotList, rip, initialize=TRUE, details=0){
             cq.pot   <- cqpotList[[ i ]]
             pa.pot   <- cqpotList[[pa[ i ]]]
             
-            if (length(sp) >= 1 && !is.na(sp)){
+            if ((length(sp) >= 1) && !is.na(sp)){
                 .infoPrint2(details, 2, "Marg onto sep {%s}\n", .colstr(sp))
                 sp.pot               <- tableMargin(cq.pot, sp)
                 cqpotList[[ i ]]     <- tableOp2(cq.pot, sp.pot, `/`)
@@ -126,15 +125,13 @@ propagateLS <- function(cqpotList, rip, initialize=TRUE, details=0){
         }
     }
 
-    tmpd <- cqpotList[[1]]
+    tmpd           <- cqpotList[[1]]
     ##print(tmpd)
     normConst      <- sum(tmpd)
-    tmpd <- tmpd / normConst
+    tmpd           <- tmpd / normConst
     cqpotList[[1]] <- tmpd
     ##print(tmpd)
-    
-
-    
+        
     ## Forward propagation (distribute evidence) away from root of junction tree
     ##
     .infoPrint(details, 2, cat("..FORWARD:\n"))
@@ -147,7 +144,7 @@ propagateLS <- function(cqpotList, rip, initialize=TRUE, details=0){
             .infoPrint2(details,2, "..Children: %s\n", .colstr(ch))
             for ( j  in 1:length(ch))
             {
-                if (length(seps[[ch[ j ]]])>0)
+                if (length(seps[[ch[ j ]]]) > 0)
                 {
                     .infoPrint2(details, 2, "Marg onto sep %i: {%s}\n", ch[ j ], .colstr(seps[[ch[ j ]]]))
                     sp.pot            <- tableMargin(cqpotList[[ i ]], seps[[ch[ j ]]])

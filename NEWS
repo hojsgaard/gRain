@@ -1,10 +1,10 @@
-gRain v1.3-6 (Release date: 2020-XX-XX)
+gRain v1.3.7 (Release date: 2022-03-14)
 =======================================
 
 Changes:
 
   * doi added to DESCRIPTION file
-
+  * fixed logical condition issue
 
 gRain v1.3-5 (Release date: 2020-06-20)
 =======================================
