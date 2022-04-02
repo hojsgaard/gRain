@@ -45,7 +45,6 @@ The syntax of \code{setEvidence()} may change in the future.
 }
 \examples{
 
-
 ## setFindings
 yn <- c("yes", "no")
 a    <- cptable(~asia, values=c(1,99),levels=yn)
@@ -83,7 +82,7 @@ pFinding(bn2)
 \references{
 Søren Højsgaard (2012). Graphical Independence Networks
 with the gRain Package for R. Journal of Statistical Software, 46(10), 1-26.
-\url{http://www.jstatsoft.org/v46/i10/}.
+\url{https://www.jstatsoft.org/v46/i10/}.
 }
 \seealso{
 \code{\link{setEvidence}}, \code{\link{getEvidence}},
