@@ -95,7 +95,7 @@ p.G_SR <- parray(~ G:S:R, levels = ssp, values=c(.99, .01, .8, .2, .9, .1, 0, 1)
 Søren Højsgaard (2012). Graphical Independence
 Networks with the gRain Package for R. Journal of Statistical
 Software, 46(10), 1-26.
-\url{http://www.jstatsoft.org/v46/i10/}.
+\url{https://www.jstatsoft.org/v46/i10/}.
 }
 \seealso{
 \code{\link{andtable}}, \code{\link{ortable}},

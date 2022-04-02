@@ -72,7 +72,7 @@ if (interactive()) iplot(hmm)
 Søren Højsgaard (2012). Graphical Independence
 Networks with the gRain Package for R. Journal of Statistical
 Software, 46(10), 1-26.
-\url{http://www.jstatsoft.org/v46/i10/}.
+\url{https://www.jstatsoft.org/v46/i10/}.
 }
 \seealso{
 \code{\link{grain}}, \code{\link{compileCPT}}

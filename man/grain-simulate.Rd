@@ -37,7 +37,7 @@ simulate(chest2, n=10)
 \references{
 Søren Højsgaard (2012). Graphical Independence Networks
 with the gRain Package for R. Journal of Statistical Software,
-46(10), 1-26.  \url{http://www.jstatsoft.org/v46/i10/}.
+46(10), 1-26.  \url{https://www.jstatsoft.org/v46/i10/}.
 }
 \author{
 Søren Højsgaard, \email{sorenh@math.aau.dk}
