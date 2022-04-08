@@ -9,7 +9,7 @@ citEntry(entry = "Article",
   number       = "10",
   pages        = "1--26",
   doi          = "10.18637/jss.v046.i10",
-  url          = "http://www.jstatsoft.org/v46/i10/",
+  url          = "https://www.jstatsoft.org/v46/i10/",
 
   textVersion  =
       paste("Søren Højsgaard (2012).",
