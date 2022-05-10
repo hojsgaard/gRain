@@ -6,64 +6,130 @@
 #' 
 #' @param x,object A relevant object.
 #' @param nodes Some nodes of the object.
+#' @param value Value to be set for slot in object.
 #' @param ... Additional arguments; currently not used.
 #' 
 
+#' @export
 #' @rdname generics
-nodeNames  <- function(x) UseMethod("nodeNames")
-
-#' @rdname generics
-nodeNames.grain  <- function(x)
-  getgrain(x, "universe")$nodes
-
-#' @rdname generics
-nodeStates <- function(x, nodes=nodeNames(x)) UseMethod("nodeStates")
-
-#' @rdname generics
-nodeStates.grain <- function(x, nodes=nodeNames(x)){
-  getgrain(x, "universe")$levels[nodes]
+nodeNames  <- function(object)
+{
+    UseMethod("nodeNames")
 }
 
+#' @export
 #' @rdname generics
-universe <- function(object, ...) UseMethod("universe")
+nodeNames.grain  <- function(object)
+{
+    getgrain(object, "universe")$nodes
+}
 
+#' @export
+#' @rdname generics
+nodeStates <- function(object, nodes=nodeNames(object))
+{
+    UseMethod("nodeStates")
+}
+
+#' @export
+#' @rdname generics
+nodeStates.grain <- function(object, nodes=nodeNames(object))
+{
+  getgrain(object, "universe")$levels[nodes]
+}
+
+#' @export
+#' @rdname generics
+universe <- function(object, ...)
+{
+    UseMethod("universe")
+}
+
+#' @export
 #' @rdname generics
 universe.grain <- function(object, ...)
+{
     getgrain(object, "universe")
-
-#' @rdname generics
-varNames.grainEvidence_ <- function(x)
-    getgrain(x, "summary")$nodes
-
-#' @rdname generics
-rip.grain <- function(object, ...)
-    getgin(object, "rip")
-
-
-
-#' @rdname generics
-vpar.cpt_spec <- function(object, ...){
-    lapply(object, function(u) names(dimnames(u)))
 }
 
-#' @rdname generics 
-vpar.cpt_grain <- function(object, ...){
-    lapply(getgin(object, "cptlist"), function(u) names(dimnames(u)))
+#' @rdname generics
+#' @export
+isCompiled <- function(object) {
+    getgin(object, "isCompiled")
 }
 
-isCompiled <- function(x) getgin(x, "isCompiled")
+#' @rdname generics
+#' @export
+isPropagated <- function(object) {
+    getgin(object, "isPropagated")
+}
 
-isPropagated <- function(x) getgin(x, "isPropagated")
-
-"isCompiled<-" <- function(object, value){
+#' @rdname generics
+#' @export
+"isCompiled<-" <- function(object, value)
+{
     object$isCompiled <- value
     object
 }
 
-"isPropagated<-" <- function(object, value){
+#' @rdname generics
+#' @export
+"isPropagated<-" <- function(object, value)
+{
     object$isPropagated <- value
     object
 }
+
+## ---------------------------------------------------------------
+##
+## Methods where generic function is in gRbase.
+##
+## ---------------------------------------------------------------
+
+
+#' @export
+#' @rdname generics
+vpar.cpt_spec <- function(object, ...)
+{
+    lapply(object, function(u) names(dimnames(u)))
+}
+
+#' @export
+#' @rdname generics 
+vpar.cpt_grain <- function(object, ...)
+{
+    lapply(getgin(object, "cptlist"), function(u) names(dimnames(u)))
+}
+
+#' @export
+#' @rdname generics
+rip.grain <- function(object, ...)
+{
+    getgin(object, "rip")
+}
+
+#' @export
+#' @rdname generics
+varNames.grainEvidence_ <- function(x)
+{
+    getgrain(x, "summary")$nodes
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

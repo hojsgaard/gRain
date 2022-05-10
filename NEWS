@@ -1,3 +1,9 @@
+gRain v1.3.10 (Release date: 2022-05-09)
+=======================================
+
+* Fixed bug in propagateLS (R version, use of &&)
+* generics now exported
+
 gRain v1.3.8 (Release date: 2022-04-02)
 =======================================
 

@@ -21,11 +21,11 @@ fastest.}
 
 \item{...}{Currently not used}
 
-\item{cqpotList}{Clique potential list}
+\item{cqpotList}{List of clique potentials}
 
 \item{rip}{A rip ordering}
 
-\item{initialize}{Always true}
+\item{initialize}{Always true.}
 }
 \value{
 A compiled and propagated grain object.

@@ -8,38 +8,52 @@
 \alias{nodeStates.grain}
 \alias{universe}
 \alias{universe.grain}
-\alias{varNames.grainEvidence_}
-\alias{rip.grain}
+\alias{isCompiled}
+\alias{isPropagated}
+\alias{isCompiled<-}
+\alias{isPropagated<-}
 \alias{vpar.cpt_spec}
 \alias{vpar.cpt_grain}
+\alias{rip.grain}
+\alias{varNames.grainEvidence_}
 \title{gRain generics}
 \usage{
-nodeNames(x)
+nodeNames(object)
 
-\method{nodeNames}{grain}(x)
+\method{nodeNames}{grain}(object)
 
-nodeStates(x, nodes = nodeNames(x))
+nodeStates(object, nodes = nodeNames(object))
 
-\method{nodeStates}{grain}(x, nodes = nodeNames(x))
+\method{nodeStates}{grain}(object, nodes = nodeNames(object))
 
 universe(object, ...)
 
 \method{universe}{grain}(object, ...)
 
-\method{varNames}{grainEvidence_}(x)
+isCompiled(object)
 
-\method{rip}{grain}(object, ...)
+isPropagated(object)
+
+isCompiled(object) <- value
+
+isPropagated(object) <- value
 
 \method{vpar}{cpt_spec}(object, ...)
 
 \method{vpar}{cpt_grain}(object, ...)
+
+\method{rip}{grain}(object, ...)
+
+\method{varNames}{grainEvidence_}(x)
 }
 \arguments{
-\item{x, object}{A relevant object.}
-
 \item{nodes}{Some nodes of the object.}
 
 \item{...}{Additional arguments; currently not used.}
+
+\item{value}{Value to be set for slot in object.}
+
+\item{x, object}{A relevant object.}
 }
 \description{
 Generic functions etc for the gRain package

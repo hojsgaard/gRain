@@ -79,27 +79,29 @@ propagate.grain <- function(object, details=object$details, engine="cpp", ...){
 
 ## Don't remember the idea behind the 'initialize' argument; should always be true
 
-
 #' @rdname grain_propagate
-#' @param cqpotList Clique potential list
+#' @param cqpotList List of clique potentials
 #' @param rip A rip ordering
-#' @param initialize Always true
+#' @param initialize Always true.
+#' 
 #' @export
 propagateLS <- function(cqpotList, rip, initialize=TRUE, details=0){
     #details=20
-    #cat(".Propagating BN: [propagateLS]\n")
-    .infoPrint(details, 1, cat(".Propagating BN: [propagateLS]\n"))
-
+    ## cat(".Propagating BN: [propagateLS]\n")
+    ## .infoPrint(details, 1, cat(".Propagating BN: [propagateLS]\n"))
+    
     cliq       <- rip$cliques
     seps       <- rip$separators
     pa         <- rip$parent
     childList  <- rip$childList
     ncliq      <- length(cliq)
 
-    ## This assignment is needed because RIP now returns 0 as the
-    ## parent index for the first clique
-    pa[pa==0] <- NA
-
+    ## Needed because RIP now returns 0 as the parent index for the
+    ## first clique
+    pa[pa == 0] <- NA
+    
+    ## str(list(cliq=cliq, seps=seps))
+    
     ## Backward propagation (collect evidence) towards root of junction tree
     ##
     .infoPrint(details, 2, cat("..BACKWARD:\n"))
@@ -111,8 +113,10 @@ propagateLS <- function(cqpotList, rip, initialize=TRUE, details=0){
             .infoPrint2(details, 2, "Clique %d: {%s}\n",  i , .colstr( cq ))
             cq.pot   <- cqpotList[[ i ]]
             pa.pot   <- cqpotList[[pa[ i ]]]
-            
-            if ((length(sp) >= 1) && !is.na(sp)){
+
+            ## str(list(ncliq=ncliq, sp=sp, cq=cq))
+            ## if ((length(sp) >= 1) && !is.na(sp)){ ## Changed on May 9, 2022
+            if (length(sp) > 0){
                 .infoPrint2(details, 2, "Marg onto sep {%s}\n", .colstr(sp))
                 sp.pot               <- tableMargin(cq.pot, sp)
                 cqpotList[[ i ]]     <- tableOp2(cq.pot, sp.pot, `/`)
@@ -126,11 +130,9 @@ propagateLS <- function(cqpotList, rip, initialize=TRUE, details=0){
     }
 
     tmpd           <- cqpotList[[1]]
-    ##print(tmpd)
     normConst      <- sum(tmpd)
     tmpd           <- tmpd / normConst
     cqpotList[[1]] <- tmpd
-    ##print(tmpd)
         
     ## Forward propagation (distribute evidence) away from root of junction tree
     ##
@@ -142,7 +144,7 @@ propagateLS <- function(cqpotList, rip, initialize=TRUE, details=0){
         if (length(ch) > 0)
         {
             .infoPrint2(details,2, "..Children: %s\n", .colstr(ch))
-            for ( j  in 1:length(ch))
+            for (j in 1:length(ch))
             {
                 if (length(seps[[ch[ j ]]]) > 0)
                 {
