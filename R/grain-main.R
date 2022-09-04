@@ -118,6 +118,7 @@ grain.pot_spec <- function(x, control=list(), smooth=0, compile=TRUE, details=0,
 #' @export
 #' @rdname grain-main
 grain.graphNEL <- function(x, control=list(), smooth=0, compile=TRUE, details=0, data=NULL, ...){
+    cat("grain.graphNEL\n")
     if (is.null(data))
         stop("Data must be given to create grain from graph\n")
     if (!(is.named.array(data) || is.data.frame(data)))
