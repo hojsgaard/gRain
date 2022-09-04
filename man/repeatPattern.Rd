@@ -4,12 +4,13 @@
 \alias{repeatPattern}
 \title{Create repeated patterns in Bayesian networks}
 \usage{
-repeatPattern(plist, instances, unlist = TRUE)
+repeatPattern(plist, instances, unlist = TRUE, data = NULL)
 }
 \arguments{
 \item{plist}{A list of conditional probability tables. The variable
 names must have the form \code{name[i]} and the \code{i} will
-be substituted by the values given in \code{instances} below.}
+be substituted by the values given in \code{instances} below.
+See also the \code{data} argument.}
 
 \item{instances}{A vector of distinct integers}
 
@@ -17,6 +18,9 @@ be substituted by the values given in \code{instances} below.}
 element is a copy of \code{plist} in which \code{name[i]} are
 substituted. If \code{TRUE} the result is the result of
 applying \code{unlist()}.}
+
+\item{data}{Enable variable names of the form \code{name[data[i]]} -
+to enable data-driven variable names.}
 }
 \description{
 Repeated patterns is a useful model specification
@@ -66,6 +70,18 @@ hmm <- grain(cpt)
 hmm 
 
 if (interactive()) iplot(hmm)
+
+## Data-driven variable names
+x0 <- cptable(~x0, values=c(0.5, 0.5), levels=yn)
+x <- cptable(~x[i] | x[data[i, "p"]], values=c(0.5, 0.5), levels=yn)
+dep <- data.frame(i=c(1, 2, 3, 4, 5, 6, 7, 8),
+                  p=c(0, 1, 2, 2, 3, 3, 4, 4))
+x <- repeatPattern(list(x), instances=dep$i, data=dep)
+tree <- compileCPT(c(list(x0), x))
+tree <- grain(tree)
+tree 
+
+if (interactive()) iplot(tree)
 
 }
 \references{
