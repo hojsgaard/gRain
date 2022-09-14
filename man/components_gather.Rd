@@ -37,7 +37,7 @@ potentials as a preprocessing step for creating a graphical
 independence network
 }
 \details{
-\preformatted{* `compileCPT` is relevant for turning a collection of
+\if{html}{\out{<div class="sourceCode">}}\preformatted{* `compileCPT` is relevant for turning a collection of
 cptable's into an object from which a network can be built. For
 example, when specification of a cpt is made with cptable then
 the levels of the node is given but not the levels of the
@@ -49,7 +49,7 @@ define a dag.
 user for the moment. However, the elements of the input should
 be arrays which define a chordal undirected graph and the
 arrays should, if multiplied, form a valid probability density.
-}
+}\if{html}{\out{</div>}}
 }
 \examples{
 

@@ -19,8 +19,8 @@ element is a copy of \code{plist} in which \code{name[i]} are
 substituted. If \code{TRUE} the result is the result of
 applying \code{unlist()}.}
 
-\item{data}{Enable variable names of the form \code{name[data[i]]} -
-to enable data-driven variable names.}
+\item{data}{Enable variable names of the form \code{name[data[i]]} - to
+enable data-driven variable names.}
 }
 \description{
 Repeated patterns is a useful model specification
@@ -81,7 +81,7 @@ tree <- compileCPT(c(list(x0), x))
 tree <- grain(tree)
 tree 
 
-if (interactive()) iplot(tree)
+#' if (interactive()) iplot(tree)
 
 }
 \references{

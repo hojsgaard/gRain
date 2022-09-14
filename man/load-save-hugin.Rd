@@ -17,7 +17,7 @@ extension '.net'}
 \item{description}{A text describing the network, defaults to
 \code{file}}
 
-\item{details}{Debugging information}
+\item{details}{Debugging information.}
 
 \item{gin}{An independence network}
 }
@@ -28,6 +28,16 @@ An object of class \code{grain}.
 These functions can load a net file saved in the
 'Hugin format' into R and save a network in R as a file in the
 'Hugin format'.
+}
+\note{
+\itemize{
+\item In Hugin, it is possible to specify de potential of a node as a
+functional relation between other nodes.  In a .net file, such a
+specification will appear as 'function' rather than as
+'node'. Such a specification is not recognized by \code{loadHuginNet}.
+\item It is recommended to avoid the text \code{node} as part of the name of
+a node.
+}
 }
 \examples{
 
