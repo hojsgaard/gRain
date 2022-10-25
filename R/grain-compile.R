@@ -16,6 +16,7 @@
 #' @param propagate If TRUE the network is also propagated meaning
 #'     that the cliques of the junction tree are calibrated to each
 #'     other.
+#' @param tug A triangulated undirected graph. 
 #' @param root A set of variables which must be in the root of the
 #'     junction tree
 #' @param control Controlling the compilation process.
@@ -38,17 +39,16 @@
 
 #' @rdname grain_compile
 #' @export
-compile.grain <- function(object, propagate=FALSE, root=NULL,
+compile.grain <- function(object, propagate=FALSE, tug=NULL, root=NULL,
            control=object$control, details=0, ...) {    
-    
-    object <- .add_jtree(object, root)
+
+    object <- .add_jtree(object, tug=tug, root=root)
     object <- .add_potential(object)
     
     isCompiled(object) <- TRUE
     isPropagated(object) <- FALSE
     
     object$control      <- control
-    
     if (propagate) propagate(object) else object
 }
 
@@ -67,48 +67,50 @@ compile.grain <- function(object, propagate=FALSE, root=NULL,
 
 }
 
-## set_root: Completes the variables in <root> in the graph,
-## FIXME: set_root: Assumes sparse matrix. A MESS
-.set_root <- function(mdagM, root){
-    vn  <- colnames(mdagM)
-    dn  <- dimnames(mdagM)
-    ft  <- names2pairs(match(root, vn), sort=FALSE, result="matrix")
-    ft  <- rbind(ft, ft[, 2:1, drop=FALSE])
-    mdagM <- .sparse_setXtf1(mdagM, ft)
-    dimnames(mdagM) <- dn
-    mdagM
+## Completes the variables in <set> in the graph,
+.make_set_complete <- function(tugM, set){
+    vn   <- colnames(tugM)
+    dn   <- dimnames(tugM)
+    ft   <- names2pairs(match(set, vn), sort=FALSE, result="matrix")
+    ft   <- rbind(ft, ft[, 2:1, drop=FALSE])
+    tugM <- .sparse_setXtf1(tugM, ft)
+    dimnames(tugM) <- dn
+    tugM
 }
 
-.add_jtree <- function(object, root=NULL){
+.add_jtree <- function(object, tug=NULL, root=NULL){
     UseMethod(".add_jtree")
 }
 
 ## #' @rdname grain_compile
-.add_jtree.cpt_grain <- function(object, root=NULL){
-    if (!inherits(object, "cpt_grain")) stop("Not a cpt_grain object\n") 
-    object[c("rip", "ug")] <- .create_jtree(object, root) 
+.add_jtree.cpt_grain <- function(object, tug=NULL,root=NULL){
+
+    if (is.null(tug)){
+        tug <- moralize(getgin(object, "dag"), result="dgCMatrix")        
+    } 
+    object[c("rip", "ug")] <- .create_jtree(tug, root) 
     object
 }
 
 ## #' @rdname grain_compile
-.add_jtree.pot_grain <- function(object, root=NULL){
+.add_jtree.pot_grain <- function(object, tug=NULL, root=NULL){
     if (is.null(rip(object)))
         stop("No rip component in object \n")
     object
 }
 
-.create_jtree <- function(object, root=NULL, update=TRUE){
+.create_jtree <- function(tugM, root=NULL, update=TRUE){
 
-    mdag <- moralize(getgin(object, "dag"), result="dgCMatrix")
+    tugM <- as(tugM, "dgCMatrix")
     if (length(root) > 1)
-        mdag <- .set_root(mdag, root)
-    
-    ug_   <- triangulateMAT(mdag)  ## FIXME : Coercions are a MESS
-    rp_   <- ripMAT( ug_ )
+        tugM <- .make_set_complete(tugM, root)
+    ug_   <- triangulateMAT(tugM)  ## FIXME : Coercions are a MESS
+    rp_   <- ripMAT(ug_)
     ug_   <- as(ug_, "graphNEL")
-
+    
     list(rip=rp_, ug=ug_)
 }
+
 
 
 ## #' @rdname grain_compile
@@ -118,15 +120,10 @@ compile.grain <- function(object, propagate=FALSE, root=NULL,
 
 
 .create_potential <- function(object){
-
-    if (is.null(rip(object)))
-        stop("No rip slot (junction tree) in object\n")
-    if (is.null(getgrain(object, "cpt")))
-        stop("No cpt slot in object\n")
     
-    pot.1    <- .make_array_list(rip(object), universe(object))
+    pot.1    <- .make_array_list(getgrain(object, "rip"), universe(object))
     pot_orig <- pot_temp <- .insert_CPT(getgrain(object, "cpt"), pot.1, details=0)
-    pot_equi <- .initialize_array_list(pot.1, NA)
+    pot_equi <- .initialize_array_list(pot.1, values=NA)
 
     list(pot_orig=pot_orig, pot_temp=pot_temp, pot_equi=pot_equi)
 }
@@ -145,17 +142,14 @@ compile.grain <- function(object, propagate=FALSE, root=NULL,
     object$potential <-
         list(pot_orig=object$cqpot,
              pot_temp=object$cqpot,
-             pot_equi=.initialize_array_list(object$cqpot, NA))
+             pot_equi=.initialize_array_list(object$cqpot, values=NA))
     object
 }
-
-
 
 ## Create potential list (rip, universe)
 ##
 .make_array_list <- function(rip.order, universe, values=1){
-    cliques <- rip.order$cliques
-    
+    cliques <- rip.order$cliques    
     potlist  <- as.list(rep(NA, length(cliques)))
     
     for ( i in seq_along(cliques)){
@@ -180,14 +174,14 @@ compile.grain <- function(object, propagate=FALSE, root=NULL,
     if (details>=1)
         cat(".Inserting cpt's in potential list [.insert_CPT]\n")
 
-    APnames <- lapply(potlist, function(x) names(dimnames(x)))
-    CPnames <- unname(lapply(cptlist, function(x) varNames(x)))
-    hosts    <- .get_hosts(CPnames, APnames)
+    pot_names <- lapply(potlist, function(x) names(dimnames(x)))
+    cpt_names <- unname(lapply(cptlist, function(x) varNames(x)))
+    hosts    <- .get_hosts(cpt_names, pot_names)
 
     for (i in 1:length(cptlist)) {
             cptc <- cptlist[[ i ]]
-            j    <- hosts[ i ]
-            potlist[[ j ]] <- tableOp( potlist[[ j ]], cptc, "*" )
+            h    <- hosts[ i ]
+            potlist[[ h ]] <- tableOp( potlist[[ h ]], cptc, "*" )
         }
     .infoPrint(details, 4, {cat("....potlist (after insertion):\n"); print(potlist) })
     potlist
@@ -208,6 +202,11 @@ compile.grain <- function(object, propagate=FALSE, root=NULL,
 
 
 
+    ## if (is.null(getgrain(object, "rip")))
+        ## stop("No rip slot (junction tree) in object\n")
+    ## if (is.null(getgrain(object, "cpt")))
+        ## stop("No cpt slot in object\n")
+
 ## .createJTreeGraph <- function(rip){
     ## if (length(rip$cliques) > 1){
         ## ft <- cbind(rip$parents, 1:length(rip$parents))
@@ -225,5 +224,19 @@ compile.grain <- function(object, propagate=FALSE, root=NULL,
 ## }
 
 
+
+
+
+## .create_jtree <- function(object, root=NULL, update=TRUE){
+
+    ## mdag <- moralize(getgin(object, "dag"), result="dgCMatrix")
+    ## if (length(root) > 1)
+        ## mdag <- .make_set_complete(mdag, root)
+    ## ug_   <- triangulateMAT(mdag)  ## FIXME : Coercions are a MESS
+    ## rp_   <- ripMAT(ug_)
+    ## ug_   <- as(ug_, "graphNEL")
+    
+    ## list(rip=rp_, ug=ug_)
+## }
 
 

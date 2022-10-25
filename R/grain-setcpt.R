@@ -53,12 +53,20 @@ setCPT <- function(object, value){
     UseMethod("setCPT")
 }
 
+
+## Modifies cptlist in object. 
+
 #' @export 
 #' @rdname cpt-update
 setCPT.cpt_grain <- function(object, value){
+
+    if (!isCompiled(object))
+        stop("grain object must be compiled")
+
     if (!.is.named.list(value))
         stop("'value' must be a named list")
 
+    ## cat(".. inserting values in cptlist\n")
     vn <- names(getgrain(object, "cpt"))
     nn <- names(value)
     if (any((id <- is.na(match(nn, vn)))))
@@ -70,7 +78,14 @@ setCPT.cpt_grain <- function(object, value){
             stop("replacement value not correct length")                    
         object$cptlist[[v]][] <- z               
     }
-    isCompiled(object) <- FALSE
+    ## isCompiled(object) <- FALSE
+
+    ## FIXME: This can be optimized further for speed because only some potentials are typically modified
+    pot.1 <- .initialize_array_list(getgrain(object, "pot_orig"), values=1)    
+    object$potential$pot_orig <- object$potential$pot_temp <-
+        .insert_CPT(getgrain(object, "cpt"), pot.1, details=0)
+    
+    
     isPropagated(object) <- FALSE
     object
 }
@@ -78,7 +93,6 @@ setCPT.cpt_grain <- function(object, value){
 .is.named.list <- function(x){
     inherits(x, "list") && !is.null(names(x))
 }
-
 
 ## cpt-update
 ## "setcpt<-" <- function(object, value){

@@ -178,9 +178,7 @@ retractEvi <- function(object, items=NULL, propagate=TRUE){
 retractEvi_ <- function(object, items=NULL, propagate=TRUE){
     ##cat("++++ retractEvidence_\n")
     .resetgrain <- function(x){
-        ##x$temppot       <- x$pot_orig
-        ##x$potential$pot_temp       <- pot(x)$pot_orig
-        x$potential$pot_temp       <- getgrain(x, "pot_orig")
+        x$potential$pot_temp <- getgrain(x, "pot_orig")
         x$evidence       <- NULL
         isPropagated(x) <- FALSE
         x
@@ -239,7 +237,6 @@ absorbEvi_<- function(object, propagate=TRUE ){
 pEvidence <- function(object){
     if ( !inherits(object, "grain") )
         stop("'object' is not a 'grain' object")
-                                        #attr(pot(object)$pot_equi, "pEvidence")
     attr(getgrain(object, "pot_equi"), "pEvidence")
 }
 

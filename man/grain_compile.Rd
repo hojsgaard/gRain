@@ -10,6 +10,7 @@
 \method{compile}{grain}(
   object,
   propagate = FALSE,
+  tug = NULL,
   root = NULL,
   control = object$control,
   details = 0,
@@ -22,6 +23,8 @@
 \item{propagate}{If TRUE the network is also propagated meaning
 that the cliques of the junction tree are calibrated to each
 other.}
+
+\item{tug}{A triangulated undirected graph.}
 
 \item{root}{A set of variables which must be in the root of the
 junction tree}
@@ -38,8 +41,7 @@ A compiled Bayesian network; an object of class
 }
 \description{
 Compiles a Bayesian network. This means creating a
-junction tree and establishing clique potentials; ; refer to
-the reference below for details.
+junction tree and establishing clique potentials.
 }
 \references{
 Søren Højsgaard (2012). Graphical Independence

@@ -56,12 +56,12 @@ propagate.grain <- function(object, details=object$details, engine="cpp", ...){
     engine <- match.arg(tolower(engine), c("r", "cpp"))
     
     propfun <- switch(engine,
-                   "r"   = {propagateLS},
-                   "cpp" = {propagateLS__})
-
+                      "r"   = {propagateLS},
+                      "cpp" = {propagateLS__})
+    
     object$potential$pot_equi <- ## FRAGILE assignment
         propfun(getgrain(object, "pot_temp"), rip=rip(object))
-
+    
     isPropagated(object) <- TRUE
     
     ## FIXME: propagate.grain : Looks strange
