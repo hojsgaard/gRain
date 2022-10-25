@@ -7,8 +7,7 @@
 #' @title Compile a graphical independence network (a Bayesian network)
 #' 
 #' @description Compiles a Bayesian network. This means creating a
-#'     junction tree and establishing clique potentials; ; refer to
-#'     the reference below for details.
+#'     junction tree and establishing clique potentials.
 #'
 #' @name grain_compile
 #' 
@@ -61,22 +60,6 @@ compile.grain <- function(object, propagate=FALSE, root=NULL,
 ##
 ## #############################################
 
-.createJTreeGraph <- function(rip){
-    if (length(rip$cliques) > 1){
-        ft <- cbind(rip$parents, 1:length(rip$parents))
-        ft <- ft[ft[, 1] != 0, , drop=FALSE]
-        V <- seq_along(rip$parents)
-        if (nrow(ft) == 0){
-            jt <- new("graphNEL", nodes = as.character(V), edgemode = "undirected")
-        } else {
-            jt <- graph::ftM2graphNEL(ft, V=as.character(V), edgemode="undirected")
-        }
-    } else {
-        jt <- new("graphNEL", nodes = "1", edgemode = "undirected")
-    }
-    jt
-}
-
 
 .timing <- function(text, control, t0){
   if (!is.null(control$timing) && control$timing)
@@ -84,10 +67,9 @@ compile.grain <- function(object, propagate=FALSE, root=NULL,
 
 }
 
-
-## setRoot: Completes the variables in <root> in the graph,
-## FIXME: setRoot: Assumes sparse matrix. A MESS
-.setRoot <- function(mdagM, root){
+## set_root: Completes the variables in <root> in the graph,
+## FIXME: set_root: Assumes sparse matrix. A MESS
+.set_root <- function(mdagM, root){
     vn  <- colnames(mdagM)
     dn  <- dimnames(mdagM)
     ft  <- names2pairs(match(root, vn), sort=FALSE, result="matrix")
@@ -118,8 +100,9 @@ compile.grain <- function(object, propagate=FALSE, root=NULL,
 .create_jtree <- function(object, root=NULL, update=TRUE){
 
     mdag <- moralize(getgin(object, "dag"), result="dgCMatrix")
-    if (length(root) > 1) mdag <- .setRoot(mdag, root)
-        
+    if (length(root) > 1)
+        mdag <- .set_root(mdag, root)
+    
     ug_   <- triangulateMAT(mdag)  ## FIXME : Coercions are a MESS
     rp_   <- ripMAT( ug_ )
     ug_   <- as(ug_, "graphNEL")
@@ -131,6 +114,21 @@ compile.grain <- function(object, propagate=FALSE, root=NULL,
 ## #' @rdname grain_compile
 .add_potential <- function(object){
     UseMethod(".add_potential")
+}
+
+
+.create_potential <- function(object){
+
+    if (is.null(rip(object)))
+        stop("No rip slot (junction tree) in object\n")
+    if (is.null(getgrain(object, "cpt")))
+        stop("No cpt slot in object\n")
+    
+    pot.1    <- .make_array_list(rip(object), universe(object))
+    pot_orig <- pot_temp <- .insert_CPT(getgrain(object, "cpt"), pot.1, details=0)
+    pot_equi <- .initialize_array_list(pot.1, NA)
+
+    list(pot_orig=pot_orig, pot_temp=pot_temp, pot_equi=pot_equi)
 }
 
 ## #' @rdname grain_compile
@@ -147,32 +145,85 @@ compile.grain <- function(object, propagate=FALSE, root=NULL,
     object$potential <-
         list(pot_orig=object$cqpot,
              pot_temp=object$cqpot,
-             pot_equi=.initArrayList(object$cqpot, NA))
+             pot_equi=.initialize_array_list(object$cqpot, NA))
     object
 }
 
-.create_potential <- function(object){
 
-    if (is.null(rip(object)))
-        stop("No rip slot (junction tree) in object\n")
-    if (is.null(getgrain(object, "cpt")))
-        stop("No cpt slot in object\n")
+
+## Create potential list (rip, universe)
+##
+.make_array_list <- function(rip.order, universe, values=1){
+    cliques <- rip.order$cliques
     
-    pot.1    <- .mkArrayList(rip(object), universe(object))
-    pot_orig <- pot_temp <- .insertCPT(getgrain(object, "cpt"), pot.1, details=0)
-    pot_equi <- .initArrayList(pot.1, NA)
+    potlist  <- as.list(rep(NA, length(cliques)))
+    
+    for ( i in seq_along(cliques)){
+        cq    <- cliques[[ i ]]
+        vlab  <- universe$levels[cq]
+        potlist[[ i ]] <- tabNew(cq, vlab, values)
+    }
+    potlist
+}
 
-    list(pot_orig=pot_orig, pot_temp=pot_temp, pot_equi=pot_equi)
+.initialize_array_list <- function(x, values=NA){
+    lapply(x, function(z) {
+        z[] <- values             
+        z
+    } )
+}
+
+## Insert cpt's into potential list (cptlist, APlist)
+##
+.insert_CPT <- function(cptlist, potlist, details=0)
+{
+    if (details>=1)
+        cat(".Inserting cpt's in potential list [.insert_CPT]\n")
+
+    APnames <- lapply(potlist, function(x) names(dimnames(x)))
+    CPnames <- unname(lapply(cptlist, function(x) varNames(x)))
+    hosts    <- .get_hosts(CPnames, APnames)
+
+    for (i in 1:length(cptlist)) {
+            cptc <- cptlist[[ i ]]
+            j    <- hosts[ i ]
+            potlist[[ j ]] <- tableOp( potlist[[ j ]], cptc, "*" )
+        }
+    .infoPrint(details, 4, {cat("....potlist (after insertion):\n"); print(potlist) })
+    potlist
 }
 
 
 
+## For each element (vector) x in xx.set, find the element (vector) y in
+## yy.set such that x is contained in y
+.get_hosts <- function(xx.set, yy.set){
+    unlist(lapply(1:length(xx.set),
+                  function(i) which(is_inset(xx.set[[i]], yy.set, index=TRUE) > 0)[1]))
+    ## Alternative:
+    ## v <- lapply(xx.set, get_superset, yy.set, all=FALSE)
+    ## v[lapply(v, length) == 0] <- NA
+    ## unlist(v)
+}
 
 
-## #' @rdname grain_compile
-## fit.grain <- function(object, propagate=TRUE, root=NULL,
-##            control=object$control, details=0, ...) {    
-##     cl <- match.call(expand.dots = TRUE)
-##     cl[[1]] <- as.name("compile.grain")
-##     eval(cl)
+
+## .createJTreeGraph <- function(rip){
+    ## if (length(rip$cliques) > 1){
+        ## ft <- cbind(rip$parents, 1:length(rip$parents))
+        ## ft <- ft[ft[, 1] != 0, , drop=FALSE]
+        ## V <- seq_along(rip$parents)
+        ## if (nrow(ft) == 0){
+            ## jt <- new("graphNEL", nodes = as.character(V), edgemode = "undirected")
+        ## } else {
+            ## jt <- graph::ftM2graphNEL(ft, V=as.character(V), edgemode="undirected")
+        ## }
+    ## } else {
+        ## jt <- new("graphNEL", nodes = "1", edgemode = "undirected")
+    ## }
+    ## jt
 ## }
+
+
+
+
