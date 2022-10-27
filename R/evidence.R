@@ -109,7 +109,7 @@ retractEvidence <- function(object, nodes=NULL, propagate=TRUE){
 #' @export 
 #' @rdname grain_evidence
 absorbEvidence <- function(object, propagate=TRUE ){
-    absorbEvi( object, propagate=propagate )
+    absorbEvi_( object, propagate=propagate )
     ## FIXME Should be absorbEvi_ 
 }
 
@@ -142,20 +142,24 @@ setEvi_ <- function(object, evidence=NULL, propagate=TRUE, details=0){
         } 
         
         oe <- getEvidence( object ) # Der er noget med typen (old/new)
-        if (details > 0){ print("old.evidence"); print(oe) }
-        ne <- new_ev( evidence, universe(object)$levels ) 
-        if (details > 0){ print("new evidence"); print( ne ) }
+        ne <- new_ev( evidence, universe(object)$levels )
+        
+        if (details > 0){
+            cat("old.evidence:\n"); print(oe)
+            cat("new evidence:\n"); print( ne )
+        }
         
         ## Hvis der er eksisterende evidens, så skal det tages ud af det nye
         if (!is.null_ev( oe ) ){
             ne <- setdiff_ev( ne, oe )
-            if (details>0) { print("new evidence - after modif"); print( ne ) }
+            if (details>0) {
+                cat("new evidence - after modification:\n"); print( ne )
+            }
         }
 
         if (length(varNames(ne)) > 0){
             rp  <- getgrain(object, "rip")    
-            host  <- getHostClique(varNames(ne), rp$cliques)
-            #str(list(ne, host))
+            host  <- get_host_clique(varNames(ne), rp$cliques)
             object$potential$pot_temp <- insertEvi(ne, getgrain(object, "pot_temp"), host)
             
             te <- if (is.null_ev(oe)) ne else union_ev(oe, ne)
@@ -213,14 +217,10 @@ retractEvi_ <- function(object, items=NULL, propagate=TRUE){
 }
 
 ## #' @name grain-evi
-absorbEvi <- function(object, propagate=TRUE ){
+absorbEvi_<- function(object, propagate=TRUE ){
     if ( !inherits(object, "grain") )
         stop("'object' is not a 'grain' object")
-    absorbEvi_( object, propagate = propagate )
-}
 
-## #' @name grain-evi
-absorbEvi_<- function(object, propagate=TRUE ){
     ## Update 'object' as
     ## 1) set pot_orig <- pot_temp
     ## 2) ignore any finding
@@ -299,6 +299,7 @@ dropEvi <- retractEvi
 ## #' @name grain-evi
 getEvi  <- getEvidence
 
+
 ## #############################################################
 ##
 ## UTILITIES
@@ -331,23 +332,22 @@ insertEvi <- function(evi.list, pot, hostclique){
     }
 }
 
-getHostClique <- function(set.list, cliques){
-    out <- lapply(set.list,
-                  function(x){
-                      ##get_superset_(x, cliques, all=FALSE)
-                      get_superset(x, cliques, all=FALSE)
-                  })
-    len <- sapply(out, length)
-    if (any( len == 0)){
-        message("Set(s) not in any clique:")
-        str(set.list[ len==0 ])
-        stop("exiting...\n")
-    }
-    unlist( out )
-}
 
 
 
 
 
 
+
+
+
+
+
+
+
+## #' @name grain-evi
+## absorbEvi <- function(object, propagate=TRUE ){
+    ## if ( !inherits(object, "grain") )
+        ## stop("'object' is not a 'grain' object")
+    ## absorbEvi_( object, propagate = propagate )
+## }

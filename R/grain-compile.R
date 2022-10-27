@@ -176,7 +176,7 @@ compile.grain <- function(object, propagate=FALSE, tug=NULL, root=NULL,
 
     pot_names <- lapply(potlist, function(x) names(dimnames(x)))
     cpt_names <- unname(lapply(cptlist, function(x) varNames(x)))
-    hosts    <- .get_hosts(cpt_names, pot_names)
+    hosts    <- get_hosts(cpt_names, pot_names)
 
     for (i in 1:length(cptlist)) {
             cptc <- cptlist[[ i ]]
@@ -189,16 +189,48 @@ compile.grain <- function(object, propagate=FALSE, tug=NULL, root=NULL,
 
 
 
-## For each element (vector) x in xx.set, find the element (vector) y in
-## yy.set such that x is contained in y
-.get_hosts <- function(xx.set, yy.set){
-    unlist(lapply(1:length(xx.set),
-                  function(i) which(is_inset(xx.set[[i]], yy.set, index=TRUE) > 0)[1]))
+
+
+## FIXME: get_hosts and get_host_clique does the same thing; reduce to one.
+## FIXME: perhaps move to gRbase as part of setops-api.R
+##
+## x_set, y_set: Lists of vectors.
+##
+## For each element (vector) x in x_set, find the element (vector) y
+## in y_set such that x is contained in y
+
+#' @export
+get_hosts <- function(x_set, y_set){
+    v <- lapply(1:length(x_set),
+                function(i) {
+                    which(is_inset(x_set[[i]], y_set, index=TRUE) > 0)[1]
+                }                
+                )
+
+    unlist(v)
+
     ## Alternative:
-    ## v <- lapply(xx.set, get_superset, yy.set, all=FALSE)
+    ## v <- lapply(x_set, get_superset, y_set, all=FALSE)
     ## v[lapply(v, length) == 0] <- NA
     ## unlist(v)
 }
+
+#' @export
+get_host_clique <- function(x_set, y_set){
+    out <- lapply(x_set,
+                  function(x){
+                      get_superset(x, y_set, all=FALSE)
+                  })
+    len <- sapply(out, length)
+    if (any( len == 0)){
+        message("Set(s) not in any clique:")
+        str(x_set[ len==0 ])
+        stop("exiting...\n")
+    }
+    unlist( out )
+}
+
+
 
 
 

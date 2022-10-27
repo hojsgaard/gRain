@@ -138,10 +138,8 @@ print.grain_ev <- function(x, ...){
 
 
 ## #' @rdname evidence_object
-
+#' @export
 varNames.grain_ev <- function(x) x$nodes
-
-
 
 #' @rdname evidence_object
 #' @param row.names Not used.
@@ -167,9 +165,15 @@ as.data.frame.grain_ev <-
 #' @rdname evidence_object
 #' @param ev1,ev2 Evidence.
 setdiff_ev <- function(ev1, ev2){
-    if (length(ev1)==0) ev1 <- new_ev( ev1 )
-    if (length(ev2)==0) ev2 <- new_ev( ev2 )
+    if (length(ev1) == 0) ev1 <- new_ev( ev1 )
+    if (length(ev2) == 0) ev2 <- new_ev( ev2 )
+    
     nn  <- setdiff( varNames(ev1), varNames(ev2) )
+    ## lst <- list(ev1=ev1, ev2=ev2, nn=nn, c1=class(ev1), c2=class(ev2),
+                ## vn1=varNames(ev1), vn2=varNames(ev2)) 
+    ## lst <<- lst
+    ## str(lst)
+
     out <- subset(ev1, select=nn)
     class(out) <- "grain_ev"
     out
