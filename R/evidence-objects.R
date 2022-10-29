@@ -90,14 +90,14 @@ new_ev <- function(evi.list=NULL, levels){
             if (is.character(v)){
                 n <- names(evi.list)[i]
                 hard.state[i]  <- v
-                evidence[[i]]  <- .hard.state2parray(n, v, levels[[n]])
+                evidence[[i]]  <- hard_state_to_parray(n, v, levels[[n]])
                 next
             }
             
             if (is.numeric(v)){
                 n <- names(evi.list)[i]
                 is.hard.evidence[i] <- FALSE
-                evidence[[i]] <- .soft.state2parray(n, v, levels[[n]])
+                evidence[[i]] <- soft_state_to_parray(n, v, levels[[n]])
             }
         }
         
@@ -169,11 +169,6 @@ setdiff_ev <- function(ev1, ev2){
     if (length(ev2) == 0) ev2 <- new_ev( ev2 )
     
     nn  <- setdiff( varNames(ev1), varNames(ev2) )
-    ## lst <- list(ev1=ev1, ev2=ev2, nn=nn, c1=class(ev1), c2=class(ev2),
-                ## vn1=varNames(ev1), vn2=varNames(ev2)) 
-    ## lst <<- lst
-    ## str(lst)
-
     out <- subset(ev1, select=nn)
     class(out) <- "grain_ev"
     out
@@ -219,21 +214,21 @@ subset.grain_ev <- function(x, subset, select, drop = FALSE, ...){
 ## ###############################################
 
 ## Bruges i new_ev
-.hard.state2parray <- function(n, v, lev){
+hard_state_to_parray <- function(n, v, lev){
     #str(list(n,v,lev))
-    tab <- .fast.parray(n, list(lev), rep.int(0, length(lev)))
+    tab <- fast_parray(n, list(lev), rep.int(0, length(lev)))
     tab[ match( v, lev )] <- 1
     tab
 }
 
 ## Bruges i new_ev
-.soft.state2parray <- function(n, v, lev){
+soft_state_to_parray <- function(n, v, lev){
     #str(list(n,v,lev))
-    .fast.parray(n, list(lev), v)
+    fast_parray(n, list(lev), v)
 }
 
 ## Bruges af ovenstående fns
-.fast.parray <- function(varNames, levels, values=1){
+fast_parray <- function(varNames, levels, values=1){
     #str(list(varNames, levels, values))
     dn <- if(is.list(levels)) levels else list(levels)
     names(dn) <- varNames

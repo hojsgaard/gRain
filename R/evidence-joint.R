@@ -86,15 +86,12 @@
 #'
 
 
-
-
 #' @export 
 #' @rdname grain_jevidence
 setJEvidence <- function(object, evidence=NULL, propagate=TRUE, details=0){
     
     setJEvidence_(object, evidence=evidence, propagate=propagate, details=details)
 }
-
 
 setJEvidence_<- function(object, evidence=NULL, propagate=TRUE, details=0){
 

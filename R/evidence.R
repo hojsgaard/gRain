@@ -90,14 +90,13 @@ setEvidence <- function(object, nodes=NULL, states=NULL, evidence=NULL, nslist=N
     if (!is.null(nslist))
         stop("Argument 'nslist' has been deprecated; please use 'evidence' instead\n")
 
-    if ( is.null( evidence ) && is.null( nodes ) )
-        stop( "Evidence is not given; nothing to do...")
+    if (is.null(evidence) && is.null(nodes))
+        stop("Evidence is not given; nothing to do...")
     
-    if ( is.null( evidence ) ) ## Then 'nodes' must be given
-        evidence <- .nodes.states2evidence( nodes, states )      
+    if (is.null(evidence)) ## Then 'nodes' must be given
+        evidence <- nodes_states_to_evidence(nodes, states)      
     
-    setEvi_(object, evidence, propagate=propagate, details=details)
-    
+    setEvi_(object, evidence, propagate=propagate, details=details)    
 }
 
 #' @rdname grain_evidence
@@ -123,7 +122,7 @@ setEvi <- function(object, nodes=NULL, states=NULL, evidence=NULL,
         stop( "Evidence is not given; nothing to do...")
     
     if ( is.null( evidence ) ) ## Then 'nodes' must be given
-        evidence <- .nodes.states2evidence( nodes, states )      
+        evidence <- nodes_states_to_evidence( nodes, states )      
     
     setEvi_( object, evidence=evidence, propagate=propagate, details=details)
 }
@@ -322,7 +321,7 @@ insertEvi <- function(evi.list, pot, hostclique){
 }
 
 
-.nodes.states2evidence <- function(nodes, states){
+nodes_states_to_evidence <- function(nodes, states){
     if (!is.null( states ) && length( nodes )==length( states )){
         evidence <- as.vector(states, "list")
         names(evidence) <- nodes
@@ -332,22 +331,3 @@ insertEvi <- function(evi.list, pot, hostclique){
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-## #' @name grain-evi
-## absorbEvi <- function(object, propagate=TRUE ){
-    ## if ( !inherits(object, "grain") )
-        ## stop("'object' is not a 'grain' object")
-    ## absorbEvi_( object, propagate = propagate )
-## }
