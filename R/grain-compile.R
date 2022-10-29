@@ -176,7 +176,7 @@ compile.grain <- function(object, propagate=FALSE, tug=NULL, root=NULL,
 
     pot_names <- lapply(potlist, function(x) names(dimnames(x)))
     cpt_names <- unname(lapply(cptlist, function(x) varNames(x)))
-    hosts    <- get_hosts(cpt_names, pot_names)
+    hosts    <-  get_superset_list(cpt_names, pot_names)
 
     for (i in 1:length(cptlist)) {
             cptc <- cptlist[[ i ]]
@@ -191,45 +191,85 @@ compile.grain <- function(object, propagate=FALSE, tug=NULL, root=NULL,
 
 
 
-## FIXME: get_hosts and get_host_clique does the same thing; reduce to one.
-## FIXME: perhaps move to gRbase as part of setops-api.R
-##
-## x_set, y_set: Lists of vectors.
-##
-## For each element (vector) x in x_set, find the element (vector) y
-## in y_set such that x is contained in y
-
+#' Get superset for each element in a list
+#'
+#' For each element (vector) x in x_set, find the first element (vector) y
+#' in y_set such that x is contained in y
+#' 
+#' @param x_set Vector or list of vectors.
+#' @param y_set Vector or list of vectors.
+#' @param warn Should a warning be made if an element is found.
+#'
+#' @examples
+#' x_set <- list(c("a", "b"), "e", c("b", "a"))
+#' y_set <- list(c("f","u", "e"), c("a", "b", "c", "a"), c("b", "c", "a"))
+#' get_superset_list(x_set, y_set)
+#' get_superset_list(letters[1:4], y_set)
+#' get_superset_list(letters[1:4], letters[1:10])
+#' get_superset_list(x_set, letters[1:10])
+#' x_set <- list(c("a", "b"), "e", c("b", "a"), "o")
+#' y_set <- list(c("f","u", "e"), c("a", "b", "c", "a"), c("b", "c", "a"))
+#' get_superset_list(x_set, y_set, warn=TRUE)
+#' get_superset_list(x_set, y_set, warn=FALSE)
+#' 
 #' @export
-get_hosts <- function(x_set, y_set){
-    v <- lapply(1:length(x_set),
-                function(i) {
-                    which(is_inset(x_set[[i]], y_set, index=TRUE) > 0)[1]
-                }                
-                )
-
-    unlist(v)
-
-    ## Alternative:
-    ## v <- lapply(x_set, get_superset, y_set, all=FALSE)
-    ## v[lapply(v, length) == 0] <- NA
-    ## unlist(v)
-}
-
-#' @export
-get_host_clique <- function(x_set, y_set){
+get_superset_list <- function(x_set, y_set, warn=FALSE){
     out <- lapply(x_set,
                   function(x){
                       get_superset(x, y_set, all=FALSE)
                   })
     len <- sapply(out, length)
-    if (any( len == 0)){
-        message("Set(s) not in any clique:")
-        str(x_set[ len==0 ])
-        stop("exiting...\n")
+    v <- which(len == 0)
+    
+    if (warn){
+        if (any(len == 0)){
+            warning(sprintf("Set(s) %s not contained anywhere\n", paste0(v, collapse=",")))
+        }
     }
+
+    if (length(v) > 0)
+        out[v] <- NA
     unlist( out )
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## ' @export
+## get_hosts <- function(x_set, y_set){
+
+    ## v <- lapply(x_set,
+                ## function(x) {
+                    ## which(is_inset(x, y_set, index=TRUE) > 0)[1]
+                ## }                
+                ## )
+
+    ## unlist(v)
+## }
 
 
 

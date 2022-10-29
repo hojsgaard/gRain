@@ -112,7 +112,7 @@ setJEvidence_<- function(object, evidence=NULL, propagate=TRUE, details=0){
         
         vn  <- sapply(evidence, varNames)    
         rp  <- getgrain(object, "rip")    
-        hc  <- get_host_clique(vn, rp$cliques)
+        hc  <- get_superset_list(vn, rp$cliques)
         pot <- getgrain(object, "pot_temp")
         pot2 <- insertJEvidence(evidence, pot, hc)
         object$potential$pot_temp <- pot2

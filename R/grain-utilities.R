@@ -1,3 +1,17 @@
+## Used in load_save_hugin_net
+
+make_cptlist <- function(object){
+    if (!inherits(object, "grain"))
+        stop("Object is not a 'grain' object\n")
+    if (!isCompiled(object)) 
+        object <- compile(object)
+    dg <- ug2dag(getgin(object, "ug"))
+    vp <- vpar(dg)
+    lapply(vp, function(vv){
+        z <- qgrain(object, nodes=vv, type="cond")
+        tabPerm(z, vv)}
+        )
+}
 
 randomCPT <- function(object, states=c("yes", "no")){
 

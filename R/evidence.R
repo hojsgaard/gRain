@@ -159,7 +159,7 @@ setEvi_ <- function(object, evidence=NULL, propagate=TRUE, details=0){
 
         if (length(varNames(ne)) > 0){
             rp  <- getgrain(object, "rip")    
-            host  <- get_host_clique(varNames(ne), rp$cliques)
+            host  <- get_superset_list(varNames(ne), rp$cliques)
             object$potential$pot_temp <- insertEvi(ne, getgrain(object, "pot_temp"), host)
             
             te <- if (is.null_ev(oe)) ne else union_ev(oe, ne)
