@@ -5,7 +5,7 @@
 %\VignetteKeyword{Probabilistic networks}
 %\VignetteEngine{knitr::knitr} 
 
-\documentclass[10pt]{article}\usepackage[]{graphicx}\usepackage[]{color}
+\documentclass[10pt]{article}\usepackage[]{graphicx}\usepackage[]{xcolor}
 % maxwidth is the original width if it is less than linewidth
 % otherwise use linewidth (to make sure the graphics do not exceed the margin)
 \makeatletter
@@ -79,12 +79,13 @@
 \def\grain{\texttt{grain}}
 \def\code#1{{\texttt{#1}}}
 \def\R{\texttt{R}}
+\def\bn{Bayesian network}
 
 
 
 \author{S{\o}ren H{\o}jsgaard\\Aalborg University, Denmark}
 \title{Bayesian networks in R with the \pkg{gRain} package}
-\date{\pkg{gRain} version 1.3-3 as of 2020-01-18}
+\date{\pkg{gRain} version 1.3.11.9005 as of 2022-11-06}
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 \maketitle
@@ -95,7 +96,7 @@
 
 The \grbn\ package implements Bayesian Networks (hereafter often
 abbreviated BNs). The name \grbn\ is an acronym for [gra]phical
-[i]ndependence [n]etworks. The main reference for \grbn\ to cite is
+[i]ndependence [n]etworks. The main reference for \grbn\  is
 \cite{hoj:12}, see also
 
 \begin{knitrout}
@@ -109,7 +110,7 @@ abbreviated BNs). The name \grbn\ is an acronym for [gra]phical
 ## 
 ##   Søren Højsgaard (2012). Graphical Independence Networks with the gRain
 ##   Package for R. Journal of Statistical Software, 46(10), 1-26. URL
-##   http://www.jstatsoft.org/v46/i10/.
+##   https://www.jstatsoft.org/v46/i10/
 ## 
 ## A BibTeX entry for LaTeX users is
 ## 
@@ -121,7 +122,8 @@ abbreviated BNs). The name \grbn\ is an acronym for [gra]phical
 ##     volume = {46},
 ##     number = {10},
 ##     pages = {1--26},
-##     url = {http://www.jstatsoft.org/v46/i10/},
+##     doi = {10.18637/jss.v046.i10},
+##     url = {https://www.jstatsoft.org/v46/i10/},
 ##   }
 \end{verbatim}
 \end{kframe}
@@ -166,6 +168,31 @@ is available from
 \label{sec:chest-clinic}
 \label{sec:chest}
 
+% <<echo=F, results='hide'>>=
+% yn <- c("yes","no")
+% a    <- cptable(~asia, values=c(1,99),levels=yn)
+% t.a  <- cptable(~tub|asia, values=c(5,95,1,99),levels=yn)
+% s    <- cptable(~smoke, values=c(5,5), levels=yn)
+% l.s  <- cptable(~lung|smoke, values=c(1,9,1,99), levels=yn)
+% b.s  <- cptable(~bronc|smoke, values=c(6,4,3,7), levels=yn)
+% e.lt <- cptable(~either|lung:tub,values=c(1,0,1,0,1,0,0,1),levels=yn)
+% x.e  <- cptable(~xray|either, values=c(98,2,5,95), levels=yn)
+% d.be <- cptable(~dysp|bronc:either, values=c(9,1,7,3,8,2,1,9), levels=yn)
+% plist <- compileCPT(list(a, t.a, s, l.s, b.s, e.lt, x.e, d.be))
+% plist
+% chest_bn <- grain(plist)
+% chest_bn
+% @ %def
+
+
+
+
+
+
+
+
+
+
 
 
 This section reviews the chest clinic example of \cite{lau/spieg:88}
@@ -188,7 +215,6 @@ chest clinic example with the following narrative:
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}
 \includegraphics[width=\maxwidth]{figures/grain-chest-LS-1} \caption[Chest clinic example from Lauritzen and Spiegelhalter (1988)]{Chest clinic example from Lauritzen and Spiegelhalter (1988).}\label{fig:chest-LS}
 \end{figure}
-
 
 \end{knitrout}
 
@@ -277,18 +303,33 @@ example is as follows.
   \cite{lau/spieg:88}) (there are other ways of specifying conditional
   probability tables, see the package documentation):
 
+% <<echo=FALSE, results='hide'>>=
+% yn <- c("yes", "no")
+% a    <- cptable(~asia, values=c(1, 99), levels=yn)
+% t.a  <- cptable(~tub|asia, values=c(5, 95, 1, 99), levels=yn)
+% s    <- cptable(~smoke, values=c(5, 5), levels=yn)
+% l.s  <- cptable(~lung|smoke, values=c(1, 9, 1, 99), levels=yn)
+% b.s  <- cptable(~bronc|smoke, values=c(6, 4, 3, 7), levels=yn)
+% e.lt <- cptable(~either|lung:tub, values=c(1, 0, 1, 0, 1, 0, 0, 1), levels=yn)
+% x.e  <- cptable(~xray|either, values=c(98, 2, 5, 95), levels=yn)
+% d.be <- cptable(~dysp|bronc:either, values=c(9, 1, 7, 3, 8, 2, 1, 9), levels=yn)
+% @ %def
+
+
+
+
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{yn} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"yes"}\hlstd{,} \hlstr{"no"}\hlstd{)}
-\hlstd{a}    \hlkwb{<-} \hlkwd{cptable}\hlstd{(}\hlopt{~}\hlstd{asia,} \hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{99}\hlstd{),} \hlkwc{levels}\hlstd{=yn)}
-\hlstd{t.a}  \hlkwb{<-} \hlkwd{cptable}\hlstd{(}\hlopt{~}\hlstd{tub}\hlopt{|}\hlstd{asia,} \hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{5}\hlstd{,} \hlnum{95}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{99}\hlstd{),} \hlkwc{levels}\hlstd{=yn)}
-\hlstd{s}    \hlkwb{<-} \hlkwd{cptable}\hlstd{(}\hlopt{~}\hlstd{smoke,} \hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{5}\hlstd{,} \hlnum{5}\hlstd{),} \hlkwc{levels}\hlstd{=yn)}
-\hlstd{l.s}  \hlkwb{<-} \hlkwd{cptable}\hlstd{(}\hlopt{~}\hlstd{lung}\hlopt{|}\hlstd{smoke,} \hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{9}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{99}\hlstd{),} \hlkwc{levels}\hlstd{=yn)}
-\hlstd{b.s}  \hlkwb{<-} \hlkwd{cptable}\hlstd{(}\hlopt{~}\hlstd{bronc}\hlopt{|}\hlstd{smoke,} \hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{6}\hlstd{,} \hlnum{4}\hlstd{,} \hlnum{3}\hlstd{,} \hlnum{7}\hlstd{),} \hlkwc{levels}\hlstd{=yn)}
-\hlstd{e.lt} \hlkwb{<-} \hlkwd{cptable}\hlstd{(}\hlopt{~}\hlstd{either}\hlopt{|}\hlstd{lung}\hlopt{:}\hlstd{tub,} \hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{1}\hlstd{),} \hlkwc{levels}\hlstd{=yn)}
-\hlstd{x.e}  \hlkwb{<-} \hlkwd{cptable}\hlstd{(}\hlopt{~}\hlstd{xray}\hlopt{|}\hlstd{either,} \hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{98}\hlstd{,} \hlnum{2}\hlstd{,} \hlnum{5}\hlstd{,} \hlnum{95}\hlstd{),} \hlkwc{levels}\hlstd{=yn)}
-\hlstd{d.be} \hlkwb{<-} \hlkwd{cptable}\hlstd{(}\hlopt{~}\hlstd{dysp}\hlopt{|}\hlstd{bronc}\hlopt{:}\hlstd{either,} \hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{9}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{7}\hlstd{,} \hlnum{3}\hlstd{,} \hlnum{8}\hlstd{,} \hlnum{2}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{9}\hlstd{),} \hlkwc{levels}\hlstd{=yn)}
+\hlstd{yn} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"yes"}\hlstd{,}\hlstr{"no"}\hlstd{)}
+\hlstd{a}    \hlkwb{<-} \hlkwd{cpt}\hlstd{(}\hlopt{~}\hlstd{asia,} \hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{99}\hlstd{),}\hlkwc{levels}\hlstd{=yn)}
+\hlstd{t.a}  \hlkwb{<-} \hlkwd{cpt}\hlstd{(}\hlopt{~}\hlstd{tub}\hlopt{|}\hlstd{asia,} \hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{5}\hlstd{,} \hlnum{95}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{99}\hlstd{),}\hlkwc{levels}\hlstd{=yn)}
+\hlstd{s}    \hlkwb{<-} \hlkwd{cpt}\hlstd{(}\hlopt{~}\hlstd{smoke,} \hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{5}\hlstd{,} \hlnum{5}\hlstd{),} \hlkwc{levels}\hlstd{=yn)}
+\hlstd{l.s}  \hlkwb{<-} \hlkwd{cpt}\hlstd{(}\hlopt{~}\hlstd{lung}\hlopt{|}\hlstd{smoke,} \hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{9}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{99}\hlstd{),} \hlkwc{levels}\hlstd{=yn)}
+\hlstd{b.s}  \hlkwb{<-} \hlkwd{cpt}\hlstd{(}\hlopt{~}\hlstd{bronc}\hlopt{|}\hlstd{smoke,} \hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{6}\hlstd{,} \hlnum{4}\hlstd{,} \hlnum{3}\hlstd{,} \hlnum{7}\hlstd{),} \hlkwc{levels}\hlstd{=yn)}
+\hlstd{e.lt} \hlkwb{<-} \hlkwd{cpt}\hlstd{(}\hlopt{~}\hlstd{either}\hlopt{|}\hlstd{lung}\hlopt{:}\hlstd{tub,}\hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{1}\hlstd{),}\hlkwc{levels}\hlstd{=yn)}
+\hlstd{x.e}  \hlkwb{<-} \hlkwd{cpt}\hlstd{(}\hlopt{~}\hlstd{xray}\hlopt{|}\hlstd{either,} \hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{98}\hlstd{,} \hlnum{2}\hlstd{,} \hlnum{5}\hlstd{,} \hlnum{95}\hlstd{),} \hlkwc{levels}\hlstd{=yn)}
+\hlstd{d.be} \hlkwb{<-} \hlkwd{cpt}\hlstd{(}\hlopt{~}\hlstd{dysp}\hlopt{|}\hlstd{bronc}\hlopt{:}\hlstd{either,} \hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{9}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{7}\hlstd{,} \hlnum{3}\hlstd{,} \hlnum{8}\hlstd{,} \hlnum{2}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{9}\hlstd{),} \hlkwc{levels}\hlstd{=yn)}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
@@ -299,7 +340,7 @@ example is as follows.
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlstd{chest_cpt} \hlkwb{<-} \hlkwd{compileCPT}\hlstd{(a, t.a, s, l.s, b.s, e.lt, x.e, d.be)}
-\hlkwd{summary}\hlstd{(chest_cpt)}
+\hlstd{chest_cpt}
 \end{alltt}
 \begin{verbatim}
 ## cpt_spec with probabilities:
@@ -328,7 +369,7 @@ The components are arrays, but coercion into dataframes sometimes makes it easie
 ##   no  0.95 0.99
 \end{verbatim}
 \begin{alltt}
-\hlstd{chest_cpt}\hlopt{$}\hlstd{tub}  \hlopt{%>%} \hlstd{as.data.frame.table}
+\hlstd{chest_cpt}\hlopt{$}\hlstd{tub  |>} \hlkwd{as.data.frame.table}\hlstd{()}
 \end{alltt}
 \begin{verbatim}
 ##   tub asia Freq
@@ -340,11 +381,11 @@ The components are arrays, but coercion into dataframes sometimes makes it easie
 \end{kframe}
 \end{knitrout}
 
-Notice: \code{either} is a logical node
+Notice: \code{either} is a logical node:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{chest_cpt}\hlopt{$}\hlstd{either}  \hlopt{%>%} \hlstd{as.data.frame.table}
+\hlstd{chest_cpt}\hlopt{$}\hlstd{either  |>} \hlkwd{as.data.frame.table}\hlstd{()}
 \end{alltt}
 \begin{verbatim}
 ##   either lung tub Freq
@@ -361,7 +402,7 @@ Notice: \code{either} is a logical node
 \end{knitrout}
 
 
-\item Create the network:\footnote{SH: Rethink print method}
+\item Create the network:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -369,15 +410,13 @@ Notice: \code{either} is a logical node
 \hlstd{chest_bn}
 \end{alltt}
 \begin{verbatim}
-## Independence network: Compiled: FALSE Propagated: FALSE 
-##   Nodes: chr [1:8] "asia" "tub" "smoke" "lung" "bronc" "either" "xray" "dysp"
+## Independence network: Compiled: TRUE Propagated: FALSE Evidence: TRUE
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
 
-Compile the network (see references for details about
-this):\footnote{SH: Maybe change so that default is that a network is
-  compiled on creation time.}
+Default is that the network is compiled at creation time, but if one
+chooses not to do so, compilation can be done with:
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -389,13 +428,15 @@ this):\footnote{SH: Maybe change so that default is that a network is
 
 \end{enumerate}
 
-\subsection{Querying a network}
+\subsection{Setting evidence and querying a network}
 \label{sec:querying-network}
 
 \begin{enumerate}
-\item The network can be queried to give marginal
-  probabilities:\footnote{\code{querygrain()} can be abbreviated
-    \code{qgrain()}.}
+\item A network can be queried to give marginal probabilities for
+  each of a set of nodes (the default) or the joint probability for a
+  set of nodes.\footnote{A third type of output exists, see package
+    documentation for details.}  Notice that \code{querygrain()} can
+  be abbreviated \code{qgrain()}.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -416,26 +457,9 @@ this):\footnote{SH: Maybe change so that default is that a network is
 \end{kframe}
 \end{knitrout}
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{querygrain}\hlstd{(chest_bn,} \hlkwc{nodes}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"lung"}\hlstd{,} \hlstr{"bronc"}\hlstd{),} \hlkwc{type}\hlstd{=}\hlstr{"marginal"}\hlstd{)}  \hlopt{%>%} \hlkwd{lapply}\hlstd{(as.data.frame.table)}
-\end{alltt}
-\begin{verbatim}
-## $lung
-##   lung  Freq
-## 1  yes 0.055
-## 2   no 0.945
-## 
-## $bronc
-##   bronc Freq
-## 1   yes 0.45
-## 2    no 0.55
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
 
-\item Likewise, a joint distribution can be obtained:\footnote{SH: FIXME}
+\item Likewise, a joint distribution can be obtained (represented as a
+  multi dimensional array):
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -451,15 +475,59 @@ this):\footnote{SH: Maybe change so that default is that a network is
 \end{kframe}
 \end{knitrout}
 
-\item Evidence can be entered in one of these two equivalent forms:
+\item Evidence can be entered in two different ways:\footnote{Alternative forms
+    exist; see package documentation for details.}
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{chest_bn2}  \hlkwb{<-} \hlkwd{setEvidence}\hlstd{(chest_bn,} \hlkwc{evidence}\hlstd{=}\hlkwd{list}\hlstd{(}\hlkwc{asia}\hlstd{=}\hlstr{"yes"}\hlstd{,} \hlkwc{dysp}\hlstd{=}\hlstr{"yes"}\hlstd{))}
-\hlstd{chest_bn2}  \hlkwb{<-} \hlkwd{setEvidence}\hlstd{(chest_bn,}
-                      \hlkwc{nodes}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"asia"}\hlstd{,} \hlstr{"dysp"}\hlstd{),} \hlkwc{states}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"yes"}\hlstd{,} \hlstr{"yes"}\hlstd{))}
+\hlstd{chest_ev}  \hlkwb{<-} \hlkwd{setEvidence}\hlstd{(chest_bn,}
+                          \hlkwc{evidence}\hlstd{=}\hlkwd{list}\hlstd{(}\hlkwc{asia}\hlstd{=}\hlstr{"yes"}\hlstd{,} \hlkwc{dysp}\hlstd{=}\hlstr{"yes"}\hlstd{))}
+\hlstd{chest_ev}  \hlkwb{<-} \hlkwd{setEvidence}\hlstd{(chest_bn,}
+                          \hlkwc{nodes}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"asia"}\hlstd{,} \hlstr{"dysp"}\hlstd{),} \hlkwc{states}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"yes"}\hlstd{,} \hlstr{"yes"}\hlstd{))}
+
+\hlcom{## Also: modify object with}
+\hlcom{## evidence(chest_bn) <- list(asia="yes", dysp="yes")}
 \end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\item The evidence is
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{getEvidence}\hlstd{(chest_ev)}
+\end{alltt}
+\begin{verbatim}
+##   nodes is.hard.evidence hard.state
+## 1  asia             TRUE        yes
+## 2  dysp             TRUE        yes
+\end{verbatim}
+\begin{alltt}
+\hlkwd{getEvidence}\hlstd{(chest_ev,} \hlkwc{short}\hlstd{=}\hlnum{FALSE}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## $nodes
+## [1] "asia" "dysp"
+## 
+## $is.hard.evidence
+## [1] TRUE TRUE
+## 
+## $hard.state
+## [1] "yes" "yes"
+## 
+## $evidence
+## $evidence[[1]]
+## asia
+## yes  no 
+##   1   0 
+## 
+## $evidence[[2]]
+## dysp
+## yes  no 
+##   1   0
+\end{verbatim}
 \end{kframe}
 \end{knitrout}
 
@@ -467,7 +535,7 @@ this):\footnote{SH: Maybe change so that default is that a network is
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{pEvidence}\hlstd{(chest_bn2)}
+\hlkwd{pEvidence}\hlstd{(chest_ev)}
 \end{alltt}
 \begin{verbatim}
 ## [1] 0.004501375
@@ -475,11 +543,11 @@ this):\footnote{SH: Maybe change so that default is that a network is
 \end{kframe}
 \end{knitrout}
 
-\item The network can be queried again:\footnote{SH: FIXME}
+\item The network can be queried again:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{querygrain}\hlstd{(chest_bn2,} \hlkwc{nodes}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"lung"}\hlstd{,} \hlstr{"bronc"}\hlstd{))}
+\hlkwd{querygrain}\hlstd{(chest_ev,} \hlkwc{nodes}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"lung"}\hlstd{,} \hlstr{"bronc"}\hlstd{))}
 \end{alltt}
 \begin{verbatim}
 ## $lung
@@ -492,37 +560,184 @@ this):\footnote{SH: Maybe change so that default is that a network is
 ##       yes        no 
 ## 0.8114021 0.1885979
 \end{verbatim}
-\begin{alltt}
-\hlkwd{querygrain}\hlstd{(chest_bn2,} \hlkwc{nodes}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"lung"}\hlstd{,} \hlstr{"bronc"}\hlstd{),} \hlkwc{type}\hlstd{=}\hlstr{"joint"}\hlstd{)}
-\end{alltt}
-\begin{verbatim}
-##      bronc
-## lung          yes         no
-##   yes 0.000283500 0.00016450
-##   no  0.003368925 0.00068445
-\end{verbatim}
 \end{kframe}
 \end{knitrout}
+
 \end{enumerate}
 
 
-Notice a small shortcut: A common usage of a Bayesian network is to
-enter evidence and then ask for the conditional distribtion of some
-variables: This can be accomplished in one simple step as follows:\footnote{SH: FIXME}
+\section{Hints and shortcuts}
+\label{sec:small-shortcuts}
+
+\begin{enumerate}
+\item An alternative way of specifying a network is by first defining CPTs and then entering values afterwards. Programmatically, this can be done as:
+
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{querygrain}\hlstd{(chest_bn,} \hlkwc{evidence}\hlstd{=}\hlkwd{list}\hlstd{(}\hlkwc{asia}\hlstd{=}\hlstr{"yes"}\hlstd{,} \hlkwc{dysp}\hlstd{=}\hlstr{"yes"}\hlstd{),}
-           \hlkwc{nodes}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"lung"}\hlstd{,} \hlstr{"bronc"}\hlstd{),} \hlkwc{type}\hlstd{=}\hlstr{"joint"}\hlstd{)}
+\hlstd{yn} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"yes"}\hlstd{,}\hlstr{"no"}\hlstd{)}
+\hlstd{flist} \hlkwb{<-} \hlkwd{c}\hlstd{(}
+    \hlopt{~}\hlstd{asia,} \hlopt{~}\hlstd{tub}\hlopt{|}\hlstd{asia,} \hlopt{~}\hlstd{smoke,} \hlopt{~}\hlstd{lung}\hlopt{|}\hlstd{smoke,} \hlopt{~}\hlstd{bronc}\hlopt{|}\hlstd{smoke,} \hlopt{~}\hlstd{either}\hlopt{|}\hlstd{lung}\hlopt{:}\hlstd{tub,}
+    \hlopt{~}\hlstd{xray}\hlopt{|}\hlstd{either,} \hlopt{~}\hlstd{dysp}\hlopt{|}\hlstd{bronc}\hlopt{:}\hlstd{either}
+\hlstd{)}
+
+\hlstd{chest_cpt} \hlkwb{<-} \hlkwd{lapply}\hlstd{(flist,} \hlkwa{function}\hlstd{(}\hlkwc{f}\hlstd{)\{}
+    \hlkwd{cpt}\hlstd{(f,} \hlkwc{levels}\hlstd{=yn)\}}
+    \hlstd{)}
+\hlstd{bn} \hlkwb{<-} \hlkwd{compileCPT}\hlstd{(chest_cpt) |>} \hlkwd{grain}\hlstd{()}
+
+\hlstd{lst} \hlkwb{<-} \hlkwd{list}\hlstd{(}\hlkwc{asia}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{99}\hlstd{),}
+            \hlkwc{tub}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{5}\hlstd{,} \hlnum{95}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{99}\hlstd{),}
+            \hlkwc{smoke}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{5}\hlstd{,} \hlnum{5}\hlstd{),}
+            \hlkwc{lung}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{9}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{99}\hlstd{),}
+            \hlkwc{bronc}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{6}\hlstd{,} \hlnum{4}\hlstd{,} \hlnum{3}\hlstd{,} \hlnum{7}\hlstd{),}
+            \hlkwc{either}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{1}\hlstd{),}
+            \hlkwc{xray}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{98}\hlstd{,} \hlnum{2}\hlstd{,} \hlnum{5}\hlstd{,} \hlnum{95}\hlstd{),}
+            \hlkwc{dysp}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{9}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{7}\hlstd{,} \hlnum{3}\hlstd{,} \hlnum{8}\hlstd{,} \hlnum{2}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{9}\hlstd{))}
+
+\hlstd{bn} \hlkwb{<-} \hlkwd{updateCPT}\hlstd{(bn, lst)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\item Consider querying a network where focus is on 
+  marginal distributions (the default). If all variables have the same
+  levels (as the case is here), the output can be coerced to a
+  dataframe:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{querygrain}\hlstd{(chest_bn,} \hlkwc{nodes}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"lung"}\hlstd{,} \hlstr{"bronc"}\hlstd{),} \hlkwc{simplify} \hlstd{=} \hlnum{TRUE}\hlstd{)}
 \end{alltt}
 \begin{verbatim}
-##      bronc
-## lung          yes         no
-##   yes 0.000283500 0.00016450
-##   no  0.003368925 0.00068445
+##         yes    no
+## lung  0.055 0.945
+## bronc 0.450 0.550
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
+
+In the more general case the output can be coerced to a list of dataframes
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{querygrain}\hlstd{(chest_bn,} \hlkwc{nodes}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"lung"}\hlstd{,} \hlstr{"bronc"}\hlstd{),} \hlkwc{result}\hlstd{=}\hlstr{"data.frame"}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## $lung
+##   lung  Freq
+## 1  yes 0.055
+## 2   no 0.945
+## 
+## $bronc
+##   bronc Freq
+## 1   yes 0.45
+## 2    no 0.55
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\item A typical use of \bn\ involves setting evidence and then querying the network afterwards. This can all be done in one call of \code{querygrain}:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{querygrain}\hlstd{(chest_bn,}
+           \hlkwc{evidence}\hlstd{=}\hlkwd{list}\hlstd{(}\hlkwc{asia}\hlstd{=}\hlstr{"yes"}\hlstd{,} \hlkwc{dysp}\hlstd{=}\hlstr{"yes"}\hlstd{),}
+           \hlkwc{nodes}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"lung"}\hlstd{,} \hlstr{"bronc"}\hlstd{),} \hlkwc{simplify} \hlstd{=} \hlnum{TRUE}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+##              yes        no
+## lung  0.09952515 0.9004749
+## bronc 0.81140207 0.1885979
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+Evidence can be also be given as a vector of weights (cfr Section~\ref{sec:hard-soft})
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{querygrain}\hlstd{(chest_bn,}
+           \hlkwc{evidence}\hlstd{=}\hlkwd{list}\hlstd{(}\hlkwc{asia}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{0}\hlstd{),} \hlkwc{dysp}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{0}\hlstd{)),}
+           \hlkwc{nodes}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"lung"}\hlstd{,} \hlstr{"bronc"}\hlstd{),} \hlkwc{simplify} \hlstd{=} \hlnum{TRUE}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+##              yes        no
+## lung  0.09952515 0.9004749
+## bronc 0.81140207 0.1885979
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+Nodes on which evidence is given are are not reported unless \code{exclude=FALSE}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{querygrain}\hlstd{(chest_bn,}
+           \hlkwc{evidence}\hlstd{=}\hlkwd{list}\hlstd{(}\hlkwc{asia}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{0}\hlstd{),} \hlkwc{dysp}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{0}\hlstd{)),}
+           \hlkwc{nodes}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"lung"}\hlstd{,} \hlstr{"bronc"}\hlstd{,} \hlstr{"asia"}\hlstd{,} \hlstr{"dysp"}\hlstd{),}
+           \hlkwc{exclude}\hlstd{=}\hlnum{FALSE}\hlstd{,} \hlkwc{simplify} \hlstd{=} \hlnum{TRUE}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+##              yes        no
+## asia  1.00000000 0.0000000
+## lung  0.09952515 0.9004749
+## bronc 0.81140207 0.1885979
+## dysp  1.00000000 0.0000000
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+
+
+If \code{nodes} are not specified, queries for all nodes without evidence are reported.
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{querygrain}\hlstd{(chest_bn,}
+           \hlkwc{evidence}\hlstd{=}\hlkwd{list}\hlstd{(}\hlkwc{asia}\hlstd{=}\hlstr{"yes"}\hlstd{,} \hlkwc{dysp}\hlstd{=}\hlstr{"yes"}\hlstd{),}
+           \hlkwc{simplify} \hlstd{=} \hlnum{TRUE}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+##               yes        no
+## tub    0.08775096 0.9122490
+## lung   0.09952515 0.9004749
+## either 0.18229985 0.8177001
+## bronc  0.81140207 0.1885979
+## smoke  0.62591986 0.3740801
+## xray   0.21953886 0.7804611
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+If \code{nodes} are not specified and \code{exclude=FALSE}, then queries for all nodes are reported.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{querygrain}\hlstd{(chest_bn,}
+           \hlkwc{evidence}\hlstd{=}\hlkwd{list}\hlstd{(}\hlkwc{asia}\hlstd{=}\hlstr{"yes"}\hlstd{,} \hlkwc{dysp}\hlstd{=}\hlstr{"yes"}\hlstd{),}
+           \hlkwc{exclude} \hlstd{=} \hlnum{FALSE}\hlstd{,} \hlkwc{simplify} \hlstd{=} \hlnum{TRUE}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+##               yes        no
+## asia   1.00000000 0.0000000
+## tub    0.08775096 0.9122490
+## lung   0.09952515 0.9004749
+## either 0.18229985 0.8177001
+## bronc  0.81140207 0.1885979
+## smoke  0.62591986 0.3740801
+## dysp   1.00000000 0.0000000
+## xray   0.21953886 0.7804611
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+
+\end{enumerate}
 
 
 
@@ -556,84 +771,774 @@ conditional probabilities are (under the model) undefined:
 \end{alltt}
 \begin{verbatim}
 ##      bronc
-## lung  yes no
-##   yes   0  0
-##   no    0  0
+## lung  yes  no
+##   yes NaN NaN
+##   no  NaN NaN
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
 
 
 
-Zero probailities (or almost zero probabilities) also arise in a
-different in a different setting. Consider this example
+
+\section{Hard  and virtual (likelihood) evidence}
+\label{sec:hard-virt-likel}
+\label{sec:hard-soft}
+
+Below we describe  how to work with virtual evidence (also known
+as soft evidence or likelihood evidence) in \grbn. This is done via the function
+\code{setEvidence()}.
+
+The clique potential representation in a Bayesian network gives
+\begin{displaymath}
+  p(x) \propto \psi(x) = \prod_{C} \psi_C(x_C).
+\end{displaymath}
+
+Here we recall that the whole idea in computations with Bayesian
+networks is to avoid calculation the product on the right hand
+side above. Instead computations are based on propagation (multiplying,
+dividing and summing clique potentials $\psi_C$ in an appropriate
+order, and such an appropriate order comes from a junction tree).
+The normalizing constant, say $c=\sum_x \psi(x)$, comes out of
+propagation as a ``by product''.
+
+Suppose a set of nodes $E$ are known to have a specific value,
+i.e. $x_E=x^*_E$. This is called hard evidence. The probability of
+the event $x_E=x^*_E$ is
+\begin{displaymath}
+  p(x_E=x^*_E)=E_p\{I(x_E=x^*_E)\} = \sum_x I(x_E=x^*_E) p(x)
+  = \frac{1}{c} \sum_x I(x_E=x^*_E) \psi(x)
+\end{displaymath}
+
+The computations are based on modifying the clique potentials $\psi_C$
+by giving value zero to states in $\psi_C$ which are not consistent
+with $x_E=x^*_E$. This can be achieved with an indicator function, say
+$L_C(x_C)$ such that we obtain a set of new potentials $\tilde \psi_C(x)
+= L_C(x_C) \psi_C(x_C)$. Propagation with these new potentials gives,
+as a by product, $\tilde c=\sum \tilde \psi(x)$ where
+$\tilde\psi(x)= \prod_C \tilde\psi_C(x_C)$. Consequently, we have
+$p(x_E=x^*_E)=\tilde c / c$.
+
+In a more general setting we may have non--negative weights $L(x)$ for
+each value of $x$. We may calculate
+\begin{displaymath}
+  E_p\{L(X)\} = \sum_x L(x)p(x)
+\end{displaymath}
+If $L(X)$ factorizes as $L(X)= \prod_C L_C(X_C)$ then the computations are
+carried out as outlined above, i.e.\ by the message passing scheme.
+
+
+\subsection{An excerpt of the chest clinic network}
+\label{sec:an-excerpt-chest}
+
+
+Consider the following excerpt of the chest clinic network.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{yn} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"yes"}\hlstd{,}\hlstr{"no"}\hlstd{)}
-\hlstd{eps} \hlkwb{<-} \hlnum{1e-100}
-\hlstd{a}    \hlkwb{<-} \hlkwd{cptable}\hlstd{(}\hlopt{~}\hlstd{a,}   \hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{, eps),} \hlkwc{levels}\hlstd{=yn)}
-\hlstd{b.a}  \hlkwb{<-} \hlkwd{cptable}\hlstd{(}\hlopt{~}\hlstd{b}\hlopt{+}\hlstd{a,} \hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{, eps, eps,} \hlnum{1}\hlstd{),} \hlkwc{levels}\hlstd{=yn)}
-\hlstd{c.b}  \hlkwb{<-} \hlkwd{cptable}\hlstd{(}\hlopt{~}\hlstd{c}\hlopt{+}\hlstd{b,} \hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{, eps, eps,} \hlnum{1}\hlstd{),} \hlkwc{levels}\hlstd{=yn)}
-\hlstd{plist} \hlkwb{<-} \hlkwd{compileCPT}\hlstd{(}\hlkwd{list}\hlstd{(a, b.a, c.b))}
-\hlstd{bn}   \hlkwb{<-} \hlkwd{grain}\hlstd{(plist)}
-\hlstd{tt}   \hlkwb{<-} \hlkwd{querygrain}\hlstd{(bn,} \hlkwc{type}\hlstd{=}\hlstr{"joint"}\hlstd{)}
-\hlkwd{ftable}\hlstd{(tt)}
+\hlstd{yn} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"yes"}\hlstd{,} \hlstr{"no"}\hlstd{)}
+\hlstd{a}    \hlkwb{<-} \hlkwd{cpt}\hlstd{(}\hlopt{~}\hlstd{asia,} \hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{99}\hlstd{),} \hlkwc{levels}\hlstd{=yn)}
+\hlstd{t.a}  \hlkwb{<-} \hlkwd{cpt}\hlstd{(}\hlopt{~}\hlstd{tub}\hlopt{|}\hlstd{asia,} \hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{5}\hlstd{,} \hlnum{95}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{99}\hlstd{),} \hlkwc{levels}\hlstd{=yn)}
+
+\hlstd{plist1} \hlkwb{<-} \hlkwd{compileCPT}\hlstd{(}\hlkwd{list}\hlstd{(a, t.a))}
+\hlstd{chest1} \hlkwb{<-} \hlkwd{grain}\hlstd{(plist1)}
+\hlkwd{querygrain}\hlstd{(chest1,} \hlkwc{simplify} \hlstd{=} \hlnum{TRUE}\hlstd{)}
 \end{alltt}
 \begin{verbatim}
-##         c    yes     no
-## a   b                  
-## yes yes    1e+00 1e-100
-##     no    1e-200 1e-100
-## no  yes   1e-200 1e-300
-##     no    1e-200 1e-100
-\end{verbatim}
-\begin{alltt}
-\hlkwd{querygrain}\hlstd{(}\hlkwd{setEvidence}\hlstd{(bn,} \hlkwc{evidence}\hlstd{=}\hlkwd{list}\hlstd{(}\hlkwc{a}\hlstd{=}\hlstr{"no"}\hlstd{,} \hlkwc{c}\hlstd{=}\hlstr{"yes"}\hlstd{)))}
-\end{alltt}
-\begin{verbatim}
-## $b
-## b
-## yes  no 
-## 0.5 0.5
+##         yes     no
+## asia 0.0100 0.9900
+## tub  0.0104 0.9896
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
 
-No problem so far, but if \code{eps} is made smaller numerical
-problems arise:\footnote{Her vil det netop vaere smart at laegge tabeller ind separat!!}
+\subsection{Specifying hard evidence} 
+\label{sec:hard-evidence}
+
+Suppose we want to make a diagnosis about tuberculosis given the evidence that a person has recently been to Asia.
+The function \code{setEvidence()} can  be used for this purpose. The following forms are equivalent
+
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{eps}  \hlkwb{<-} \hlnum{1e-200}
-\hlstd{a}    \hlkwb{<-} \hlkwd{cptable}\hlstd{(}\hlopt{~}\hlstd{a,}   \hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{, eps),}\hlkwc{levels}\hlstd{=yn)}
-\hlstd{b.a}  \hlkwb{<-} \hlkwd{cptable}\hlstd{(}\hlopt{~}\hlstd{b}\hlopt{+}\hlstd{a,} \hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{, eps, eps,} \hlnum{1}\hlstd{),}\hlkwc{levels}\hlstd{=yn)}
-\hlstd{c.b}  \hlkwb{<-} \hlkwd{cptable}\hlstd{(}\hlopt{~}\hlstd{c}\hlopt{+}\hlstd{b,} \hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{, eps, eps,} \hlnum{1}\hlstd{),}\hlkwc{levels}\hlstd{=yn)}
-\hlstd{plist} \hlkwb{<-} \hlkwd{compileCPT}\hlstd{(}\hlkwd{list}\hlstd{(a, b.a, c.b))}
-\hlstd{bn}   \hlkwb{<-} \hlkwd{grain}\hlstd{(plist)}
-\hlstd{tt}   \hlkwb{<-} \hlkwd{querygrain}\hlstd{(bn,} \hlkwc{type}\hlstd{=}\hlstr{"joint"}\hlstd{)}
-\hlkwd{ftable}\hlstd{(tt)}
+\hlkwd{setEvidence}\hlstd{(chest1,} \hlkwc{evidence}\hlstd{=}\hlkwd{list}\hlstd{(}\hlkwc{asia}\hlstd{=}\hlstr{"yes"}\hlstd{))}
 \end{alltt}
 \begin{verbatim}
-##         c    yes     no
-## a   b                  
-## yes yes    1e+00 1e-200
-##     no     0e+00 1e-200
-## no  yes    0e+00  0e+00
-##     no     0e+00 1e-200
-\end{verbatim}
-\begin{alltt}
-\hlkwd{querygrain}\hlstd{(}\hlkwd{setEvidence}\hlstd{(bn,} \hlkwc{evidence}\hlstd{=}\hlkwd{list}\hlstd{(}\hlkwc{a}\hlstd{=}\hlstr{"no"}\hlstd{,} \hlkwc{c}\hlstd{=}\hlstr{"yes"}\hlstd{)))}
-\end{alltt}
-\begin{verbatim}
-## $b
-## b
-## yes  no 
-## NaN NaN
+## Independence network: Compiled: TRUE Propagated: TRUE Evidence: TRUE
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
+
+We call such evidence hard evidence because the state of the variables are known with certainty.
+
+
+% <<>>=
+% querygrain(chest1, nodes="tub", simplify = TRUE)
+% querygrain(chest1, evidence=list(asia="yes"), simplify = TRUE)
+% @ %def
+
+\subsection{Virtual evidence (also called soft or likelihood evidence)}
+\label{sec:virt-evid-likel}
+
+Suppose we do not know with certainty whether a patient has
+recently been to Asia (perhaps the patient is too ill to
+tell). However the patient (if he/she is Caucasian) may be unusually
+tanned and this lends support to the hypothesis of a recent visit to
+Asia.
+
+To accommodate this setting we create an extended network with an extra
+node for which we enter evidence.
+
+
+However, it is NOT necessary to do
+so in practice, because we may equivalently enter the virtual evidence
+in the original network.
+
+We can then introduce a new variable
+\code{guess\_asia} with \code{asia} as its only parent.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{g.a} \hlkwb{<-} \hlkwd{cpt}\hlstd{(}\hlopt{~}\hlstd{guess_asia}\hlopt{+}\hlstd{asia,} \hlkwc{levels}\hlstd{=yn,}
+              \hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{.8}\hlstd{,} \hlnum{.2}\hlstd{,} \hlnum{.1}\hlstd{,} \hlnum{.9}\hlstd{))}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+This reflects the assumption that for patients who have recently been
+to Asia we would (correctly) guess so in 80\% of the cases, whereas for patients who have
+not recently been to A we would (erroneously) guess that they have
+recently been to Asia in 10\% of the cases.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{plist2} \hlkwb{<-} \hlkwd{compileCPT}\hlstd{(}\hlkwd{list}\hlstd{(a, t.a, g.a ))}
+\hlstd{chest2} \hlkwb{<-} \hlkwd{grain}\hlstd{(plist2)}
+\hlkwd{querygrain}\hlstd{(chest2,} \hlkwc{simplify} \hlstd{=} \hlnum{TRUE}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+##               yes     no
+## asia       0.0100 0.9900
+## tub        0.0104 0.9896
+## guess_asia 0.1070 0.8930
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+
+Now specify the guess or judgment, that the person has recently been
+to Asia:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{querygrain}\hlstd{(chest2,} \hlkwc{evidence}\hlstd{=}\hlkwd{list}\hlstd{(}\hlkwc{guess_asia}\hlstd{=}\hlstr{"yes"}\hlstd{),}
+           \hlkwc{simplify}\hlstd{=}\hlnum{TRUE}\hlstd{,} \hlkwc{exclude} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+##                   yes        no
+## asia       0.07476636 0.9252336
+## tub        0.01299065 0.9870093
+## guess_asia 1.00000000 0.0000000
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\subsection{Specifying virtual evidence}
+\label{sec:spec-virt-evid}
+
+The same guess or judgment can be specified as virtual evidence
+(also called likelihood evidence) for the original network:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{chest1_ve} \hlkwb{<-} \hlstd{chest1 |>} \hlkwd{setEvidence}\hlstd{(}\hlkwc{evidence}\hlstd{=}\hlkwd{list}\hlstd{(}\hlkwc{asia}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{.8}\hlstd{,} \hlnum{.1}\hlstd{)))}
+\hlstd{chest1_ve |>} \hlkwd{querygrain}\hlstd{(}\hlkwc{simplify} \hlstd{=} \hlnum{TRUE}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+##            yes        no
+## tub 0.01299065 0.9870093
+\end{verbatim}
+\begin{alltt}
+\hlkwd{getEvidence}\hlstd{(chest1_ve,} \hlkwc{short}\hlstd{=}\hlnum{FALSE}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## $nodes
+## [1] "asia"
+## 
+## $is.hard.evidence
+## [1] FALSE
+## 
+## $hard.state
+## [1] NA
+## 
+## $evidence
+## $evidence[[1]]
+## asia
+## yes  no 
+## 0.8 0.1
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+This also means that specifying that specifying \code{asia='yes'} can
+be done as
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{querygrain}\hlstd{(chest1,} \hlkwc{evidence}\hlstd{=}\hlkwd{list}\hlstd{(}\hlkwc{asia}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{0}\hlstd{)),} \hlkwc{simplify}\hlstd{=T)}
+\end{alltt}
+\begin{verbatim}
+##      yes   no
+## tub 0.05 0.95
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\subsection{Extending networks to include other types of variables}
+\label{sec:ixture}
+
+\grbn\ only handles discrete variables with a finite state space, but
+using likelihood evidence it is possible to work with networks with
+both discrete and continuous variables (or other types of variables).
+This is possible only when he networks have a specific structure. This
+is possible when no discrete variable has non--discrete parents.
+
+Take a simple example: Form a \bn\ for variables $x=(x_1, x_2)$. 
+Conceptually augment this network with additional variables $y=(y_1, y_2)$ where
+$y_1|x_1=k \sim N(\mu_k, v)$ and
+$y_2|x_2=k \sim Poi(\lambda_k)$ for $k=1,2$. Also we make the assumption
+that $y_1$ and $y_2$ are independent given $x=(x_1, x_2)$. This gives the DAG
+below:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{plot}\hlstd{(}\hlkwd{dag}\hlstd{(}\hlopt{~}\hlstd{y1}\hlopt{:}\hlstd{x1} \hlopt{+} \hlstd{x2}\hlopt{:}\hlstd{x1} \hlopt{+} \hlstd{y2}\hlopt{:}\hlstd{x2))}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figures/grain-unnamed-chunk-34-1} 
+\end{knitrout}
+
+
+A \bn\ for $x$ can be constructed as:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{u} \hlkwb{<-} \hlkwd{list}\hlstd{(}\hlkwc{x1}\hlstd{=yn,} \hlkwc{x2}\hlstd{=yn)}
+\hlstd{x1} \hlkwb{<-} \hlkwd{cpt}\hlstd{(}\hlopt{~}\hlstd{x1,} \hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{3}\hlstd{),} \hlkwc{levels}\hlstd{=yn)}
+\hlstd{x2} \hlkwb{<-} \hlkwd{cpt}\hlstd{(}\hlopt{~}\hlstd{x2}\hlopt{|}\hlstd{x1,} \hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{3}\hlstd{,} \hlnum{3}\hlstd{,} \hlnum{1}\hlstd{),} \hlkwc{levels}\hlstd{=yn)}
+\hlstd{bn} \hlkwb{<-} \hlkwd{grain}\hlstd{(}\hlkwd{compileCPT}\hlstd{(x1, x2))}
+\hlkwd{querygrain}\hlstd{(bn,} \hlkwc{simplify}\hlstd{=}\hlnum{TRUE}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+##      yes    no
+## x1 0.250 0.750
+## x2 0.625 0.375
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+The augmentation of $y|x$ can go along these lines: The parameters describing $y|x$ are set to be:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{v} \hlkwb{<-} \hlnum{2}
+\hlstd{mu} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlkwc{mu1}\hlstd{=}\hlnum{2}\hlstd{,} \hlkwc{mu2}\hlstd{=}\hlnum{5}\hlstd{)}
+\hlstd{lambda} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlkwc{lambda1}\hlstd{=}\hlnum{0}\hlstd{,} \hlkwc{lambda2}\hlstd{=}\hlnum{7}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+Suppose we observe $y_1 = y_1^*$. Then
+\begin{displaymath}
+  p(x|y_1= y_1^*)\propto p(x_1)p(x_2|x_1) p(y_1=y_1^*|x_1) =  p(x_1)p(x_2|x_1) L_1(x_1)
+\end{displaymath}
+where $L_1(x_1)$ denotes the likelihood. In a \bn\ setting this
+corresponds to changing $p(x_1)$ as
+\begin{displaymath}
+  p(x_1) \leftarrow p(x_1)L_1(x_1)
+\end{displaymath}
+and then carry on with propagation. This can be achieved in different ways. One is by setting the likelihood as evidence:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{y1} \hlkwb{<-} \hlnum{1} \hlcom{# Observed value for y1}
+\hlstd{lik1} \hlkwb{<-} \hlkwd{dnorm}\hlstd{(y1,} \hlkwc{mean}\hlstd{=mu,} \hlkwc{sd}\hlstd{=}\hlkwd{sqrt}\hlstd{(v))}
+\hlkwd{querygrain}\hlstd{(bn,} \hlkwc{exclude} \hlstd{=} \hlnum{FALSE}\hlstd{,}
+           \hlkwc{evidence}\hlstd{=}\hlkwd{list}\hlstd{(}\hlkwc{x1}\hlstd{=lik1),} \hlkwc{simplify} \hlstd{=} \hlnum{TRUE}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+##          yes         no
+## x1 0.9340965 0.06590353
+## x2 0.2829518 0.71704823
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+An alternative is to explicitly modify the CPT which specifies $p(x_1)$:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{x1_upd} \hlkwb{<-} \hlkwd{getgrain}\hlstd{(bn,} \hlstr{"cptlist"}\hlstd{)}\hlopt{$}\hlstd{x1} \hlopt{*} \hlstd{lik1}
+\hlstd{bn2} \hlkwb{<-} \hlkwd{updateCPT}\hlstd{(bn,} \hlkwd{list}\hlstd{(}\hlkwc{x1}\hlstd{=x1_upd))}
+\hlkwd{querygrain}\hlstd{(bn2)}
+\end{alltt}
+\begin{verbatim}
+## $x1
+## x1
+##        yes         no 
+## 0.93409647 0.06590353 
+## 
+## $x2
+## x2
+##       yes        no 
+## 0.2829518 0.7170482
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+A final remark: The conditional distribtion of
+$y_1$ is normal, but the unconditional distribtion is a mixture of
+normals. Likewise, the conditional distribution of
+$y_2$ is poisson, but the unconditional distribtion is a mixture of
+poissons. Evidence on, say $y_1$ changes the belief in $x_1$ and
+$x_2$ and this in turn changes the distribution of
+$y_2$ (evidence changes the mixture weights.)  
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{set.seed}\hlstd{(}\hlnum{2022}\hlstd{)}
+\hlstd{nsim} \hlkwb{<-} \hlnum{1000}
+\hlstd{xsim1} \hlkwb{<-} \hlkwd{simulate}\hlstd{(bn, nsim)}
+\hlkwd{head}\hlstd{(xsim1)}
+\end{alltt}
+\begin{verbatim}
+##    x1  x2
+## 1  no  no
+## 2 yes  no
+## 3  no  no
+## 4  no yes
+## 5  no yes
+## 6  no  no
+\end{verbatim}
+\begin{alltt}
+\hlstd{xsim2} \hlkwb{<-} \hlkwd{simulate}\hlstd{(bn2, nsim)}
+\hlkwd{head}\hlstd{(xsim2)}
+\end{alltt}
+\begin{verbatim}
+##    x1  x2
+## 1 yes  no
+## 2 yes yes
+## 3 yes yes
+## 4  no yes
+## 5 yes yes
+## 6 yes  no
+\end{verbatim}
+\begin{alltt}
+\hlkwd{par}\hlstd{(}\hlkwc{mfrow}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{))}
+\hlstd{y2sim} \hlkwb{<-} \hlkwd{rpois}\hlstd{(}\hlkwc{n}\hlstd{=nsim,} \hlkwc{lambda}\hlstd{=lambda[xsim1}\hlopt{$}\hlstd{x2])}
+\hlstd{y22sim} \hlkwb{<-} \hlkwd{rpois}\hlstd{(}\hlkwc{n}\hlstd{=nsim,} \hlkwc{lambda}\hlstd{=lambda[xsim2}\hlopt{$}\hlstd{x2])}
+\hlstd{y2sim |>} \hlkwd{hist}\hlstd{(}\hlkwc{prob}\hlstd{=T,} \hlkwc{ylim}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{.4}\hlstd{),} \hlkwc{breaks}\hlstd{=}\hlnum{10}\hlstd{)}
+\hlstd{y22sim |>} \hlkwd{hist}\hlstd{(}\hlkwc{prob}\hlstd{=T,} \hlkwc{ylim}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{.4}\hlstd{),} \hlkwc{breaks}\hlstd{=}\hlnum{10}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figures/grain-unnamed-chunk-39-1} 
+\end{knitrout}
+
+
+
+
+
+
+
+
+The joint distribution is
+\begin{displaymath}
+  p(x,y_1, y_2) = p(x)p(y_1|x)p(y_2|x)
+\end{displaymath}
+
+Suppose the interest is in the distribution of $x$ given
+$y_1=y_1^*$ and $y_2=y_2^*$. We then have
+\begin{displaymath}
+  p(x|y_1^*, y_2^*) \propto p(x) p(y_1^*|x)p(y_2^*|x) =
+  p(x) L_1(x) L_2(x)
+\end{displaymath}
+
+
+
+
+
+\section{Building networks from data}
+\label{sec:using-textttsm-argum}
+
+The following two graphs specify the same model:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{dG}  \hlkwb{<-} \hlkwd{dag}\hlstd{(}\hlopt{~}\hlstd{A}\hlopt{:}\hlstd{B} \hlopt{+} \hlstd{B}\hlopt{:}\hlstd{C)}
+\hlstd{uG}  \hlkwb{<-} \hlkwd{ug}\hlstd{(}\hlopt{~}\hlstd{A}\hlopt{:}\hlstd{B} \hlopt{+} \hlstd{B}\hlopt{:}\hlstd{C)}
+\hlkwd{par}\hlstd{(}\hlkwc{mfrow}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{));} \hlkwd{plot}\hlstd{( dG );} \hlkwd{plot}\hlstd{( uG )}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figures/grain-unnamed-chunk-40-1} 
+\end{knitrout}
+
+Suppose data is
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{dat} \hlkwb{<-} \hlkwd{tabNew}\hlstd{(}\hlkwd{c}\hlstd{(}\hlstr{"A"}\hlstd{,} \hlstr{"B"}\hlstd{,} \hlstr{"C"}\hlstd{),} \hlkwc{levels}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"lev1"}\hlstd{,} \hlstr{"lev2"}\hlstd{),} \hlcom{#levels=c(2,2,2),}
+              \hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{2}\hlstd{,} \hlnum{3}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{2}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{4}\hlstd{))}
+\hlkwd{class}\hlstd{(dat)}
+\end{alltt}
+\begin{verbatim}
+## [1] "array"
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+A network can be built from data using:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{gr.dG} \hlkwb{<-} \hlkwd{compile}\hlstd{(}\hlkwd{grain}\hlstd{( dG,} \hlkwc{data}\hlstd{=dat ))}
+\hlstd{gr.uG} \hlkwb{<-} \hlkwd{compile}\hlstd{(}\hlkwd{grain}\hlstd{( uG,} \hlkwc{data}\hlstd{=dat ))}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+However, when there are zeros in the table, care must be taken.
+
+\subsection{Extracting information from tables}
+\label{sec:extr-inform-from}
+
+In the process of creating networks, conditional probability tables
+are extracted when the graph is a dag and clique potentials are
+extracted when the graph is a chordal (i.e.\ triangulated) undirected
+graph. This takes place as follows (internally):
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{extractCPT}\hlstd{(dat, dG) |>} \hlkwd{c}\hlstd{()} \hlcom{## FIXME: Printing problem}
+\end{alltt}
+\begin{verbatim}
+## $A
+##       B
+## A           lev1 lev2
+##   lev1 0.3333333  0.3
+##   lev2 0.6666667  0.7
+## 
+## $B
+##       C
+## B      lev1  lev2
+##   lev1    0 0.375
+##   lev2    1 0.625
+## 
+## $C
+## C
+##      lev1      lev2 
+## 0.3846154 0.6153846
+\end{verbatim}
+\begin{alltt}
+\hlkwd{extractPOT}\hlstd{(dat, uG) |>} \hlkwd{c}\hlstd{()} \hlcom{## FIXME: Printing problem}
+\end{alltt}
+\begin{verbatim}
+## [[1]]
+##       A
+## B            lev1      lev2
+##   lev1 0.07692308 0.1538462
+##   lev2 0.23076923 0.5384615
+## 
+## [[2]]
+##       B
+## C      lev1 lev2
+##   lev1    0  0.5
+##   lev2    1  0.5
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+The conditional probability table $P(A|B)$ contains \code{NaN}s
+because
+\begin{displaymath}
+  P(A|B=B1)=\frac{n(A,B=B1)}{\sum_A n(A,B=B1)} = \frac{0}{0} = \mbox{NaN}
+\end{displaymath}
+
+For this reason the network \code{gr.dG} above will fail to compile
+whereas \code{gr.uG} will work, but it may not give the expected results.
+
+\subsection{Using smooth}
+\label{sec:using-smooth}
+
+To illustrate what goes on, we can extract the distributions from data
+as follows:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{p.A_B} \hlkwb{<-} \hlkwd{tabDiv}\hlstd{(dat,} \hlkwd{tabMarg}\hlstd{(dat,} \hlstr{"B"}\hlstd{))} \hlcom{## p(A|B)}
+\hlstd{p.B}   \hlkwb{<-} \hlkwd{tabMarg}\hlstd{(dat,} \hlstr{"B"}\hlstd{)} \hlopt{/} \hlkwd{sum}\hlstd{(dat)}   \hlcom{## p(B)}
+\hlstd{p.AB2} \hlkwb{<-} \hlkwd{tabMult}\hlstd{(p.A_B, p.B)}            \hlcom{## P(AB)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+However, the result is slightly misleading because \code{tabDiv}
+sets $0/0=0$.
+In \grain\ there is a \code{smooth} argument that will add a small
+number to the cell entries before extracting tables, i.e.
+\begin{displaymath}
+  P(A|B=B1)=\frac{n(A,B=B1)+\epsilon}{\sum_A ( n(A,B=B1) + \epsilon) }
+  = \frac{\epsilon}{2\epsilon} = 0.5
+\end{displaymath}
+and
+\begin{displaymath}
+  P(B)= \frac{\sum_A (n(A,B)+\epsilon)}{\sum_{AB} (n(A,B)+\epsilon)}
+\end{displaymath}
+
+We can mimic this as follows:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{e} \hlkwb{<-} \hlnum{1e-2}
+\hlstd{(dat.e} \hlkwb{<-} \hlstd{dat} \hlopt{+} \hlstd{e)}
+\end{alltt}
+\begin{verbatim}
+## , , C = lev1
+## 
+##       B
+## A      lev1 lev2
+##   lev1 0.01 2.01
+##   lev2 0.01 3.01
+## 
+## , , C = lev2
+## 
+##       B
+## A      lev1 lev2
+##   lev1 1.01 1.01
+##   lev2 2.01 4.01
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{pe.A_B} \hlkwb{<-} \hlkwd{tabDiv}\hlstd{(dat.e,} \hlkwd{tabMarg}\hlstd{(dat.e,} \hlstr{"B"}\hlstd{))}
+\hlstd{pe.B}   \hlkwb{<-} \hlkwd{tabMarg}\hlstd{(dat.e,} \hlstr{"B"}\hlstd{)} \hlopt{/} \hlkwd{sum}\hlstd{(dat.e)}
+\hlstd{pe.AB}  \hlkwb{<-} \hlkwd{tabMult}\hlstd{(pe.A_B, pe.B)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+However this resulting joint distribution is different from what is
+obtained from the adjusted table itself
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{dat2.e} \hlkwb{<-} \hlstd{dat.e} \hlopt{/} \hlkwd{sum}\hlstd{(dat.e)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{(dat2.e} \hlopt{-} \hlstd{pe.AB)  |>} \hlkwd{ftable}\hlstd{()}
+\end{alltt}
+\begin{verbatim}
+##           C       lev1       lev2
+## A    B                           
+## lev1 lev1    0.0000000 -0.0764526
+##      lev2    0.0764526  0.0000000
+## lev2 lev1    0.0000000 -0.0764526
+##      lev2    0.0764526  0.0000000
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+This difference appears in the \grbn\ networks.
+
+\subsection{Extracting tables}
+\label{sec:extracting-tables}
+
+One can do
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{gr.dG} \hlkwb{<-} \hlkwd{compile}\hlstd{(}\hlkwd{grain}\hlstd{(dG,} \hlkwc{data}\hlstd{=dat,} \hlkwc{smooth}\hlstd{=e))}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+which (internally) corresponds to
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{extractCPT}\hlstd{(dat, dG,} \hlkwc{smooth}\hlstd{=e)  |>} \hlkwd{c}\hlstd{()}
+\end{alltt}
+\begin{verbatim}
+## $A
+##       B
+## A           lev1      lev2
+##   lev1 0.3344371 0.3003992
+##   lev2 0.6655629 0.6996008
+## 
+## $B
+##       C
+## B             lev1      lev2
+##   lev1 0.001992032 0.3753117
+##   lev2 0.998007968 0.6246883
+## 
+## $C
+## C
+##      lev1      lev2 
+## 0.3847926 0.6152074
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+We get
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{querygrain}\hlstd{(gr.dG,} \hlkwc{exclude}\hlstd{=}\hlnum{FALSE}\hlstd{,} \hlkwc{simplify}\hlstd{=}\hlnum{TRUE}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+##        lev1      lev2
+## A 0.3082845 0.6917155
+## B 0.2316611 0.7683389
+## C 0.3847926 0.6152074
+\end{verbatim}
+\begin{alltt}
+\hlkwd{querygrain}\hlstd{(gr.uG,} \hlkwc{exclude}\hlstd{=}\hlnum{FALSE}\hlstd{,} \hlkwc{simplify}\hlstd{=}\hlnum{TRUE}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+##        lev1      lev2
+## B 0.2307692 0.7692308
+## A 0.3076923 0.6923077
+## C 0.3846154 0.6153846
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+However, if we condition on \code{B=lev1} we get:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{querygrain}\hlstd{(gr.dG,} \hlkwc{evidence}\hlstd{=}\hlkwd{list}\hlstd{(}\hlkwc{B}\hlstd{=}\hlstr{"lev1"}\hlstd{),} \hlkwc{exclude}\hlstd{=}\hlnum{FALSE}\hlstd{,} \hlkwc{simplify}\hlstd{=}\hlnum{TRUE}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+##          lev1      lev2
+## A 0.334437086 0.6655629
+## B 1.000000000 0.0000000
+## C 0.003308796 0.9966912
+\end{verbatim}
+\begin{alltt}
+\hlkwd{querygrain}\hlstd{(gr.uG,} \hlkwc{evidence}\hlstd{=}\hlkwd{list}\hlstd{(}\hlkwc{B}\hlstd{=}\hlstr{"lev1"}\hlstd{),} \hlkwc{exclude}\hlstd{=}\hlnum{FALSE}\hlstd{,} \hlkwc{simplify}\hlstd{=}\hlnum{TRUE}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+##        lev1      lev2
+## B 1.0000000 0.0000000
+## A 0.3333333 0.6666667
+## C 0.0000000 1.0000000
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+so the ``problem'' with zero entries shows up in a different
+place. However, the answer is not necessarily wrong; the answer simply
+states that $P(A|B=lev1)$ is undefined.
+To ``remedy'' we can use the \code{smooth} argument:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{gr.uG} \hlkwb{<-} \hlkwd{compile}\hlstd{(}\hlkwd{grain}\hlstd{(uG,} \hlkwc{data}\hlstd{=dat,} \hlkwc{smooth}\hlstd{=e))}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+which (internally) corresponds to
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{c}\hlstd{(}\hlkwd{extractPOT}\hlstd{(dat, uG,} \hlkwc{smooth}\hlstd{=e)) |>} \hlkwd{c}\hlstd{()}
+\end{alltt}
+\begin{verbatim}
+## [[1]]
+##       A
+## B            lev1      lev2
+##   lev1 0.07745399 0.1541411
+##   lev2 0.23082822 0.5375767
+## 
+## [[2]]
+##       B
+## C             lev1 lev2
+##   lev1 0.003311258  0.5
+##   lev2 0.996688742  0.5
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+Notice that the results are not exactly identical:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{querygrain}\hlstd{(gr.dG,} \hlkwc{exclude}\hlstd{=}\hlnum{FALSE}\hlstd{,} \hlkwc{simplify}\hlstd{=}\hlnum{TRUE}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+##        lev1      lev2
+## A 0.3082845 0.6917155
+## B 0.2316611 0.7683389
+## C 0.3847926 0.6152074
+\end{verbatim}
+\begin{alltt}
+\hlkwd{querygrain}\hlstd{(gr.uG,} \hlkwc{exclude}\hlstd{=}\hlnum{FALSE}\hlstd{,} \hlkwc{simplify}\hlstd{=}\hlnum{TRUE}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+##        lev1      lev2
+## B 0.2315951 0.7684049
+## A 0.3082822 0.6917178
+## C 0.3849693 0.6150307
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{querygrain}\hlstd{(gr.dG,} \hlkwc{evidence}\hlstd{=}\hlkwd{list}\hlstd{(}\hlkwc{B}\hlstd{=}\hlstr{"lev1"}\hlstd{),} \hlkwc{exclude}\hlstd{=}\hlnum{FALSE}\hlstd{,} \hlkwc{simplify}\hlstd{=}\hlnum{TRUE}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+##          lev1      lev2
+## A 0.334437086 0.6655629
+## B 1.000000000 0.0000000
+## C 0.003308796 0.9966912
+\end{verbatim}
+\begin{alltt}
+\hlkwd{querygrain}\hlstd{(gr.uG,} \hlkwc{evidence}\hlstd{=}\hlkwd{list}\hlstd{(}\hlkwc{B}\hlstd{=}\hlstr{"lev1"}\hlstd{),} \hlkwc{exclude}\hlstd{=}\hlnum{FALSE}\hlstd{,} \hlkwc{simplify}\hlstd{=}\hlnum{TRUE}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+##          lev1      lev2
+## B 1.000000000 0.0000000
+## A 0.334437086 0.6655629
+## C 0.003311258 0.9966887
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+
 
 
 \subsection{Brute force computations and why they fail}
@@ -647,23 +1552,23 @@ construct the joint distribution (an array with $2^8=256$ entries) directly as:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{joint} \hlkwb{<-} \hlkwd{ar_prod_list}\hlstd{(chest_cpt)}
+\hlstd{joint} \hlkwb{<-} \hlkwd{tabListMult}\hlstd{(chest_cpt)}
 \hlkwd{dim}\hlstd{(joint)}
 \end{alltt}
 \begin{verbatim}
 ## [1] 2 2 2 2 2 2 2 2
 \end{verbatim}
 \begin{alltt}
-\hlstd{joint}  \hlopt{%>%} \hlstd{as.data.frame.table} \hlopt{%>%} \hlstd{head}
+\hlstd{joint  |>} \hlkwd{as.data.frame.table}\hlstd{() |>} \hlkwd{head}\hlstd{()}
 \end{alltt}
 \begin{verbatim}
-##   dysp bronc either lung tub asia smoke xray      Freq
-## 1  yes   yes    yes  yes yes  yes   yes  yes 1.323e-05
-## 2   no   yes    yes  yes yes  yes   yes  yes 1.470e-06
-## 3  yes    no    yes  yes yes  yes   yes  yes 6.860e-06
-## 4   no    no    yes  yes yes  yes   yes  yes 2.940e-06
-## 5  yes   yes     no  yes yes  yes   yes  yes 0.000e+00
-## 6   no   yes     no  yes yes  yes   yes  yes 0.000e+00
+##   xray asia smoke lung tub dysp bronc either       Freq
+## 1  yes  yes   yes  yes yes  yes   yes    yes 0.00390625
+## 2   no  yes   yes  yes yes  yes   yes    yes 0.00390625
+## 3  yes   no   yes  yes yes  yes   yes    yes 0.00390625
+## 4   no   no   yes  yes yes  yes   yes    yes 0.00390625
+## 5  yes  yes    no  yes yes  yes   yes    yes 0.00390625
+## 6   no  yes    no  yes yes  yes   yes    yes 0.00390625
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -687,20 +1592,20 @@ Marginal distributions are
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{ar_marg}\hlstd{(joint,} \hlstr{"lung"}\hlstd{)}
+\hlkwd{tabMarg}\hlstd{(joint,} \hlstr{"lung"}\hlstd{)}
 \end{alltt}
 \begin{verbatim}
 ## lung
-##   yes    no 
-## 0.055 0.945
+## yes  no 
+## 0.5 0.5
 \end{verbatim}
 \begin{alltt}
-\hlkwd{ar_marg}\hlstd{(joint,} \hlstr{"bronc"}\hlstd{)}
+\hlkwd{tabMarg}\hlstd{(joint,} \hlstr{"bronc"}\hlstd{)}
 \end{alltt}
 \begin{verbatim}
 ## bronc
-##  yes   no 
-## 0.45 0.55
+## yes  no 
+## 0.5 0.5
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -710,7 +1615,7 @@ Conditioning on evidence can be done in different ways: The conditional density 
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlstd{ev} \hlkwb{<-} \hlkwd{list}\hlstd{(}\hlkwc{asia}\hlstd{=}\hlstr{"yes"}\hlstd{,} \hlkwc{dysp}\hlstd{=}\hlstr{"yes"}\hlstd{)}
-\hlstd{cond1} \hlkwb{<-} \hlkwd{ar_slice}\hlstd{(joint,} \hlkwc{slice}\hlstd{=ev)}
+\hlstd{cond1} \hlkwb{<-} \hlkwd{tabSlice}\hlstd{(joint,} \hlkwc{slice}\hlstd{=ev)}
 \hlstd{cond1} \hlkwb{<-} \hlstd{cond1} \hlopt{/} \hlkwd{sum}\hlstd{(cond1)}
 \hlkwd{dim}\hlstd{(cond1)}
 \end{alltt}
@@ -718,20 +1623,20 @@ Conditioning on evidence can be done in different ways: The conditional density 
 ## [1] 2 2 2 2 2 2
 \end{verbatim}
 \begin{alltt}
-\hlkwd{ar_marg}\hlstd{(cond1,} \hlstr{"lung"}\hlstd{)}
+\hlkwd{tabMarg}\hlstd{(cond1,} \hlstr{"lung"}\hlstd{)}
 \end{alltt}
 \begin{verbatim}
 ## lung
-##        yes         no 
-## 0.09952515 0.90047485
+## yes  no 
+## 0.5 0.5
 \end{verbatim}
 \begin{alltt}
-\hlkwd{ar_marg}\hlstd{(cond1,} \hlstr{"bronc"}\hlstd{)}
+\hlkwd{tabMarg}\hlstd{(cond1,} \hlstr{"bronc"}\hlstd{)}
 \end{alltt}
 \begin{verbatim}
 ## bronc
-##       yes        no 
-## 0.8114021 0.1885979
+## yes  no 
+## 0.5 0.5
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -740,7 +1645,7 @@ Alternatively, multiply all entries not consistent by zero and all other entries
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{cond2} \hlkwb{<-} \hlkwd{ar_slice_mult}\hlstd{(joint,} \hlkwc{slice}\hlstd{=ev)}
+\hlstd{cond2} \hlkwb{<-} \hlkwd{tabSliceMult}\hlstd{(joint,} \hlkwc{slice}\hlstd{=ev)}
 \hlstd{cond2} \hlkwb{<-} \hlstd{cond2} \hlopt{/} \hlkwd{sum}\hlstd{(cond2)}
 \hlkwd{dim}\hlstd{(cond2)}
 \end{alltt}
@@ -748,20 +1653,20 @@ Alternatively, multiply all entries not consistent by zero and all other entries
 ## [1] 2 2 2 2 2 2 2 2
 \end{verbatim}
 \begin{alltt}
-\hlkwd{ar_marg}\hlstd{(cond2,} \hlstr{"lung"}\hlstd{)}
+\hlkwd{tabMarg}\hlstd{(cond2,} \hlstr{"lung"}\hlstd{)}
 \end{alltt}
 \begin{verbatim}
 ## lung
-##        yes         no 
-## 0.09952515 0.90047485
+## yes  no 
+## 0.5 0.5
 \end{verbatim}
 \begin{alltt}
-\hlkwd{ar_marg}\hlstd{(cond2,} \hlstr{"bronc"}\hlstd{)}
+\hlkwd{tabMarg}\hlstd{(cond2,} \hlstr{"bronc"}\hlstd{)}
 \end{alltt}
 \begin{verbatim}
 ## bronc
-##       yes        no 
-## 0.8114021 0.1885979
+## yes  no 
+## 0.5 0.5
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -773,13 +1678,13 @@ Alternatively, multiply all entries not consistent by zero and all other entries
 %     cond1 <- ar_slice(joint, slice=ev)
 %     cond1 <- cond1 / sum(cond1)
 %     dim(cond1)
-%     ar_marg(cond1, "lung")    
+%     tabMarg(cond1, "lung")    
 % }
 % f2 <- function(){
 %     cond2 <- ar_slice_mult(joint, slice=ev)
 %     cond2 <- cond2 / sum(cond2)
 %     dim(cond2)
-%     ar_marg(cond2, "lung")    
+%     tabMarg(cond2, "lung")    
 % }
 % f1()
 % f2()
@@ -792,765 +1697,6 @@ Alternatively, multiply all entries not consistent by zero and all other entries
 %                    )                   
 % }
 % @
-
-\section{Hard  and virtual (likelihood) evidence}
-\label{sec:hard-virt-likel}
-
-Below we describe  how to work with virtual evidence (also known
-as likelihood evidence) in \grbn. This is done via the function
-\code{setEvidence()}.
-
-The clique potential representation in a Bayesian network gives
-\begin{displaymath}
-  p(x) \propto \psi(x) = \prod_{C} \psi_C(x_C)
-\end{displaymath}
-where we recall that the whole idea in computations with Bayesian
-networks is to avoid calculation the product on the right hand
-side. Instead computations are based on propagation (multiplying,
-dividing and summing clique potentials $\psi_C$ in an appropriate
-order, and such an appropriate order comes from a junction tree).
-The normalizing constant, say $c=\sum_x \psi(x)$, comes out of
-propagation as a ``by product''.
-
-Suppose a set of nodes $E$ are known to have a specific value,
-i.e. $x_E=x^*_E$. This is called hard evidence. The probability of
-the event $x_E=x^*_E$ is
-\begin{displaymath}
-  p(x_E=x^*_E)=E_p\{I(x_E=x^*_E)\} = \sum_x I(x_E=x^*_E) p(x)
-  = \frac{1}{c} \sum_x I(x_E=x^*_E) \psi(x)
-\end{displaymath}
-
-The computations are based on modifying the clique potentials $\psi_C$
-by giving value zero to states in $\psi_C$ which are not consistent
-with $x_E=x^*_E$. This can be achieved with an indicator function, say
-$L_C(x_C)$ such that we obtain a set of new potentials $\tilde \psi_C
-= L_C(x_C) \psi_C(x_C)$. Propagation with these new potentials gives,
-as a by product, $\tilde c=\sum \tilde \psi(x)$ where
-$\tilde\psi(x)= \prod_C \tilde\psi_C(x_C)$. Consequently, we have
-$p(x_E=x^*_E)=\tilde c / c$.
-
-In a more general setting we may have non--negative weights $L(x)$ for
-each value of $x$. We may calculate
-\begin{displaymath}
-  E_p\{L(X)\} = \sum_x L(x)p(x)
-\end{displaymath}
-If $L(X)$ factorizes as $L(X)=L_C(X_C)$ then the computations are
-carried out as outlined above, i.e.\ by the message passing scheme.
-
-
-\subsection{An excerpt of the chest clinic network}
-\label{sec:an-excerpt-chest}
-
-
-Consider the following excerpt of
-the chest clinic network which is described in the paper mentioned
-above.
-
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{yn} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"yes"}\hlstd{,}\hlstr{"no"}\hlstd{)}
-\hlstd{a}    \hlkwb{<-} \hlkwd{cptable}\hlstd{(}\hlopt{~}\hlstd{asia,} \hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{99}\hlstd{),}\hlkwc{levels}\hlstd{=yn)}
-\hlstd{t.a}  \hlkwb{<-} \hlkwd{cptable}\hlstd{(}\hlopt{~}\hlstd{tub}\hlopt{|}\hlstd{asia,} \hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{5}\hlstd{,}\hlnum{95}\hlstd{,}\hlnum{1}\hlstd{,}\hlnum{99}\hlstd{),}\hlkwc{levels}\hlstd{=yn)}
-
-\hlstd{(plist1} \hlkwb{<-} \hlkwd{compileCPT}\hlstd{(}\hlkwd{list}\hlstd{(a, t.a)))}
-\end{alltt}
-\begin{verbatim}
-## cpt_spec with probabilities:
-##  P( asia )
-##  P( tub | asia )
-\end{verbatim}
-\begin{alltt}
-\hlstd{plist1[[}\hlnum{1}\hlstd{]]}
-\end{alltt}
-\begin{verbatim}
-## asia
-##  yes   no 
-## 0.01 0.99
-\end{verbatim}
-\begin{alltt}
-\hlstd{plist1[[}\hlnum{2}\hlstd{]]}
-\end{alltt}
-\begin{verbatim}
-##      asia
-## tub    yes   no
-##   yes 0.05 0.01
-##   no  0.95 0.99
-\end{verbatim}
-\begin{alltt}
-\hlstd{(chest1} \hlkwb{<-} \hlkwd{grain}\hlstd{(plist1))}
-\end{alltt}
-\begin{verbatim}
-## Independence network: Compiled: FALSE Propagated: FALSE 
-##   Nodes: chr [1:2] "asia" "tub"
-\end{verbatim}
-\begin{alltt}
-\hlkwd{querygrain}\hlstd{(chest1)}
-\end{alltt}
-\begin{verbatim}
-## $asia
-## asia
-##  yes   no 
-## 0.01 0.99 
-## 
-## $tub
-## tub
-##    yes     no 
-## 0.0104 0.9896
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
-
-\subsection{Specifying hard evidence}
-\label{sec:hard-evidence}
-
-Suppose we want to make a diagnosis about tuberculosis given the
-evidence that a person has recently been to Asia. The functions
-\code{setFinding()} (which has been in \grbn\ for years) and
-\code{setEvidence()} (which is a recent addition to \grbn) can both be used for this
-purpose. The following forms are equivalent (\verb|setFinding()| is kept in \grbn\ for backward compatibility):
-
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{setEvidence}\hlstd{(chest1,} \hlkwc{evidence}\hlstd{=}\hlkwd{list}\hlstd{(}\hlkwc{asia}\hlstd{=}\hlstr{"yes"}\hlstd{))}
-\end{alltt}
-\begin{verbatim}
-## Independence network: Compiled: TRUE Propagated: TRUE 
-##   Nodes: chr [1:2] "asia" "tub"
-##   Evidence:
-##   nodes is.hard.evidence hard.state
-## 1  asia             TRUE        yes
-##   pEvidence: 0.010000
-\end{verbatim}
-\begin{alltt}
-\hlkwd{setEvidence}\hlstd{(chest1,} \hlkwc{nodes}\hlstd{=}\hlstr{"asia"}\hlstd{,} \hlkwc{states}\hlstd{=}\hlstr{"yes"}\hlstd{)}
-\end{alltt}
-\begin{verbatim}
-## Independence network: Compiled: TRUE Propagated: TRUE 
-##   Nodes: chr [1:2] "asia" "tub"
-##   Evidence:
-##   nodes is.hard.evidence hard.state
-## 1  asia             TRUE        yes
-##   pEvidence: 0.010000
-\end{verbatim}
-\begin{alltt}
-\hlcom{## setFinding(chest1, nodes="asia", states="yes")}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
-
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{querygrain}\hlstd{(}\hlkwd{setEvidence}\hlstd{(chest1,} \hlkwc{evidence}\hlstd{=}\hlkwd{list}\hlstd{(}\hlkwc{asia}\hlstd{=}\hlstr{"yes"}\hlstd{)))}
-\end{alltt}
-\begin{verbatim}
-## $tub
-## tub
-##  yes   no 
-## 0.05 0.95
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
-
-\subsection{What is virtual evidence (also called likelihood evidence)
-?}
-\label{sec:virt-evid-likel}
-
-Suppose we do not know with certainty whether a patient has
-recently been to Asia (perhaps the patient is too ill to
-tell). However the patient (if he/she is Caucasian) may be unusually
-tanned and this lends support to the hypothesis of a recent visit to
-Asia.
-
-To accommodate we create an extended network with an extra
-node for which we enter evidence.  However, it is NOT necessary to do
-so in practice, because we may equivalently enter the virtual evidence
-in the original network.
-
-We can then introduce a new variable
-\code{guess.asia} with \code{asia} as its only parent.\footnote{FIXME: Hvorfor vil parray ikke gaa vaek...}
-
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{g.a} \hlkwb{<-} \hlkwd{parray}\hlstd{(}\hlkwd{c}\hlstd{(}\hlstr{"guess.asia"}\hlstd{,} \hlstr{"asia"}\hlstd{),} \hlkwc{levels}\hlstd{=}\hlkwd{list}\hlstd{(yn, yn),}
-              \hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{.8}\hlstd{,}\hlnum{.2}\hlstd{,} \hlnum{.1}\hlstd{,}\hlnum{.9}\hlstd{))}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
-
-This reflects the assumption that for patients who have recently been
-to Asia we would guess so in 80\% of the cases, whereas for patients who have
-not recently been to A we would (erroneously) guess that they have
-recently been to Asia in 10\% of the cases.
-
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{(plist2} \hlkwb{<-} \hlkwd{compileCPT}\hlstd{(}\hlkwd{list}\hlstd{(a, t.a, g.a )))}
-\end{alltt}
-\begin{verbatim}
-## cpt_spec with probabilities:
-##  P( asia )
-##  P( tub | asia )
-##  P( guess.asia | asia )
-\end{verbatim}
-\begin{alltt}
-\hlstd{(chest2} \hlkwb{<-} \hlkwd{grain}\hlstd{(plist2))}
-\end{alltt}
-\begin{verbatim}
-## Independence network: Compiled: FALSE Propagated: FALSE 
-##   Nodes: chr [1:3] "asia" "tub" "guess.asia"
-\end{verbatim}
-\begin{alltt}
-\hlkwd{querygrain}\hlstd{( chest2 )}
-\end{alltt}
-\begin{verbatim}
-## $asia
-## asia
-##  yes   no 
-## 0.01 0.99 
-## 
-## $tub
-## tub
-##    yes     no 
-## 0.0104 0.9896 
-## 
-## $guess.asia
-## guess.asia
-##   yes    no 
-## 0.107 0.893
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
-
-
-Now specify the guess or judgment, that the person has recently been
-to Asia:
-
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{querygrain}\hlstd{(}\hlkwd{setEvidence}\hlstd{(chest2,} \hlkwc{evidence}\hlstd{=}\hlkwd{list}\hlstd{(}\hlkwc{guess.asia}\hlstd{=}\hlstr{"yes"}\hlstd{)))}
-\end{alltt}
-\begin{verbatim}
-## $asia
-## asia
-##        yes         no 
-## 0.07476636 0.92523364 
-## 
-## $tub
-## tub
-##        yes         no 
-## 0.01299065 0.98700935
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
-
-\subsection{Specifying virtual evidence}
-\label{sec:spec-virt-evid}
-
-The same guess or judgment can be specified as virtual evidence
-(also called likelihood evidence) for the original network:
-
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{querygrain}\hlstd{(}\hlkwd{setEvidence}\hlstd{(chest1,} \hlkwc{evidence}\hlstd{=}\hlkwd{list}\hlstd{(}\hlkwc{asia}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{.8}\hlstd{,} \hlnum{.1}\hlstd{))))}
-\end{alltt}
-\begin{verbatim}
-## $tub
-## tub
-##        yes         no 
-## 0.01299065 0.98700935
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
-
-This also means that specifying that specifying \code{asia='yes'} can
-be done as
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{querygrain}\hlstd{(}\hlkwd{setEvidence}\hlstd{(chest1,} \hlkwc{evidence}\hlstd{=}\hlkwd{list}\hlstd{(}\hlkwc{asia}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{0}\hlstd{))))}
-\end{alltt}
-\begin{verbatim}
-## $tub
-## tub
-##  yes   no 
-## 0.05 0.95
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
-
-
-\subsection{A mixture of a discrete and a continuous variable}
-\label{sec:ixture}
-
-\grbn\ only handles discrete variables with a finite state space, but
-using likelihood evidence it is possible to work with networks with
-both discrete and continuous variables (or other types of variables).
-This is possible only when he networks
-have a specific structure. This is possible when no discrete variable
-has non--discrete parents.\footnote{SH: Expand this.}
-
-Take a simple example: $x$ is a discrete variable with levels $1$ and
-$2$; $y_1|x=k \sim N(\mu_k, \sigma^2_k)$ and $y_2|x=k \sim
-Poi(\lambda_k)$ where $k=1,2$. The joint distribution is
-\begin{displaymath}
-  p(x,y_1, y_2) = p(x)p(y_1|x)p(y_2|x)
-\end{displaymath}
-
-Suppose the interest is in the distribution of $x$ given
-$y_1=y_1^*$ and $y_2=y_2^*$. We then have
-\begin{displaymath}
-  p(x|y_1^*, y_2^*) \propto p(x) p(y_1^*|x)p(y_2^*|x) =
-  p(x) L_1(x) L_2(x)
-\end{displaymath}
-
-
-
-
-
-
-
-\section{Building networks from data}
-\label{sec:using-textttsm-argum}
-
-The following two graphs specify the same model:
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{dG}  \hlkwb{<-} \hlkwd{dag}\hlstd{(}\hlopt{~}\hlstd{A}\hlopt{:}\hlstd{B} \hlopt{+} \hlstd{B}\hlopt{:}\hlstd{C)}
-\hlstd{uG}  \hlkwb{<-} \hlkwd{ug}\hlstd{(}\hlopt{~}\hlstd{A}\hlopt{:}\hlstd{B} \hlopt{+} \hlstd{B}\hlopt{:}\hlstd{C)}
-\hlkwd{par}\hlstd{(}\hlkwc{mfrow}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{));} \hlkwd{plot}\hlstd{( dG );} \hlkwd{plot}\hlstd{( uG )}
-\end{alltt}
-\end{kframe}
-\includegraphics[width=\maxwidth]{figures/grain-unnamed-chunk-34-1} 
-
-\end{knitrout}
-
-Suppose data is
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{dat} \hlkwb{<-} \hlkwd{ar_new}\hlstd{(}\hlkwd{c}\hlstd{(}\hlstr{"A"}\hlstd{,} \hlstr{"B"}\hlstd{,} \hlstr{"C"}\hlstd{),} \hlkwc{levels}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,} \hlnum{2}\hlstd{,} \hlnum{2}\hlstd{),} \hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{2}\hlstd{,} \hlnum{3}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{2}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{4}\hlstd{))}
-\hlkwd{class}\hlstd{(dat)}
-\end{alltt}
-\begin{verbatim}
-## [1] "array"
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
-
-A network can be built from data using:
-
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{gr.dG} \hlkwb{<-} \hlkwd{compile}\hlstd{(} \hlkwd{grain}\hlstd{( dG,} \hlkwc{data}\hlstd{=dat ) )}
-\hlstd{gr.uG} \hlkwb{<-} \hlkwd{compile}\hlstd{(} \hlkwd{grain}\hlstd{( uG,} \hlkwc{data}\hlstd{=dat ) )}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
-
-However, when there are zeros in the table, care must be taken.
-
-\subsection{Extracting information from tables}
-\label{sec:extr-inform-from}
-
-In the process of creating networks, conditional probability tables
-are extracted when the graph is a dag and clique potentials are
-extracted when the graph is a chordal (i.e.\ triangulated) undirected
-graph. This takes place as follows (internally):
-
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{extractCPT}\hlstd{(dat, dG)}
-\end{alltt}
-\begin{verbatim}
-## $A
-##     B
-## A           B1  B2
-##   A1 0.3333333 0.3
-##   A2 0.6666667 0.7
-## 
-## $B
-##     C
-## B    C1    C2
-##   B1  0 0.375
-##   B2  1 0.625
-## 
-## $C
-## C
-##        C1        C2 
-## 0.3846154 0.6153846 
-## 
-## attr(,"graph")
-## A graphNEL graph with directed edges
-## Number of Nodes = 3 
-## Number of Edges = 2 
-## attr(,"class")
-## [1] "cpt_rep"
-\end{verbatim}
-\begin{alltt}
-\hlkwd{c}\hlstd{(}\hlkwd{extractPOT}\hlstd{(dat, uG ))}
-\end{alltt}
-\begin{verbatim}
-## [[1]]
-##     A
-## B            A1        A2
-##   B1 0.07692308 0.1538462
-##   B2 0.23076923 0.5384615
-## 
-## [[2]]
-##     C
-## B     C1  C2
-##   B1 0.0 1.0
-##   B2 0.5 0.5
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
-
-The conditional probability table $P(A|B)$ contains \code{NaN}s
-because
-\begin{displaymath}
-  P(A|B=B1)=\frac{n(A,B=B1)}{\sum_A n(A,B=B1)} = \frac{0}{0} = \mbox{NaN}
-\end{displaymath}
-
-For this reason the network \code{gr.dG} above will fail to compile
-whereas \code{gr.uG} will work, but it may not give the expected results.
-
-\subsection{Using smooth}
-\label{sec:using-smooth}
-
-To illustrate what goes on, we can extract the distributions from data
-as follows:\footnote{SH: FIXME Use new functions from gRbase.}
-
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{p.A.g.B} \hlkwb{<-} \hlkwd{tableDiv}\hlstd{(dat,} \hlkwd{tableMargin}\hlstd{(dat,} \hlstr{"B"}\hlstd{))}
-\hlstd{p.B}     \hlkwb{<-} \hlkwd{tableMargin}\hlstd{(dat,} \hlstr{"B"}\hlstd{)} \hlopt{/} \hlkwd{sum}\hlstd{(dat)}
-\hlstd{p.AB}    \hlkwb{<-} \hlkwd{tableMult}\hlstd{( p.A.g.B, p.B)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
-
-However, the result is slightly misleading because \code{tableDiv}
-sets $0/0=0$.
-
-In \grain\ there is a \code{smooth} argument that will add a small
-number to the cell entries before extracting tables, i.e.
-\begin{displaymath}
-  P(A|B=B1)=\frac{n(A,B=B1)+\epsilon}{\sum_A ( n(A,B=B1) + \epsilon) }
-  = \frac{\epsilon}{2\epsilon} = 0.5
-\end{displaymath}
-and
-\begin{displaymath}
-  P(B)= \frac{\sum_A (n(A,B)+\epsilon)}{\sum_{AB} (n(A,B)+\epsilon)}
-\end{displaymath}
-
-We can mimic this as follows:
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{e} \hlkwb{<-} \hlnum{1e-2}
-\hlstd{(dat.e} \hlkwb{<-} \hlstd{dat} \hlopt{+} \hlstd{e)}
-\end{alltt}
-\begin{verbatim}
-## , , C = C1
-## 
-##     B
-## A      B1   B2
-##   A1 0.01 2.01
-##   A2 0.01 3.01
-## 
-## , , C = C2
-## 
-##     B
-## A      B1   B2
-##   A1 1.01 1.01
-##   A2 2.01 4.01
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
-
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{pe.A.g.B} \hlkwb{<-} \hlkwd{tableDiv}\hlstd{(dat.e,} \hlkwd{tableMargin}\hlstd{(dat,} \hlstr{"B"}\hlstd{))}
-\hlstd{pe.B} \hlkwb{<-} \hlkwd{tableMargin}\hlstd{(dat.e,} \hlstr{"B"}\hlstd{)}\hlopt{/}\hlkwd{sum}\hlstd{(dat.e)}
-\hlstd{pe.AB}  \hlkwb{<-} \hlkwd{tableMult}\hlstd{( pe.A.g.B, pe.B )}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
-
-However this resulting joint distribution is different from what is
-obtained from the adjusted table itself
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{dat.e} \hlopt{/} \hlkwd{sum}\hlstd{(dat.e)}
-\end{alltt}
-\begin{verbatim}
-## , , C = C1
-## 
-##     B
-## A             B1        B2
-##   A1 0.000764526 0.1536697
-##   A2 0.000764526 0.2301223
-## 
-## , , C = C2
-## 
-##     B
-## A            B1         B2
-##   A1 0.07721713 0.07721713
-##   A2 0.15366972 0.30657492
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
-
-This difference appears in the \grbn\ networks.
-
-\subsection{Extracting tables}
-\label{sec:extracting-tables}
-
-One can do
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{gr.dG} \hlkwb{<-} \hlkwd{compile}\hlstd{(}\hlkwd{grain}\hlstd{(dG,} \hlkwc{data}\hlstd{=dat,} \hlkwc{smooth}\hlstd{=e))}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
-
-which (internally) corresponds to
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{extractCPT}\hlstd{(dat, dG,} \hlkwc{smooth}\hlstd{=e)}
-\end{alltt}
-\begin{verbatim}
-## $A
-##     B
-## A           B1        B2
-##   A1 0.3344371 0.3003992
-##   A2 0.6655629 0.6996008
-## 
-## $B
-##     C
-## B             C1        C2
-##   B1 0.001992032 0.3753117
-##   B2 0.998007968 0.6246883
-## 
-## $C
-## C
-##        C1        C2 
-## 0.3847926 0.6152074 
-## 
-## attr(,"graph")
-## A graphNEL graph with directed edges
-## Number of Nodes = 3 
-## Number of Edges = 2 
-## attr(,"class")
-## [1] "cpt_rep"
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
-
-We get
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{querygrain}\hlstd{(gr.dG)}
-\end{alltt}
-\begin{verbatim}
-## $A
-## A
-##        A1        A2 
-## 0.3082845 0.6917155 
-## 
-## $B
-## B
-##        B1        B2 
-## 0.2316611 0.7683389 
-## 
-## $C
-## C
-##        C1        C2 
-## 0.3847926 0.6152074
-\end{verbatim}
-\begin{alltt}
-\hlkwd{querygrain}\hlstd{(gr.uG)}
-\end{alltt}
-\begin{verbatim}
-## $B
-## B
-##        B1        B2 
-## 0.2307692 0.7692308 
-## 
-## $A
-## A
-##        A1        A2 
-## 0.3076923 0.6923077 
-## 
-## $C
-## C
-##        C1        C2 
-## 0.3846154 0.6153846
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
-
-However, if we condition on \code{B=B1} we get:
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{querygrain}\hlstd{(}\hlkwd{setFinding}\hlstd{(gr.dG,} \hlkwc{nodes}\hlstd{=}\hlstr{"B"}\hlstd{,} \hlkwc{states}\hlstd{=}\hlstr{"B1"}\hlstd{))}
-\end{alltt}
-\begin{verbatim}
-## $A
-## A
-##        A1        A2 
-## 0.3344371 0.6655629 
-## 
-## $C
-## C
-##          C1          C2 
-## 0.003308796 0.996691204
-\end{verbatim}
-\begin{alltt}
-\hlkwd{querygrain}\hlstd{(}\hlkwd{setFinding}\hlstd{(gr.uG,} \hlkwc{nodes}\hlstd{=}\hlstr{"B"}\hlstd{,} \hlkwc{states}\hlstd{=}\hlstr{"B1"}\hlstd{))}
-\end{alltt}
-\begin{verbatim}
-## $A
-## A
-##        A1        A2 
-## 0.3333333 0.6666667 
-## 
-## $C
-## C
-## C1 C2 
-##  0  1
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
-
-so the ``problem'' with zero entries shows up in a different
-place. However, the answer is not necessarily wrong; the answer simply
-states that $P(A|B=B1)$ is undefined.
-To ``remedy'' we can use the \code{smooth} argument:
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{gr.uG} \hlkwb{<-} \hlkwd{compile}\hlstd{(}\hlkwd{grain}\hlstd{(uG,} \hlkwc{data}\hlstd{=dat,} \hlkwc{smooth}\hlstd{=e))}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
-which (internally) corresponds to
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{c}\hlstd{(}\hlkwd{extractPOT}\hlstd{(dat, uG,} \hlkwc{smooth}\hlstd{=e))}
-\end{alltt}
-\begin{verbatim}
-## [[1]]
-##     A
-## B            A1        A2
-##   B1 0.07745399 0.1541411
-##   B2 0.23082822 0.5375767
-## 
-## [[2]]
-##     C
-## B             C1        C2
-##   B1 0.003311258 0.9966887
-##   B2 0.500000000 0.5000000
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
-
-Notice that the results are not exactly identical:
-
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{querygrain}\hlstd{(gr.uG)}
-\end{alltt}
-\begin{verbatim}
-## $B
-## B
-##        B1        B2 
-## 0.2315951 0.7684049 
-## 
-## $A
-## A
-##        A1        A2 
-## 0.3082822 0.6917178 
-## 
-## $C
-## C
-##        C1        C2 
-## 0.3849693 0.6150307
-\end{verbatim}
-\begin{alltt}
-\hlkwd{querygrain}\hlstd{(gr.dG)}
-\end{alltt}
-\begin{verbatim}
-## $A
-## A
-##        A1        A2 
-## 0.3082845 0.6917155 
-## 
-## $B
-## B
-##        B1        B2 
-## 0.2316611 0.7683389 
-## 
-## $C
-## C
-##        C1        C2 
-## 0.3847926 0.6152074
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
-
-
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{querygrain}\hlstd{(}\hlkwd{setFinding}\hlstd{(gr.uG,} \hlkwc{nodes}\hlstd{=}\hlstr{"B"}\hlstd{,} \hlkwc{states}\hlstd{=}\hlstr{"B1"}\hlstd{))}
-\end{alltt}
-\begin{verbatim}
-## $A
-## A
-##        A1        A2 
-## 0.3344371 0.6655629 
-## 
-## $C
-## C
-##          C1          C2 
-## 0.003311258 0.996688742
-\end{verbatim}
-\begin{alltt}
-\hlkwd{querygrain}\hlstd{(}\hlkwd{setFinding}\hlstd{(gr.dG,} \hlkwc{nodes}\hlstd{=}\hlstr{"B"}\hlstd{,} \hlkwc{states}\hlstd{=}\hlstr{"B1"}\hlstd{))}
-\end{alltt}
-\begin{verbatim}
-## $A
-## A
-##        A1        A2 
-## 0.3344371 0.6655629 
-## 
-## $C
-## C
-##          C1          C2 
-## 0.003308796 0.996691204
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
 
 
 \bibliography{grain}
@@ -1602,3 +1748,5 @@ Notice that the results are not exactly identical:
 % <<>>=
 % sum(ar_slice(tt, list(either="no", tub="yes")))
 % @ %def
+
+
