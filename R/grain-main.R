@@ -118,7 +118,7 @@ grain.pot_spec <- function(x, control=list(), smooth=0, compile=TRUE, details=0,
 #' @export
 #' @rdname grain-main
 grain.graphNEL <- function(x, control=list(), smooth=0, compile=TRUE, details=0, data=NULL, ...){
-    cat("grain.graphNEL\n")
+    ## cat("grain.graphNEL\n")
     if (is.null(data))
         stop("Data must be given to create grain from graph\n")
     if (!(is.named.array(data) || is.data.frame(data)))
@@ -160,18 +160,25 @@ grain.cpt_rep <- function(x, ...){grain(compileCPT(x))}
 ## #' @rdname grain-main    
 ## grain.marg_rep <- function(x, ...){grain(compileCPT(x))} FIXME to implement
 
+
+## FIXME Rethink print.grain
+
 #' @export
 print.grain <- function(x,...){
+
+    hasEvidence <- !is.null(evidence(x))
+    
+    ## if ( !is.null((ev <- evidence(x))) ){
+        
+        ## cat("  Evidence: TRUE\n");
+        ## print( ev )
+        ## if (!is.null((p <- pEvidence(x))))
+        ## cat(sprintf("  pEvidence: %f\n", p))
+    ## }
+    
     cat("Independence network: Compiled:", isCompiled(x),
-        "Propagated:", isPropagated(x), "\n")
-    cat("  Nodes:"); str(unname(nodeNames(x)))
-    if ( !is.null((ev <- evidence(x))) ){
-        cat("  Evidence:\n");
-        ##½        print(as.data.frame( ev ) )
-        print( ev )
-        if (!is.null((p <- pEvidence(x))))
-            cat(sprintf("  pEvidence: %f\n", p))
-    }
+        "Propagated:", isPropagated(x), "Evidence:", hasEvidence, "\n")
+    ## cat("  Nodes:"); str(unname(nodeNames(x)))
     invisible(x)
 }
 

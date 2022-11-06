@@ -1,28 +1,28 @@
 ## ##############################################################
 ##
-#' @title Update components of Bayesian network
+#' @title Update CPTs of Bayesian network
 #'
-#' @description Update components of Bayesian network.
+#' @description Update CPTs of Bayesian network.
 #'
-#' @name cpt-update
+#' @name update-cpt
 #' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
 #' 
-##
 ## ##############################################################
 #'
 #' @param object A `grain` object.
 #' @param value A named list, see examples below.
+#'
+#' @details Updates some CPTs in a network but the overhead in redoing
+#'     the triangulation and other steps are avoided.
 #' 
 #' @seealso \code{\link{grain}}, \code{\link[gRbase]{propagate}},
 #'     \code{\link[gRbase]{triangulate}}, \code{\link[gRbase]{rip}},
 #'     \code{\link[gRbase]{junctionTree}}
-#' @references Søren Højsgaard (2012). Graphical Independence
-#'     Networks with the gRain Package for R. Journal of Statistical
-#'     Software, 46(10), 1-26.
-#'     \url{https://www.jstatsoft.org/v46/i10/}.
+#' @references Søren Højsgaard (2012). Graphical Independence Networks
+#'     with the gRain Package for R. Journal of Statistical Software,
+#'     46(10), 1-26.  \url{https://www.jstatsoft.org/v46/i10/}.
 #' 
 #' @keywords utilities models
-
 #' @examples
 #' ## See the wet grass example at
 #' ## https://en.wikipedia.org/wiki/Bayesian_network
@@ -41,29 +41,27 @@
 #' getgrain(wet.bn, "cpt")$S
 #'
 #' # Now update some cpt's
-#' wet.bn2 <- setCPT(wet.bn, list(R=c(.3, .7), S=c(.1, .9, .7, .3)))
+#' wet.bn2 <- updateCPT(wet.bn, list(R=c(.3, .7), S=c(.1, .9, .7, .3)))
 #' 
 #' getgrain(wet.bn2, "cpt")$R
 #' getgrain(wet.bn2, "cpt")$S
 #' 
-
 #' @export 
-#' @rdname cpt-update
-setCPT <- function(object, value){
-    UseMethod("setCPT")
+#' @rdname update-cpt
+updateCPT <- function(object, value){
+    UseMethod("updateCPT")
 }
-
 
 ## Modifies cptlist in object. 
 
 #' @export 
-#' @rdname cpt-update
-setCPT.cpt_grain <- function(object, value){
+#' @rdname update-cpt
+updateCPT.cpt_grain <- function(object, value){
 
     if (!isCompiled(object))
         stop("grain object must be compiled")
 
-    if (!.is.named.list(value))
+    if (!is_named_list(value))
         stop("'value' must be a named list")
 
     ## cat(".. inserting values in cptlist\n")
@@ -76,7 +74,13 @@ setCPT.cpt_grain <- function(object, value){
         z <- value[[i]]
         if (length(z) != length(getgrain(object, "cpt")[[v]]))
             stop("replacement value not correct length")                    
-        object$cptlist[[v]][] <- z               
+        ccc <- object$cptlist[[v]]        
+        ## cat("tab - before\n"); print(ccc)
+        ccc[] <- z
+        ccc <- tabNormalize(ccc, "first")
+        ## cat("tab - after\n"); print(ccc)
+        object$cptlist[[v]] <- ccc
+        #object$cptlist[[v]][] <- z               
     }
     ## isCompiled(object) <- FALSE
 
@@ -84,24 +88,48 @@ setCPT.cpt_grain <- function(object, value){
     pot.1 <- .initialize_array_list(getgrain(object, "pot_orig"), values=1)    
     object$potential$pot_orig <- object$potential$pot_temp <-
         .insert_CPT(getgrain(object, "cpt"), pot.1, details=0)
-    
-    
+        
     isPropagated(object) <- FALSE
     object
 }
 
-.is.named.list <- function(x){
+is_named_list <- function(x){
     inherits(x, "list") && !is.null(names(x))
 }
 
-## cpt-update
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## update-cpt
 ## "setcpt<-" <- function(object, value){
 ##     UseMethod("setcpt<-")
 ## }
 
-## #' @rdname cpt-update
+## #' @rdname update-cpt
 ## "setcpt<-.grain" <- function(object, value){
-##     setCPT(object, value)
+##     updateCPT(object, value)
 ## }
 
 

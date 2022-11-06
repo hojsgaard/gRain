@@ -16,6 +16,8 @@
 #' @param exclude If \code{TRUE} then nodes on which evidence is given
 #'     will be excluded from \code{nodes} (see above).
 #' @param normalize Should the results be normalized to sum to one.
+#' @param simplify Should the result be simplified (to a dataframe) if
+#'     possible.
 #' @param type Valid choices are \code{"marginal"} which gives the
 #'     marginal distribution for each node in \code{nodes};
 #'     \code{"joint"} which gives the joint distribution for
@@ -56,7 +58,7 @@
 #' @export
 querygrain <- function(object, nodes=nodeNames(object), type="marginal",
                        evidence=NULL, exclude=TRUE, normalize=TRUE,
-                       result="array", details=0)
+                       simplify=FALSE, result="array", details=0)
 {
   UseMethod("querygrain")
 }
@@ -67,6 +69,7 @@ qgrain <- querygrain
 #' @export
 querygrain.grain <- function(object, nodes = nodeNames(object), type = "marginal",
                              evidence=NULL, exclude=TRUE, normalize=TRUE,
+                             simplify=FALSE,
                              result="array", details=0){
 
     if (!is.null(evidence)){
@@ -110,9 +113,13 @@ querygrain.grain <- function(object, nodes = nodeNames(object), type = "marginal
                    out <- qobject
            })
 
-    if (result == "data.frame")
-        out <- lapply(out, as.data.frame.table)
-
+    if (simplify){
+        out <- simplify_query(out)
+    } else {
+        if (result == "data.frame")
+            out <- lapply(out, as.data.frame.table)
+    }
+    
     if (object$control$timing)
         cat("Time: query", proc.time()-t0, "\n")
     out
@@ -168,10 +175,6 @@ querygrain.grain <- function(object, nodes = nodeNames(object), type = "marginal
     value
 }
 
-##idxb <- sapply(cliq, function(cq) subsetof(nodes, cq))
-##tab   <- pot(object)$pot_equi[[ which(idxb)[1] ]]
-
-
 .nodeMarginal <- function(object, nodes=NULL, exclude=TRUE, details=1){
     ##cat(".nodeMarginal\n")
 
@@ -191,15 +194,20 @@ querygrain.grain <- function(object, nodes = nodeNames(object), type = "marginal
         for (i in 1:length(nodes)){
             cvert  <- nodes[i]
             idx    <- host.cq[i]
-            ## querygrain - .nodeMarginal: Calculations based on equipot
-                                        #cpot   <- pot(object)$pot_equi[[ idx ]]
             cpot   <- getgrain(object, "pot_equi")[[ idx ]]
-            ##mtab   <- tableMargin( cpot, cvert ) ## FIX tableMargin replaced
-            mtab <- tabMarg(cpot, cvert)
-            
+            mtab   <- tabMarg(cpot, cvert)           
             mtab   <- mtab / sum( mtab )
             out[[ i ]] <- mtab
         }
         return( out )
     }
 }
+
+##mtab   <- tableMargin( cpot, cvert ) ## FIX tableMargin replaced
+
+## querygrain - .nodeMarginal: Calculations based on equipot
+##cpot   <- pot(object)$pot_equi[[ idx ]]
+
+##idxb <- sapply(cliq, function(cq) subsetof(nodes, cq))
+##tab   <- pot(object)$pot_equi[[ which(idxb)[1] ]]
+

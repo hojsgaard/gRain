@@ -6,7 +6,7 @@
 #' 
 ## ###############################################################
 #'
-#' @name grain_jevidence
+#' @name grain_joint_evidence
 #'
 #' @param object A "grain" object.
 #' @param evidence A list of evidence. Each element is a named array.
@@ -19,10 +19,9 @@
 #' @note All the joint evidence functionality should be used with
 #'     great care.
 #'
-#' @aliases print.grain_jev
-#'
+#' @aliases print.grain_joint_evidence
+#' 
 #' @examples
-#'
 #' data(chest_cpt)
 #' chest.bn <- grain(compileCPT(chest_cpt))
 #' chest.bn <- compile(chest.bn)
@@ -39,6 +38,7 @@
 #' chest.bn
 #' chest.bn2 <- setJEvidence(chest.bn, evidence=ev)
 #' chest.bn2
+#' getEvidence(chest.bn2)
 #'
 #' # Notice: The evidence is defined on (subsets of) cliques of the junction tree
 #' # and therefore evidence can readily be absorbed:
@@ -49,7 +49,7 @@
 #' # absorbed.  Hence this will fail:
 #'
 #' \dontrun{
-#' ev.fail <- list(tab(c("dysp","smoke"), levels=uni, values=c(.1, .2, .9, .8)) )
+#' ev.fail <- list(tabNew(c("dysp","smoke"), levels=uni, values=c(.1, .2, .9, .8)) )
 #' setJEvidence(chest.bn, evidence=ev.fail)
 #' }
 #'
@@ -87,7 +87,7 @@
 
 
 #' @export 
-#' @rdname grain_jevidence
+#' @rdname grain_joint_evidence
 setJEvidence <- function(object, evidence=NULL, propagate=TRUE, details=0){
     
     setJEvidence_(object, evidence=evidence, propagate=propagate, details=details)
@@ -95,21 +95,32 @@ setJEvidence <- function(object, evidence=NULL, propagate=TRUE, details=0){
 
 setJEvidence_<- function(object, evidence=NULL, propagate=TRUE, details=0){
 
-    if (!inherits(object, "grain")) stop("'object' is not a grain object")
-    
+    if (!inherits(object, "grain")) {
+        stop("'object' is not a grain object")
+    }  
     if (!is.null( evidence )) {
-        if ( length(getEvidence( object )) > 0 )
+        if (length(getEvidence( object )) > 0)
             stop("'object' already has evidence set; can not proceed\n")
         
-        if ( !inherits( evidence, "grain_jev" ) )
+        if ( !inherits(evidence, "grain_joint_evidence"))
             evidence <- new_jev( evidence, universe( object )$levels )
-        
+
+        ## print.default(evidence)
         if (!isCompiled(object))
             object <- compile( object )
-        
-        vn  <- sapply(evidence, varNames)    
+
         rp  <- getgrain(object, "rip")    
+
+        vn  <- lapply(evidence, varNames)    
         hc  <- get_superset_list(vn, rp$cliques)
+
+        if (any(is.na(hc))){
+            kk <- which(is.na(hc))
+            kk2 <- toString(kk)
+            st <- sprintf("Evidence item(s) %s contain sets of nodes not in one clique\n", kk2)
+            stop(st)
+        }
+        
         pot <- getgrain(object, "pot_temp")
         pot2 <- insertJEvidence(evidence, pot, hc)
         object$potential$pot_temp <- pot2
@@ -119,15 +130,15 @@ setJEvidence_<- function(object, evidence=NULL, propagate=TRUE, details=0){
     object
 }
 
-## #' @rdname grain_jevidence
-## #' @param evi.list A "grain_jev" object.
+## #' @rdname grain_joint_evidence
+## #' @param evi.list A "grain_joint_evidence" object.
 ## #' @param pot A list of clique potentials (a potential is an array).
 ## #' @param hostclique A numerical vector indicating in which element of
 ## #'     'pot' each eviendence item in 'evi.list' should be inserted in.
 
 insertJEvidence <- function(evi.list, pot, hostclique){
-    if ( !inherits(evi.list, "grain_jev") )
-        stop("'object' is not a 'grain_jev' object")
+    if ( !inherits(evi.list, "grain_joint_evidence") )
+        stop("'object' is not a 'grain_joint_evidence' object")
     #ee <<- evi.list
     for (i in seq_along( evi.list ) ){
         p <- evi.list[[ i ]]
@@ -140,7 +151,7 @@ insertJEvidence <- function(evi.list, pot, hostclique){
 
 
 #' @export 
-#' @rdname grain_jevidence
+#' @rdname grain_joint_evidence
 #' @param items Items in the evidence list to be removed. Here,
 #'     \code{NULL} means remove everything, \code{0} means nothing is
 #'     removed. Otherwise \code{items} is a numeric vector.
@@ -150,6 +161,7 @@ retractJEvidence <- function(object, items=NULL, propagate=TRUE, details=0){
         stop("'items' must be  numeric or NULL")            
 
     ev <- getEvidence( object )
+    cls <- class(ev)
 
     if (length( ev ) > 0) {        
         if ( is.null( items ) )
@@ -162,20 +174,21 @@ retractJEvidence <- function(object, items=NULL, propagate=TRUE, details=0){
                 keep <- seq_along( ev )[ -items ]
                 if (any(is.na(keep))) stop("'items' out of range")
                 ev <- ev[ keep]
-                
+                class(ev) <- cls
                 object$evidence <-
                     if (length(ev) > 0) ev else NULL
             }
         }
     }
+
     object <- if (propagate) propagate( object ) else object
     object
 }
 
 #' @export 
-#' @rdname grain_jevidence
+#' @rdname grain_joint_evidence
 new_jev <- function(ev, levels){
-    if (inherits(ev, "grain_jev")) return( ev )
+    if (inherits(ev, "grain_joint_evidence")) return( ev )
 
     if (!is.list(ev)) stop("'ev' must be a list")
     if (!is.list(levels)) stop("'levels' must be a list")
@@ -213,14 +226,14 @@ new_jev <- function(ev, levels){
         ev[ spec ] <- new.out
     }    
     names(ev) <- NULL
-    class(ev) <- "grain_jev"
+    class(ev) <- "grain_joint_evidence"
     ev
 }
 
-## #' @rdname grain_jevidence
-## #' @param x A "grain_jev" object.
+## #' @rdname grain_joint_evidence
+## #' @param x A "grain_joint_evidence" object.
 ## #' @param ... Additional arguments; currently not used.
-print.grain_jev <- function(x, ...){
+print.grain_joint_evidence <- function(x, ...){
     vn <- lapply(x, varNames)
     str(vn)
     ##str(x)

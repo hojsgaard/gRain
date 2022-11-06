@@ -3,11 +3,11 @@
 \name{evidence_object}
 \alias{evidence_object}
 \alias{new_ev}
-\alias{subset.grain_ev}
-\alias{print.grain_ev}
-\alias{varNames.grain_ev}
+\alias{subset.grain_evidence}
+\alias{print.grain_evidence}
+\alias{varNames.grain_evidence}
 \alias{is.null_ev}
-\alias{as.data.frame.grain_ev}
+\alias{as.data.frame.grain_evidence}
 \alias{setdiff_ev}
 \alias{union_ev}
 \title{Evidence objects}
@@ -16,7 +16,7 @@ new_ev(evi.list = NULL, levels)
 
 is.null_ev(object)
 
-\method{as.data.frame}{grain_ev}(x, row.names = NULL, optional = FALSE, ...)
+\method{as.data.frame}{grain_evidence}(x, row.names = NULL, optional = FALSE, ...)
 
 setdiff_ev(ev1, ev2)
 

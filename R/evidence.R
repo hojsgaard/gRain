@@ -30,7 +30,6 @@
 #' @param states A vector of states (of the nodes given by 'nodes')
 #' @param evidence An alternative way of specifying findings
 #'     (evidence), see examples below.
-#' @param nslist deprecated
 #' @param propagate Should the network be propagated?
 #' @param details Debugging information
 #'
@@ -84,11 +83,9 @@
 
 #' @rdname grain_evidence
 #' @export 
-setEvidence <- function(object, nodes=NULL, states=NULL, evidence=NULL, nslist=NULL,
+setEvidence <- function(object, nodes=NULL, states=NULL, evidence=NULL, 
                         propagate=TRUE, details=0){
-    
-    if (!is.null(nslist))
-        stop("Argument 'nslist' has been deprecated; please use 'evidence' instead\n")
+    stopifnot_grain(object)    
 
     if (is.null(evidence) && is.null(nodes))
         stop("Evidence is not given; nothing to do...")
@@ -102,36 +99,21 @@ setEvidence <- function(object, nodes=NULL, states=NULL, evidence=NULL, nslist=N
 #' @rdname grain_evidence
 #' @export 
 retractEvidence <- function(object, nodes=NULL, propagate=TRUE){
+    stopifnot_grain(object)
     retractEvi_(object, items=nodes, propagate=propagate)
 }
 
 #' @export 
 #' @rdname grain_evidence
 absorbEvidence <- function(object, propagate=TRUE ){
+    stopifnot_grain(object)
     absorbEvi_( object, propagate=propagate )
-    ## FIXME Should be absorbEvi_ 
 }
 
-
-setEvi <- function(object, nodes=NULL, states=NULL, evidence=NULL, 
-                   propagate=TRUE, details=0){
-    if ( !inherits(object, "grain") )
-        stop("'object' is not a 'grain' object")
-    
-    if ( is.null( evidence ) && is.null( nodes ) )
-        stop( "Evidence is not given; nothing to do...")
-    
-    if ( is.null( evidence ) ) ## Then 'nodes' must be given
-        evidence <- nodes_states_to_evidence( nodes, states )      
-    
-    setEvi_( object, evidence=evidence, propagate=propagate, details=details)
-}
 
 setEvi_ <- function(object, evidence=NULL, propagate=TRUE, details=0){
     ##    details=0
     ##    cat("++++ setEvi_ input evidence: \n"); str(evidence)
-
-    ## If object is not compiled then do so
     
     if (is.null_ev( evidence )){
         cat("Nothing to do\n")
@@ -164,7 +146,9 @@ setEvi_ <- function(object, evidence=NULL, propagate=TRUE, details=0){
             te <- if (is.null_ev(oe)) ne else union_ev(oe, ne)
             ##te <- union_ev( oe, ne )
             if (details>0) {print("total evidence"); print( te )}
+
             object$evidence <- te
+
         }         
     } 
     if (propagate) propagate(object) else object
@@ -172,8 +156,7 @@ setEvi_ <- function(object, evidence=NULL, propagate=TRUE, details=0){
 
 
 retractEvi <- function(object, items=NULL, propagate=TRUE){
-    if ( !inherits(object, "grain") )
-        stop("'object' is not a 'grain' object")
+    stopifnot_grain(object)
     retractEvi_(object, items=items, propagate=propagate)
 }
 
@@ -183,7 +166,7 @@ retractEvi_ <- function(object, items=NULL, propagate=TRUE){
     .resetgrain <- function(x){
         x$potential$pot_temp <- getgrain(x, "pot_orig")
         x$evidence       <- NULL
-        isPropagated(x) <- FALSE
+        isPropagated(x)  <- FALSE
         x
     }
 
@@ -207,7 +190,7 @@ retractEvi_ <- function(object, items=NULL, propagate=TRUE){
                 object <- .resetgrain( object )                
                 if (length( keep ) > 0){
                     ne <- subset( oe, select=keep )
-                    object <- setEvi( object, evidence = ne )
+                    object <- setEvi_( object, evidence = ne )
                 }
             }
         }
@@ -217,8 +200,7 @@ retractEvi_ <- function(object, items=NULL, propagate=TRUE){
 
 ## #' @name grain-evi
 absorbEvi_<- function(object, propagate=TRUE ){
-    if ( !inherits(object, "grain") )
-        stop("'object' is not a 'grain' object")
+    stopifnot_grain(object)
 
     ## Update 'object' as
     ## 1) set pot_orig <- pot_temp
@@ -234,8 +216,7 @@ absorbEvi_<- function(object, propagate=TRUE ){
 #' @export 
 #' @name grain_evidence
 pEvidence <- function(object){
-    if ( !inherits(object, "grain") )
-        stop("'object' is not a 'grain' object")
+    stopifnot_grain(object)
     attr(getgrain(object, "pot_equi"), "pEvidence")
 }
 
@@ -243,13 +224,32 @@ pEvidence <- function(object){
 pEvi <- function(object)
     pEvidence(object)
 
-#' @export 
+#' @export
+#' @param short If TRUE a dataframe with a summary is returned;
+#'     otherwise a list with all details.
 #' @name grain_evidence
-getEvidence <- function(object){
-    if ( !inherits(object, "grain") )
-        stop("'object' is not a 'grain' object")
-    object$evidence
+getEvidence <- function(object, short=TRUE){
+    stopifnot_grain(object)    
+    ev <- object$evidence
+    if (is.null(ev)){
+        return(NULL)
+    }
+    if (!inherits(ev, c("grain_evidence", "grain_joint_evidence")))
+        stop("This should not happen\n")
+
+    if (inherits(ev, "grain_evidence")){
+        if (short){
+            as.data.frame(ev[1:3])
+        } else {
+            ## class(ev) <- "list"
+            ev
+        }       
+    } else {
+        ## class(ev) <- "list"
+        ev
+    }
 }
+
 
 ## #' @name grain-evi
 "dropEvi<-" <- function(object, value=NULL){
@@ -258,27 +258,29 @@ getEvidence <- function(object){
 
 ## #' @name grain-evi
 "addEvi<-" <- function(object, value=NULL){
-    setEvi(object, value)
+    setEvi_(object, value)
 }
 
 #' @export 
 #' @name grain_evidence
-evidence <- function(object){
+evidence <- function(object, short=TRUE){
     UseMethod("evidence")
 }
 
 #' @export 
 #' @name grain_evidence
-evidence.grain <- function(object){
-    getEvidence( object )
+evidence.grain <- function(object, short=TRUE){
+    getEvidence(object, short)
 }
 
+#' @export 
 #' @name grain_evidence
 #' @param value The evidence in the form of a named list or an evidence-object. 
 "evidence<-" <- function(object, value=NULL){
     UseMethod("evidence<-")
 }
 
+#' @export 
 #' @name grain_evidence
 "evidence<-.grain" <- function(object, value=NULL){
     if (is.null( value ))
@@ -290,7 +292,7 @@ evidence.grain <- function(object){
 ## Alternative names
 
 ## #' @name grain-evi
-addEvi  <- setEvi
+addEvi  <- setEvi_
 
 ## #' @name grain-evi
 dropEvi <- retractEvi
@@ -307,14 +309,12 @@ getEvi  <- getEvidence
 
 insertEvi <- function(evi.list, pot, hostclique){
     ##cat("insertEvi\n")
-    if ( !inherits(evi.list, "grain_ev") )
-        stop("'object' is not a 'grain_ev' object")
+    if ( !inherits(evi.list, "grain_evidence") )
+        stop("'object' is not a 'grain_evidence' object")
     
     for (i in seq_along( evi.list$evidence ) ){
         p <- evi.list$evidence[[ i ]]
-        #print(p)
         j <- hostclique[ i ]
-        #print( j )
         pot[[j]] <- tabMult( pot[[ j ]], p )
     }
     pot
@@ -322,12 +322,33 @@ insertEvi <- function(evi.list, pot, hostclique){
 
 
 nodes_states_to_evidence <- function(nodes, states){
-    if (!is.null( states ) && length( nodes )==length( states )){
+    if (!is.null( states ) && length( nodes ) == length( states )){
         evidence <- as.vector(states, "list")
         names(evidence) <- nodes
-        evidence
+        return(evidence)
     } else {
         stop( "Either states are not given or nodes and states do not have same length" )
     }
 }
 
+stopifnot_grain <- function(object){
+    if ( !inherits(object, "grain") )
+        stop("'object' is not a 'grain' object")    
+}
+
+
+
+
+
+## setEvi <- function(object, nodes=NULL, states=NULL, evidence=NULL, 
+                   ## propagate=TRUE, details=0){
+    ## stopifnot_grain(object)
+    
+    ## if ( is.null( evidence ) && is.null( nodes ) )
+        ## stop( "Evidence is not given; nothing to do...")
+    
+    ## if ( is.null( evidence ) ) ## Then 'nodes' must be given
+        ## evidence <- nodes_states_to_evidence( nodes, states )      
+    
+    ## setEvi_( object, evidence=evidence, propagate=propagate, details=details)
+## }

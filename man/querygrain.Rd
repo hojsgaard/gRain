@@ -13,6 +13,7 @@ querygrain(
   evidence = NULL,
   exclude = TRUE,
   normalize = TRUE,
+  simplify = FALSE,
   result = "array",
   details = 0
 )
@@ -37,6 +38,9 @@ given the other variables in \code{nodes}.}
 will be excluded from \code{nodes} (see above).}
 
 \item{normalize}{Should the results be normalized to sum to one.}
+
+\item{simplify}{Should the result be simplified (to a dataframe) if
+possible.}
 
 \item{result}{If "data.frame" the result is returned as a data
 frame (or possibly as a list of dataframes).}

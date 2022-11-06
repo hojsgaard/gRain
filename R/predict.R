@@ -66,9 +66,7 @@ predict.grain <- function(object, response, predictors=setdiff(names(newdata), r
     nd <- do.call(cbind, lapply(newdata, as.character))
     nd <- nd[, predictors, drop=FALSE]
 
-    ## print(head(nd))
     vn <- colnames(nd)
-    ## print(vn)
 
     #for (i in 1:nrow(newdata)){
         ## case      <- newdata[i, predictors, drop=FALSE]
@@ -89,7 +87,6 @@ predict.grain <- function(object, response, predictors=setdiff(names(newdata), r
         p.evec[i] <- p.e
         for (j in 1:length(response)){
             pj   <- .nodeMarginal(objecttmp1, response[j])[[1]] ## BRIS
-                                        #print(pj)
             ans[[j]][i,] <- pj
         }
     }
@@ -98,10 +95,7 @@ predict.grain <- function(object, response, predictors=setdiff(names(newdata), r
         ns <- nodeStates(object, response)
         for (i in 1:length(ans)){
             a<-ans[[i]]
-                                        #print(a)
             mlc <- apply(a,1,which.max)
-                                        #print(mlc)
-
             ans[[i]] <- ns[[i]][mlc]
         }
     }

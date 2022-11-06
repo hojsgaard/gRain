@@ -65,10 +65,10 @@ propagate.grain <- function(object, details=object$details, engine="cpp", ...){
     isPropagated(object) <- TRUE
     
     ## FIXME: propagate.grain : Looks strange
-    if (!is.null((ev <- getEvidence(object)))){
-        attr(ev, "pEvidence") <- pEvidence(object)
-        object$evidence <- ev
-    }
+    ## if (!is.null((ev <- getEvidence(object)))){
+        ## attr(ev, "pEvidence") <- pEvidence(object)
+        ## object$evidence <- ev
+    ## }
     
     .timing(" Time: propagation:", object$control, t0)
     object

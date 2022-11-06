@@ -7,7 +7,7 @@
 ##
 ## ###############################################################
 #'
-#' @aliases subset.grain_ev print.grain_ev varNames.grain_ev
+#' @aliases subset.grain_evidence print.grain_evidence varNames.grain_evidence
 #' 
 #' @details Evidence is specified as a list. Internally, evidence is
 #'     represented as a grain evidence object which is a list with 4 elements.
@@ -57,14 +57,16 @@
 #' @param levels A named list with the levels of all variables. 
 new_ev <- function(evi.list=NULL, levels){
 
-    if (inherits( evi.list, "grain_ev") ) return( evi.list )
-    
-    out <- list(nodes=character(0),
-                is.hard.evidence=logical(0),
-                hard.state=character(0),
-                evidence=list() )
-    
-    if (length(evi.list) != 0){
+    if (inherits(evi.list, "grain_evidence")) {
+        return(evi.list)
+    }
+
+    if (length(evi.list) == 0){
+        out <- list(nodes=character(0),
+                    is.hard.evidence=logical(0),
+                    hard.state=character(0),
+                    evidence=list() )
+    } else {
         ## First remove all evidence specified as NA
         not.na <- !unlist(lapply(lapply(evi.list,is.na), any), use.names=FALSE)
         if (length( not.na ) > 0)
@@ -73,8 +75,6 @@ new_ev <- function(evi.list=NULL, levels){
         evidence           <- vector("list", length(evi.list))
         is.hard.evidence   <- rep.int(TRUE,  length(evi.list))
         hard.state         <- rep.int(NA,    length(evi.list))
-        
-        ## cat("new_ev\n"); print(evi.list)
         
         for (i in seq_along(evi.list)){
             ev <- evi.list[i]
@@ -105,15 +105,15 @@ new_ev <- function(evi.list=NULL, levels){
         keep <- unlist(lapply(evidence, function(e){ sum(e) !=0 && all(e>=0) }), use.names=FALSE)
         ## print(keep)
         
-        nodes <- unique.default( unlist(lapply(evidence, .namesDimnames)),
+        nodes <- unique.default(unlist(lapply(evidence, .namesDimnames)),
                                 use.names=FALSE )
-        
-        out$nodes            = nodes[keep]
-        out$is.hard.evidence = is.hard.evidence[keep]
-        out$hard.state       = hard.state[keep]
-        out$evidence         = evidence[keep]
+        out <- list(
+            nodes            = nodes[keep],
+            is.hard.evidence = is.hard.evidence[keep],
+            hard.state       = hard.state[keep],
+            evidence         = evidence[keep])
     }
-    class( out ) <- "grain_ev"
+    class(out) <- c("grain_evidence", "list")
     out
 }
 
@@ -122,8 +122,8 @@ new_ev <- function(evi.list=NULL, levels){
 #' @param object Some R object.
 is.null_ev <- function(object){
     if (missing(object)) TRUE
-    else if (length(object)==0) TRUE
-    else if (inherits(object, "grain_ev") && length(varNames(object)) == 0) TRUE
+    else if (length(object) == 0) TRUE
+    else if (inherits(object, "grain_evidence") && length(varNames(object)) == 0) TRUE
     else FALSE
 
 }
@@ -132,14 +132,22 @@ is.null_ev <- function(object){
 ## #' @param x Evidence object
 
 #' @export
-print.grain_ev <- function(x, ...){
-    print( as.data.frame(x[1:3]) )
+print.grain_evidence <- function(x, ...){
+    class(x) <- "list"
+    invisible(x)
 }
+
+## ' @export
+## summary.grain_evidence <- function(object, ...){
+    ## list(
+        ## as.data.frame(object[1:3]),
+        ## object$evidence)
+## }
 
 
 ## #' @rdname evidence_object
 #' @export
-varNames.grain_ev <- function(x) x$nodes
+varNames.grain_evidence <- function(x) x$nodes
 
 #' @rdname evidence_object
 #' @param row.names Not used.
@@ -147,7 +155,7 @@ varNames.grain_ev <- function(x) x$nodes
 #' @param x An evidence object.
 #' @param ... Not used.
 #' @export 
-as.data.frame.grain_ev <-
+as.data.frame.grain_evidence <-
     function (x, row.names = NULL, optional = FALSE, ...) {
         is.atom <- sapply(x, is.atomic)
         atom <- x[is.atom]
@@ -170,7 +178,7 @@ setdiff_ev <- function(ev1, ev2){
     
     nn  <- setdiff( varNames(ev1), varNames(ev2) )
     out <- subset(ev1, select=nn)
-    class(out) <- "grain_ev"
+    class(out) <- c("grain_evidence", "list")
     out
 }
 
@@ -182,12 +190,12 @@ union_ev <- function(ev1, ev2){
     ev <- setdiff_ev( ev1, ev2 )
     out <- mapply(function(l1, l2){c(l1,l2)},
                   ev, ev2, SIMPLIFY=FALSE, USE.NAMES=TRUE)
-    class(out) <- "grain_ev"
+    class(out) <- c("grain_evidence", "list")
     out
 }
 
 #' @export 
-subset.grain_ev <- function(x, subset, select, drop = FALSE, ...){
+subset.grain_evidence <- function(x, subset, select, drop = FALSE, ...){
     if (missing(select)) x
     else if (length(select)==0) new_ev(list())
     else {
