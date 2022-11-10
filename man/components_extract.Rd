@@ -32,7 +32,7 @@ turned into a \code{graphNEL} object by calling \code{ug} or
 
 \item{mg}{An object of class \code{marg_rep}}
 
-\item{pt}{An object of class \code{pot_rep}}
+\item{pt}{An object of class \code{pot_representation}}
 }
 \value{
 \itemize{

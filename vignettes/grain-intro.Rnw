@@ -393,7 +393,7 @@ lst <- list(asia=c(1, 99),
             xray=c(98, 2, 5, 95),
             dysp=c(9, 1, 7, 3, 8, 2, 1, 9))
 
-bn <- updateCPT(bn, lst)
+bn <- replaceCPT(bn, lst)
 
 
 
@@ -683,7 +683,7 @@ querygrain(bn, exclude = FALSE,
 An alternative is to explicitly modify the CPT which specifies $p(x_1)$:
 <<>>=
 x1_upd <- getgrain(bn, "cptlist")$x1 * lik1
-bn2 <- updateCPT(bn, list(x1=x1_upd))
+bn2 <- replaceCPT(bn, list(x1=x1_upd))
 querygrain(bn2) 
 @ 
 

@@ -74,34 +74,35 @@ objects are now compiled upon creation.
 }
 \examples{
 
-## Asia (chest clinic) network created from conditional probability tables
+## Create network from conditional probability tables CPTs:
 
 yn   <- c("yes", "no")
-a    <- cptable(~asia,              values=c(1,99), levels=yn)
-t.a  <- cptable(~tub+asia,          values=c(5,95,1,99), levels=yn)
-s    <- cptable(~smoke,             values=c(5,5), levels=yn)
-l.s  <- cptable(~lung+smoke,        values=c(1,9,1,99), levels=yn)
-b.s  <- cptable(~bronc+smoke,       values=c(6,4,3,7), levels=yn)
-e.lt <- cptable(~either+lung+tub,   values=c(1,0,1,0,1,0,0,1), levels=yn)
-x.e  <- cptable(~xray+either,       values=c(98,2,5,95), levels=yn)
-d.be <- cptable(~dysp+bronc+either, values=c(9,1,7,3,8,2,1,9), levels=yn)
-chest.cpt <- compileCPT(a, t.a, s, l.s, b.s, e.lt, x.e, d.be)
-chest.bn  <- grain(chest.cpt)
+a    <- cpt(~asia,              values=c(1,99), levels=yn)
+t.a  <- cpt(~tub+asia,          values=c(5,95,1,99), levels=yn)
+s    <- cpt(~smoke,             values=c(5,5), levels=yn)
+l.s  <- cpt(~lung+smoke,        values=c(1,9,1,99), levels=yn)
+b.s  <- cpt(~bronc+smoke,       values=c(6,4,3,7), levels=yn)
+e.lt <- cpt(~either+lung+tub,   values=c(1,0,1,0,1,0,0,1), levels=yn)
+x.e  <- cpt(~xray+either,       values=c(98,2,5,95), levels=yn)
+d.be <- cpt(~dysp+bronc+either, values=c(9,1,7,3,8,2,1,9), levels=yn)
+cpt_list  <- list(a, t.a, s, l.s, b.s, e.lt, x.e, d.be)
+chest_cpt <- compileCPT(cpt_list)
+## Alternative: chest_cpt <- compileCPT(a, t.a, s, l.s, b.s, e.lt, x.e, d.be)
+
+chest_bn  <- grain(chest_cpt)
 
 ## Create network from data and graph specification.
 
-## There are different ways; see documentation in the "See all"
-## links.
-
 data(lizard, package="gRbase")
-# DAG: height <- species -> diam
+
+## From a DAG: height <- species -> diam
 daG <- dag(~species + height:species + diam:species)
 
-# UG : [height:species][diam:species]
+## From an undirected graph UG : [height:species][diam:species]
 uG  <- ug(~height:species + diam:species)
 
-bn.uG   <- grain(uG, data=lizard)
-bn.daG  <- grain(daG, data=lizard)
+liz.ug   <- grain(uG, data=lizard)
+liz.dag  <- grain(daG, data=lizard)
 }
 \references{
 Søren Højsgaard (2012). Graphical Independence

@@ -19,8 +19,7 @@ element is a copy of \code{plist} in which \code{name[i]} are
 substituted. If \code{TRUE} the result is the result of
 applying \code{unlist()}.}
 
-\item{data}{Enable variable names of the form \code{name[data[i]]} - to
-enable data-driven variable names.}
+\item{data}{A two column matrix. The first column is the index / name of a node; the second column is the index / name of the node's parent.}
 }
 \description{
 Repeated patterns is a useful model specification
@@ -31,57 +30,54 @@ short cut for Bayesian networks
 ## Example: Markov chain
 yn <- c("yes", "no")
 
-## Specify p(x0)
-x.0 <- cptable(~x0, values=c(1, 9), levels=yn)
+x.0 <- cptable(~x0, values=c(1, 9), levels=yn)                   ## p(x0)
+x.x <- cptable(~x[i]|x[i-1], values=c(1, 99, 2, 98), levels=yn)  ## p(x[i]|x[i-1])
 
-## Specify transition density
-x.x <- cptable(~x[i]|x[i-1], values=c(1, 99, 2, 98), levels=yn)
+x.0 <- cpt(~x0, values=c(1, 9), levels=yn)                   ## p(x0)
+x.x <- cpt(~x[i]|x[i-1], values=c(1, 99, 2, 98), levels=yn)  ## p(x[i]|x[i-1])
 
-## Pattern to be repeated
-pat <- list(x.x)
+pat <- list(x.x) ## Pattern to be repeated
 
-rep.pat <- repeatPattern(pat, instances=1:5)
-cpt <- compileCPT(c(list(x.0), rep.pat))
-mc <- grain(cpt)
-
+n <- 5
+rep.pat <- repeatPattern(pat, instances=1:n)
+mc <- compileCPT(c(list(x.0), rep.pat)) |> grain()
 if (interactive()) iplot(mc)
 
 ## Example: Hidden markov model: The x[i]'s are unobserved, the
 ## y[i]'s can be observed.
 
-yn <- c("yes", "no")
+x.0 <- cptable(~x0, values=c(1, 9), levels=yn)                   ##  p(x0)
+x.x <- cptable(~x[i]|x[i-1], values=c(1, 99, 2, 98), levels=yn)  ##  p(x[i]|x[i-1])
+y.x <- cptable(~y[i]|x[i], values=c(10, 90, 20, 80), levels=yn)  ##  p(y[i]|x[i])
 
-## Specify p(x0)
-x.0 <- cptable(~x0, values=c(1, 9), levels=yn)
+x.0 <- cpt(~x0, values=c(1, 9), levels=yn)                   ##  p(x0)
+x.x <- cpt(~x[i]|x[i-1], values=c(1, 99, 2, 98), levels=yn)  ##  p(x[i]|x[i-1])
+y.x <- cpt(~y[i]|x[i], values=c(10, 90, 20, 80), levels=yn)  ##  p(y[i]|x[i])
 
-## Specify transition density
-x.x <- cptable(~x[i]|x[i-1], values=c(1, 99, 2, 98), levels=yn)
+pat <- list(x.x, y.x) ## Pattern to be repeated
 
-## Specify emission density
-y.x <- cptable(~y[i]|x[i],   values=c(10, 90, 20, 80), levels=yn)
-
-## The pattern to be repeated
-pat <- list(x.x, y.x)
-
-## Repeat pattern and create network
-rep.pat <- repeatPattern(pat, instances=1:5)
-cpt <- compileCPT(c(list(x.0), rep.pat))
-hmm <- grain(cpt)
+rep.pat <- repeatPattern(pat, instances=1:n)
+hmm <- compileCPT(c(list(x.0), rep.pat)) |> grain()
 hmm 
 
 if (interactive()) iplot(hmm)
 
 ## Data-driven variable names
-x0 <- cptable(~x0, values=c(0.5, 0.5), levels=yn)
-x <- cptable(~x[i] | x[data[i, "p"]], values=c(0.5, 0.5), levels=yn)
 dep <- data.frame(i=c(1, 2, 3, 4, 5, 6, 7, 8),
                   p=c(0, 1, 2, 2, 3, 3, 4, 4))
-x <- repeatPattern(list(x), instances=dep$i, data=dep)
-tree <- compileCPT(c(list(x0), x))
-tree <- grain(tree)
+
+z0 <- cptable(~z0, values=c(0.5, 0.5), levels=yn)
+za <- cptable(~z[i] | z[data[i, "p"]], values=c(0.5, 0.5), levels=yn)
+zb <- repeatPattern(list(za), instances=1:nrow(dep), data=dep)
+tree <- compileCPT(c(list(z0), zb))  |> grain()
+
+x0 <- cpt(~x0, values=c(0.5, 0.5), levels=yn)
+xa <- cpt(~x[i] | x[data[i, "p"]], values=c(0.5, 0.5), levels=yn)
+xb <- repeatPattern(list(xa), instances=1:nrow(dep), data=dep)
+tree <- compileCPT(c(list(x0), xb))  |> grain()
 tree 
 
-#' if (interactive()) iplot(tree)
+if (interactive()) iplot(tree)
 
 }
 \references{

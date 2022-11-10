@@ -58,7 +58,6 @@ x <- compileCPT(chest_cpt)
 class(x)
 grain(x)
 
-## FIXME: compileCPT/compilePOT examples missing.
 }
 \references{
 Søren Højsgaard (2012). Graphical Independence Networks
