@@ -1,10 +1,10 @@
 ## ##############################################################
 ##
-#' @title Update CPTs of Bayesian network
+#' @title Replace CPTs in Bayesian network
 #'
-#' @description Update CPTs of Bayesian network.
+#' @description Replace CPTs of Bayesian network.
 #'
-#' @name update-cpt
+#' @name replace-cpt
 #' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
 #' 
 ## ##############################################################
@@ -12,8 +12,22 @@
 #' @param object A `grain` object.
 #' @param value A named list, see examples below.
 #'
-#' @details Updates some CPTs in a network but the overhead in redoing
-#'     the triangulation and other steps are avoided.
+#' @details When a Bayesian network (BN) is constricted from a list of
+#'     conditional probility tables (CPTs) various actions are taken:
+#'
+#' 1. It is checked that the list of CPTs define a directed acyclic graph (DAG).
+#'
+#' 1. The DAG is moralized and triangulated.
+#'
+#' 1. A list of clique potentials (one for each clique in the
+#'    triangulated graph) is created from the list of CPTs.
+#'
+#' 1. The clique potentials are, by default, calibrated to each other
+#'     so that the potentials contain marginal distribtions. 
+#'
+#' The function described here bypass the first two steps which can
+#' provide an imporatant gain in speed compared to constructing a new
+#' BN with a new set of CPTs.
 #' 
 #' @seealso \code{\link{grain}}, \code{\link[gRbase]{propagate}},
 #'     \code{\link[gRbase]{triangulate}}, \code{\link[gRbase]{rip}},
@@ -28,35 +42,28 @@
 #' ## https://en.wikipedia.org/wiki/Bayesian_network
 #' 
 #' yn <- c("yes", "no")
-#' p.R <- cptable(~R, values=c(.2, .8), levels=yn)
-#' p.S_R <- cptable(~S:R, values=c(.01, .99, .4, .6), levels=yn)
+#' p.R    <- cptable(~R, values=c(.2, .8), levels=yn)
+#' p.S_R  <- cptable(~S:R, values=c(.01, .99, .4, .6), levels=yn)
 #' p.G_SR <- cptable(~G:S:R, values=c(.99, .01, .8, .2, .9, .1, 0, 1), levels=yn)
 #' 
-#' x <- compileCPT(p.R, p.S_R, p.G_SR)
-#' x
-#' wet.bn <- grain(x)
+#' wet.bn <- compileCPT(p.R, p.S_R, p.G_SR)  |> grain()
+#' getgrain(wet.bn, "cpt")[c("R","S")]
 #' 
-#' getgrain(wet.bn, "cpt")
-#' getgrain(wet.bn, "cpt")$R
-#' getgrain(wet.bn, "cpt")$S
-#'
-#' # Now update some cpt's
-#' wet.bn2 <- updateCPT(wet.bn, list(R=c(.3, .7), S=c(.1, .9, .7, .3)))
-#' 
-#' getgrain(wet.bn2, "cpt")$R
-#' getgrain(wet.bn2, "cpt")$S
+#' # Update some CPTs
+#' wet.bn <- replaceCPT(wet.bn, list(R=c(.3, .7), S=c(.1, .9, .7, .3)))
+#' getgrain(wet.bn, "cpt")[c("R","S")]
 #' 
 #' @export 
-#' @rdname update-cpt
-updateCPT <- function(object, value){
-    UseMethod("updateCPT")
+#' @rdname replace-cpt
+replaceCPT <- function(object, value){
+    UseMethod("replaceCPT")
 }
 
 ## Modifies cptlist in object. 
 
 #' @export 
-#' @rdname update-cpt
-updateCPT.cpt_grain <- function(object, value){
+#' @rdname replace-cpt
+replaceCPT.cpt_grain <- function(object, value){
 
     if (!isCompiled(object))
         stop("grain object must be compiled")
@@ -66,21 +73,18 @@ updateCPT.cpt_grain <- function(object, value){
 
     ## cat(".. inserting values in cptlist\n")
     vn <- names(getgrain(object, "cpt"))
-    nn <- names(value)
-    if (any((id <- is.na(match(nn, vn)))))
-        stop("variable(s) ", toString(nn[id]), " not in network")   
-    for (i in seq_along(nn)){
-        v <- nn[i]
+    nms <- names(value)
+    if (any((id <- is.na(match(nms, vn)))))
+        stop("variable(s) ", toString(nms[id]), " not in network")   
+    for (i in seq_along(nms)){
+        v <- nms[i]
         z <- value[[i]]
         if (length(z) != length(getgrain(object, "cpt")[[v]]))
             stop("replacement value not correct length")                    
         ccc <- object$cptlist[[v]]        
-        ## cat("tab - before\n"); print(ccc)
         ccc[] <- z
         ccc <- tabNormalize(ccc, "first")
-        ## cat("tab - after\n"); print(ccc)
         object$cptlist[[v]] <- ccc
-        #object$cptlist[[v]][] <- z               
     }
     ## isCompiled(object) <- FALSE
 
@@ -109,28 +113,6 @@ is_named_list <- function(x){
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-## update-cpt
-## "setcpt<-" <- function(object, value){
-##     UseMethod("setcpt<-")
-## }
-
-## #' @rdname update-cpt
-## "setcpt<-.grain" <- function(object, value){
-##     updateCPT(object, value)
-## }
 
 
 

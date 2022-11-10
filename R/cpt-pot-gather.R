@@ -56,21 +56,6 @@
 #' class(x)
 #' grain(x)
 #' 
-#' ## FIXME: compileCPT/compilePOT examples missing.
-
-## foo <- function(x, ..., z){
-##     args <- c(list(x), list(...))
-##     listify_dots(args)
-## }
-## listify_dots <- function(args){
-##     args <- lapply(args, function(a) if (!is.list(a)) list(a) else a)
-##     unlist(args, recursive=FALSE)    
-## }
-## #' @details \code{compileCPT}, \code{compilePOT} are wrappers for
-## #'     \code{compileCPT} and \code{compilePOT} and are kept for
-## #'     backward compatibility.
-## #'
-
 
 #' @rdname components_gather
 #' @export
@@ -88,7 +73,9 @@ compileCPT <- function(x, ..., forceCheck=TRUE){
     
     ## zz: Internal representation of cpts
     zz  <- lapply(x, parse_cpt)
-
+    ## zz <<- zz
+    ## print(zz)
+    
     universe <- .create_universe(zz)
 
     ## Given node names; need to check that they are not replicated
@@ -100,20 +87,22 @@ compileCPT <- function(x, ..., forceCheck=TRUE){
     ss <- setdiff(unique(unlist(vn_given)),  universe$nodes)
     if (length(ss) > 0)
         stop(paste("Distribution not specified for nodes(s):", toString(ss)))
-    
-    ## Does specification define a DAG? If x is cpt_rep the answer is yes
-    if (inherits(x, "cpt_rep")){
+
+
+    ## Does specification define a DAG? If x is cpt_representation the answer is yes
+    if (inherits(x, "cpt_representation")){
         graph <- attr(x, "graph")
     } else {
         vp <- lapply(zz, "[[", "vpar")
         graph <- dagList(vp, forceCheck=forceCheck)
     }
+
     ## Need list of cpts (each represented as an array)
     out <- lapply(seq_along(zz), .create_array, zz, universe)    
     names(out) <- universe$nodes
-
+    
     attr(out, "universe") <- universe
-    attr(out, "dag")    <- graph
+    attr(out, "dag")      <- graph
     class(out)            <- "cpt_spec"
     out
 }
@@ -130,7 +119,7 @@ compilePOT <- function(x, ..., forceCheck=TRUE){
 
 #' @export
 print.cpt_spec <- function(x, ...){
-    cat("cpt_spec with probabilities:\n")
+    ## cat("cpt_spec with probabilities:\n")
     lapply(x,
            function(xx){
                vn <- varNames(xx)
@@ -141,7 +130,7 @@ print.cpt_spec <- function(x, ...){
 
 #' @export
 print.pot_spec <- function(x, ...){
-    cat("pot_spec with potentials:\n")
+    ## cat("pot_spec with potentials:\n")
     lapply(x,
            function(xx){
                vn <- names(dimnames(xx))
@@ -151,7 +140,7 @@ print.pot_spec <- function(x, ...){
 }
 
 summary.cpt_spec <- function(object, ...){
-    cat("cpt_spec with probabilities:\n")
+    ## cat("cpt_spec with probabilities:\n")
     lapply(object,
            function(xx){
                vn <- varNames(xx)
@@ -197,7 +186,7 @@ print.cpt_spec_simple <- function(x,...){
 
     universe  <- .make.universe(x)
     
-    if (inherits(x, "pot_rep")){ ## Result of extractPOT
+    if (inherits(x, "pot_representation")){ ## Result of extractPOT
         graph <- attr(x, "graph")
         rp    <- attr(x, "rip")
     } else {
@@ -246,32 +235,11 @@ print.cpt_spec_simple <- function(x,...){
 
 
 
-
-
-
-
-
-
-## ##################################################################
-##
-## Extend compilation function 
-##
-## ##################################################################
-
-## compile.cpt_rep <- function(object, ...)
-##     compileCPT(object, ...)
-
-## compile.pot_rep <- function(object, ...)
-##     compilePOT(object, ...)
-
-## #################################################################
-
-
 ## ##################################################################
 ##
 ## INTERNAL UTILITIES
 ##
-## The .parse_cpt functions are used only in compileCPT
+## Used only in compileCPT
 ##
 ## ##################################################################
 
@@ -284,17 +252,20 @@ parse_cpt <- function(xi){
 
 #' @export
 parse_cpt.xtabs <- function(xi){
+    ## cat("parse_cpt.xtabs\n")
     NextMethod("parse_cpt")
 }
 
 #' @export
 parse_cpt.cptable_class <- function(xi){
+    ## cat("parse_cpt.cptable_class\n")
     .parse_cpt_finalize(varNames(xi), valueLabels(xi)[[1]],
                         as.numeric(xi), attr(xi, "smooth"))
 }
 
 #' @export
 parse_cpt.default <- function(xi){
+    ## cat("parse_cpt.default\n")
     if (!is.named.array(xi)) stop("'xi' must be a named array")
     .parse_cpt_finalize(varNames(xi), valueLabels(xi)[[1]],
                         as.numeric(xi), 0)
@@ -302,6 +273,7 @@ parse_cpt.default <- function(xi){
 
 .parse_cpt_finalize <- function(vpar, vlev, values, smooth){
 
+    ## str(list(vpar=vpar, vlev=vlev, values=values, smooth=smooth))
     ## Normalization of CPTs happen here
     values <- matrix(values, nrow=length(vlev))
     s  <- colSums(values)
@@ -311,6 +283,7 @@ parse_cpt.default <- function(xi){
     out <- list(vnam=vpar[1], vlev=vlev, vpar=vpar, values=values,
                 normalize="first", smooth=smooth)
     class(out) <- "cpt_generic"
+    ## print(out)
     out    
 }
 
@@ -319,36 +292,16 @@ parse_cpt.default <- function(xi){
 
 
 
+## ##################################################################
+##
+## Extend compilation function 
+##
+## ##################################################################
 
+## compile.cpt_representation <- function(object, ...)
+##     compileCPT(object, ...)
 
+## compile.pot_representation <- function(object, ...)
+##     compilePOT(object, ...)
 
-
-
-## compilePOT <- function(x, ...){
-##     ## x: a list of arrays, and a rip attribute
-    
-##     .make.universe <- function(x){
-##         lll       <- unlist(lapply(x, dimnames), recursive=FALSE)
-##         nnn       <- names(lll)
-##         iii       <- match(unique(nnn), nnn)
-##         levels    <- lll[iii]
-##         vn        <- nnn[iii]
-##         di        <- c(lapply(levels, length), recursive=TRUE)
-##         names(di) <- vn
-##         universe  <- list(nodes = vn, levels = levels, nlev   = di)
-##         universe
-##     }
-
-##     if (!inherits(x, "pot_rep")) stop("can not compile 'x'\n")
-##     if (is.null(attr(x, "rip"))) stop("no rip attribute; not a proper POT_spec object")
-
-##     attr(x, "universe") <- .make.universe(x)
-##     attr(x, "ug")       <- ug(attr(x, "rip")$cliques)
-##     class(x) <- "pot_spec"
-##     x
-## }
-
-
-
-
-
+## #################################################################

@@ -12,8 +12,7 @@
 #'     element is a copy of \code{plist} in which \code{name[i]} are
 #'     substituted. If \code{TRUE} the result is the result of
 #'     applying \code{unlist()}.
-#' @param data Enable variable names of the form \code{name[data[i]]} - to
-#'     enable data-driven variable names.
+#' @param data A two column matrix. The first column is the index / name of a node; the second column is the index / name of the node's parent.
 #' 
 #' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
 #' @seealso \code{\link{grain}}, \code{\link{compileCPT}}
@@ -27,96 +26,112 @@
 #' ## Example: Markov chain
 #' yn <- c("yes", "no")
 #' 
-#' ## Specify p(x0)
-#' x.0 <- cptable(~x0, values=c(1, 9), levels=yn)
-#' 
-#' ## Specify transition density
-#' x.x <- cptable(~x[i]|x[i-1], values=c(1, 99, 2, 98), levels=yn)
+#' x.0 <- cptable(~x0, values=c(1, 9), levels=yn)                   ## p(x0)
+#' x.x <- cptable(~x[i]|x[i-1], values=c(1, 99, 2, 98), levels=yn)  ## p(x[i]|x[i-1])
 #'
-#' ## Pattern to be repeated
-#' pat <- list(x.x)
+#' x.0 <- cpt(~x0, values=c(1, 9), levels=yn)                   ## p(x0)
+#' x.x <- cpt(~x[i]|x[i-1], values=c(1, 99, 2, 98), levels=yn)  ## p(x[i]|x[i-1])
 #' 
-#' rep.pat <- repeatPattern(pat, instances=1:5)
-#' cpt <- compileCPT(c(list(x.0), rep.pat))
-#' mc <- grain(cpt)
+#' pat <- list(x.x) ## Pattern to be repeated
 #'
+#' n <- 5
+#' rep.pat <- repeatPattern(pat, instances=1:n)
+#' mc <- compileCPT(c(list(x.0), rep.pat)) |> grain()
 #' if (interactive()) iplot(mc)
 #' 
 #' ## Example: Hidden markov model: The x[i]'s are unobserved, the
 #' ## y[i]'s can be observed.
 #' 
-#' yn <- c("yes", "no")
+#' x.0 <- cptable(~x0, values=c(1, 9), levels=yn)                   ##  p(x0)
+#' x.x <- cptable(~x[i]|x[i-1], values=c(1, 99, 2, 98), levels=yn)  ##  p(x[i]|x[i-1])
+#' y.x <- cptable(~y[i]|x[i], values=c(10, 90, 20, 80), levels=yn)  ##  p(y[i]|x[i])
 #' 
-#' ## Specify p(x0)
-#' x.0 <- cptable(~x0, values=c(1, 9), levels=yn)
+#' x.0 <- cpt(~x0, values=c(1, 9), levels=yn)                   ##  p(x0)
+#' x.x <- cpt(~x[i]|x[i-1], values=c(1, 99, 2, 98), levels=yn)  ##  p(x[i]|x[i-1])
+#' y.x <- cpt(~y[i]|x[i], values=c(10, 90, 20, 80), levels=yn)  ##  p(y[i]|x[i])
 #' 
-#' ## Specify transition density
-#' x.x <- cptable(~x[i]|x[i-1], values=c(1, 99, 2, 98), levels=yn)
-#' 
-#' ## Specify emission density
-#' y.x <- cptable(~y[i]|x[i],   values=c(10, 90, 20, 80), levels=yn)
-#' 
-#' ## The pattern to be repeated
-#' pat <- list(x.x, y.x)
-#' 
-#' ## Repeat pattern and create network
-#' rep.pat <- repeatPattern(pat, instances=1:5)
-#' cpt <- compileCPT(c(list(x.0), rep.pat))
-#' hmm <- grain(cpt)
+#' pat <- list(x.x, y.x) ## Pattern to be repeated
+#'
+#' rep.pat <- repeatPattern(pat, instances=1:n)
+#' hmm <- compileCPT(c(list(x.0), rep.pat)) |> grain()
 #' hmm 
 #'
 #' if (interactive()) iplot(hmm)
 #' 
 #' ## Data-driven variable names
-#' x0 <- cptable(~x0, values=c(0.5, 0.5), levels=yn)
-#' x <- cptable(~x[i] | x[data[i, "p"]], values=c(0.5, 0.5), levels=yn)
 #' dep <- data.frame(i=c(1, 2, 3, 4, 5, 6, 7, 8),
 #'                   p=c(0, 1, 2, 2, 3, 3, 4, 4))
-#' x <- repeatPattern(list(x), instances=dep$i, data=dep)
-#' tree <- compileCPT(c(list(x0), x))
-#' tree <- grain(tree)
+#'
+#' z0 <- cptable(~z0, values=c(0.5, 0.5), levels=yn)
+#' za <- cptable(~z[i] | z[data[i, "p"]], values=c(0.5, 0.5), levels=yn)
+#' zb <- repeatPattern(list(za), instances=1:nrow(dep), data=dep)
+#' tree <- compileCPT(c(list(z0), zb))  |> grain()
+#' 
+#' x0 <- cpt(~x0, values=c(0.5, 0.5), levels=yn)
+#' xa <- cpt(~x[i] | x[data[i, "p"]], values=c(0.5, 0.5), levels=yn)
+#' xb <- repeatPattern(list(xa), instances=1:nrow(dep), data=dep)
+#' tree <- compileCPT(c(list(x0), xb))  |> grain()
 #' tree 
 #' 
-#' #' if (interactive()) iplot(tree)
+#' if (interactive()) iplot(tree)
 #' 
 #' @export repeatPattern
 #' 
 repeatPattern <- function(plist, instances, unlist=TRUE, data=NULL){
     ans <- vector("list", length(instances))
+    print(ans)
     for (i in seq_along(instances)){
-        ans[[ i ]] <- .do.one(plist, instances[[ i ]], data)
+        ans[[ i ]] <- do_instance(plist, instances[[ i ]], data)
     }
     if (unlist)
         ans <- unlist(ans, recursive=FALSE)
+    ## print(ans)
     ans
 }
 
-.do.one <- function(plist1, i.val, data=NULL){
+set_dim_names_array <- function(xx, i, data=NULL){
+    nms <- names(dimnames(xx))
+    head <- gsub("\\[.*", "", nms)
+
+    if (is.null(data)){
+        b1 <- gsub("^.*\\[(.*)\\]", "\\1", nms)
+        b2 <- eval(parse(text=paste0("c(", toString(b1), ")")), list(i=i))
+    } else {
+        b2 <- data[i, ]
+    }
+    nms2 <- paste0(head, b2)
+    names(dimnames(xx)) <- nms2
+    xx            
+}
+
+set_dim_names_cptable <- function(xx, i, data=NULL){
+    nms <- attr(xx, "vpa")
+    head <- gsub("\\[.*", "", nms)
+
+    if (is.null(data)){
+        b1 <- gsub("^.*\\[(.*)\\]", "\\1", nms)
+        b2 <- eval(parse(text=paste0("c(", toString(b1), ")")), list(i=i))
+    } else {
+        b2 <- data[i, ]
+    }
+    nms2 <- paste0(head, b2)
+    attr(xx, "vpa") <- nms2
+    xx            
+}
+
+
+do_instance <- function(plist1, i.val, data=NULL){
     pp <- lapply(plist1, function(xx){
-        ##xx$vpa <- .subst(xx$vpa, i.val)                       ## FIX 14/8/2017
-        attr(xx, "vpa") <- .subst(attr(xx, "vpa"), i.val, data) ## FIX 14/8/2017, 24/7/2022
-        xx
-    }) 
+        if (inherits(xx, "array")){
+            set_dim_names_array(xx, i.val, data)
+        } else if (inherits(xx, "cptable_class")){
+            set_dim_names_cptable(xx, i.val, data)
+        } else {
+            stop("no behaviour defined\n")
+        }
+    }
+    )
     pp 
 }
 
-.subst <- function(x, i.val, data=NULL){
-    ##vv <- c("xyz[i+1]tyu", "xx[i]")
-    ##x <- c("xyz[i+1]tyu", "xx[i]","kkkk")
-    ##x <- c("xyztyu", "xx","kkkk")
-    with.brack <- grep("\\[",x)
-    vv <- x[ with.brack ]
-    
-    if (length(vv)>0){
-        idx.vec <- gsub("[^\\[]*\\[([^\\]*)\\].*", "\\1", vv)
-        idx.exp <- parse(text=idx.vec)
-        idx.val <- unlist(lapply(idx.exp, eval, list(i=i.val, data=data)))
-        vv2 <- list()
-        for (ii in seq_along(idx.val)){
-            vv2[[ii]] <- gsub("\\[([^\\]*)\\]", idx.val[ii], vv[ii])
-        }
-        vv2 <- unlist(vv2)
-        x[ with.brack ] <- vv2
-    }
-    x
-}
+

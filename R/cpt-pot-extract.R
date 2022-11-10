@@ -85,7 +85,7 @@ extractCPT <- function(data_, graph, smooth=0){
     vpa <- vpar(graph)
     out <- .extractCPT_primitive(data_, vpa=vpa, smooth=smooth)
     attr(out, "graph") <- graph
-    class(out)         <- "cpt_rep"
+    class(out)         <- "cpt_representation"
     out
 }
 
@@ -102,7 +102,7 @@ extractPOT <- function(data_, graph, smooth=0){
     out   <- .extractPOT_primitive(data_, rip_$cliques, rip_$sep, smooth=smooth)
     attr(out, "rip")   <- rip_
     attr(out, "graph") <- graph    
-    class(out)         <- "pot_rep"
+    class(out)         <- "pot_representation"
     out
 }
 
@@ -138,15 +138,15 @@ marg2pot <- function(mg){
                          tabDiv0(mg[[i]], tabMarg(mg[[i]], seps[[i]]))               
                  })
     attr(pt, "rip") <- rip_
-    class(pt) <- "pot_rep"
+    class(pt) <- "pot_representation"
     pt
 }
 
 #' @export 
 #' @rdname components_extract 
-#' @param pt An object of class \code{pot_rep}
+#' @param pt An object of class \code{pot_representation}
 pot2marg <- function(pt){
-    if (!inherits(pt, "pot_rep")) stop("'pt' not a pot_rep object\n")    
+    if (!inherits(pt, "pot_representation")) stop("'pt' not a pot_representation object\n")    
     mg <- pt
     rip_ <- attr(pt, "rip")
     seps <- rip_$separators
