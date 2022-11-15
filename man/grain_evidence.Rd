@@ -26,7 +26,7 @@ retractEvidence(object, nodes = NULL, propagate = TRUE)
 
 absorbEvidence(object, propagate = TRUE)
 
-pEvidence(object)
+pEvidence(object, evidence = NULL)
 
 getEvidence(object, short = TRUE)
 

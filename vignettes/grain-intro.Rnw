@@ -346,22 +346,31 @@ chest_ev  <- setEvidence(chest_bn,
 ## evidence(chest_bn) <- list(asia="yes", dysp="yes")
 @ %def
 
-\item The evidence is
+\item The evidence is a list and can conveniently be displayed as a dataframe:
 
 <<>>=
-getEvidence(chest_ev)
-getEvidence(chest_ev, short=FALSE)
+getEvidence(chest_ev) |> as.data.frame()
 @ 
+
+\item The network can be queried again:
+<<>>=
+querygrain(chest_ev, nodes=c("lung", "bronc"))
+@ %def
+
 
 \item The probability of observing this evidence under the model is
 <<>>=
 pEvidence(chest_ev)
 @ %def
 
-\item The network can be queried again:
+\item The probability of an evidence can be found with only
+  propagation towards the root of a junction tree. This saves about
+  half the computational effort of propagation:
+
 <<>>=
-querygrain(chest_ev, nodes=c("lung", "bronc"))
-@ %def
+pEvidence(chest_bn, evidence=list(asia="yes", dysp="yes"))
+@ 
+
 
 \end{enumerate}
 
@@ -378,13 +387,18 @@ flist <- c(
     ~asia, ~tub|asia, ~smoke, ~lung|smoke, ~bronc|smoke, ~either|lung:tub,
     ~xray|either, ~dysp|bronc:either
 )
+## or
+flist <- list("asia", c("tub", "asia"), "smoke", c("lung", "smoke"),
+              c("bronc", "smoke"), c("either", "tub", "lung"), c("xray", "either"),
+              c("dysp", "bronc", "either"))
 
-chest_cpt <- lapply(flist, function(f){
-    cpt(f, levels=yn)}
-    )
-bn <- compileCPT(chest_cpt) |> grain()
+chest_cpt2 <- lapply(flist, function(f){
+    cpt(f, levels=yn)
+})
 
-lst <- list(asia=c(1, 99),
+bn2 <- compileCPT(chest_cpt2) |> grain()
+
+lst2 <- list(asia=c(1, 99),
             tub=c(5, 95, 1, 99),
             smoke=c(5, 5),
             lung=c(1, 9, 1, 99),            
@@ -393,10 +407,7 @@ lst <- list(asia=c(1, 99),
             xray=c(98, 2, 5, 95),
             dysp=c(9, 1, 7, 3, 8, 2, 1, 9))
 
-bn <- replaceCPT(bn, lst)
-
-
-
+bn2 <- replaceCPT(bn2, lst2)
 @ 
 
 \item Consider querying a network where focus is on 
@@ -836,7 +847,8 @@ This difference appears in the \grbn\ networks.
 
 One can do
 <<>>=
-gr.dG <- compile(grain(dG, data=dat, smooth=e))
+
+gr.dG <- grain(dG, data=dat, smooth=e)
 @ %def
 
 which (internally) corresponds to
@@ -861,11 +873,11 @@ place. However, the answer is not necessarily wrong; the answer simply
 states that $P(A|B=lev1)$ is undefined.
 To ``remedy'' we can use the \code{smooth} argument:
 <<>>=
-gr.uG <- compile(grain(uG, data=dat, smooth=e))
+gr.uG <- grain(uG, data=dat, smooth=e)
 @ %def
 which (internally) corresponds to
 <<>>=
-c(extractPOT(dat, uG, smooth=e)) |> c()
+extractPOT(dat, uG, smooth=e) |> c()
 @ %def
 
 Notice that the results are not exactly identical:
@@ -919,7 +931,10 @@ tabMarg(joint, "lung")
 tabMarg(joint, "bronc")
 @
 
-Conditioning on evidence can be done in different ways: The conditional density is a $6$--way slice of the original $8$--way joint distribution:
+Conditioning on evidence can be done in different ways: The
+conditional density is a $6$--way slice of the original $8$--way joint
+distribution:
+
 << >>= 
 ev <- list(asia="yes", dysp="yes")
 cond1 <- tabSlice(joint, slice=ev)
@@ -937,6 +952,11 @@ dim(cond2)
 tabMarg(cond2, "lung")
 tabMarg(cond2, "bronc")
 @
+
+
+\bibliography{grain}
+
+\end{document}
 
 
 
@@ -964,11 +984,6 @@ tabMarg(cond2, "bronc")
 %                    )                   
 % }
 % @
-
-
-\bibliography{grain}
-
-\end{document}
 
 
 %%\SweaveInput{Rmarkup.STY}

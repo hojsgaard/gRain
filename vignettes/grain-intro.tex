@@ -85,7 +85,7 @@
 
 \author{S{\o}ren H{\o}jsgaard\\Aalborg University, Denmark}
 \title{Bayesian networks in R with the \pkg{gRain} package}
-\date{\pkg{gRain} version 1.3.11.9005 as of 2022-11-06}
+\date{\pkg{gRain} version 1.3.12 as of 2022-11-15}
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 \maketitle
@@ -343,7 +343,6 @@ example is as follows.
 \hlstd{chest_cpt}
 \end{alltt}
 \begin{verbatim}
-## cpt_spec with probabilities:
 ##  P( asia )
 ##  P( tub | asia )
 ##  P( smoke )
@@ -410,7 +409,7 @@ Notice: \code{either} is a logical node:
 \hlstd{chest_bn}
 \end{alltt}
 \begin{verbatim}
-## Independence network: Compiled: TRUE Propagated: FALSE Evidence: TRUE
+## Independence network: Compiled: TRUE Propagated: FALSE Evidence: FALSE
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -492,53 +491,17 @@ chooses not to do so, compilation can be done with:
 \end{kframe}
 \end{knitrout}
 
-\item The evidence is
+\item The evidence is a list and can conveniently be displayed as a dataframe:
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{getEvidence}\hlstd{(chest_ev)}
+\hlkwd{getEvidence}\hlstd{(chest_ev) |>} \hlkwd{as.data.frame}\hlstd{()}
 \end{alltt}
 \begin{verbatim}
-##   nodes is.hard.evidence hard.state
-## 1  asia             TRUE        yes
-## 2  dysp             TRUE        yes
-\end{verbatim}
-\begin{alltt}
-\hlkwd{getEvidence}\hlstd{(chest_ev,} \hlkwc{short}\hlstd{=}\hlnum{FALSE}\hlstd{)}
-\end{alltt}
-\begin{verbatim}
-## $nodes
-## [1] "asia" "dysp"
-## 
-## $is.hard.evidence
-## [1] TRUE TRUE
-## 
-## $hard.state
-## [1] "yes" "yes"
-## 
-## $evidence
-## $evidence[[1]]
-## asia
-## yes  no 
-##   1   0 
-## 
-## $evidence[[2]]
-## dysp
-## yes  no 
-##   1   0
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
-
-\item The probability of observing this evidence under the model is
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{pEvidence}\hlstd{(chest_ev)}
-\end{alltt}
-\begin{verbatim}
-## [1] 0.004501375
+##   nodes is_hard hard_state evi_weight
+## 1  asia    TRUE        yes       1, 0
+## 2  dysp    TRUE        yes       1, 0
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -563,6 +526,35 @@ chooses not to do so, compilation can be done with:
 \end{kframe}
 \end{knitrout}
 
+
+\item The probability of observing this evidence under the model is
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{pEvidence}\hlstd{(chest_ev)}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.004501375
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\item The probability of an evidence can be found with only
+  propagation towards the root of a junction tree. This saves about
+  half the computational effort of propagation:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{pEvidence}\hlstd{(chest_bn,} \hlkwc{evidence}\hlstd{=}\hlkwd{list}\hlstd{(}\hlkwc{asia}\hlstd{=}\hlstr{"yes"}\hlstd{,} \hlkwc{dysp}\hlstd{=}\hlstr{"yes"}\hlstd{))}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.004501375
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+
 \end{enumerate}
 
 
@@ -580,13 +572,18 @@ chooses not to do so, compilation can be done with:
     \hlopt{~}\hlstd{asia,} \hlopt{~}\hlstd{tub}\hlopt{|}\hlstd{asia,} \hlopt{~}\hlstd{smoke,} \hlopt{~}\hlstd{lung}\hlopt{|}\hlstd{smoke,} \hlopt{~}\hlstd{bronc}\hlopt{|}\hlstd{smoke,} \hlopt{~}\hlstd{either}\hlopt{|}\hlstd{lung}\hlopt{:}\hlstd{tub,}
     \hlopt{~}\hlstd{xray}\hlopt{|}\hlstd{either,} \hlopt{~}\hlstd{dysp}\hlopt{|}\hlstd{bronc}\hlopt{:}\hlstd{either}
 \hlstd{)}
+\hlcom{## or}
+\hlstd{flist} \hlkwb{<-} \hlkwd{list}\hlstd{(}\hlstr{"asia"}\hlstd{,} \hlkwd{c}\hlstd{(}\hlstr{"tub"}\hlstd{,} \hlstr{"asia"}\hlstd{),} \hlstr{"smoke"}\hlstd{,} \hlkwd{c}\hlstd{(}\hlstr{"lung"}\hlstd{,} \hlstr{"smoke"}\hlstd{),}
+              \hlkwd{c}\hlstd{(}\hlstr{"bronc"}\hlstd{,} \hlstr{"smoke"}\hlstd{),} \hlkwd{c}\hlstd{(}\hlstr{"either"}\hlstd{,} \hlstr{"tub"}\hlstd{,} \hlstr{"lung"}\hlstd{),} \hlkwd{c}\hlstd{(}\hlstr{"xray"}\hlstd{,} \hlstr{"either"}\hlstd{),}
+              \hlkwd{c}\hlstd{(}\hlstr{"dysp"}\hlstd{,} \hlstr{"bronc"}\hlstd{,} \hlstr{"either"}\hlstd{))}
 
-\hlstd{chest_cpt} \hlkwb{<-} \hlkwd{lapply}\hlstd{(flist,} \hlkwa{function}\hlstd{(}\hlkwc{f}\hlstd{)\{}
-    \hlkwd{cpt}\hlstd{(f,} \hlkwc{levels}\hlstd{=yn)\}}
-    \hlstd{)}
-\hlstd{bn} \hlkwb{<-} \hlkwd{compileCPT}\hlstd{(chest_cpt) |>} \hlkwd{grain}\hlstd{()}
+\hlstd{chest_cpt2} \hlkwb{<-} \hlkwd{lapply}\hlstd{(flist,} \hlkwa{function}\hlstd{(}\hlkwc{f}\hlstd{)\{}
+    \hlkwd{cpt}\hlstd{(f,} \hlkwc{levels}\hlstd{=yn)}
+\hlstd{\})}
 
-\hlstd{lst} \hlkwb{<-} \hlkwd{list}\hlstd{(}\hlkwc{asia}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{99}\hlstd{),}
+\hlstd{bn2} \hlkwb{<-} \hlkwd{compileCPT}\hlstd{(chest_cpt2) |>} \hlkwd{grain}\hlstd{()}
+
+\hlstd{lst2} \hlkwb{<-} \hlkwd{list}\hlstd{(}\hlkwc{asia}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{99}\hlstd{),}
             \hlkwc{tub}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{5}\hlstd{,} \hlnum{95}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{99}\hlstd{),}
             \hlkwc{smoke}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{5}\hlstd{,} \hlnum{5}\hlstd{),}
             \hlkwc{lung}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{9}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{99}\hlstd{),}
@@ -595,7 +592,7 @@ chooses not to do so, compilation can be done with:
             \hlkwc{xray}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{98}\hlstd{,} \hlnum{2}\hlstd{,} \hlnum{5}\hlstd{,} \hlnum{95}\hlstd{),}
             \hlkwc{dysp}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{9}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{7}\hlstd{,} \hlnum{3}\hlstd{,} \hlnum{8}\hlstd{,} \hlnum{2}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{9}\hlstd{))}
 
-\hlstd{bn} \hlkwb{<-} \hlkwd{updateCPT}\hlstd{(bn, lst)}
+\hlstd{bn2} \hlkwb{<-} \hlkwd{replaceCPT}\hlstd{(bn2, lst2)}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
@@ -741,7 +738,7 @@ If \code{nodes} are not specified and \code{exclude=FALSE}, then queries for all
 
 
 
-\subsection{Conditioning on evidence with zero probability}
+\section{Conditioning on evidence with zero probability}
 \label{sec:zero-probabilities}
 
 Consider setting the evidence
@@ -970,17 +967,21 @@ The same guess or judgment can be specified as virtual evidence
 ## $nodes
 ## [1] "asia"
 ## 
-## $is.hard.evidence
+## $is_hard
 ## [1] FALSE
 ## 
-## $hard.state
+## $hard_state
 ## [1] NA
 ## 
-## $evidence
-## $evidence[[1]]
+## $evi_weight
+## $evi_weight[[1]]
 ## asia
 ## yes  no 
-## 0.8 0.1
+## 0.8 0.1 
+## 
+## 
+## attr(,"class")
+## [1] "grain_evidence" "list"
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -1021,7 +1022,7 @@ below:
 \hlkwd{plot}\hlstd{(}\hlkwd{dag}\hlstd{(}\hlopt{~}\hlstd{y1}\hlopt{:}\hlstd{x1} \hlopt{+} \hlstd{x2}\hlopt{:}\hlstd{x1} \hlopt{+} \hlstd{y2}\hlopt{:}\hlstd{x2))}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\maxwidth]{figures/grain-unnamed-chunk-34-1} 
+\includegraphics[width=\maxwidth]{figures/grain-unnamed-chunk-35-1} 
 \end{knitrout}
 
 
@@ -1087,7 +1088,7 @@ An alternative is to explicitly modify the CPT which specifies $p(x_1)$:
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlstd{x1_upd} \hlkwb{<-} \hlkwd{getgrain}\hlstd{(bn,} \hlstr{"cptlist"}\hlstd{)}\hlopt{$}\hlstd{x1} \hlopt{*} \hlstd{lik1}
-\hlstd{bn2} \hlkwb{<-} \hlkwd{updateCPT}\hlstd{(bn,} \hlkwd{list}\hlstd{(}\hlkwc{x1}\hlstd{=x1_upd))}
+\hlstd{bn2} \hlkwb{<-} \hlkwd{replaceCPT}\hlstd{(bn,} \hlkwd{list}\hlstd{(}\hlkwc{x1}\hlstd{=x1_upd))}
 \hlkwd{querygrain}\hlstd{(bn2)}
 \end{alltt}
 \begin{verbatim}
@@ -1122,13 +1123,13 @@ $y_2$ (evidence changes the mixture weights.)
 \hlkwd{head}\hlstd{(xsim1)}
 \end{alltt}
 \begin{verbatim}
-##    x1  x2
-## 1  no  no
-## 2 yes  no
-## 3  no  no
-## 4  no yes
-## 5  no yes
-## 6  no  no
+##   x1  x2
+## 1 no yes
+## 2 no yes
+## 3 no yes
+## 4 no yes
+## 5 no yes
+## 6 no yes
 \end{verbatim}
 \begin{alltt}
 \hlstd{xsim2} \hlkwb{<-} \hlkwd{simulate}\hlstd{(bn2, nsim)}
@@ -1137,10 +1138,10 @@ $y_2$ (evidence changes the mixture weights.)
 \begin{verbatim}
 ##    x1  x2
 ## 1 yes  no
-## 2 yes yes
-## 3 yes yes
-## 4  no yes
-## 5 yes yes
+## 2  no yes
+## 3 yes  no
+## 4 yes  no
+## 5  no yes
 ## 6 yes  no
 \end{verbatim}
 \begin{alltt}
@@ -1151,7 +1152,7 @@ $y_2$ (evidence changes the mixture weights.)
 \hlstd{y22sim |>} \hlkwd{hist}\hlstd{(}\hlkwc{prob}\hlstd{=T,} \hlkwc{ylim}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{.4}\hlstd{),} \hlkwc{breaks}\hlstd{=}\hlnum{10}\hlstd{)}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\maxwidth]{figures/grain-unnamed-chunk-39-1} 
+\includegraphics[width=\maxwidth]{figures/grain-unnamed-chunk-40-1} 
 \end{knitrout}
 
 
@@ -1189,7 +1190,7 @@ The following two graphs specify the same model:
 \hlkwd{par}\hlstd{(}\hlkwc{mfrow}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{));} \hlkwd{plot}\hlstd{( dG );} \hlkwd{plot}\hlstd{( uG )}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\maxwidth]{figures/grain-unnamed-chunk-40-1} 
+\includegraphics[width=\maxwidth]{figures/grain-unnamed-chunk-41-1} 
 \end{knitrout}
 
 Suppose data is
@@ -1376,7 +1377,7 @@ One can do
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{gr.dG} \hlkwb{<-} \hlkwd{compile}\hlstd{(}\hlkwd{grain}\hlstd{(dG,} \hlkwc{data}\hlstd{=dat,} \hlkwc{smooth}\hlstd{=e))}
+\hlstd{gr.dG} \hlkwb{<-} \hlkwd{grain}\hlstd{(dG,} \hlkwc{data}\hlstd{=dat,} \hlkwc{smooth}\hlstd{=e)}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
@@ -1463,7 +1464,7 @@ To ``remedy'' we can use the \code{smooth} argument:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{gr.uG} \hlkwb{<-} \hlkwd{compile}\hlstd{(}\hlkwd{grain}\hlstd{(uG,} \hlkwc{data}\hlstd{=dat,} \hlkwc{smooth}\hlstd{=e))}
+\hlstd{gr.uG} \hlkwb{<-} \hlkwd{grain}\hlstd{(uG,} \hlkwc{data}\hlstd{=dat,} \hlkwc{smooth}\hlstd{=e)}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
@@ -1471,7 +1472,7 @@ which (internally) corresponds to
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{c}\hlstd{(}\hlkwd{extractPOT}\hlstd{(dat, uG,} \hlkwc{smooth}\hlstd{=e)) |>} \hlkwd{c}\hlstd{()}
+\hlkwd{extractPOT}\hlstd{(dat, uG,} \hlkwc{smooth}\hlstd{=e) |>} \hlkwd{c}\hlstd{()}
 \end{alltt}
 \begin{verbatim}
 ## [[1]]
@@ -1562,13 +1563,13 @@ construct the joint distribution (an array with $2^8=256$ entries) directly as:
 \hlstd{joint  |>} \hlkwd{as.data.frame.table}\hlstd{() |>} \hlkwd{head}\hlstd{()}
 \end{alltt}
 \begin{verbatim}
-##   xray asia smoke lung tub dysp bronc either       Freq
-## 1  yes  yes   yes  yes yes  yes   yes    yes 0.00390625
-## 2   no  yes   yes  yes yes  yes   yes    yes 0.00390625
-## 3  yes   no   yes  yes yes  yes   yes    yes 0.00390625
-## 4   no   no   yes  yes yes  yes   yes    yes 0.00390625
-## 5  yes  yes    no  yes yes  yes   yes    yes 0.00390625
-## 6   no  yes    no  yes yes  yes   yes    yes 0.00390625
+##   xray lung asia smoke tub dysp bronc either        Freq
+## 1  yes  yes  yes   yes yes  yes   yes    yes 0.000013230
+## 2   no  yes  yes   yes yes  yes   yes    yes 0.000000270
+## 3  yes   no  yes   yes yes  yes   yes    yes 0.000119070
+## 4   no   no  yes   yes yes  yes   yes    yes 0.000002430
+## 5  yes  yes   no   yes yes  yes   yes    yes 0.000261954
+## 6   no  yes   no   yes yes  yes   yes    yes 0.000005346
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -1596,21 +1597,24 @@ Marginal distributions are
 \end{alltt}
 \begin{verbatim}
 ## lung
-## yes  no 
-## 0.5 0.5
+##   yes    no 
+## 0.055 0.945
 \end{verbatim}
 \begin{alltt}
 \hlkwd{tabMarg}\hlstd{(joint,} \hlstr{"bronc"}\hlstd{)}
 \end{alltt}
 \begin{verbatim}
 ## bronc
-## yes  no 
-## 0.5 0.5
+##  yes   no 
+## 0.45 0.55
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
 
-Conditioning on evidence can be done in different ways: The conditional density is a $6$--way slice of the original $8$--way joint distribution:
+Conditioning on evidence can be done in different ways: The
+conditional density is a $6$--way slice of the original $8$--way joint
+distribution:
+
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -1627,16 +1631,16 @@ Conditioning on evidence can be done in different ways: The conditional density 
 \end{alltt}
 \begin{verbatim}
 ## lung
-## yes  no 
-## 0.5 0.5
+##        yes         no 
+## 0.09952515 0.90047485
 \end{verbatim}
 \begin{alltt}
 \hlkwd{tabMarg}\hlstd{(cond1,} \hlstr{"bronc"}\hlstd{)}
 \end{alltt}
 \begin{verbatim}
 ## bronc
-## yes  no 
-## 0.5 0.5
+##       yes        no 
+## 0.8114021 0.1885979
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -1657,19 +1661,24 @@ Alternatively, multiply all entries not consistent by zero and all other entries
 \end{alltt}
 \begin{verbatim}
 ## lung
-## yes  no 
-## 0.5 0.5
+##        yes         no 
+## 0.09952515 0.90047485
 \end{verbatim}
 \begin{alltt}
 \hlkwd{tabMarg}\hlstd{(cond2,} \hlstr{"bronc"}\hlstd{)}
 \end{alltt}
 \begin{verbatim}
 ## bronc
-## yes  no 
-## 0.5 0.5
+##       yes        no 
+## 0.8114021 0.1885979
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
+
+
+\bibliography{grain}
+
+\end{document}
 
 
 
@@ -1697,11 +1706,6 @@ Alternatively, multiply all entries not consistent by zero and all other entries
 %                    )                   
 % }
 % @
-
-
-\bibliography{grain}
-
-\end{document}
 
 
 %%\SweaveInput{Rmarkup.STY}

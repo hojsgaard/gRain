@@ -1,7 +1,16 @@
+gRain v1.3.12 (Release date: 2022-11-11)
+========================================
+
+* `setCPT()` function renamed to `replaceCPT()`
+* `cpt()` function added.
+* `repeatPattern()` reimplemented (and) simplified.
+* `querygrain` now takes simplify argument.
+
 gRain v1.3.11 (Release date: 2022-09-04)
 =======================================
 
-* Enable data-driven variable names and hence data-driven network structure. (Thanks to Gregor Gorjanc)
+* Enable data-driven variable names and hence data-driven network
+  structure. (Thanks to Gregor Gorjanc)
 
 gRain v1.3.10 (Release date: 2022-05-09)
 =======================================

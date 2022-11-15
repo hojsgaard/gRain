@@ -2,28 +2,28 @@
 % Please edit documentation in R/evidence-objects.R
 \name{evidence_object}
 \alias{evidence_object}
-\alias{new_ev}
+\alias{new_evi}
 \alias{subset.grain_evidence}
 \alias{print.grain_evidence}
 \alias{varNames.grain_evidence}
-\alias{is.null_ev}
+\alias{is.null_evi}
 \alias{as.data.frame.grain_evidence}
-\alias{setdiff_ev}
-\alias{union_ev}
+\alias{setdiff_evi}
+\alias{union_evi}
 \title{Evidence objects}
 \usage{
-new_ev(evi.list = NULL, levels)
+new_evi(evi_list = NULL, levels)
 
-is.null_ev(object)
+is.null_evi(object)
 
 \method{as.data.frame}{grain_evidence}(x, row.names = NULL, optional = FALSE, ...)
 
-setdiff_ev(ev1, ev2)
+setdiff_evi(ev1, ev2)
 
-union_ev(ev1, ev2)
+union_evi(ev1, ev2)
 }
 \arguments{
-\item{evi.list}{A named list with evidence; see 'examples' below.}
+\item{evi_list}{A named list with evidence; see 'examples' below.}
 
 \item{levels}{A named list with the levels of all variables.}
 
@@ -49,41 +49,38 @@ represented as a grain evidence object which is a list with 4 elements.
 \examples{
 
 ## Define the universe
-
-uni <- list(asia = c("yes", "no"), tub = c("yes", "no"), smoke = c("yes", "no"),
-            lung = c("yes", "no"), bronc = c("yes", "no"), either = c("yes", "no"),
-            xray = c("yes", "no"), dysp = c("yes", "no"))
+yn <- c("yes", "no")
+uni <- list(asia = yn, tub = yn, smoke = yn, lung = yn,
+            bronc = yn, either = yn, xray = yn, dysp = yn)
 
 e1 <- list(dysp="no", xray="no")
-eo1 <- new_ev( e1, levels=uni )
-eo1
-as.data.frame( eo1 )
-eo1 \%>\% str
+eo1 <- new_evi(e1, levels=uni)
+eo1  |> as.data.frame()
 
-e1.2 <- list(dysp="no", xray=c(0, 1))
-eo1.2 <- new_ev( e1.2, levels=uni )
-eo1.2
+e2 <- list(dysp="no", xray=c(0, 1))
+eo2 <- new_evi(e2, levels=uni)
+eo2 |> as.data.frame()
 
-# Notice that in eo1.2, xray is not regarded as hard
-# evidence but as a weight on each level. Other than that, eo1.2
-# and eo1 are equivalent here. This is used in connection
-# with specifying likelihood evidence. 
+# Above e1 and e2 specifies the same evidence but information about
+# whether the state has been set definite or as a weight is
+# maintained.
 
-e2 <- list(dysp="yes", asia="yes")
-eo2 <- new_ev(e2, uni)
+e3 <- list(dysp="yes", asia="yes")
+eo3 <- new_evi(e3, uni)
+eo3 |> as.data.frame()
 
 # If evidence 'e1' is already set in the network and new evidence
-# 'e2' emerges, the evidence in the network must be updated. But
+# 'e3' emerges, then evidence in the network must be updated. But
 # there is a conflict in that dysp="yes" in 'e1' and
-# dysp="no" in 'e2'. The (arbitrary) convention is that
-# existsting evidence overrides new evidence so that the only new
-# evidence in 'e2' is really asia="yes".
+# dysp="no" in 'e3'. The (arbitrary) convention is that
+# existing evidence overrides new evidence so that the only new
+# evidence in 'e3' is really asia="yes".
 
 # To subtract existing evidence from new evidence we can do:
-setdiff_ev( eo2, eo1 )
+setdiff_evi(eo3, eo1) |> as.data.frame()
 
 # Likewise the 'union' is
-union_ev( eo2, eo1 )
+union_evi(eo3, eo1) |> as.data.frame()
 
 }
 \author{
