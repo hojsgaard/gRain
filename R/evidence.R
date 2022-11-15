@@ -92,7 +92,7 @@ setEvidence <- function(object, nodes=NULL, states=NULL, evidence=NULL,
     
     if (is.null(evidence)) ## Then 'nodes' must be given
         evidence <- nodes_states_to_evidence(nodes, states)      
-    
+
     setEvi_(object, evidence, propagate=propagate, details=details)    
 }
 
@@ -112,10 +112,10 @@ absorbEvidence <- function(object, propagate=TRUE ){
 
 
 setEvi_ <- function(object, evidence=NULL, propagate=TRUE, details=0){
-    ##    details=0
-    ##    cat("++++ setEvi_ input evidence: \n"); str(evidence)
+    ## details=10
+    ## cat("++++ setEvi_ input evidence: \n"); str(evidence)
     
-    if (is.null_ev( evidence )){
+    if (is.null_evi( evidence )){
         cat("Nothing to do\n")
     } else {
         if (!isCompiled(object)){
@@ -123,16 +123,16 @@ setEvi_ <- function(object, evidence=NULL, propagate=TRUE, details=0){
         } 
         
         oe <- getEvidence( object ) # Der er noget med typen (old/new)
-        ne <- new_ev( evidence, universe(object)$levels )
+        ne <- new_evi( evidence, universe(object)$levels )
         
         if (details > 0){
-            cat("old.evidence:\n"); print(oe)
-            cat("new evidence:\n"); print( ne )
+            cat("old.evidence:\n"); print.default(oe)
+            cat("new evidence:\n"); print.default(ne)
         }
         
         ## Hvis der er eksisterende evidens, så skal det tages ud af det nye
-        if (!is.null_ev( oe ) ){
-            ne <- setdiff_ev( ne, oe )
+        if (!is.null_evi( oe ) ){
+            ne <- setdiff_evi( ne, oe )
             if (details>0) {
                 cat("new evidence - after modification:\n"); print( ne )
             }
@@ -143,9 +143,9 @@ setEvi_ <- function(object, evidence=NULL, propagate=TRUE, details=0){
             host  <- get_superset_list(varNames(ne), rp$cliques)
             object$potential$pot_temp <- insertEvi(ne, getgrain(object, "pot_temp"), host)
             
-            te <- if (is.null_ev(oe)) ne else union_ev(oe, ne)
-            ##te <- union_ev( oe, ne )
-            if (details>0) {print("total evidence"); print( te )}
+            te <- if (is.null_evi(oe)) ne else union_evi(oe, ne)
+            ##te <- union_evi( oe, ne )
+            ## if (details>0) {print("total evidence"); print( te )}
 
             object$evidence <- te
 
@@ -176,7 +176,7 @@ retractEvi_ <- function(object, items=NULL, propagate=TRUE){
         if (!(is.character( items ) || is.numeric( items )) )
             stop("'items' must be a character or numeric vector")
         oe <- getEvidence( object )
-        if (!is.null_ev( oe )){
+        if (!is.null_evi( oe )){
             vn <- varNames( oe )
             if (is.numeric(items)){
                 items <- vn[items]
@@ -213,16 +213,45 @@ absorbEvi_<- function(object, propagate=TRUE ){
     if (propagate) propagate(object) else object
 }
 
+# #' @export 
+# #' @name grain_evidence
+## pEvidence <- function(object){
+    ## stopifnot_grain(object)
+    ## attr(getgrain(object, "pot_equi"), "pEvidence")
+## }
+
+## if (is.null(evidence))
+## if (!hasEvidence) return(NULL)
+## else 
+
 #' @export 
 #' @name grain_evidence
-pEvidence <- function(object){
+pEvidence <- function(object, evidence=NULL){
+    has_evidence <- function(x) {
+        !is.null(x$evidence)
+    }
     stopifnot_grain(object)
-    attr(getgrain(object, "pot_equi"), "pEvidence")
+    if (is.null(evidence)){
+        if (!has_evidence(object))
+            return(NULL)
+        else {
+            attr(getgrain(object, "pot_equi"), "pEvidence")
+        }
+    } else {
+        if (has_evidence(object)){
+            stop("argument 'evidence' only allowed on networks without existing evidence\n")
+        } else {
+            compute_p_evidence(setEvidence(object, evidence=evidence,
+                                           propagate=FALSE))
+        }
+    }
+    
 }
 
 ## #' @name grain-evi
-pEvi <- function(object)
-    pEvidence(object)
+## pEvi <- function(object)
+    ## pEvidence(object)
+
 
 #' @export
 #' @param short If TRUE a dataframe with a summary is returned;
@@ -234,21 +263,42 @@ getEvidence <- function(object, short=TRUE){
     if (is.null(ev)){
         return(NULL)
     }
-    if (!inherits(ev, c("grain_evidence", "grain_joint_evidence")))
-        stop("This should not happen\n")
+    ev
+    ## if (!inherits(ev, c("grain_evidence", "grain_joint_evidence")))
+        ## stop("This should not happen\n")
 
-    if (inherits(ev, "grain_evidence")){
-        if (short){
-            as.data.frame(ev[1:3])
-        } else {
+    ## if (inherits(ev, "grain_evidence")){
+        ## if (short){
+            ## as.data.frame(ev[1:3])
+        ## } else {
             ## class(ev) <- "list"
-            ev
-        }       
-    } else {
+            ## ev
+        ## }       
+    ## } else {
         ## class(ev) <- "list"
-        ev
-    }
+        ## ev
+    ## }
 }
+
+
+## #' @export
+## print.grain_evidence <- function(x, ...){
+    ## print(as.data.frame(x[1:3]))
+    ## class(x) <- "list"
+    ## print(x)
+    ## invisible(x)
+## }
+
+## ' @export
+## summary.grain_evidence <- function(object, ...){
+    ## list(
+        ## as.data.frame(object[1:3]),
+        ## object$evidence)
+## }
+
+
+
+
 
 
 ## #' @name grain-evi
@@ -289,6 +339,8 @@ evidence.grain <- function(object, short=TRUE){
         setEvidence(object, evidence=value)
 }
 
+
+
 ## Alternative names
 
 ## #' @name grain-evi
@@ -307,15 +359,16 @@ getEvi  <- getEvidence
 ##
 ## #############################################################
 
-insertEvi <- function(evi.list, pot, hostclique){
+
+insertEvi <- function(evi_object, pot, hostclique){
     ##cat("insertEvi\n")
-    if ( !inherits(evi.list, "grain_evidence") )
+    if ( !inherits(evi_object, "grain_evidence") )
         stop("'object' is not a 'grain_evidence' object")
     
-    for (i in seq_along( evi.list$evidence ) ){
-        p <- evi.list$evidence[[ i ]]
+    for (i in seq_along( evi_object$evi_weight) ){
+        p <- evi_object$evi_weight[[ i ]]
         j <- hostclique[ i ]
-        pot[[j]] <- tabMult( pot[[ j ]], p )
+        pot[[j]] <- tabMult(pot[[ j ]], p)
     }
     pot
 }

@@ -12,8 +12,9 @@
 #' @param object A `grain` object.
 #' @param value A named list, see examples below.
 #'
-#' @details When a Bayesian network (BN) is constricted from a list of
-#'     conditional probility tables (CPTs) various actions are taken:
+#' @details When a Bayesian network (BN) is constructed from a list of
+#'     conditional probability tables (CPTs) (e.g. using the function
+#'     `grain()`), various actions are taken:
 #'
 #' 1. It is checked that the list of CPTs define a directed acyclic graph (DAG).
 #'
@@ -23,11 +24,11 @@
 #'    triangulated graph) is created from the list of CPTs.
 #'
 #' 1. The clique potentials are, by default, calibrated to each other
-#'     so that the potentials contain marginal distribtions. 
+#'     so that the potentials contain marginal distributions. 
 #'
 #' The function described here bypass the first two steps which can
-#' provide an imporatant gain in speed compared to constructing a new
-#' BN with a new set of CPTs.
+#' provide an important gain in speed compared to constructing a new
+#' BN with a new set of CPTs with the same DAG.
 #' 
 #' @seealso \code{\link{grain}}, \code{\link[gRbase]{propagate}},
 #'     \code{\link[gRbase]{triangulate}}, \code{\link[gRbase]{rip}},
