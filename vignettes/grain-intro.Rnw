@@ -1,4 +1,4 @@
-%\VignetteIndexEntry{grain-intro}
+%\VignetteIndexEntry{grain: Introduction}
 %\VignetteDepends{gRbase}
 %\VignetteKeyword{Bayesian networks}
 %\VignetteKeyword{Graphical Models}
@@ -182,7 +182,7 @@ true (yes) if either $\tau$ or $\lambda$ are true (yes) and false (no) otherwise
 The connection between the variables is displayed by the DAG (directed acyclic graph) in
 Figure~\ref{fig:chest-LS}.
 
-A joint probability density factorising accoring to a DAG with nodes
+A joint probability density factorizing according to a DAG with nodes
 $V$ can be constructed as follows: Each node $v\in V$ has a set $pa(v)$ of parents and each node
 $v\in V$ has a finite set of states. A joint distribution
 over the variables $V$ can be given as
@@ -365,7 +365,9 @@ pEvidence(chest_ev)
 
 \item The probability of an evidence can be found with only
   propagation towards the root of a junction tree. This saves about
-  half the computational effort of propagation:
+  half the computational effort of propagation. However, notice that the
+  network is not changed by this operation, so if the network is
+  subsequently queried, there is no gain in computing time.
 
 <<>>=
 pEvidence(chest_bn, evidence=list(asia="yes", dysp="yes"))
@@ -389,8 +391,8 @@ flist <- c(
 )
 ## or
 flist <- list("asia", c("tub", "asia"), "smoke", c("lung", "smoke"),
-              c("bronc", "smoke"), c("either", "tub", "lung"), c("xray", "either"),
-              c("dysp", "bronc", "either"))
+              c("bronc", "smoke"), c("either", "tub", "lung"),
+              c("xray", "either"), c("dysp", "bronc", "either"))
 
 chest_cpt2 <- lapply(flist, function(f){
     cpt(f, levels=yn)
@@ -424,7 +426,9 @@ In the more general case the output can be coerced to a list of dataframes
 querygrain(chest_bn, nodes=c("lung", "bronc"), result="data.frame")
 @ 
 
-\item A typical use of \bn\ involves setting evidence and then querying the network afterwards. This can all be done in one call of \code{querygrain}:
+\item A typical use of \bn\ involves setting evidence and then
+  querying the network afterwards. This can all be done in one call of
+  \code{querygrain} (notice that this does not alter the network object):
 
 <<>>= 
 querygrain(chest_bn,
@@ -432,14 +436,22 @@ querygrain(chest_bn,
            nodes=c("lung", "bronc"), simplify = TRUE)
 @
 
-Evidence can be also be given as a vector of weights (cfr Section~\ref{sec:hard-soft})
+\item Evidence can be also be given as a vector of weights. 
+
 <<>>= 
 querygrain(chest_bn,
            evidence=list(asia=c(1,0), dysp=c(1,0)),
            nodes=c("lung", "bronc"), simplify = TRUE)
 @
 
-Nodes on which evidence is given are are not reported unless \code{exclude=FALSE}
+The weights must be non-negative but need not sum to one. This is
+important in connection with soft evidence (also called likelihood
+evidence), see Section~\ref{sec:hard-soft}. Above, the weights could
+also have been set as \code{c(.1, 0)}. The important part is that the
+zero excludes certain states as being impossible.
+
+
+\item Nodes on which evidence is given are not reported unless \code{exclude=FALSE}
 
 <<>>= 
 querygrain(chest_bn,
@@ -449,8 +461,7 @@ querygrain(chest_bn,
 @
 
 
-
-If \code{nodes} are not specified, queries for all nodes without evidence are reported.
+\item If \code{nodes} are not specified, queries for all nodes without evidence are reported.
 <<>>= 
 querygrain(chest_bn,
            evidence=list(asia="yes", dysp="yes"),
@@ -698,10 +709,10 @@ bn2 <- replaceCPT(bn, list(x1=x1_upd))
 querygrain(bn2) 
 @ 
 
-A final remark: The conditional distribtion of
-$y_1$ is normal, but the unconditional distribtion is a mixture of
+A final remark: The conditional distribution of
+$y_1$ is normal, but the unconditional distribution is a mixture of
 normals. Likewise, the conditional distribution of
-$y_2$ is poisson, but the unconditional distribtion is a mixture of
+$y_2$ is poisson, but the unconditional distribution is a mixture of
 poissons. Evidence on, say $y_1$ changes the belief in $x_1$ and
 $x_2$ and this in turn changes the distribution of
 $y_2$ (evidence changes the mixture weights.)  
@@ -743,7 +754,7 @@ $y_1=y_1^*$ and $y_2=y_2^*$. We then have
 
 
 
-
+\appendix
 
 \section{Building networks from data}
 \label{sec:using-textttsm-argum}
@@ -896,7 +907,7 @@ querygrain(gr.uG, evidence=list(B="lev1"), exclude=FALSE, simplify=TRUE)
 
 
 
-\subsection{Brute force computations and why they fail}
+\section{Brute force computations and why they fail}
 \label{sec:brute-force-comp}
 
 
@@ -917,7 +928,8 @@ levels will give a joint state space with $10^{80}$
 states; that is about the number of atoms in the universe. Similarly,
 $265$
 binary variables will result in a joint state space of about the same
-size. Yet, \grbn\ has been used succesfully in models with tens of
+size. Yet, \grbn\ has been used successfully
+in models with tens of
 thousand variables.  The ``trick'' in \grbn\ is to make all
 computations without ever forming the joint distribution. 
 

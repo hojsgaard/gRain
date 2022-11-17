@@ -1,4 +1,4 @@
-%\VignetteIndexEntry{grain-intro}
+%\VignetteIndexEntry{grain: Introduction}
 %\VignetteDepends{gRbase}
 %\VignetteKeyword{Bayesian networks}
 %\VignetteKeyword{Graphical Models}
@@ -85,7 +85,7 @@
 
 \author{S{\o}ren H{\o}jsgaard\\Aalborg University, Denmark}
 \title{Bayesian networks in R with the \pkg{gRain} package}
-\date{\pkg{gRain} version 1.3.12 as of 2022-11-15}
+\date{\pkg{gRain} version 1.3.12 as of 2022-11-17}
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 \maketitle
@@ -235,7 +235,7 @@ true (yes) if either $\tau$ or $\lambda$ are true (yes) and false (no) otherwise
 The connection between the variables is displayed by the DAG (directed acyclic graph) in
 Figure~\ref{fig:chest-LS}.
 
-A joint probability density factorising accoring to a DAG with nodes
+A joint probability density factorising according to a DAG with nodes
 $V$ can be constructed as follows: Each node $v\in V$ has a set $pa(v)$ of parents and each node
 $v\in V$ has a finite set of states. A joint distribution
 over the variables $V$ can be given as
@@ -541,7 +541,9 @@ chooses not to do so, compilation can be done with:
 
 \item The probability of an evidence can be found with only
   propagation towards the root of a junction tree. This saves about
-  half the computational effort of propagation:
+  half the computational effort of propagation. However, notice that the
+  network is not changed by this operation, so if the network is
+  subsequently queried, there is no gain in computing time.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -574,8 +576,8 @@ chooses not to do so, compilation can be done with:
 \hlstd{)}
 \hlcom{## or}
 \hlstd{flist} \hlkwb{<-} \hlkwd{list}\hlstd{(}\hlstr{"asia"}\hlstd{,} \hlkwd{c}\hlstd{(}\hlstr{"tub"}\hlstd{,} \hlstr{"asia"}\hlstd{),} \hlstr{"smoke"}\hlstd{,} \hlkwd{c}\hlstd{(}\hlstr{"lung"}\hlstd{,} \hlstr{"smoke"}\hlstd{),}
-              \hlkwd{c}\hlstd{(}\hlstr{"bronc"}\hlstd{,} \hlstr{"smoke"}\hlstd{),} \hlkwd{c}\hlstd{(}\hlstr{"either"}\hlstd{,} \hlstr{"tub"}\hlstd{,} \hlstr{"lung"}\hlstd{),} \hlkwd{c}\hlstd{(}\hlstr{"xray"}\hlstd{,} \hlstr{"either"}\hlstd{),}
-              \hlkwd{c}\hlstd{(}\hlstr{"dysp"}\hlstd{,} \hlstr{"bronc"}\hlstd{,} \hlstr{"either"}\hlstd{))}
+              \hlkwd{c}\hlstd{(}\hlstr{"bronc"}\hlstd{,} \hlstr{"smoke"}\hlstd{),} \hlkwd{c}\hlstd{(}\hlstr{"either"}\hlstd{,} \hlstr{"tub"}\hlstd{,} \hlstr{"lung"}\hlstd{),}
+              \hlkwd{c}\hlstd{(}\hlstr{"xray"}\hlstd{,} \hlstr{"either"}\hlstd{),} \hlkwd{c}\hlstd{(}\hlstr{"dysp"}\hlstd{,} \hlstr{"bronc"}\hlstd{,} \hlstr{"either"}\hlstd{))}
 
 \hlstd{chest_cpt2} \hlkwb{<-} \hlkwd{lapply}\hlstd{(flist,} \hlkwa{function}\hlstd{(}\hlkwc{f}\hlstd{)\{}
     \hlkwd{cpt}\hlstd{(f,} \hlkwc{levels}\hlstd{=yn)}
@@ -635,7 +637,9 @@ In the more general case the output can be coerced to a list of dataframes
 \end{kframe}
 \end{knitrout}
 
-\item A typical use of \bn\ involves setting evidence and then querying the network afterwards. This can all be done in one call of \code{querygrain}:
+\item A typical use of \bn\ involves setting evidence and then
+  querying the network afterwards. This can all be done in one call of
+  \code{querygrain} (notice that this does not alter the network object):
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -652,7 +656,8 @@ In the more general case the output can be coerced to a list of dataframes
 \end{kframe}
 \end{knitrout}
 
-Evidence can be also be given as a vector of weights (cfr Section~\ref{sec:hard-soft})
+\item Evidence can be also be given as a vector of weights. 
+
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -668,7 +673,14 @@ Evidence can be also be given as a vector of weights (cfr Section~\ref{sec:hard-
 \end{kframe}
 \end{knitrout}
 
-Nodes on which evidence is given are are not reported unless \code{exclude=FALSE}
+The weights must be non-negative but need not sum to one. This is
+important in connection with soft evidence (also called likelihood
+evidence), see Section~\ref{sec:hard-soft}. Above, the weights could
+also have been set as \code{c(.1, 0)}. The important part is that the
+zero excludes certain states as being impossible.
+
+
+\item Nodes on which evidence is given are not reported unless \code{exclude=FALSE}
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -689,8 +701,7 @@ Nodes on which evidence is given are are not reported unless \code{exclude=FALSE
 \end{knitrout}
 
 
-
-If \code{nodes} are not specified, queries for all nodes without evidence are reported.
+\item If \code{nodes} are not specified, queries for all nodes without evidence are reported.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -1105,10 +1116,10 @@ An alternative is to explicitly modify the CPT which specifies $p(x_1)$:
 \end{kframe}
 \end{knitrout}
 
-A final remark: The conditional distribtion of
-$y_1$ is normal, but the unconditional distribtion is a mixture of
+A final remark: The conditional distribution of
+$y_1$ is normal, but the unconditional distribution is a mixture of
 normals. Likewise, the conditional distribution of
-$y_2$ is poisson, but the unconditional distribtion is a mixture of
+$y_2$ is poisson, but the unconditional distribution is a mixture of
 poissons. Evidence on, say $y_1$ changes the belief in $x_1$ and
 $x_2$ and this in turn changes the distribution of
 $y_2$ (evidence changes the mixture weights.)  
@@ -1123,13 +1134,13 @@ $y_2$ (evidence changes the mixture weights.)
 \hlkwd{head}\hlstd{(xsim1)}
 \end{alltt}
 \begin{verbatim}
-##   x1  x2
-## 1 no yes
-## 2 no yes
-## 3 no yes
-## 4 no yes
-## 5 no yes
-## 6 no yes
+##    x1  x2
+## 1  no yes
+## 2  no yes
+## 3 yes  no
+## 4  no yes
+## 5 yes  no
+## 6  no yes
 \end{verbatim}
 \begin{alltt}
 \hlstd{xsim2} \hlkwb{<-} \hlkwd{simulate}\hlstd{(bn2, nsim)}
@@ -1137,12 +1148,12 @@ $y_2$ (evidence changes the mixture weights.)
 \end{alltt}
 \begin{verbatim}
 ##    x1  x2
-## 1 yes  no
-## 2  no yes
-## 3 yes  no
+## 1 yes yes
+## 2 yes  no
+## 3 yes yes
 ## 4 yes  no
-## 5  no yes
-## 6 yes  no
+## 5 yes  no
+## 6 yes yes
 \end{verbatim}
 \begin{alltt}
 \hlkwd{par}\hlstd{(}\hlkwc{mfrow}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{))}
@@ -1176,7 +1187,7 @@ $y_1=y_1^*$ and $y_2=y_2^*$. We then have
 
 
 
-
+\appendix
 
 \section{Building networks from data}
 \label{sec:using-textttsm-argum}
@@ -1542,7 +1553,7 @@ Notice that the results are not exactly identical:
 
 
 
-\subsection{Brute force computations and why they fail}
+\section{Brute force computations and why they fail}
 \label{sec:brute-force-comp}
 
 
@@ -1563,13 +1574,13 @@ construct the joint distribution (an array with $2^8=256$ entries) directly as:
 \hlstd{joint  |>} \hlkwd{as.data.frame.table}\hlstd{() |>} \hlkwd{head}\hlstd{()}
 \end{alltt}
 \begin{verbatim}
-##   xray lung asia smoke tub dysp bronc either        Freq
-## 1  yes  yes  yes   yes yes  yes   yes    yes 0.000013230
-## 2   no  yes  yes   yes yes  yes   yes    yes 0.000000270
-## 3  yes   no  yes   yes yes  yes   yes    yes 0.000119070
-## 4   no   no  yes   yes yes  yes   yes    yes 0.000002430
-## 5  yes  yes   no   yes yes  yes   yes    yes 0.000261954
-## 6   no  yes   no   yes yes  yes   yes    yes 0.000005346
+##   xray asia smoke lung tub dysp bronc either        Freq
+## 1  yes  yes   yes  yes yes  yes   yes    yes 1.32300e-05
+## 2   no  yes   yes  yes yes  yes   yes    yes 2.70000e-07
+## 3  yes   no   yes  yes yes  yes   yes    yes 2.61954e-04
+## 4   no   no   yes  yes yes  yes   yes    yes 5.34600e-06
+## 5  yes  yes    no  yes yes  yes   yes    yes 6.61500e-07
+## 6   no  yes    no  yes yes  yes   yes    yes 1.35000e-08
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -1581,7 +1592,8 @@ levels will give a joint state space with $10^{80}$
 states; that is about the number of atoms in the universe. Similarly,
 $265$
 binary variables will result in a joint state space of about the same
-size. Yet, \grbn\ has been used succesfully in models with tens of
+size. Yet, \grbn\ has been used successfully
+in models with tens of
 thousand variables.  The ``trick'' in \grbn\ is to make all
 computations without ever forming the joint distribution. 
 
