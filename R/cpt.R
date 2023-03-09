@@ -52,6 +52,6 @@ simplify_query <- function(b){
 
 
 #' @export
-tidy.grain_evidence <- function(x){
+tidy.grain_evidence <- function(x, ...){
     as.data.frame(x)
 }
