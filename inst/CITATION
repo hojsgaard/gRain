@@ -1,8 +1,8 @@
 citHeader("To cite gRain in publications use:")
 
-citEntry(entry = "Article",
+bibentry(bibtype = "Article",
   title        = "Graphical Independence Networks with the {gRain} Package for {R}",
-  author       = personList(as.person("S{\\o}ren H{\\o}jsgaard")),
+  author       = "S{\\o}ren H{\\o}jsgaard",
   journal      = "Journal of Statistical Software",
   year         = "2012",
   volume       = "46",

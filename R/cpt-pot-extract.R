@@ -14,8 +14,8 @@
 #' 
 #' @param data_ A named array or a dataframe.
 #'
-#' @param graph A \code{graphNEL} object or a list or formula which can be
-#'     turned into a \code{graphNEL} object by calling \code{ug} or
+#' @param graph An \code{igraph} object or a list or formula which can be
+#'     turned into a \code{igraph} object by calling \code{ug} or
 #'     \code{dag}. For \code{extractCPT}, graph must be/define a DAG while for
 #'     \code{extractPOT}, graph must be/define undirected triangulated graph.
 #' 
@@ -76,11 +76,13 @@
 
 #' @rdname components_extract
 #' @export 
-extractCPT <- function(data_, graph, smooth=0){
+extractCPT <- function(data_, graph, smooth=0) {
 
     .is.valid.data(data_)
-    if (inherits(graph, c("formula", "list"))) graph <- dag(graph)
-    if (!is_dag(graph)) stop("'graph' not a DAG")
+    if (inherits(graph, c("formula", "list")))
+        graph <- dag(graph)
+    if (!is_dag(graph))
+        stop("'graph' not a DAG")
     
     vpa <- vpar(graph)
     out <- .extractCPT_primitive(data_, vpa=vpa, smooth=smooth)
@@ -92,11 +94,13 @@ extractCPT <- function(data_, graph, smooth=0){
 
 #' @export
 #' @rdname components_extract
-extractPOT <- function(data_, graph, smooth=0){
+extractPOT <- function(data_, graph, smooth=0) {
     
     .is.valid.data(data_)
-    if (inherits(graph, c("formula", "list"))) graph <- ug(graph)    
-    if (!is_tug(graph)) stop("'graph' not undirected and triangulated")
+    if (inherits(graph, c("formula", "list")))
+        graph <- ug(graph)    
+    if (!is_tug(graph))
+        stop("'graph' not undirected and triangulated")
 
     rip_  <- rip(graph)
     out   <- .extractPOT_primitive(data_, rip_$cliques, rip_$sep, smooth=smooth)
@@ -108,11 +112,14 @@ extractPOT <- function(data_, graph, smooth=0){
 
 #' @export 
 #' @rdname components_extract
-extractMARG <- function(data_, graph, smooth=0){
+extractMARG <- function(data_, graph, smooth=0) {
 
     .is.valid.data(data_)
-    if (inherits(graph, c("formula", "list"))) graph <- ug(graph)    
-    if (!is_tug(graph)) stop("'graph' not undirected and triangulated")
+    
+    if (inherits(graph, c("formula", "list")))
+        graph <- ug(graph)    
+    if (!is_tug(graph))
+        stop("'graph' not undirected and triangulated")
     
     rip_  <- rip(graph)
     out   <- .extractMARG_primitive(data_, rip_$cliques, rip_$sep, smooth=smooth)
@@ -126,12 +133,13 @@ extractMARG <- function(data_, graph, smooth=0){
 #' @export 
 #' @rdname components_extract
 #' @param mg An object of class \code{marg_rep}
-marg2pot <- function(mg){
-    if (!inherits(mg, "marg_rep")) stop("'mg' not a marg_rep object\n")
+marg2pot <- function(mg) {
+    if (!inherits(mg, "marg_rep"))
+        stop("'mg' not a marg_rep object\n")
     rip_ <- attr(mg, "rip")
     seps <- rip_$separators
     pt <- lapply(seq_along(rip_$cliques),
-                 function(i){
+                 function(i) {
                      if (length(seps[[i]]) == 0)
                          mg[[i]]
                      else
@@ -145,14 +153,14 @@ marg2pot <- function(mg){
 #' @export 
 #' @rdname components_extract 
 #' @param pt An object of class \code{pot_representation}
-pot2marg <- function(pt){
+pot2marg <- function(pt) {
     if (!inherits(pt, "pot_representation")) stop("'pt' not a pot_representation object\n")    
     mg <- pt
     rip_ <- attr(pt, "rip")
     seps <- rip_$separators
     par  <- rip_$parents
     
-    for (i in 2:length(rip_$cliques)){
+    for (i in 2:length(rip_$cliques)) {
         if (par[i] > 0){
             mg[[i]] <- tabMult(mg[[i]], tabMarg(mg[[par[i]]], seps[[i]]))
         }
@@ -169,7 +177,7 @@ pot2marg <- function(pt){
 ## ##################################################################
 
 
-.extractCPT_primitive <- function(data_, vpa, smooth=0){
+.extractCPT_primitive <- function(data_, vpa, smooth=0) {
         
     is.df <- is.data.frame(data_)
     out <- lapply(vpa, function(ss){.dataMarg(data_, ss, is.df)})
@@ -181,7 +189,7 @@ pot2marg <- function(pt){
     
     chk <- unlist(lapply(out, function(zz) any(is.na(zz))))
     nnn <- names(chk)[which(chk)]
-    if (length(nnn) > 0){
+    if (length(nnn) > 0) {
         cat(sprintf("NAs found in conditional probability table(s) for nodes: %s\n",
                     toString(nnn)))
         cat(sprintf("  ... consider using the smooth argument\n"))
@@ -191,9 +199,9 @@ pot2marg <- function(pt){
 
 
 
-.extractPOT_primitive <- function(data_, cliq, seps=NULL, smooth=0){        
+.extractPOT_primitive <- function(data_, cliq, seps=NULL, smooth=0) {        
     
-    .normalize <- function(tt, sp){
+    .normalize <- function(tt, sp) {
         if (length(sp) > 0) tabDiv0(tt, tabMarg(tt, sp))
         else tt / sum(tt)        
     }
@@ -212,17 +220,17 @@ pot2marg <- function(pt){
 
 
 
-    .extractMARG_primitive <- function(data_, cliq, seps=NULL, smooth=0){        
-        out <- vector("list", length(cliq))
-        is.df <- is.data.frame(data_)
-        
-        for (i in seq_along(cliq)){
-            cq   <- cliq[[ i ]]
-            t.cq <- .dataMarg(data_, cq, is.df) + smooth       
-            out[[i]] <- t.cq / sum(t.cq)
-        }
-        out
+.extractMARG_primitive <- function(data_, cliq, seps=NULL, smooth=0) {        
+    out <- vector("list", length(cliq))
+    is.df <- is.data.frame(data_)
+    
+    for (i in seq_along(cliq)){
+        cq   <- cliq[[ i ]]
+        t.cq <- .dataMarg(data_, cq, is.df) + smooth       
+        out[[i]] <- t.cq / sum(t.cq)
     }
+    out
+}
 
 
 ## #' @rdname components_extract
@@ -239,10 +247,10 @@ pot2marg <- function(pt){
 
 
 ## helper function; can possibly be made faster
-.dataMarg <- function(data_, cq, is.df=NULL){
+.dataMarg <- function(data_, cq, is.df=NULL) {
 
     ## .dfMarg can possibly be made faster
-    .dfMarg <- function(data_, cq){
+    .dfMarg <- function(data_, cq) {
         xtabs(~., data=data_[ , cq, drop=FALSE])
     }
 
@@ -256,7 +264,7 @@ pot2marg <- function(pt){
 
 
 
-.is.valid.data <- function(data_){
+.is.valid.data <- function(data_) {
     if (!(is.data.frame(data_) || is.named.array(data_)))
         stop("'data_' must be dataframe or array.")
 }

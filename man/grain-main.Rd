@@ -7,6 +7,7 @@
 \alias{grain.CPTspec}
 \alias{grain.pot_spec}
 \alias{grain.graphNEL}
+\alias{grain.igraph}
 \alias{grain.dModel}
 \title{Graphical Independence Network}
 \usage{
@@ -19,6 +20,16 @@ grain(x, ...)
 \method{grain}{pot_spec}(x, control = list(), smooth = 0, compile = TRUE, details = 0, ...)
 
 \method{grain}{graphNEL}(
+  x,
+  control = list(),
+  smooth = 0,
+  compile = TRUE,
+  details = 0,
+  data = NULL,
+  ...
+)
+
+\method{grain}{igraph}(
   x,
   control = list(),
   smooth = 0,

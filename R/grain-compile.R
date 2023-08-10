@@ -106,7 +106,7 @@ compile.grain <- function(object, propagate=FALSE, tug=NULL, root=NULL,
         tugM <- .make_set_complete(tugM, root)
     ug_   <- triangulateMAT(tugM)  ## FIXME : Coercions are a MESS
     rp_   <- ripMAT(ug_)
-    ug_   <- as(ug_, "graphNEL")
+    ug_   <- as(ug_, "igraph")
     
     list(rip=rp_, ug=ug_)
 }
@@ -169,8 +169,7 @@ compile.grain <- function(object, propagate=FALSE, tug=NULL, root=NULL,
 
 ## Insert cpt's into potential list (cptlist, APlist)
 ##
-.insert_CPT <- function(cptlist, potlist, details=0)
-{
+.insert_CPT <- function(cptlist, potlist, details=0) {
     if (details>=1)
         cat(".Inserting cpt's in potential list [.insert_CPT]\n")
 
@@ -178,9 +177,13 @@ compile.grain <- function(object, propagate=FALSE, tug=NULL, root=NULL,
     cpt_names <- unname(lapply(cptlist, function(x) varNames(x)))
     hosts    <-  get_superset_list(cpt_names, pot_names)
 
+    str(list(cpt_names=cpt_names, pot_names=pot_names, hosts=hosts))
+    
     for (i in 1:length(cptlist)) {
             cptc <- cptlist[[ i ]]
             h    <- hosts[ i ]
+            str(list(i=i, h=h))
+            ## print(h); print(potlist[[h]])
             potlist[[ h ]] <- tableOp( potlist[[ h ]], cptc, "*" )
         }
     .infoPrint(details, 4, {cat("....potlist (after insertion):\n"); print(potlist) })
@@ -213,7 +216,7 @@ compile.grain <- function(object, propagate=FALSE, tug=NULL, root=NULL,
 #' get_superset_list(x_set, y_set, warn=FALSE)
 #' 
 #' @export
-get_superset_list <- function(x_set, y_set, warn=FALSE){
+get_superset_list <- function(x_set, y_set, warn=FALSE) {
     out <- lapply(x_set,
                   function(x){
                       get_superset(x, y_set, all=FALSE)
@@ -247,68 +250,5 @@ get_superset_list <- function(x_set, y_set, warn=FALSE){
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-## ' @export
-## get_hosts <- function(x_set, y_set){
-
-    ## v <- lapply(x_set,
-                ## function(x) {
-                    ## which(is_inset(x, y_set, index=TRUE) > 0)[1]
-                ## }                
-                ## )
-
-    ## unlist(v)
-## }
-
-
-
-
-    ## if (is.null(getgrain(object, "rip")))
-        ## stop("No rip slot (junction tree) in object\n")
-    ## if (is.null(getgrain(object, "cpt")))
-        ## stop("No cpt slot in object\n")
-
-## .createJTreeGraph <- function(rip){
-    ## if (length(rip$cliques) > 1){
-        ## ft <- cbind(rip$parents, 1:length(rip$parents))
-        ## ft <- ft[ft[, 1] != 0, , drop=FALSE]
-        ## V <- seq_along(rip$parents)
-        ## if (nrow(ft) == 0){
-            ## jt <- new("graphNEL", nodes = as.character(V), edgemode = "undirected")
-        ## } else {
-            ## jt <- graph::ftM2graphNEL(ft, V=as.character(V), edgemode="undirected")
-        ## }
-    ## } else {
-        ## jt <- new("graphNEL", nodes = "1", edgemode = "undirected")
-    ## }
-    ## jt
-## }
-
-
-
-
-
-## .create_jtree <- function(object, root=NULL, update=TRUE){
-
-    ## mdag <- moralize(getgin(object, "dag"), result="dgCMatrix")
-    ## if (length(root) > 1)
-        ## mdag <- .make_set_complete(mdag, root)
-    ## ug_   <- triangulateMAT(mdag)  ## FIXME : Coercions are a MESS
-    ## rp_   <- ripMAT(ug_)
-    ## ug_   <- as(ug_, "graphNEL")
-    
-    ## list(rip=rp_, ug=ug_)
-## }
 
 

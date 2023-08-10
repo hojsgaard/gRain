@@ -23,8 +23,8 @@ pot2marg(pt)
 \arguments{
 \item{data_}{A named array or a dataframe.}
 
-\item{graph}{A \code{graphNEL} object or a list or formula which can be
-turned into a \code{graphNEL} object by calling \code{ug} or
+\item{graph}{An \code{igraph} object or a list or formula which can be
+turned into a \code{igraph} object by calling \code{ug} or
 \code{dag}. For \code{extractCPT}, graph must be/define a DAG while for
 \code{extractPOT}, graph must be/define undirected triangulated graph.}
 

@@ -59,11 +59,8 @@ prettyDate <- format(Sys.Date())
 The \grbn\ package implements Bayesian Networks (hereafter often
 abbreviated BNs). The name \grbn\ is an acronym for [gra]phical
 [i]ndependence [n]etworks. The main reference for \grbn\  is
-\cite{hoj:12}, see also
+\cite{hoj:12}, see also `citation("gRain")`.
 
-<< >>= 
-citation("gRain")
-@
 
 Moreover, \cite{hoj:edw:lau:12} gives a broad treatment of graphical
 models (including Bayesian networks) More information about the

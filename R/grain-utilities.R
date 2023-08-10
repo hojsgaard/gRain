@@ -1,22 +1,22 @@
 ## Used in load_save_hugin_net
 
-make_cptlist <- function(object){
+make_cptlist <- function(object) {
     if (!inherits(object, "grain"))
         stop("Object is not a 'grain' object\n")
     if (!isCompiled(object)) 
         object <- compile(object)
     dg <- ug2dag(getgin(object, "ug"))
     vp <- vpar(dg)
-    lapply(vp, function(vv){
+    lapply(vp, function(vv) {
         z <- qgrain(object, nodes=vv, type="cond")
         tabPerm(z, vv)}
         )
 }
 
-randomCPT <- function(object, states=c("yes", "no")){
+randomCPT <- function(object, states=c("yes", "no")) {
 
-    if (!inherits(object, "graphNEL"))
-        stop("'object' must be a graphNEL\n")
+    if (!inherits(object, "igraph"))
+        stop("'object' must be an igraph\n")
     if (!is_dag(object))
         stop("'object' is not a DAG\n")
 
@@ -28,7 +28,7 @@ randomCPT <- function(object, states=c("yes", "no")){
     compileCPT( cpt )
 }
 
-.print_probability <- function(vn){
+.print_probability <- function(vn) {
     if (length(vn) > 1){
         cat(paste(" P(", vn[1], "|", paste(vn[-1], collapse=' '), ")\n"))
     } else {
@@ -180,10 +180,4 @@ splitVec.list <- function(val, lev){
 
 ## as.grain.cpt_spec <- function(x, ...){
 ##     grain( x )
-## }
-
-## as.grain.graphNEL <- function(x, data, smooth=0, ...){
-##     if (missing(data))
-##         stop("'data' needed to create network from graph")
-##     grain(x, data=data, smooth=smooth)
 ## }

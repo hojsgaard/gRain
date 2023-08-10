@@ -79,7 +79,7 @@ grain <- function(x, ...){
 
 #' @rdname grain-main
 #' @export
-grain.cpt_spec <- function(x, control=list(), smooth=0, compile=TRUE, details=0, ...){
+grain.cpt_spec <- function(x, control=list(), smooth=0, compile=TRUE, details=0, ...) {
     ##cat("grain.cpt_spec\n")
     control  <- .setControl(control)
     out  <- c(list(universe    = attr(x, "universe"),
@@ -103,7 +103,7 @@ grain.CPTspec <- grain.cpt_spec
 
 #' @export
 #' @rdname grain-main
-grain.pot_spec <- function(x, control=list(), smooth=0, compile=TRUE, details=0,...){
+grain.pot_spec <- function(x, control=list(), smooth=0, compile=TRUE, details=0,...) {
     
     control  <- .setControl(control)
     out  <- c(list(universe    = attr(x, "universe"),              
@@ -120,7 +120,6 @@ grain.pot_spec <- function(x, control=list(), smooth=0, compile=TRUE, details=0,
 #' @export
 #' @rdname grain-main
 grain.graphNEL <- function(x, control=list(), smooth=0, compile=TRUE, details=0, data=NULL, ...){
-    ## cat("grain.graphNEL\n")
     if (is.null(data))
         stop("Data must be given to create grain from graph\n")
     if (!(is.named.array(data) || is.data.frame(data)))
@@ -138,6 +137,30 @@ grain.graphNEL <- function(x, control=list(), smooth=0, compile=TRUE, details=0,
 
     grain(zz, data=data, control=control, compile=compile, details=details)
 }
+
+
+## A graph + data (wrappers for calling grain.pot_spec and grain.cpt_spec)
+#' @export
+#' @rdname grain-main
+grain.igraph <- function(x, control=list(), smooth=0, compile=TRUE, details=0, data=NULL, ...) {
+    if (is.null(data))
+        stop("Data must be given to create grain from graph\n")
+    if (!(is.named.array(data) || is.data.frame(data)))
+        stop("Data must be an array or a dataframe\n")
+
+    if (is_dag(x)){
+        zz <- extractCPT(data, x, smooth=smooth)
+        zz <- compileCPT(zz)
+    } else if (is_tug(x)){
+        zz <- extractPOT(data, x, smooth=smooth)
+        zz <- compilePOT(zz)
+    }
+    else
+        stop("graph 'x' is neither a directed acyclic graph or a triangulated undirected graph")
+
+    grain(zz, data=data, control=control, compile=compile, details=details)
+}
+
 
 #' @export
 #' @rdname grain-main

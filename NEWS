@@ -1,3 +1,9 @@
+gRain v1.3.14 (Release date: 2023-08-10)
+========================================
+
+  * This version will work next major revision of gRbase (which is
+    independent of bioconductor packages)
+
 gRain v1.3.13 (Release date: 2023-03-09)
 ========================================
 
