@@ -63,10 +63,10 @@
 #' data(lizard, package="gRbase")
 #'
 #' ## From a DAG: height <- species -> diam
-#' daG <- dag(~species + height:species + diam:species)
+#' daG <- dag(~species + height:species + diam:species, result="igraph")
 #'
 #' ## From an undirected graph UG : [height:species][diam:species]
-#' uG  <- ug(~height:species + diam:species)
+#' uG  <- ug(~height:species + diam:species, result="igraph")
 #' 
 #' liz.ug   <- grain(uG, data=lizard)
 #' liz.dag  <- grain(daG, data=lizard)
@@ -80,7 +80,7 @@ grain <- function(x, ...){
 #' @rdname grain-main
 #' @export
 grain.cpt_spec <- function(x, control=list(), smooth=0, compile=TRUE, details=0, ...) {
-    ##cat("grain.cpt_spec\n")
+
     control  <- .setControl(control)
     out  <- c(list(universe    = attr(x, "universe"),
                    cptlist     = as_cpt_spec_simple(x), ## Strips unnecessary stuff                   
@@ -116,27 +116,6 @@ grain.pot_spec <- function(x, control=list(), smooth=0, compile=TRUE, details=0,
     if (compile) compile(out) else out
 }
 
-## A graph + data (wrappers for calling grain.pot_spec and grain.cpt_spec)
-#' @export
-#' @rdname grain-main
-grain.graphNEL <- function(x, control=list(), smooth=0, compile=TRUE, details=0, data=NULL, ...){
-    if (is.null(data))
-        stop("Data must be given to create grain from graph\n")
-    if (!(is.named.array(data) || is.data.frame(data)))
-        stop("Data must be an array or a dataframe\n")
-
-    if (is_dag(x)){
-        zz <- extractCPT(data, x, smooth=smooth)
-        zz <- compileCPT(zz)
-    } else if (is_tug(x)){
-        zz <- extractPOT(data, x, smooth=smooth)
-        zz <- compilePOT(zz)
-    }
-    else
-        stop("graph 'x' is neither a directed acyclic graph or a triangulated undirected graph")
-
-    grain(zz, data=data, control=control, compile=compile, details=details)
-}
 
 
 ## A graph + data (wrappers for calling grain.pot_spec and grain.cpt_spec)
@@ -148,10 +127,10 @@ grain.igraph <- function(x, control=list(), smooth=0, compile=TRUE, details=0, d
     if (!(is.named.array(data) || is.data.frame(data)))
         stop("Data must be an array or a dataframe\n")
 
-    if (is_dag(x)){
+    if (is_dag(x)) {
         zz <- extractCPT(data, x, smooth=smooth)
         zz <- compileCPT(zz)
-    } else if (is_tug(x)){
+    } else if (is_tug(x)) {
         zz <- extractPOT(data, x, smooth=smooth)
         zz <- compilePOT(zz)
     }
@@ -176,18 +155,18 @@ grain.dModel <- function(x, control=list(), smooth=0, compile=TRUE, details=0, d
 
 #' @export
 ## #' @rdname grain-main
-grain.pot_representation <- function(x, ...){
+grain.pot_representation <- function(x, ...) {
     grain(compilePOT(x))
 }
 
 #' @export
 ## #' @rdname grain-main
-grain.cpt_representation <- function(x, ...){
+grain.cpt_representation <- function(x, ...) {
     grain(compileCPT(x))
 }
 
 #' @export
-print.grain <- function(x, ...){
+print.grain <- function(x, ...) {
 
     hasEvidence <- !is.null(evidence(x))
     cat("Independence network: Compiled:", isCompiled(x),
@@ -197,7 +176,7 @@ print.grain <- function(x, ...){
 }
 
 #' @export
-summary.grain <- function(object, type='std', ...){
+summary.grain <- function(object, type='std', ...) {
 
     type <- match.arg(type, c("std", "cliques", "rip", "configurations"))
     
@@ -260,6 +239,29 @@ summary.grain <- function(object, type='std', ...){
   con[(namc <- names(control))] <- control
   con
 }
+
+
+## ## A graph + data (wrappers for calling grain.pot_spec and grain.cpt_spec)
+## #' @export
+## #' @rdname grain-main
+## grain.graphNEL <- function(x, control=list(), smooth=0, compile=TRUE, details=0, data=NULL, ...) {
+##     if (is.null(data))
+##         stop("Data must be given to create grain from graph\n")
+##     if (!(is.named.array(data) || is.data.frame(data)))
+##         stop("Data must be an array or a dataframe\n")
+
+##     if (is_dag(x)){
+##         zz <- extractCPT(data, x, smooth=smooth)
+##         zz <- compileCPT(zz)
+##     } else if (is_tug(x)){
+##         zz <- extractPOT(data, x, smooth=smooth)
+##         zz <- compilePOT(zz)
+##     }
+##     else
+##         stop("graph 'x' is neither a directed acyclic graph or a triangulated undirected graph")
+
+##     grain(zz, data=data, control=control, compile=compile, details=details)
+## }
 
 
 ## cpt_spec

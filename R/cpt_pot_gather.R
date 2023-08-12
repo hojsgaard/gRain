@@ -59,13 +59,13 @@
 
 #' @rdname components_gather
 #' @export
-compileCPT <- function(x, ..., forceCheck=TRUE){
+compileCPT <- function(x, ..., forceCheck=TRUE) {
     args <- c(list(x), list(...))
     args <- listify_dots(args)
     .compileCPT(args, forceCheck=forceCheck)
 }
 
-.compileCPT <- function(x, forceCheck=TRUE){
+.compileCPT <- function(x, forceCheck=TRUE) {
     ## x: A list of cpts (arrays)
 
     type <- is.list(x) ##&& all(sapply(x, is.named.array))
@@ -90,11 +90,11 @@ compileCPT <- function(x, ..., forceCheck=TRUE){
 
 
     ## Does specification define a DAG? If x is cpt_representation the answer is yes
-    if (inherits(x, "cpt_representation")){
+    if (inherits(x, "cpt_representation")) {
         graph <- attr(x, "graph")
     } else {
         vp <- lapply(zz, "[[", "vpar")
-        graph <- dagList(vp, forceCheck=forceCheck)
+        graph <- dagList(vp, forceCheck=forceCheck, result="igraph")
     }
 
     ## Need list of cpts (each represented as an array)

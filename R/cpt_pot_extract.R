@@ -48,10 +48,10 @@
 #' data(lizard, package="gRbase")
 #'
 #' # DAG: height <- species -> diam
-#' daG <- dag(~species + height:species + diam:species)
+#' daG <- dag(~species + height:species + diam:species, result="igraph")
 #'
 #' # UG : [height:species][diam:species]
-#' uG  <- ug(~height:species + diam:species)
+#' uG  <- ug(~height:species + diam:species, result="igraph")
 #' 
 #' pt <- extractPOT(lizard, ~height:species + diam:species) 
 #' cp <- extractCPT(lizard, ~species + height:species + diam:species)
