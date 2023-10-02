@@ -85,7 +85,7 @@
 
 \author{S{\o}ren H{\o}jsgaard\\Aalborg University, Denmark}
 \title{Bayesian networks in R with the \pkg{gRain} package}
-\date{\pkg{gRain} version 1.3.12 as of 2022-11-17}
+\date{\pkg{gRain} version 1.3.13 as of 2023-08-12}
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 \maketitle
@@ -97,37 +97,8 @@
 The \grbn\ package implements Bayesian Networks (hereafter often
 abbreviated BNs). The name \grbn\ is an acronym for [gra]phical
 [i]ndependence [n]etworks. The main reference for \grbn\  is
-\cite{hoj:12}, see also
+\cite{hoj:12}, see also `citation("gRain")`.
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{citation}\hlstd{(}\hlstr{"gRain"}\hlstd{)}
-\end{alltt}
-\begin{verbatim}
-## 
-## To cite gRain in publications use:
-## 
-##   Søren Højsgaard (2012). Graphical Independence Networks with the gRain
-##   Package for R. Journal of Statistical Software, 46(10), 1-26. URL
-##   https://www.jstatsoft.org/v46/i10/
-## 
-## A BibTeX entry for LaTeX users is
-## 
-##   @Article{,
-##     title = {Graphical Independence Networks with the {gRain} Package for {R}},
-##     author = {S{\o}ren H{\o}jsgaard},
-##     journal = {Journal of Statistical Software},
-##     year = {2012},
-##     volume = {46},
-##     number = {10},
-##     pages = {1--26},
-##     doi = {10.18637/jss.v046.i10},
-##     url = {https://www.jstatsoft.org/v46/i10/},
-##   }
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
 
 Moreover, \cite{hoj:edw:lau:12} gives a broad treatment of graphical
 models (including Bayesian networks) More information about the
@@ -137,6 +108,7 @@ is available from
 \begin{quote}
 \url{http://people.math.aau.dk/~sorenh/software/gR}
 \end{quote}
+
 
 %% \section{Two worked examples}
 %% \label{sec:two-worked-examples}
@@ -187,14 +159,6 @@ is available from
 
 
 
-
-
-
-
-
-
-
-
 This section reviews the chest clinic example of \cite{lau/spieg:88}
 (illustrated in Figure~\ref{fig:chest-LS}) and shows one way of
 specifying the model in \grbn{}.  \cite{lau/spieg:88} motivate the
@@ -211,11 +175,12 @@ chest clinic example with the following narrative:
 \end{quote}
 
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}
-\includegraphics[width=\maxwidth]{figures/grain-chest-LS-1} \caption[Chest clinic example from Lauritzen and Spiegelhalter (1988)]{Chest clinic example from Lauritzen and Spiegelhalter (1988).}\label{fig:chest-LS}
-\end{figure}
 
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in xy.coords(x, y, xlabel, ylabel, log): 'x' is a list, but does not have components 'x' and 'y'}}\end{kframe}
 \end{knitrout}
 
 \subsection{Building a network}
@@ -235,7 +200,7 @@ true (yes) if either $\tau$ or $\lambda$ are true (yes) and false (no) otherwise
 The connection between the variables is displayed by the DAG (directed acyclic graph) in
 Figure~\ref{fig:chest-LS}.
 
-A joint probability density factorising according to a DAG with nodes
+A joint probability density factorizing according to a DAG with nodes
 $V$ can be constructed as follows: Each node $v\in V$ has a set $pa(v)$ of parents and each node
 $v\in V$ has a finite set of states. A joint distribution
 over the variables $V$ can be given as
@@ -297,6 +262,8 @@ $p(\lambda,\tau,\beta|e^*)$.
 
 A simple way of  specifying the model for the chest clinic
 example is as follows.
+
+
 
 \begin{enumerate}
 \item Specify conditional probability tables (with values as given in
@@ -406,6 +373,52 @@ Notice: \code{either} is a logical node:
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlstd{chest_bn} \hlkwb{<-} \hlkwd{grain}\hlstd{(chest_cpt)}
+\end{alltt}
+\begin{verbatim}
+## List of 3
+##  $ cpt_names:List of 8
+##   ..$ : chr "asia"
+##   ..$ : chr [1:2] "tub" "asia"
+##   ..$ : chr "smoke"
+##   ..$ : chr [1:2] "lung" "smoke"
+##   ..$ : chr [1:2] "bronc" "smoke"
+##   ..$ : chr [1:3] "either" "lung" "tub"
+##   ..$ : chr [1:2] "xray" "either"
+##   ..$ : chr [1:3] "dysp" "bronc" "either"
+##  $ pot_names:List of 6
+##   ..$ : chr [1:2] "asia" "tub"
+##   ..$ : chr [1:3] "either" "lung" "tub"
+##   ..$ : chr [1:3] "either" "lung" "bronc"
+##   ..$ : chr [1:3] "smoke" "lung" "bronc"
+##   ..$ : chr [1:3] "either" "dysp" "bronc"
+##   ..$ : chr [1:2] "either" "xray"
+##  $ hosts    : int [1:8] 1 1 4 4 4 2 6 5
+## List of 2
+##  $ i: int 1
+##  $ h: int 1
+## List of 2
+##  $ i: int 2
+##  $ h: int 1
+## List of 2
+##  $ i: int 3
+##  $ h: int 4
+## List of 2
+##  $ i: int 4
+##  $ h: int 4
+## List of 2
+##  $ i: int 5
+##  $ h: int 4
+## List of 2
+##  $ i: int 6
+##  $ h: int 2
+## List of 2
+##  $ i: int 7
+##  $ h: int 6
+## List of 2
+##  $ i: int 8
+##  $ h: int 5
+\end{verbatim}
+\begin{alltt}
 \hlstd{chest_bn}
 \end{alltt}
 \begin{verbatim}
@@ -422,10 +435,60 @@ chooses not to do so, compilation can be done with:
 \begin{alltt}
 \hlstd{chest_bn} \hlkwb{<-} \hlkwd{compile}\hlstd{(chest_bn)}
 \end{alltt}
+\begin{verbatim}
+## List of 3
+##  $ cpt_names:List of 8
+##   ..$ : chr "asia"
+##   ..$ : chr [1:2] "tub" "asia"
+##   ..$ : chr "smoke"
+##   ..$ : chr [1:2] "lung" "smoke"
+##   ..$ : chr [1:2] "bronc" "smoke"
+##   ..$ : chr [1:3] "either" "lung" "tub"
+##   ..$ : chr [1:2] "xray" "either"
+##   ..$ : chr [1:3] "dysp" "bronc" "either"
+##  $ pot_names:List of 6
+##   ..$ : chr [1:2] "asia" "tub"
+##   ..$ : chr [1:3] "either" "lung" "tub"
+##   ..$ : chr [1:3] "either" "lung" "bronc"
+##   ..$ : chr [1:3] "smoke" "lung" "bronc"
+##   ..$ : chr [1:3] "either" "dysp" "bronc"
+##   ..$ : chr [1:2] "either" "xray"
+##  $ hosts    : int [1:8] 1 1 4 4 4 2 6 5
+## List of 2
+##  $ i: int 1
+##  $ h: int 1
+## List of 2
+##  $ i: int 2
+##  $ h: int 1
+## List of 2
+##  $ i: int 3
+##  $ h: int 4
+## List of 2
+##  $ i: int 4
+##  $ h: int 4
+## List of 2
+##  $ i: int 5
+##  $ h: int 4
+## List of 2
+##  $ i: int 6
+##  $ h: int 2
+## List of 2
+##  $ i: int 7
+##  $ h: int 6
+## List of 2
+##  $ i: int 8
+##  $ h: int 5
+\end{verbatim}
 \end{kframe}
 \end{knitrout}
 
 \end{enumerate}
+
+
+
+
+
+
 
 \subsection{Setting evidence and querying a network}
 \label{sec:querying-network}
@@ -584,7 +647,52 @@ chooses not to do so, compilation can be done with:
 \hlstd{\})}
 
 \hlstd{bn2} \hlkwb{<-} \hlkwd{compileCPT}\hlstd{(chest_cpt2) |>} \hlkwd{grain}\hlstd{()}
-
+\end{alltt}
+\begin{verbatim}
+## List of 3
+##  $ cpt_names:List of 8
+##   ..$ : chr "asia"
+##   ..$ : chr [1:2] "tub" "asia"
+##   ..$ : chr "smoke"
+##   ..$ : chr [1:2] "lung" "smoke"
+##   ..$ : chr [1:2] "bronc" "smoke"
+##   ..$ : chr [1:3] "either" "tub" "lung"
+##   ..$ : chr [1:2] "xray" "either"
+##   ..$ : chr [1:3] "dysp" "bronc" "either"
+##  $ pot_names:List of 6
+##   ..$ : chr [1:2] "asia" "tub"
+##   ..$ : chr [1:3] "either" "lung" "tub"
+##   ..$ : chr [1:3] "either" "lung" "bronc"
+##   ..$ : chr [1:3] "smoke" "lung" "bronc"
+##   ..$ : chr [1:3] "either" "dysp" "bronc"
+##   ..$ : chr [1:2] "either" "xray"
+##  $ hosts    : int [1:8] 1 1 4 4 4 2 6 5
+## List of 2
+##  $ i: int 1
+##  $ h: int 1
+## List of 2
+##  $ i: int 2
+##  $ h: int 1
+## List of 2
+##  $ i: int 3
+##  $ h: int 4
+## List of 2
+##  $ i: int 4
+##  $ h: int 4
+## List of 2
+##  $ i: int 5
+##  $ h: int 4
+## List of 2
+##  $ i: int 6
+##  $ h: int 2
+## List of 2
+##  $ i: int 7
+##  $ h: int 6
+## List of 2
+##  $ i: int 8
+##  $ h: int 5
+\end{verbatim}
+\begin{alltt}
 \hlstd{lst2} \hlkwb{<-} \hlkwd{list}\hlstd{(}\hlkwc{asia}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{99}\hlstd{),}
             \hlkwc{tub}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{5}\hlstd{,} \hlnum{95}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{99}\hlstd{),}
             \hlkwc{smoke}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{5}\hlstd{,} \hlnum{5}\hlstd{),}
@@ -596,6 +704,50 @@ chooses not to do so, compilation can be done with:
 
 \hlstd{bn2} \hlkwb{<-} \hlkwd{replaceCPT}\hlstd{(bn2, lst2)}
 \end{alltt}
+\begin{verbatim}
+## List of 3
+##  $ cpt_names:List of 8
+##   ..$ : chr "asia"
+##   ..$ : chr [1:2] "tub" "asia"
+##   ..$ : chr "smoke"
+##   ..$ : chr [1:2] "lung" "smoke"
+##   ..$ : chr [1:2] "bronc" "smoke"
+##   ..$ : chr [1:3] "either" "tub" "lung"
+##   ..$ : chr [1:2] "xray" "either"
+##   ..$ : chr [1:3] "dysp" "bronc" "either"
+##  $ pot_names:List of 6
+##   ..$ : chr [1:2] "tub" "asia"
+##   ..$ : chr [1:3] "either" "tub" "lung"
+##   ..$ : chr [1:3] "either" "lung" "bronc"
+##   ..$ : chr [1:3] "bronc" "smoke" "lung"
+##   ..$ : chr [1:3] "dysp" "bronc" "either"
+##   ..$ : chr [1:2] "xray" "either"
+##  $ hosts    : int [1:8] 1 1 4 4 4 2 6 5
+## List of 2
+##  $ i: int 1
+##  $ h: int 1
+## List of 2
+##  $ i: int 2
+##  $ h: int 1
+## List of 2
+##  $ i: int 3
+##  $ h: int 4
+## List of 2
+##  $ i: int 4
+##  $ h: int 4
+## List of 2
+##  $ i: int 5
+##  $ h: int 4
+## List of 2
+##  $ i: int 6
+##  $ h: int 2
+## List of 2
+##  $ i: int 7
+##  $ h: int 6
+## List of 2
+##  $ i: int 8
+##  $ h: int 5
+\end{verbatim}
 \end{kframe}
 \end{knitrout}
 
@@ -836,6 +988,8 @@ If $L(X)$ factorizes as $L(X)= \prod_C L_C(X_C)$ then the computations are
 carried out as outlined above, i.e.\ by the message passing scheme.
 
 
+
+
 \subsection{An excerpt of the chest clinic network}
 \label{sec:an-excerpt-chest}
 
@@ -851,6 +1005,23 @@ Consider the following excerpt of the chest clinic network.
 
 \hlstd{plist1} \hlkwb{<-} \hlkwd{compileCPT}\hlstd{(}\hlkwd{list}\hlstd{(a, t.a))}
 \hlstd{chest1} \hlkwb{<-} \hlkwd{grain}\hlstd{(plist1)}
+\end{alltt}
+\begin{verbatim}
+## List of 3
+##  $ cpt_names:List of 2
+##   ..$ : chr "asia"
+##   ..$ : chr [1:2] "tub" "asia"
+##  $ pot_names:List of 1
+##   ..$ : chr [1:2] "asia" "tub"
+##  $ hosts    : int [1:2] 1 1
+## List of 2
+##  $ i: int 1
+##  $ h: int 1
+## List of 2
+##  $ i: int 2
+##  $ h: int 1
+\end{verbatim}
+\begin{alltt}
 \hlkwd{querygrain}\hlstd{(chest1,} \hlkwc{simplify} \hlstd{=} \hlnum{TRUE}\hlstd{)}
 \end{alltt}
 \begin{verbatim}
@@ -860,6 +1031,9 @@ Consider the following excerpt of the chest clinic network.
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
+
+
+
 
 \subsection{Specifying hard evidence} 
 \label{sec:hard-evidence}
@@ -925,6 +1099,28 @@ recently been to Asia in 10\% of the cases.
 \begin{alltt}
 \hlstd{plist2} \hlkwb{<-} \hlkwd{compileCPT}\hlstd{(}\hlkwd{list}\hlstd{(a, t.a, g.a ))}
 \hlstd{chest2} \hlkwb{<-} \hlkwd{grain}\hlstd{(plist2)}
+\end{alltt}
+\begin{verbatim}
+## List of 3
+##  $ cpt_names:List of 3
+##   ..$ : chr "asia"
+##   ..$ : chr [1:2] "tub" "asia"
+##   ..$ : chr [1:2] "guess_asia" "asia"
+##  $ pot_names:List of 2
+##   ..$ : chr [1:2] "asia" "tub"
+##   ..$ : chr [1:2] "asia" "guess_asia"
+##  $ hosts    : int [1:3] 1 1 2
+## List of 2
+##  $ i: int 1
+##  $ h: int 1
+## List of 2
+##  $ i: int 2
+##  $ h: int 1
+## List of 2
+##  $ i: int 3
+##  $ h: int 2
+\end{verbatim}
+\begin{alltt}
 \hlkwd{querygrain}\hlstd{(chest2,} \hlkwc{simplify} \hlstd{=} \hlnum{TRUE}\hlstd{)}
 \end{alltt}
 \begin{verbatim}
@@ -1033,7 +1229,7 @@ below:
 \hlkwd{plot}\hlstd{(}\hlkwd{dag}\hlstd{(}\hlopt{~}\hlstd{y1}\hlopt{:}\hlstd{x1} \hlopt{+} \hlstd{x2}\hlopt{:}\hlstd{x1} \hlopt{+} \hlstd{y2}\hlopt{:}\hlstd{x2))}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\maxwidth]{figures/grain-unnamed-chunk-35-1} 
+\includegraphics[width=\maxwidth]{figures/grain-unnamed-chunk-34-1} 
 \end{knitrout}
 
 
@@ -1046,6 +1242,23 @@ A \bn\ for $x$ can be constructed as:
 \hlstd{x1} \hlkwb{<-} \hlkwd{cpt}\hlstd{(}\hlopt{~}\hlstd{x1,} \hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{3}\hlstd{),} \hlkwc{levels}\hlstd{=yn)}
 \hlstd{x2} \hlkwb{<-} \hlkwd{cpt}\hlstd{(}\hlopt{~}\hlstd{x2}\hlopt{|}\hlstd{x1,} \hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{3}\hlstd{,} \hlnum{3}\hlstd{,} \hlnum{1}\hlstd{),} \hlkwc{levels}\hlstd{=yn)}
 \hlstd{bn} \hlkwb{<-} \hlkwd{grain}\hlstd{(}\hlkwd{compileCPT}\hlstd{(x1, x2))}
+\end{alltt}
+\begin{verbatim}
+## List of 3
+##  $ cpt_names:List of 2
+##   ..$ : chr "x1"
+##   ..$ : chr [1:2] "x2" "x1"
+##  $ pot_names:List of 1
+##   ..$ : chr [1:2] "x1" "x2"
+##  $ hosts    : int [1:2] 1 1
+## List of 2
+##  $ i: int 1
+##  $ h: int 1
+## List of 2
+##  $ i: int 2
+##  $ h: int 1
+\end{verbatim}
+\begin{alltt}
 \hlkwd{querygrain}\hlstd{(bn,} \hlkwc{simplify}\hlstd{=}\hlnum{TRUE}\hlstd{)}
 \end{alltt}
 \begin{verbatim}
@@ -1100,6 +1313,23 @@ An alternative is to explicitly modify the CPT which specifies $p(x_1)$:
 \begin{alltt}
 \hlstd{x1_upd} \hlkwb{<-} \hlkwd{getgrain}\hlstd{(bn,} \hlstr{"cptlist"}\hlstd{)}\hlopt{$}\hlstd{x1} \hlopt{*} \hlstd{lik1}
 \hlstd{bn2} \hlkwb{<-} \hlkwd{replaceCPT}\hlstd{(bn,} \hlkwd{list}\hlstd{(}\hlkwc{x1}\hlstd{=x1_upd))}
+\end{alltt}
+\begin{verbatim}
+## List of 3
+##  $ cpt_names:List of 2
+##   ..$ : chr "x1"
+##   ..$ : chr [1:2] "x2" "x1"
+##  $ pot_names:List of 1
+##   ..$ : chr [1:2] "x2" "x1"
+##  $ hosts    : int [1:2] 1 1
+## List of 2
+##  $ i: int 1
+##  $ h: int 1
+## List of 2
+##  $ i: int 2
+##  $ h: int 1
+\end{verbatim}
+\begin{alltt}
 \hlkwd{querygrain}\hlstd{(bn2)}
 \end{alltt}
 \begin{verbatim}
@@ -1136,7 +1366,7 @@ $y_2$ (evidence changes the mixture weights.)
 \begin{verbatim}
 ##    x1  x2
 ## 1  no yes
-## 2  no yes
+## 2 yes  no
 ## 3 yes  no
 ## 4  no yes
 ## 5 yes  no
@@ -1148,12 +1378,12 @@ $y_2$ (evidence changes the mixture weights.)
 \end{alltt}
 \begin{verbatim}
 ##    x1  x2
-## 1 yes yes
+## 1 yes  no
 ## 2 yes  no
-## 3 yes yes
+## 3 yes  no
 ## 4 yes  no
-## 5 yes  no
-## 6 yes yes
+## 5 yes yes
+## 6 yes  no
 \end{verbatim}
 \begin{alltt}
 \hlkwd{par}\hlstd{(}\hlkwc{mfrow}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{))}
@@ -1163,7 +1393,7 @@ $y_2$ (evidence changes the mixture weights.)
 \hlstd{y22sim |>} \hlkwd{hist}\hlstd{(}\hlkwc{prob}\hlstd{=T,} \hlkwc{ylim}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{.4}\hlstd{),} \hlkwc{breaks}\hlstd{=}\hlnum{10}\hlstd{)}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\maxwidth]{figures/grain-unnamed-chunk-40-1} 
+\includegraphics[width=\maxwidth]{figures/grain-unnamed-chunk-39-1} 
 \end{knitrout}
 
 
@@ -1201,7 +1431,7 @@ The following two graphs specify the same model:
 \hlkwd{par}\hlstd{(}\hlkwc{mfrow}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,}\hlnum{2}\hlstd{));} \hlkwd{plot}\hlstd{( dG );} \hlkwd{plot}\hlstd{( uG )}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\maxwidth]{figures/grain-unnamed-chunk-41-1} 
+\includegraphics[width=\maxwidth]{figures/grain-unnamed-chunk-40-1} 
 \end{knitrout}
 
 Suppose data is
@@ -1224,6 +1454,46 @@ A network can be built from data using:
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlstd{gr.dG} \hlkwb{<-} \hlkwd{compile}\hlstd{(}\hlkwd{grain}\hlstd{( dG,} \hlkwc{data}\hlstd{=dat ))}
+\end{alltt}
+\begin{verbatim}
+## List of 3
+##  $ cpt_names:List of 3
+##   ..$ : chr [1:2] "A" "B"
+##   ..$ : chr [1:2] "B" "C"
+##   ..$ : chr "C"
+##  $ pot_names:List of 2
+##   ..$ : chr [1:2] "B" "A"
+##   ..$ : chr [1:2] "B" "C"
+##  $ hosts    : int [1:3] 1 2 2
+## List of 2
+##  $ i: int 1
+##  $ h: int 1
+## List of 2
+##  $ i: int 2
+##  $ h: int 2
+## List of 2
+##  $ i: int 3
+##  $ h: int 2
+## List of 3
+##  $ cpt_names:List of 3
+##   ..$ : chr [1:2] "A" "B"
+##   ..$ : chr [1:2] "B" "C"
+##   ..$ : chr "C"
+##  $ pot_names:List of 2
+##   ..$ : chr [1:2] "B" "A"
+##   ..$ : chr [1:2] "B" "C"
+##  $ hosts    : int [1:3] 1 2 2
+## List of 2
+##  $ i: int 1
+##  $ h: int 1
+## List of 2
+##  $ i: int 2
+##  $ h: int 2
+## List of 2
+##  $ i: int 3
+##  $ h: int 2
+\end{verbatim}
+\begin{alltt}
 \hlstd{gr.uG} \hlkwb{<-} \hlkwd{compile}\hlstd{(}\hlkwd{grain}\hlstd{( uG,} \hlkwc{data}\hlstd{=dat ))}
 \end{alltt}
 \end{kframe}
@@ -1390,6 +1660,26 @@ One can do
 \begin{alltt}
 \hlstd{gr.dG} \hlkwb{<-} \hlkwd{grain}\hlstd{(dG,} \hlkwc{data}\hlstd{=dat,} \hlkwc{smooth}\hlstd{=e)}
 \end{alltt}
+\begin{verbatim}
+## List of 3
+##  $ cpt_names:List of 3
+##   ..$ : chr [1:2] "A" "B"
+##   ..$ : chr [1:2] "B" "C"
+##   ..$ : chr "C"
+##  $ pot_names:List of 2
+##   ..$ : chr [1:2] "B" "A"
+##   ..$ : chr [1:2] "B" "C"
+##  $ hosts    : int [1:3] 1 2 2
+## List of 2
+##  $ i: int 1
+##  $ h: int 1
+## List of 2
+##  $ i: int 2
+##  $ h: int 2
+## List of 2
+##  $ i: int 3
+##  $ h: int 2
+\end{verbatim}
 \end{kframe}
 \end{knitrout}
 
@@ -1574,13 +1864,13 @@ construct the joint distribution (an array with $2^8=256$ entries) directly as:
 \hlstd{joint  |>} \hlkwd{as.data.frame.table}\hlstd{() |>} \hlkwd{head}\hlstd{()}
 \end{alltt}
 \begin{verbatim}
-##   xray asia smoke lung tub dysp bronc either        Freq
-## 1  yes  yes   yes  yes yes  yes   yes    yes 1.32300e-05
-## 2   no  yes   yes  yes yes  yes   yes    yes 2.70000e-07
-## 3  yes   no   yes  yes yes  yes   yes    yes 2.61954e-04
-## 4   no   no   yes  yes yes  yes   yes    yes 5.34600e-06
-## 5  yes  yes    no  yes yes  yes   yes    yes 6.61500e-07
-## 6   no  yes    no  yes yes  yes   yes    yes 1.35000e-08
+##   xray smoke asia tub lung dysp bronc either        Freq
+## 1  yes   yes  yes yes  yes  yes   yes    yes 1.32300e-05
+## 2   no   yes  yes yes  yes  yes   yes    yes 2.70000e-07
+## 3  yes    no  yes yes  yes  yes   yes    yes 6.61500e-07
+## 4   no    no  yes yes  yes  yes   yes    yes 1.35000e-08
+## 5  yes   yes   no yes  yes  yes   yes    yes 2.61954e-04
+## 6   no   yes   no yes  yes  yes   yes    yes 5.34600e-06
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -1688,9 +1978,6 @@ Alternatively, multiply all entries not consistent by zero and all other entries
 \end{knitrout}
 
 
-\bibliography{grain}
-
-\end{document}
 
 
 
@@ -1765,4 +2052,19 @@ Alternatively, multiply all entries not consistent by zero and all other entries
 % sum(ar_slice(tt, list(either="no", tub="yes")))
 % @ %def
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+\bibliography{grain}
+\end{document}
 

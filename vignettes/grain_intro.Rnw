@@ -71,6 +71,7 @@ is available from
 \url{http://people.math.aau.dk/~sorenh/software/gR}
 \end{quote}
 
+
 %% \section{Two worked examples}
 %% \label{sec:two-worked-examples}
 
@@ -134,14 +135,6 @@ chest_bn
 @ %def
 
 
-
-
-
-
-
-
-
-
 This section reviews the chest clinic example of \cite{lau/spieg:88}
 (illustrated in Figure~\ref{fig:chest-LS}) and shows one way of
 specifying the model in \grbn{}.  \cite{lau/spieg:88} motivate the
@@ -156,6 +149,7 @@ chest clinic example with the following narrative:
   between lung cancer and tuberculosis, as neither does the presence or
   absence of dyspnoea.''
 \end{quote}
+
 
 
 <<chest-LS, echo=F, fig.cap="Chest clinic example from Lauritzen and Spiegelhalter (1988).">>=
@@ -242,6 +236,8 @@ $p(\lambda,\tau,\beta|e^*)$.
 A simple way of  specifying the model for the chest clinic
 example is as follows.
 
+
+
 \begin{enumerate}
 \item Specify conditional probability tables (with values as given in
   \cite{lau/spieg:88}) (there are other ways of specifying conditional
@@ -307,6 +303,12 @@ chest_bn <- compile(chest_bn)
 @
 
 \end{enumerate}
+
+
+
+
+
+
 
 \subsection{Setting evidence and querying a network}
 \label{sec:querying-network}
@@ -546,6 +548,8 @@ If $L(X)$ factorizes as $L(X)= \prod_C L_C(X_C)$ then the computations are
 carried out as outlined above, i.e.\ by the message passing scheme.
 
 
+
+
 \subsection{An excerpt of the chest clinic network}
 \label{sec:an-excerpt-chest}
 
@@ -561,6 +565,9 @@ plist1 <- compileCPT(list(a, t.a))
 chest1 <- grain(plist1)
 querygrain(chest1, simplify = TRUE) 
 @ %def
+
+
+
 
 \subsection{Specifying hard evidence} 
 \label{sec:hard-evidence}
@@ -733,10 +740,6 @@ y22sim |> hist(prob=T, ylim=c(0, .4), breaks=10)
 
 
 
-
-
-
-
 The joint distribution is
 \begin{displaymath}
   p(x,y_1, y_2) = p(x)p(y_1|x)p(y_2|x)
@@ -758,8 +761,8 @@ $y_1=y_1^*$ and $y_2=y_2^*$. We then have
 
 The following two graphs specify the same model:
 <<>>=
-dG  <- dag(~A:B + B:C)
-uG  <- ug(~A:B + B:C)
+dG  <- dag(~A:B + B:C, result="igraph")
+uG  <- ug(~A:B + B:C, result="igraph")
 par(mfrow=c(1,2)); plot( dG ); plot( uG )
 @ %def
 
@@ -963,9 +966,6 @@ tabMarg(cond2, "bronc")
 @
 
 
-\bibliography{grain}
-
-\end{document}
 
 
 
@@ -1040,4 +1040,19 @@ tabMarg(cond2, "bronc")
 % sum(ar_slice(tt, list(either="no", tub="yes")))
 % @ %def
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+\bibliography{grain}
+\end{document}
 
