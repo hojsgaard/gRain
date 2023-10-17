@@ -6,7 +6,7 @@
 \alias{chest_cpt}
 \title{Chest clinic example}
 \format{
-An object of class \code{list} of length 8.
+An object of class \code{cpt_spec} of length 8.
 }
 \usage{
 data(chest_cpt)

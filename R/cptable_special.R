@@ -129,7 +129,7 @@ mendel <- function(allele, names=c("child", "father", "mother")){
     }
 
 
-## Thereses goodie!!
+
 .tgprob <- function(child, mother, father){
     child <- strsplit(child, "")[[1]]
     mother <- strsplit(mother, "")[[1]]

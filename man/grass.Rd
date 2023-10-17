@@ -25,7 +25,7 @@ p.G_SR <- cptable(~G:S:R, values=c(.99, .01, .8, .2, .9, .1, 0, 1), levels=yn)
 grain(compileCPT(p.R, p.S_R, p.G_SR))
 
 # 'data' generated from
-# grass_cpt <- list(p.R, p.S_R, p.G_SR)
+grass_cpt <- list(p.R, p.S_R, p.G_SR)
 
 data(grass_cpt)
 

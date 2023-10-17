@@ -77,14 +77,14 @@ objects are now compiled upon creation.
 ## Create network from conditional probability tables CPTs:
 
 yn   <- c("yes", "no")
-a    <- cpt(~asia,              values=c(1,99), levels=yn)
-t.a  <- cpt(~tub+asia,          values=c(5,95,1,99), levels=yn)
-s    <- cpt(~smoke,             values=c(5,5), levels=yn)
-l.s  <- cpt(~lung+smoke,        values=c(1,9,1,99), levels=yn)
-b.s  <- cpt(~bronc+smoke,       values=c(6,4,3,7), levels=yn)
-e.lt <- cpt(~either+lung+tub,   values=c(1,0,1,0,1,0,0,1), levels=yn)
-x.e  <- cpt(~xray+either,       values=c(98,2,5,95), levels=yn)
-d.be <- cpt(~dysp+bronc+either, values=c(9,1,7,3,8,2,1,9), levels=yn)
+a    <- cpt(~asia,                  values=c(1,99), levels=yn)
+t.a  <- cpt(~tub + asia,            values=c(5,95,1,99), levels=yn)
+s    <- cpt(~smoke,                 values=c(5,5), levels=yn)
+l.s  <- cpt(~lung + smoke,          values=c(1,9,1,99), levels=yn)
+b.s  <- cpt(~bronc + smoke,         values=c(6,4,3,7), levels=yn)
+e.lt <- cpt(~either + lung + tub,   values=c(1,0,1,0,1,0,0,1), levels=yn)
+x.e  <- cpt(~xray + either,         values=c(98,2,5,95), levels=yn)
+d.be <- cpt(~dysp + bronc + either, values=c(9,1,7,3,8,2,1,9), levels=yn)
 cpt_list  <- list(a, t.a, s, l.s, b.s, e.lt, x.e, d.be)
 chest_cpt <- compileCPT(cpt_list)
 ## Alternative: chest_cpt <- compileCPT(a, t.a, s, l.s, b.s, e.lt, x.e, d.be)
@@ -115,7 +115,7 @@ Software, 46(10), 1-26.
 \code{\link{propagate.grain}}, \code{\link{setFinding}},
 \code{\link{setEvidence}}, \code{\link{getFinding}},
 \code{\link{pFinding}}, \code{\link{retractFinding}},
-\code{\link{extractCPT}}, \code{\link{extractPOT}},
+\code{\link{extract_cpt}}, \code{\link{extract_pot}},
 \code{\link{compileCPT}}, \code{\link{compilePOT}}
 }
 \author{

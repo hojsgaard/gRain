@@ -2,43 +2,52 @@
 % Please edit documentation in R/cpt_pot_extract.R
 \name{components_extract}
 \alias{components_extract}
+\alias{extract_cpt}
+\alias{extract_pot}
+\alias{extract_marg}
+\alias{marg2pot}
+\alias{pot2marg}
 \alias{extractCPT}
 \alias{extractPOT}
 \alias{extractMARG}
-\alias{marg2pot}
-\alias{pot2marg}
 \title{Extract conditional probabilities and clique potentials from
 data.}
 \usage{
+extract_cpt(data_, graph, smooth = 0)
+
+extract_pot(data_, graph, smooth = 0)
+
+extract_marg(data_, graph, smooth = 0)
+
+marg2pot(marg_rep)
+
+pot2marg(pot_rep)
+
 extractCPT(data_, graph, smooth = 0)
 
 extractPOT(data_, graph, smooth = 0)
 
 extractMARG(data_, graph, smooth = 0)
-
-marg2pot(mg)
-
-pot2marg(pt)
 }
 \arguments{
 \item{data_}{A named array or a dataframe.}
 
 \item{graph}{An \code{igraph} object or a list or formula which can be
 turned into a \code{igraph} object by calling \code{ug} or
-\code{dag}. For \code{extractCPT}, graph must be/define a DAG while for
-\code{extractPOT}, graph must be/define undirected triangulated graph.}
+\code{dag}. For \code{extract_cpt}, graph must be/define a DAG while for
+\code{extract_pot}, graph must be/define undirected triangulated graph.}
 
 \item{smooth}{See 'details' below.}
 
-\item{mg}{An object of class \code{marg_rep}}
+\item{marg_rep}{An object of class \code{marg_rep}}
 
-\item{pt}{An object of class \code{pot_representation}}
+\item{pot_rep}{An object of class \code{pot_representation}}
 }
 \value{
 \itemize{
-\item \code{extractCPT}: A list of conditional probability tables.
-\item \code{extractPOT}: A list of clique potentials.
-\item \code{extractMARG}: A list of clique marginals.
+\item \code{extract_cpt}: A list of conditional probability tables.
+\item \code{extract_pot}: A list of clique potentials.
+\item \code{extract_marg}: A list of clique marginals.
 }
 }
 \description{
@@ -62,8 +71,8 @@ daG <- dag(~species + height:species + diam:species, result="igraph")
 # UG : [height:species][diam:species]
 uG  <- ug(~height:species + diam:species, result="igraph")
 
-pt <- extractPOT(lizard, ~height:species + diam:species) 
-cp <- extractCPT(lizard, ~species + height:species + diam:species)
+pt <- extract_pot(lizard, ~height:species + diam:species) 
+cp <- extract_cpt(lizard, ~species + height:species + diam:species)
 
 pt
 cp

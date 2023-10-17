@@ -124,8 +124,6 @@ do_instance <- function(plist1, i.val, data=NULL){
     pp <- lapply(plist1, function(xx){
         if (inherits(xx, "array")){
             set_dim_names_array(xx, i.val, data)
-        } else if (inherits(xx, "cptable_class")){
-            set_dim_names_cptable(xx, i.val, data)
         } else {
             stop("no behaviour defined\n")
         }
