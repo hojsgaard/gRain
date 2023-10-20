@@ -86,6 +86,8 @@
 #' @export
 cpt <- function(names, levels, values, normalize = "first", smooth=0){
     names <- c(.formula2char(names))
+    cat("cpt................")
+    str(list(names=names, levels=levels, values=values, normalize = normalize, smooth=smooth))
     tabNew(names=names, levels=levels, values=values, normalize = normalize, smooth=smooth)
 }
 
