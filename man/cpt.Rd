@@ -7,7 +7,7 @@
 \usage{
 cpt(names, levels, values, normalize = "first", smooth = 0)
 
-cptable(names, levels, values, normalize = "first", smooth = 0)
+cptable(vpar, levels = NULL, values = NULL, normalize = TRUE, smooth = 0)
 }
 \arguments{
 \item{names}{Specifications of the names in P(v|pa1,...pak). See

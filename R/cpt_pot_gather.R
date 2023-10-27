@@ -157,8 +157,8 @@ print.cpt_spec_simple <- function(x,...){
 compile_cpt_worker <- function(x, forceCheck=TRUE) {
     ## x: A list of cpts (arrays)
 
-    type <- is.list(x) ##&& all(sapply(x, is.named.array))
-    if (!type) stop("A list of named arrays is expected")
+    ## type <- is.list(x) ##&& all(sapply(x, is.named.array))
+    ## if (!type) stop("A list of named arrays is expected")
         
     ## zz: Internal representation of cpts
     zz  <- lapply(x, parse_cpt)
@@ -274,12 +274,6 @@ parse_cpt.xtabs <- function(xi){
     NextMethod("parse_cpt")
 }
 
-## #' @export
-## parse_cpt.cptable_class <- function(xi){
-##     cat("parse_cpt.cptable_class\n")
-##     .parse_cpt_finalize(varNames(xi), valueLabels(xi)[[1]],
-##                         as.numeric(xi), attr(xi, "smooth"))
-## }
 
 #' @export
 parse_cpt.default <- function(xi){
@@ -289,10 +283,45 @@ parse_cpt.default <- function(xi){
                         as.numeric(xi), 0)
 }
 
+
 .parse_cpt_finalize <- function(vpar, vlev, values, smooth){
 
     ## str(list(vpar=vpar, vlev=vlev, values=values, smooth=smooth))
     ## Normalization of CPTs happen here
+    ## print("JJJJJJJJJJJJJJJJJJJJJJ\n")
+    ## str(list(vpar=vpar, vlev=vlev, values=values, smooth=smooth))
+    values <- matrix(values, nrow=length(vlev))
+    s  <- colSums(values)
+    for (j in 1:ncol(values)) values[, j] <- values[, j] / s[j]
+    values <- as.numeric(values)
+
+    out <- list(vnam=vpar[1], vlev=vlev, vpar=vpar, values=values,
+                normalize="first", smooth=smooth)
+    class(out) <- "cpt_generic"
+    ## print(out)
+    out    
+}
+
+
+## NOTE : All this cptable stuff must be kept in the package in order
+## to make bnlearn work (and moreover, cptable is used in the original
+## JSS paper)
+
+#' @export
+parse_cpt.cptable_class <- function(xi){
+    ## cat("parse_cpt.cptable_class\n")
+    ## print(xi)
+    ## xi <<- xi
+    .parse_cptable_finalize(attr(xi, "vpa"), attr(xi, "levels"), 
+                        as.numeric(xi), attr(xi, "smooth"))
+}
+
+.parse_cptable_finalize <- function(vpar, vlev, values, smooth){
+
+    ## str(list(vpar=vpar, vlev=vlev, values=values, smooth=smooth))
+    ## Normalization of CPTs happen here
+    ## print("JJJJJJJJJJJJJJJJJJJJJJ\n")
+    ## str(list(vpar=vpar, vlev=vlev, values=values, smooth=smooth))
     values <- matrix(values, nrow=length(vlev))
     s  <- colSums(values)
     for (j in 1:ncol(values)) values[, j] <- values[, j] / s[j]

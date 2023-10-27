@@ -86,12 +86,38 @@
 #' @export
 cpt <- function(names, levels, values, normalize = "first", smooth=0){
     names <- c(.formula2char(names))
-    cat("cpt................")
-    str(list(names=names, levels=levels, values=values, normalize = normalize, smooth=smooth))
+    ## cat("cpt................")
+    ## str(list(names=names, levels=levels, values=values, normalize = normalize, smooth=smooth))
     tabNew(names=names, levels=levels, values=values, normalize = normalize, smooth=smooth)
 }
 
+## #' @rdname cpt
+## #' @export
+## cptable <- cpt
+
+
+
+
 #' @rdname cpt
 #' @export
-cptable <- cpt
+cptable <- function(vpar, levels=NULL, values=NULL, normalize=TRUE,  smooth=0 ){
+    vpa  <- c(.formula2char(vpar))        
+    if (is.list(levels)){
+        v <- vpa[1]
+        if (!(v %in% names(levels)))
+            stop(paste0("Name ", v, " is not in the 'levels' list\n"))
+        levels <- levels[[v]]
+    }
+    ##str(list(vpa=vpa, xlevels=levels))
+    ## if (is.null(values))
+    ##     values <- rep(1.0, length(levels))
+    out  <- values
+    attributes(out) <-
+        list(vpa=vpa, normalize=normalize,
+             smooth=smooth, levels=levels)
+    class(out) <- "cptable_class"
+    out
+}
+
+
 
