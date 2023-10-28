@@ -13,7 +13,7 @@
 \item{nsim}{Number of cases to simulate.}
 
 \item{seed}{An optional integer controlling the random number
-generatation.}
+generation.}
 
 \item{\dots}{Not used.}
 }

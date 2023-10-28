@@ -11,7 +11,7 @@ loadHuginNet(file, description = NULL, details = 0)
 saveHuginNet(gin, file, details = 0)
 }
 \arguments{
-\item{file}{Name of HUGIN net file. Convenient to give the file the
+\item{file}{Name of Hugin net file. Convenient to give the file the
 extension '.net'}
 
 \item{description}{A text describing the network, defaults to
@@ -31,7 +31,7 @@ These functions can load a net file saved in the
 }
 \note{
 \itemize{
-\item In Hugin, it is possible to specify de potential of a node as a
+\item In Hugin, it is possible to specify the potential of a node as a
 functional relation between other nodes.  In a .net file, such a
 specification will appear as 'function' rather than as
 'node'. Such a specification is not recognized by \code{loadHuginNet}.

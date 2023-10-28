@@ -15,7 +15,7 @@
 #' @param object An independence network.
 #' @param nsim Number of cases to simulate.
 #' @param seed An optional integer controlling the random number
-#'     generatation.
+#'     generation.
 #' @param \dots Not used.
 #' @return A data frame
 

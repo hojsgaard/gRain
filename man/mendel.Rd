@@ -12,7 +12,7 @@ mendel(allele, names = c("child", "father", "mother"))
 \item{names}{Names of columns in dataframe.}
 }
 \description{
-Generate conditional probability table for mendelian
+Generate conditional probability table for Mendelian
 segregation.
 }
 \note{

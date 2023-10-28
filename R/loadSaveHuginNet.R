@@ -12,7 +12,7 @@
 #' 
 #' @aliases loadHuginNet saveHuginNet
 #' @param gin An independence network
-#' @param file Name of HUGIN net file. Convenient to give the file the
+#' @param file Name of Hugin net file. Convenient to give the file the
 #'     extension '.net'
 #' @param description A text describing the network, defaults to
 #'     \code{file}
@@ -20,7 +20,7 @@
 #'
 #' @note
 #'
-#' * In Hugin, it is possible to specify de potential of a node as a
+#' * In Hugin, it is possible to specify the potential of a node as a
 #'   functional relation between other nodes.  In a .net file, such a
 #'   specification will appear as 'function' rather than as
 #'   'node'. Such a specification is not recognized by `loadHuginNet`.

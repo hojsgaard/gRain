@@ -103,7 +103,7 @@ ortable <- ortab
 
 #' @title Mendelian segregation
 #'
-#' @description Generate conditional probability table for mendelian
+#' @description Generate conditional probability table for Mendelian
 #'     segregation.
 #' @param allele A character vector.
 #' @param names  Names of columns in dataframe.

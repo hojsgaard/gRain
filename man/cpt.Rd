@@ -26,6 +26,8 @@ order, please see section 'details' and the examples.}
 \item{normalize}{See 'details' below.}
 
 \item{smooth}{Should values be smoothed, see 'Details' below.}
+
+\item{vpar}{node an its parents}
 }
 \value{
 An array.
