@@ -2,14 +2,20 @@
 % Please edit documentation in R/cpt_pot_gather.R
 \name{components_gather}
 \alias{components_gather}
-\alias{compileCPT}
+\alias{compile_cpt}
 \alias{parse_cpt,}
-\alias{parse_cpt.xtabs,parse_cpt.cptable_class,}
+\alias{parse_cpt.xtabs,}
 \alias{parse_cpt.default}
+\alias{compile_pot}
+\alias{compileCPT}
 \alias{compilePOT}
 \alias{parse_cpt}
 \title{Compile conditional probability tables / cliques potentials.}
 \usage{
+compile_cpt(x, ..., forceCheck = TRUE)
+
+compile_pot(x, ..., forceCheck = TRUE)
+
 compileCPT(x, ..., forceCheck = TRUE)
 
 compilePOT(x, ..., forceCheck = TRUE)
@@ -54,7 +60,7 @@ arrays should, if multiplied, form a valid probability density.
 \examples{
 
 data(chest_cpt)
-x <- compileCPT(chest_cpt)
+x <- compile_cpt(chest_cpt)
 class(x)
 grain(x)
 
@@ -65,7 +71,7 @@ with the gRain Package for R. Journal of Statistical Software,
 46(10), 1-26.  \url{https://www.jstatsoft.org/v46/i10/}.
 }
 \seealso{
-\code{\link{extractCPT}}, \code{\link{extractPOT}}, \code{\link{extractMARG}}
+\code{\link{extract_cpt}}, \code{\link{extract_pot}}, \code{\link{extract_marg}}
 }
 \author{
 Søren Højsgaard, \email{sorenh@math.aau.dk}

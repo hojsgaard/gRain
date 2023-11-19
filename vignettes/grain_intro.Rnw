@@ -717,7 +717,7 @@ A final remark: The conditional distribution of
 $y_1$ is normal, but the unconditional distribution is a mixture of
 normals. Likewise, the conditional distribution of
 $y_2$ is poisson, but the unconditional distribution is a mixture of
-poissons. Evidence on, say $y_1$ changes the belief in $x_1$ and
+two poisson distributions. Evidence on, say $y_1$ changes the belief in $x_1$ and
 $x_2$ and this in turn changes the distribution of
 $y_2$ (evidence changes the mixture weights.)  
 

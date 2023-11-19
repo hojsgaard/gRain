@@ -21,7 +21,7 @@
 #' 
 #' @param ... Additional arguments; currently not used.
 #' 
-#' @aliases parse_cpt, parse_cpt.xtabs,parse_cpt.cptable_class, parse_cpt.default
+#' @aliases parse_cpt, parse_cpt.xtabs, parse_cpt.default
 #' 
 #' @details
 #'     * `compileCPT` is relevant for turning a collection of
@@ -41,7 +41,7 @@
 #' 
 #' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
 #'
-#' @seealso \code{\link{extractCPT}}, \code{\link{extractPOT}}, \code{\link{extractMARG}}
+#' @seealso \code{\link{extract_cpt}}, \code{\link{extract_pot}}, \code{\link{extract_marg}}
 #' 
 #' @references Søren Højsgaard (2012). Graphical Independence Networks
 #'     with the gRain Package for R. Journal of Statistical Software,
@@ -52,67 +52,42 @@
 #' @examples
 #'
 #' data(chest_cpt)
-#' x <- compileCPT(chest_cpt)
+#' x <- compile_cpt(chest_cpt)
 #' class(x)
 #' grain(x)
 #' 
 
 #' @rdname components_gather
 #' @export
-compileCPT <- function(x, ..., forceCheck=TRUE) {
+compile_cpt <- function(x, ..., forceCheck=TRUE) {
     args <- c(list(x), list(...))
     args <- listify_dots(args)
-    .compileCPT(args, forceCheck=forceCheck)
+    compile_cpt_worker(args, forceCheck=forceCheck)
 }
 
-.compileCPT <- function(x, forceCheck=TRUE) {
-    ## x: A list of cpts (arrays)
-
-    type <- is.list(x) ##&& all(sapply(x, is.named.array))
-    if (!type) stop("A list of named arrays is expected")        ## FIXME Can also be cptable_class...
-    
-    ## zz: Internal representation of cpts
-    zz  <- lapply(x, parse_cpt)
-    ## zz <<- zz
-    ## print(zz)
-    
-    universe <- .create_universe(zz)
-
-    ## Given node names; need to check that they are not replicated
-    vn_given <- sapply(zz, "[[", "vnam")
-    if (length(vn_given) != length(unique(vn_given)))
-        stop("Some nodes specified more than once: ", toString(vn_given))
-    
-    ## Are all cpts defined?
-    ss <- setdiff(unique(unlist(vn_given)),  universe$nodes)
-    if (length(ss) > 0)
-        stop(paste("Distribution not specified for nodes(s):", toString(ss)))
-
-
-    ## Does specification define a DAG? If x is cpt_representation the answer is yes
-    if (inherits(x, "cpt_representation")) {
-        graph <- attr(x, "graph")
-    } else {
-        vp <- lapply(zz, "[[", "vpar")
-        graph <- dagList(vp, forceCheck=forceCheck, result="igraph")
-    }
-
-    ## Need list of cpts (each represented as an array)
-    out <- lapply(seq_along(zz), .create_array, zz, universe)    
-    names(out) <- universe$nodes
-    
-    attr(out, "universe") <- universe
-    attr(out, "dag")      <- graph
-    class(out)            <- "cpt_spec"
-    out
-}
 
 #' @rdname components_gather
-compilePOT <- function(x, ..., forceCheck=TRUE){
+#' @export
+compile_pot <- function(x, ..., forceCheck=TRUE){
     args <- c(list(x), list(...))
     args <- listify_dots(args)
-    .compilePOT(args, forceCheck=forceCheck)   
+    compile_pot_worker(args, forceCheck=forceCheck)   
 }
+
+
+
+## -------------------------------------------------------------
+## For backward compatibility; deprecate in future release
+## -------------------------------------------------------------
+
+#' @rdname components_gather
+#' @export
+compileCPT <- compile_cpt
+
+#' @rdname components_gather
+#' @export
+compilePOT <- compile_pot
+
 
 
 ## #############################################################
@@ -153,6 +128,7 @@ summary.cpt_spec <- function(object, ...){
 ## ###########################################################
 ## Helper functions  -- used only in grain-main.R
 ## ###########################################################
+
 as_cpt_spec_simple <- function(x){
     z <- c(x)
     attr(z, "universe") <- attr(x, "universe")
@@ -178,7 +154,49 @@ print.cpt_spec_simple <- function(x,...){
 ##
 ## ###################################################
 
-.compilePOT <- function(x, ...){
+compile_cpt_worker <- function(x, forceCheck=TRUE) {
+    ## x: A list of cpts (arrays)
+
+    ## type <- is.list(x) ##&& all(sapply(x, is.named.array))
+    ## if (!type) stop("A list of named arrays is expected")
+        
+    ## zz: Internal representation of cpts
+    zz  <- lapply(x, parse_cpt)
+    ## zz <<- zz
+    ## print(zz)
+    
+    universe <- .create_universe(zz)
+
+    ## Given node names; need to check that they are not replicated
+    vn_given <- sapply(zz, "[[", "vnam")
+    if (length(vn_given) != length(unique(vn_given)))
+        stop("Some nodes specified more than once: ", toString(vn_given))
+    
+    ## Are all cpts defined?
+    ss <- setdiff(unique(unlist(vn_given)),  universe$nodes)
+    if (length(ss) > 0)
+        stop(paste("Distribution not specified for nodes(s):", toString(ss)))
+
+
+    ## Does specification define a DAG? If x is cpt_representation the answer is yes
+    if (inherits(x, "cpt_representation")) {
+        graph <- attr(x, "graph")
+    } else {
+        vp <- lapply(zz, "[[", "vpar")
+        graph <- dagList(vp, forceCheck=forceCheck, result="igraph")
+    }
+
+    ## Need list of cpts (each represented as an array)
+    out <- lapply(seq_along(zz), .create_array, zz, universe)    
+    names(out) <- universe$nodes
+    
+    attr(out, "universe") <- universe
+    attr(out, "dag")      <- graph
+    class(out)            <- "cpt_spec"
+    out
+}
+
+compile_pot_worker <- function(x, ...){
     ## x: a list of arrays, and a rip attribute
 
     type <- is.list(x) && all(sapply(x, is.named.array))
@@ -186,7 +204,7 @@ print.cpt_spec_simple <- function(x,...){
 
     universe  <- .make.universe(x)
     
-    if (inherits(x, "pot_representation")){ ## Result of extractPOT
+    if (inherits(x, "pot_representation")){ ## Result of extract_pot
         graph <- attr(x, "graph")
         rp    <- attr(x, "rip")
     } else {
@@ -256,12 +274,6 @@ parse_cpt.xtabs <- function(xi){
     NextMethod("parse_cpt")
 }
 
-#' @export
-parse_cpt.cptable_class <- function(xi){
-    ## cat("parse_cpt.cptable_class\n")
-    .parse_cpt_finalize(varNames(xi), valueLabels(xi)[[1]],
-                        as.numeric(xi), attr(xi, "smooth"))
-}
 
 #' @export
 parse_cpt.default <- function(xi){
@@ -271,10 +283,13 @@ parse_cpt.default <- function(xi){
                         as.numeric(xi), 0)
 }
 
+
 .parse_cpt_finalize <- function(vpar, vlev, values, smooth){
 
     ## str(list(vpar=vpar, vlev=vlev, values=values, smooth=smooth))
     ## Normalization of CPTs happen here
+    ## print("JJJJJJJJJJJJJJJJJJJJJJ\n")
+    ## str(list(vpar=vpar, vlev=vlev, values=values, smooth=smooth))
     values <- matrix(values, nrow=length(vlev))
     s  <- colSums(values)
     for (j in 1:ncol(values)) values[, j] <- values[, j] / s[j]
@@ -288,8 +303,36 @@ parse_cpt.default <- function(xi){
 }
 
 
+## NOTE : All this cptable stuff must be kept in the package in order
+## to make bnlearn work (and moreover, cptable is used in the original
+## JSS paper)
 
+#' @export
+parse_cpt.cptable_class <- function(xi){
+    ## cat("parse_cpt.cptable_class\n")
+    ## print(xi)
+    ## xi <<- xi
+    .parse_cptable_finalize(attr(xi, "vpa"), attr(xi, "levels"), 
+                        as.numeric(xi), attr(xi, "smooth"))
+}
 
+.parse_cptable_finalize <- function(vpar, vlev, values, smooth){
+
+    ## str(list(vpar=vpar, vlev=vlev, values=values, smooth=smooth))
+    ## Normalization of CPTs happen here
+    ## print("JJJJJJJJJJJJJJJJJJJJJJ\n")
+    ## str(list(vpar=vpar, vlev=vlev, values=values, smooth=smooth))
+    values <- matrix(values, nrow=length(vlev))
+    s  <- colSums(values)
+    for (j in 1:ncol(values)) values[, j] <- values[, j] / s[j]
+    values <- as.numeric(values)
+
+    out <- list(vnam=vpar[1], vlev=vlev, vpar=vpar, values=values,
+                normalize="first", smooth=smooth)
+    class(out) <- "cpt_generic"
+    ## print(out)
+    out    
+}
 
 
 ## ##################################################################

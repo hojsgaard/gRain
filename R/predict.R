@@ -15,7 +15,7 @@
 #'     responses.
 #' @param newdata A data frame
 #' @param type If "class", the most probable class is returned; if
-#'     "distribution" the conditional distrubtion is returned.
+#'     "distribution" the conditional distribution is returned.
 #' @param ... Not used
 #' @return A list with components \item{pred}{A list with the
 #'     predictions} \item{pFinding}{A vector with the probability of

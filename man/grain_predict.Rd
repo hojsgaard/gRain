@@ -27,7 +27,7 @@ responses.}
 \item{newdata}{A data frame}
 
 \item{type}{If "class", the most probable class is returned; if
-"distribution" the conditional distrubtion is returned.}
+"distribution" the conditional distribution is returned.}
 
 \item{...}{Not used}
 }

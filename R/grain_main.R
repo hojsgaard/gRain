@@ -30,7 +30,7 @@
 #'     \code{\link{propagate.grain}}, \code{\link{setFinding}},
 #'     \code{\link{setEvidence}}, \code{\link{getFinding}},
 #'     \code{\link{pFinding}}, \code{\link{retractFinding}},
-#'     \code{\link{extractCPT}}, \code{\link{extractPOT}},
+#'     \code{\link{extract_cpt}}, \code{\link{extract_pot}},
 #'     \code{\link{compileCPT}}, \code{\link{compilePOT}}
 #' 
 #' @references Søren Højsgaard (2012). Graphical Independence
@@ -44,14 +44,14 @@
 #' ## Create network from conditional probability tables CPTs:
 #' 
 #' yn   <- c("yes", "no")
-#' a    <- cpt(~asia,              values=c(1,99), levels=yn)
-#' t.a  <- cpt(~tub+asia,          values=c(5,95,1,99), levels=yn)
-#' s    <- cpt(~smoke,             values=c(5,5), levels=yn)
-#' l.s  <- cpt(~lung+smoke,        values=c(1,9,1,99), levels=yn)
-#' b.s  <- cpt(~bronc+smoke,       values=c(6,4,3,7), levels=yn)
-#' e.lt <- cpt(~either+lung+tub,   values=c(1,0,1,0,1,0,0,1), levels=yn)
-#' x.e  <- cpt(~xray+either,       values=c(98,2,5,95), levels=yn)
-#' d.be <- cpt(~dysp+bronc+either, values=c(9,1,7,3,8,2,1,9), levels=yn)
+#' a    <- cpt(~asia,                  values=c(1,99), levels=yn)
+#' t.a  <- cpt(~tub + asia,            values=c(5,95,1,99), levels=yn)
+#' s    <- cpt(~smoke,                 values=c(5,5), levels=yn)
+#' l.s  <- cpt(~lung + smoke,          values=c(1,9,1,99), levels=yn)
+#' b.s  <- cpt(~bronc + smoke,         values=c(6,4,3,7), levels=yn)
+#' e.lt <- cpt(~either + lung + tub,   values=c(1,0,1,0,1,0,0,1), levels=yn)
+#' x.e  <- cpt(~xray + either,         values=c(98,2,5,95), levels=yn)
+#' d.be <- cpt(~dysp + bronc + either, values=c(9,1,7,3,8,2,1,9), levels=yn)
 #' cpt_list  <- list(a, t.a, s, l.s, b.s, e.lt, x.e, d.be)
 #' chest_cpt <- compileCPT(cpt_list)
 #' ## Alternative: chest_cpt <- compileCPT(a, t.a, s, l.s, b.s, e.lt, x.e, d.be)
@@ -128,10 +128,10 @@ grain.igraph <- function(x, control=list(), smooth=0, compile=TRUE, details=0, d
         stop("Data must be an array or a dataframe\n")
 
     if (is_dag(x)) {
-        zz <- extractCPT(data, x, smooth=smooth)
+        zz <- extract_cpt(data, x, smooth=smooth)
         zz <- compileCPT(zz)
     } else if (is_tug(x)) {
-        zz <- extractPOT(data, x, smooth=smooth)
+        zz <- extract_pot(data, x, smooth=smooth)
         zz <- compilePOT(zz)
     }
     else
@@ -241,27 +241,7 @@ summary.grain <- function(object, type='std', ...) {
 }
 
 
-## ## A graph + data (wrappers for calling grain.pot_spec and grain.cpt_spec)
-## #' @export
-## #' @rdname grain-main
-## grain.graphNEL <- function(x, control=list(), smooth=0, compile=TRUE, details=0, data=NULL, ...) {
-##     if (is.null(data))
-##         stop("Data must be given to create grain from graph\n")
-##     if (!(is.named.array(data) || is.data.frame(data)))
-##         stop("Data must be an array or a dataframe\n")
 
-##     if (is_dag(x)){
-##         zz <- extractCPT(data, x, smooth=smooth)
-##         zz <- compileCPT(zz)
-##     } else if (is_tug(x)){
-##         zz <- extractPOT(data, x, smooth=smooth)
-##         zz <- compilePOT(zz)
-##     }
-##     else
-##         stop("graph 'x' is neither a directed acyclic graph or a triangulated undirected graph")
-
-##     grain(zz, data=data, control=control, compile=compile, details=details)
-## }
 
 
 ## cpt_spec
@@ -322,36 +302,3 @@ summary.grain <- function(object, type='std', ...) {
 
 
 
-
-## #' 
-## #' plot(bn.uG)
-## #' plot(bn.daG)
-## #' 
-## #' querygrain(bn.uG)
-## #' querygrain(bn.daG)
-## #' 
-## #' # Sanity: Are the distributions identical?
-## #' t1 <- querygrain(bn.uG, type="joint")
-## #' t2 <- querygrain(bn.daG, type="joint")
-## #' t1 %a/% t2
-## #' 
-## #' # At a lower level
-## #' bn2.uG <- extractPOT(lizard, ~height:species + diam:species)  %>% grain
-## #' bn2.daG <- extractCPT(lizard, ~species + height:species + diam:species)  %>% grain
-## #' 
-## #' plot(bn2.uG)
-## #' plot(bn2.daG)
-## #' 
-## #' t1 <- querygrain(bn2.uG, type="joint")
-## #' t2 <- querygrain(bn2.daG, type="joint")
-## #' t1 %a/% t2
-## #' 
-
-
-
-
-## #' @rdname grain-main    
-## grain.marg_rep <- function(x, ...){grain(compileCPT(x))} FIXME to implement
-
-
-## FIXME Rethink print.grain

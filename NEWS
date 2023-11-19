@@ -1,4 +1,17 @@
+gRain v1.4.0 (Release date: 2023-10-16)
+========================================
+
+* Requires gRbase >=2.0.0 so that graph operations are based on
+  igraph.
+
+* Any references to cptable_class removed
+
+* Any references to parray removed
+
+* compileCPT is now compile_cpt etc but the old ones are kept until they will be deprecated in a future release
+
 gRain v1.3.15 (Release date: 2023-08-10)
+========================================
 
 * Depends on R 4.2.0 so that the pipe is available
 

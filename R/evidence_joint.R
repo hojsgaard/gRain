@@ -74,7 +74,7 @@
 #' 
 #' ## Create joint evidence object:
 #' yn <- c("yes", "no")
-#' db <- parray(c("dysp", "bronc"), list(yn, yn), values=c(.1, .2, .9, .8))
+#' db <- tabNew(c("dysp", "bronc"), list(dysp=yn, bronc=yn), values=c(.1, .2, .9, .8))
 #' db
 #' ev   <- list(asia=c(1, 0), dysp="yes", db)
 #'
