@@ -183,11 +183,19 @@ pot2marg <- function(pt) {
     out <- lapply(vpa, function(ss){.dataMarg(data_, ss, is.df)})
     
     ## FIXME : Get rid of this parray stuff (at least as a class)
-    ## NOTE: Normalization takes place here
-    out <- lapply(out, as.parray, normalize="first", smooth=smooth)
+    ## out <- lapply(out, as.parray, normalize="first", smooth=smooth)
+
+    out <- lapply(out,
+                    function(oo){
+                        tabNormalize(oo + smooth, type="first")
+                    })
+
+    chk <- unlist(lapply(out,
+                         function(zz) {
+                             any(is.na(zz))
+                         }
+                         ))
     
-    
-    chk <- unlist(lapply(out, function(zz) any(is.na(zz))))
     nnn <- names(chk)[which(chk)]
     if (length(nnn) > 0) {
         cat(sprintf("NAs found in conditional probability table(s) for nodes: %s\n",
