@@ -78,7 +78,7 @@ propagate.grain <- function(object, details=object$details, engine="cpp", ...){
 #' 
 #' @export
 propagateLS <- function(cq_pot_list, rip, initialize=TRUE, details=0){
-    cat(".Propagating BN: [propagateLS]\n")
+    ## cat(".Propagating BN: [propagateLS]\n")
     ## .infoPrint(details, 1, cat(".Propagating BN: [propagateLS]\n"))
     
     cliq       <- rip$cliques
