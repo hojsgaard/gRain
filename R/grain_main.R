@@ -104,7 +104,7 @@ grain.CPTspec <- grain.cpt_spec
 #' @export
 #' @rdname grain-main
 grain.pot_spec <- function(x, control=list(), smooth=0, compile=TRUE, details=0,...) {
-    
+    cat("grain.pot_spec\n")
     control  <- .setControl(control)
     out  <- c(list(universe    = attr(x, "universe"),              
                    cqpot       = x, ## FIXME: was c(x)...                  
@@ -115,7 +115,6 @@ grain.pot_spec <- function(x, control=list(), smooth=0, compile=TRUE, details=0,
     class(out) <- c("pot_grain", "grain")
     if (compile) compile(out) else out
 }
-
 
 
 ## A graph + data (wrappers for calling grain.pot_spec and grain.cpt_spec)
@@ -131,8 +130,11 @@ grain.igraph <- function(x, control=list(), smooth=0, compile=TRUE, details=0, d
         zz <- extract_cpt(data, x, smooth=smooth)
         zz <- compileCPT(zz)
     } else if (is_tug(x)) {
+        cat("x is undirected\n")
         zz <- extract_pot(data, x, smooth=smooth)
-        zz <- compilePOT(zz)
+        ## ripit2 <<- attr(zz, "rip") 
+        zz <- compile_pot(zz)
+        ## ripit3 <<- attr(zz, "rip") 
     }
     else
         stop("graph 'x' is neither a directed acyclic graph or a triangulated undirected graph")

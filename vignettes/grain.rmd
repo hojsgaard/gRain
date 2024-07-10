@@ -1,8 +1,13 @@
 ---
 title: Graphical Independence Networks
+subtitle: A vignette for the gRain package
+author: Søren Højsgaard
 output:
   bookdown::html_document2:
     base_format: rmarkdown::html_vignette
+    toc: true
+    number_sections: true
+  pdf_document:
     toc: true
     number_sections: true
 vignette: >
@@ -13,16 +18,17 @@ vignette: >
   %\VignettePackage{gRain}
   %\VignetteEngine{knitr::knitr}
   %\VignetteEncoding{UTF-8}
+bibliography: grain.bib  
 --- 
 
 
 ```{r include=FALSE,echo=FALSE,warning=FALSE}
 dir.create("figures")
-knitr::opts_chunk$set(fig.height=2.5,
+knitr::opts_chunk$set(fig.height=5,
                fig.path='figures/grain-',
                warning=FALSE, message=FALSE
 )
-options("prompt"="> ","width"=85)
+options("prompt"="> ","width"=85, "digits"=5)
 ```
 
 
@@ -51,36 +57,33 @@ is available from
 \end{quote}
 
 
-## Two worked examples
-{#sec:two-worked-examples}
+<!-- ## Two worked examples {#sec:two-worked-examples} -->
 
-### Wet grass
-{#sec:wet-grass}
+<!-- ### Wet grass {#sec:wet-grass} -->
 
-The `wet grass` example is motivated by the following narrative (taken from 
-(https://en.wikipedia.org/wiki/Bayesian_network))
-\begin{quote}
-  Two events can cause grass to be wet: an active sprinkler or
-  rain. Rain has a direct effect on the use of the sprinkler (namely
-  that when it rains, the sprinkler usually is not active).
-\end{quote}
+<!-- The `wet grass` example is motivated by the following narrative (taken from  -->
+<!-- (https://en.wikipedia.org/wiki/Bayesian_network)): -->
 
-```{r echo=F, results='hide'}
-yn <- c("yes","no")
-p.R    <- cptable(~R, values=c(2, 8), levels=yn)
-p.S_R  <- cptable(~S:R, values=c(1, 99, 4, 6), levels=yn)
-p.G_SR <- cptable(~G:S:R, values=c(99, 1, 8, 2, 9, 1, 0, 1), levels=yn)
-grass_bn <- compileCPT(p.R, p.S_R, p.G_SR)  %>% grain
-``` 
+<!--   *"Two events can cause grass to be wet: an active sprinkler or -->
+<!--   rain. Rain has a direct effect on the use of the sprinkler (namely -->
+<!--   that when it rains, the sprinkler usually is not active).*" -->
 
-```{r chest-grass, fig.height=3, echo=F, fig.cap="Wet graph example; taken from Wikipedia."}
-plot(grass_bn)
-```
+<!-- ```{r echo=F, results='hide'} -->
+<!-- yn <- c("yes","no") -->
+<!-- p.R    <- cpt(~R, values=c(2, 8), levels=yn) -->
+<!-- p.S_R  <- cpt(~S:R, values=c(1, 99, 4, 6), levels=yn) -->
+<!-- p.G_SR <- cpt(~G:S:R, values=c(99, 1, 8, 2, 9, 1, 0, 1), levels=yn) -->
+<!-- grass_bn <- compileCPT(p.R, p.S_R, p.G_SR)  %>% grain -->
+<!-- ```  -->
+
+<!-- ```{r chest-grass, fig.height=5, echo=F, fig.cap="Wet graph example; taken from Wikipedia."} -->
+<!-- par(mar=c(0,0,0,0)) -->
+<!-- plot(grass_bn$dag) -->
+<!-- ``` -->
 
 
-## Example: Chest clinic
-{#sec:chest-clinic}
-{#sec:chest}
+### Example: Chest clinic {#sec:chest-clinic}
+
 
 ```{r echo=F, results='hide'}
 yn <- c("yes","no")
@@ -101,39 +104,55 @@ chest_bn
 
 This section reviews the chest clinic example of @lau/spieg:88
 (illustrated in Figure~\@ref(fig:chest-LS)) and shows one way of
-specifying the model in \grbn{}.  @lau/spieg:88 motivate the
+specifying the model in gRain{}.  @lau/spieg:88 motivate the
 chest clinic example with the following narrative:
 
-\begin{quote}
-  ``Shortness--of--breath (dyspnoea) may be due to tuberculosis, lung
+  *``Shortness--of--breath (dyspnoea) may be due to tuberculosis, lung
   cancer or bronchitis, or none of them, or more than one of them. A
   recent visit to Asia increases the chances of tuberculosis, while
   smoking is known to be a risk factor for both lung cancer and
   bronchitis. The results of a single chest X--ray do not discriminate
   between lung cancer and tuberculosis, as neither does the presence or
-  absence of dyspnoea.''
-\end{quote}
+  absence of dyspnoea.''*
 
+
+```{r}
+chest_dag <- dag(list("asia", c("tub", "asia"), "smoke", c("lung", "smoke"), c("bronc", 
+"smoke"), c("either", "tub", "lung"), c("xray", "either"), c("dysp", 
+"bronc", "either")))
+library(igraph)
+
+myplot <- function(x, layout=igraph::layout.fruchterman.reingold(x), ...) {
+  igraph::V(x)$size <- 30
+  igraph::V(x)$label.cex <- 1
+  plot(x, layout=layout, ...)
+  return(invisible())
+}
+par(mar=c(0,0,0,0))
+plot(chest_dag)
+```
 
 
 ```{r chest-LS, echo=F, fig.height=3, fig.cap="Chest clinic example from Lauritzen and Spiegelhalter (1988)."}
+par(mar=c(0,0,0,0))
 plot(chest_bn)
 ``` 
 
-### Building a network
+## Building a network
 
 The description above involves the following binary variables:
-$\alpha=\mbox{asia}$,
-$\sigma=\mbox{smoker}$,
-$\tau=\mbox{tuberculosis}$,
-$\lambda=\mbox{lung cancer}$,
-$\beta=\mbox{bronchitis}$,
-$\epsilon=\mbox{either tuberculosis or lung cancer}$,
-$\delta=\mbox{dyspnoea}$ and
-$\xi=\mbox{xray}$. 
-Each variable is binary and can take the values ``yes'' and ``no'':
-Note that $\epsilon$ is a logical variable which is
-true (yes) if either $\tau$ or $\lambda$ are true (yes) and false (no) otherwise.
+$a=\mbox{asia}$,
+$s=\mbox{smoker}$,
+$t=\mbox{tuberculosis}$,
+$l=\mbox{lung cancer}$,
+$b=\mbox{bronchitis}$,
+$e=\mbox{either tuberculosis or lung cancer}$,
+$d=\mbox{dyspnoea}$ and
+$x=\mbox{xray}$. 
+
+Each variable is binary and can take the values "yes" and "no":
+Note that $e$ is a logical variable which is
+true (yes) if either $t$ or $l$ are true (yes) and false (no) otherwise.
 The connection between the variables is displayed by the DAG (directed acyclic graph) in
 Figure~\@ref(fig:chest-LS).
 
@@ -148,7 +167,12 @@ over the variables $V$ can be given as a product of conditional distributions
 \end{align}
 
 where $p(v|pa(v))$ is a function defined on $(v,pa(v))$. This function
-satisfies that $\sum_{v^*} p(v=v^*|pa(v))=1$, i.e.\ that
+satisfies that 
+$$
+\sum_{v^*} p(v=v^*|pa(v))=1,
+$$ 
+
+i.e.\ that
 for each configuration of the parents $pa(v)$, the sum
 over the levels of $v$ equals one. Hence $p(v|pa(v))$ becomes the
 conditional distribution of $v$ given $pa(v)$.
@@ -164,15 +188,19 @@ can be constructed as
 \begin{align}
   (\#eq:chestfact1)
   p(V) =
-  p(\alpha)p(\sigma)p(\tau|\alpha)p(\lambda|\sigma)p(\beta|\sigma)p(\epsilon|\tau,\lambda)
-  p(\delta|\epsilon, \beta)p(\xi|\epsilon).
+  p(a)p(s)p(t|a)p(l|s)p(b|s)p(e|t,l)
+  p(d|e, b)p(x|e).
 \end{align}
 
 
 
-### Queries to networks
 
-Suppose we are given the evidence (sometimes also called ``finding'')
+
+
+
+## Queries to networks
+
+Suppose we are given the evidence (sometimes also called "finding")
 that a set of variables $E\subset V$
 have a specific value $e^*$.
 With this evidence, we are often interested in the conditional
@@ -183,14 +211,14 @@ for a set $U\subset V \setminus E$. Interest might also be in
 calculating the probability of a specific event, e.g.\ the probability
 of seeing a specific evidence, i.e.\ $p(E=e^*)$.
 Other types of evidence (called soft evidence, virtual evidence or likelihood evidence) are discussed in
-Section~\@ref(sec:hard-virt-likel).
+Section \@ref(sec:hard-soft).
 
 For
 example that a person has recently visited Asia and suffers from
-dyspnoea, i.e.\ $\alpha=\mbox{yes}$ and $\delta=\mbox{yes}$.
-In the chest clinic example, interest might be in $p(\lambda|e^*)$, $p(\tau|e^*)$
-and  $p(\beta|e^*)$, or possibly in the joint (conditional) distribution
-$p(\lambda,\tau,\beta|e^*)$.
+dyspnoea, i.e.\ $a=\mbox{yes}$ and $d=\mbox{yes}$.
+In the chest clinic example, interest might be in $p(l|e^*)$, $p(t|e^*)$
+and  $p(b|e^*)$, or possibly in the joint (conditional) distribution
+$p(l,t,b|e^*)$.
 
 
 
@@ -200,7 +228,6 @@ $p(\lambda,\tau,\beta|e^*)$.
 
 A simple way of  specifying the model for the chest clinic
 example is as follows.
-
 
 Specify conditional probability tables (with values as given in
   @lau/spieg:88) (there are other ways of specifying conditional
@@ -219,10 +246,10 @@ d.be <- cpt(~dysp|bronc:either, values=c(9, 1, 7, 3, 8, 2, 1, 9), levels=yn)
 ``` 
 
 
--  Compile list of conditional probability tables.
+Compile list of conditional probability tables.
 
 ```{r }
-chest_cpt <- compileCPT(a, t.a, s, l.s, b.s, e.lt, x.e, d.be)
+chest_cpt <- compile_cpt(a, t.a, s, l.s, b.s, e.lt, x.e, d.be)
 chest_cpt
 ``` 
 
@@ -232,13 +259,7 @@ chest_cpt$tub
 chest_cpt$tub  |> as.data.frame.table()
 ``` 
 
-Notice: `either` is a logical node:
-```{r }
-chest_cpt$either  |> as.data.frame.table()
-``` 
-
-
--  Create the network:
+Create the network:
 ```{r  } 
 chest_bn <- grain(chest_cpt)
 chest_bn
@@ -258,30 +279,33 @@ chest_bn <- compile(chest_bn)
 
 
 
+
+
+
 ### Setting evidence and querying a network {#sec:querying-network}
 
 dasdasdas [here](#sec:querying-network) asd
 
-\begin{enumerate}
--  A network can be queried to give marginal probabilities for
+A network can be queried to give marginal probabilities for
   each of a set of nodes (the default) or the joint probability for a
   set of nodes.\footnote{A third type of output exists, see package
-    documentation for details.}  Notice that \code{querygrain()} can
-  be abbreviated \code{qgrain()}.
+    documentation for details.}  Notice that querygrain() can
+  be abbreviated qgrain().
 
 ```{r }
-querygrain(chest_bn, nodes=c("lung", "bronc"), type="marginal")
+disease <- c("tub", "lung", "bronc")
+querygrain(chest_bn, nodes=disease, type="marginal")
 ``` 
 
 
--  Likewise, a joint distribution can be obtained (represented as a
+Likewise, a joint distribution can be obtained (represented as a
   multi dimensional array):
 
 ```{r }
-querygrain(chest_bn, nodes=c("lung", "bronc"), type="joint")
+querygrain(chest_bn, nodes=disease, type="joint")  |> ftable()
 ``` 
 
--  Evidence can be entered in two different ways:\footnote{Alternative forms
+Evidence can be entered in two different ways:\footnote{Alternative forms
     exist; see package documentation for details.}
 
 ```{r }
@@ -294,24 +318,25 @@ chest_ev  <- setEvidence(chest_bn,
 ## evidence(chest_bn) <- list(asia="yes", dysp="yes")
 ``` 
 
--  The evidence is a list and can conveniently be displayed as a dataframe:
+The evidence is a list and can conveniently be displayed as a dataframe:
 
 ```{r }
 getEvidence(chest_ev) |> as.data.frame()
 ``` 
 
--  The network can be queried again:
+The network can be queried again:
 ```{r }
 querygrain(chest_ev, nodes=c("lung", "bronc"))
 ``` 
 
 
--  The probability of observing this evidence under the model is
+The probability of observing this evidence under the model is
+
 ```{r }
 pEvidence(chest_ev)
 ``` 
 
--  The probability of an evidence can be found with only
+The probability of an evidence can be found with only
   propagation towards the root of a junction tree. This saves about
   half the computational effort of propagation. However, notice that the
   network is not changed by this operation, so if the network is
@@ -322,7 +347,7 @@ pEvidence(chest_bn, evidence=list(asia="yes", dysp="yes"))
 ``` 
 
 
--  The probability of observing a specific evidence can be found by
+The probability of observing a specific evidence can be found by
   setting the evidence as a vector of weights. This is useful in
   connection with soft evidence (also called likelihood evidence), see
   Section~\@ref(sec:hard-soft).
@@ -330,8 +355,7 @@ pEvidence(chest_bn, evidence=list(asia="yes", dysp="yes"))
 
 ## Hints and shortcuts {#sec:small-shortcuts}
 
-\begin{enumerate}
--  An alternative way of specifying a network is by first defining CPTs and then entering values afterwards. Programmatically, this can be done as:
+An alternative way of specifying a network is by first defining CPTs and then entering values afterwards. Programmatically, this can be done as:
 
 ```{r }
 yn <- c("yes","no")
@@ -362,7 +386,7 @@ lst2 <- list(asia=c(1, 99),
 bn2 <- replaceCPT(bn2, lst2)
 ``` 
 
--  Consider querying a network where focus is on 
+Consider querying a network where focus is on 
   marginal distributions (the default). If all variables have the same
   levels (as the case is here), the output can be coerced to a
   dataframe:
@@ -372,13 +396,14 @@ querygrain(chest_bn, nodes=c("lung", "bronc"), simplify = TRUE)
 ``` 
 
 In the more general case the output can be coerced to a list of dataframes
+
 ```{r }
 querygrain(chest_bn, nodes=c("lung", "bronc"), result="data.frame")
 ``` 
 
--  A typical use of \bn\ involves setting evidence and then
+A typical use of gRain involves setting evidence and then
   querying the network afterwards. This can all be done in one call of
-  \code{querygrain} (notice that this does not alter the network object):
+  `querygrain()` (notice that this does not alter the network object):
 
 ```{r } 
 querygrain(chest_bn,
@@ -386,7 +411,7 @@ querygrain(chest_bn,
            nodes=c("lung", "bronc"), simplify = TRUE)
 ```
 
--  Evidence can be also be given as a vector of weights. 
+Evidence can be also be given as a vector of weights. 
 
 ```{r } 
 querygrain(chest_bn,
@@ -397,11 +422,11 @@ querygrain(chest_bn,
 The weights must be non-negative but need not sum to one. This is
 important in connection with soft evidence (also called likelihood
 evidence), see Section~\@ref(sec:hard-soft). Above, the weights could
-also have been set as \code{c(.1, 0)}. The important part is that the
+also have been set as c(.1, 0). The important part is that the
 zero excludes certain states as being impossible.
 
 
--  Nodes on which evidence is given are not reported unless \code{exclude=FALSE}
+Nodes on which evidence is given are not reported unless `exclude=FALSE` 
 
 ```{r } 
 querygrain(chest_bn,
@@ -411,14 +436,15 @@ querygrain(chest_bn,
 ```
 
 
--  If \code{nodes} are not specified, queries for all nodes without evidence are reported.
+If `nodes`are not specified, queries for all nodes without evidence are reported.
+
 ```{r } 
 querygrain(chest_bn,
            evidence=list(asia="yes", dysp="yes"),
            simplify = TRUE)
 ```
 
-If \code{nodes} are not specified and \code{exclude=FALSE}, then queries for all nodes are reported.
+If `nodes` are not specified and `exclude=FALSE`, then queries for all nodes are reported.
 
 ```{r } 
 querygrain(chest_bn,
@@ -427,12 +453,38 @@ querygrain(chest_bn,
 ```
 
 
-\end{enumerate}
+
+## Building a network from data {#sec:using-data}
+
+
+The following list defines a dag for the chest clinic example: Each component is a list with two elements: the first element is the node and the second element is a vector of parents. 
+
+```{r}
+flist <- list("asia", c("tub", "asia"), "smoke", c("lung", "smoke"),
+              c("bronc", "smoke"), c("either", "tub", "lung"),
+              c("xray", "either"), c("dysp", "bronc", "either"))
+
+g <- dag(flist)
+plot(g)
+```
+
+```{r}
+bn1 <- grain(g, data=gRbase::chestSim10000)
+```
 
 
 
-## Conditioning on evidence with zero probability
-{#sec:zero-probabilities}
+```{r}
+rr <- list(c("xray", "either"), c("asia", "tub"), c("smoke", "lung", 
+"bronc"), c("lung", "either", "tub"), c("lung", "either", "bronc"
+), c("bronc", "either", "dysp"))
+
+g2 <- ug(rr)
+plot(g2)
+```
+
+
+## Conditioning on evidence with zero probability {#sec:zero-probabilities}
 
 Consider setting the evidence
 ```{r }
@@ -440,7 +492,7 @@ chest_bn3 <- setEvidence(chest_bn, evidence=list(either="no", tub="yes"))
 ``` 
 
 Under the model, this specific evidence has zero probability:
-\verb|either| is true if \verb|tub| is true or \verb|lung| is true (or
+`either` is true if `tub` is true or `lung` is true (or
 both). Hence the specific evidence is impossible and therefore, all
 conditional probabilities are (under the model) undefined:
 
@@ -450,20 +502,16 @@ querygrain(chest_bn3, nodes=c("lung", "bronc"), type="joint")
 ``` 
 
 
-
-
-## Hard  and virtual (likelihood) evidence
-{#sec:hard-virt-likel}
-{#sec:hard-soft}
+## Hard  and virtual (likelihood) evidence {#sec:hard-soft}
 
 Below we describe  how to work with virtual evidence (also known
-as soft evidence or likelihood evidence) in \grbn. This is done via the function
-\code{setEvidence()}.
+as soft evidence or likelihood evidence) in gRain. This is done via the function
+setEvidence().
 
 The clique potential representation in a Bayesian network gives
-\begin{displaymath}
+\begin{align}
   p(x) \propto \psi(x) = \prod_{C} \psi_C(x_C).
-\end{displaymath}
+\end{align}
 
 Here we recall that the whole idea in computations with Bayesian
 networks is to avoid calculation the product on the right hand
@@ -471,15 +519,15 @@ side above. Instead computations are based on propagation (multiplying,
 dividing and summing clique potentials $\psi_C$ in an appropriate
 order, and such an appropriate order comes from a junction tree).
 The normalizing constant, say $c=\sum_x \psi(x)$, comes out of
-propagation as a ``by product''.
+propagation as a "by-product".
 
 Suppose a set of nodes $E$ are known to have a specific value,
 i.e. $x_E=x^*_E$. This is called hard evidence. The probability of
 the event $x_E=x^*_E$ is
-\begin{displaymath}
+\begin{align}
   p(x_E=x^*_E)=E_p\{I(x_E=x^*_E)\} = \sum_x I(x_E=x^*_E) p(x)
   = \frac{1}{c} \sum_x I(x_E=x^*_E) \psi(x)
-\end{displaymath}
+\end{align}
 
 The computations are based on modifying the clique potentials $\psi_C$
 by giving value zero to states in $\psi_C$ which are not consistent
@@ -492,9 +540,9 @@ $p(x_E=x^*_E)=\tilde c / c$.
 
 In a more general setting we may have non--negative weights $L(x)$ for
 each value of $x$. We may calculate
-\begin{displaymath}
+\begin{align}
   E_p\{L(X)\} = \sum_x L(x)p(x)
-\end{displaymath}
+\end{align}
 If $L(X)$ factorizes as $L(X)= \prod_C L_C(X_C)$ then the computations are
 carried out as outlined above, i.e.\ by the message passing scheme.
 
@@ -522,7 +570,7 @@ querygrain(chest1, simplify = TRUE)
 ### Specifying hard evidence  {#sec:hard-evidence}
 
 Suppose we want to make a diagnosis about tuberculosis given the evidence that a person has recently been to Asia.
-The function \code{setEvidence()} can  be used for this purpose. The following forms are equivalent
+The function setEvidence() can  be used for this purpose. The following forms are equivalent
 
 ```{r }
 setEvidence(chest1, evidence=list(asia="yes"))
@@ -553,7 +601,7 @@ so in practice, because we may equivalently enter the virtual evidence
 in the original network.
 
 We can then introduce a new variable
-\code{guess\_asia} with \code{asia} as its only parent.
+`guess_asia` with `asia` as its only parent.
 
 ```{r }
 g.a <- cpt(~guess_asia+asia, levels=yn,
@@ -591,13 +639,13 @@ chest1_ve |> querygrain(simplify = TRUE)
 getEvidence(chest1_ve, short=FALSE)
 ``` 
 
-This also means that specifying that specifying \code{asia='yes'} can
+This also means that specifying that specifying `asia="yes"` can
 be done as
 ```{r }
 querygrain(chest1, evidence=list(asia=c(1, 0)), simplify=T)
 ``` 
 
-### Extending networks to include other types of variables {#sec:ixture}
+### Extending networks to include other types of variables {#sec:mixture}
 
 gRain only handles discrete variables with a finite state space, but
 using likelihood evidence it is possible to work with networks with
@@ -605,10 +653,10 @@ both discrete and continuous variables (or other types of variables).
 This is possible only when he networks have a specific structure. This
 is possible when no discrete variable has non--discrete parents.
 
-Take a simple example: Form a \bn\ for variables $x=(x_1, x_2)$. 
+Take a simple example: Form a network for variables $x=(x_1, x_2)$. 
 Conceptually augment this network with additional variables $y=(y_1, y_2)$ where
 $y_1|x_1=k \sim N(\mu_k, v)$ and
-$y_2|x_2=k \sim Poi(\lambda_k)$ for $k=1,2$. Also we make the assumption
+$y_2|x_2=k \sim Poi(l_k)$ for $k=1,2$. Also we make the assumption
 that $y_1$ and $y_2$ are independent given $x=(x_1, x_2)$. This gives the DAG
 below:
 
@@ -617,7 +665,7 @@ plot(dag(~y1:x1 + x2:x1 + y2:x2))
 ``` 
 
 
-A \bn\ for $x$ can be constructed as:
+A network for $x$ can be constructed as:
 
 ```{r }
 u <- list(x1=yn, x2=yn)
@@ -635,14 +683,16 @@ lambda <- c(lambda1=0, lambda2=7)
 ``` 
 
 Suppose we observe $y_1 = y_1^*$. Then
-\begin{displaymath}
+
+\begin{align}
   p(x|y_1= y_1^*)\propto p(x_1)p(x_2|x_1) p(y_1=y_1^*|x_1) =  p(x_1)p(x_2|x_1) L_1(x_1)
-\end{displaymath}
-where $L_1(x_1)$ denotes the likelihood. In a \bn\ setting this
+\end{align}
+
+where $L_1(x_1)$ denotes the likelihood. In a network setting this
 corresponds to changing $p(x_1)$ as
-\begin{displaymath}
+\begin{align}
   p(x_1) \leftarrow p(x_1)L_1(x_1)
-\end{displaymath}
+\end{align}
 and then carry on with propagation. This can be achieved in different ways. One is by setting the likelihood as evidence:
 
 ```{r }
@@ -687,23 +737,19 @@ y22sim |> hist(prob=T, ylim=c(0, .4), breaks=10)
 
 
 The joint distribution is
-\begin{displaymath}
+\begin{align}
   p(x,y_1, y_2) = p(x)p(y_1|x)p(y_2|x)
-\end{displaymath}
+\end{align}
 
 Suppose the interest is in the distribution of $x$ given
 $y_1=y_1^*$ and $y_2=y_2^*$. We then have
-\begin{displaymath}
+\begin{align}
   p(x|y_1^*, y_2^*) \propto p(x) p(y_1^*|x)p(y_2^*|x) =
   p(x) L_1(x) L_2(x)
-\end{displaymath}
+\end{align}
 
 
-
-\appendix
-
-## Building networks from data
-{#sec:using-textttsm-argum}
+## Building networks from data {#sec:building-networks}
 
 The following two graphs specify the same model:
 ```{r }
@@ -728,8 +774,7 @@ gr.uG <- compile(grain( uG, data=dat ))
 
 However, when there are zeros in the table, care must be taken.
 
-### Extracting information from tables
-{#sec:extr-inform-from}
+### Extracting information from tables {#sec:extr-inform-from}
 
 In the process of creating networks, conditional probability tables
 are extracted when the graph is a dag and clique potentials are
@@ -741,17 +786,16 @@ extractCPT(dat, dG) |> c() ## FIXME: Printing problem
 extractPOT(dat, uG) |> c() ## FIXME: Printing problem
 ``` 
 
-The conditional probability table $P(A|B)$ contains \code{NaN}s
+The conditional probability table $P(A|B)$ contains `NaN`s
 because
-\begin{displaymath}
+\begin{align}
   P(A|B=B1)=\frac{n(A,B=B1)}{\sum_A n(A,B=B1)} = \frac{0}{0} = \mbox{NaN}
-\end{displaymath}
+\end{align}
 
-For this reason the network \code{gr.dG} above will fail to compile
-whereas \code{gr.uG} will work, but it may not give the expected results.
+For this reason the network `gr.dG` above will fail to compile
+whereas `gr.uG` will work, but it may not give the expected results.
 
-### Using smooth
-{#sec:using-smooth}
+### Using smooth {#sec:using-smooth}
 
 To illustrate what goes on, we can extract the distributions from data
 as follows:
@@ -762,18 +806,18 @@ p.B   <- tabMarg(dat, "B") / sum(dat)   ## p(B)
 p.AB2 <- tabMult(p.A_B, p.B)            ## P(AB)
 ``` 
 
-However, the result is slightly misleading because \code{tabDiv}
+However, the result is slightly misleading because `tabDiv`
 sets $0/0=0$.
-In \grain\ there is a \code{smooth} argument that will add a small
+In gRain there is a `smooth` argument that will add a small
 number to the cell entries before extracting tables, i.e.
-\begin{displaymath}
-  P(A|B=B1)=\frac{n(A,B=B1)+\epsilon}{\sum_A ( n(A,B=B1) + \epsilon) }
-  = \frac{\epsilon}{2\epsilon} = 0.5
-\end{displaymath}
+\begin{align}
+  P(A|B=B1)=\frac{n(A,B=B1)+e}{\sum_A ( n(A,B=B1) + e) }
+  = \frac{e}{2e} = 0.5
+\end{align}
 and
-\begin{displaymath}
-  P(B)= \frac{\sum_A (n(A,B)+\epsilon)}{\sum_{AB} (n(A,B)+\epsilon)}
-\end{displaymath}
+\begin{align}
+  P(B)= \frac{\sum_A (n(A,B)+e)}{\sum_{AB} (n(A,B)+e)}
+\end{align}
 
 We can mimic this as follows:
 ```{r }
@@ -799,8 +843,7 @@ dat2.e <- dat.e / sum(dat.e)
 ``` 
 This difference appears in the gRain networks.
 
-### Extracting tables
-{#sec:extracting-tables}
+### Extracting tables {#sec:extracting-tables}
 
 One can do
 ```{r }
@@ -819,16 +862,18 @@ querygrain(gr.dG, exclude=FALSE, simplify=TRUE)
 querygrain(gr.uG, exclude=FALSE, simplify=TRUE) 
 ``` 
 
-However, if we condition on \code{B=lev1} we get:
+However, if we condition on `B=lev1` we get:
+
 ```{r }
 querygrain(gr.dG, evidence=list(B="lev1"), exclude=FALSE, simplify=TRUE)
 querygrain(gr.uG, evidence=list(B="lev1"), exclude=FALSE, simplify=TRUE)
 ``` 
 
-so the ``problem'' with zero entries shows up in a different
+so the "problem" with zero entries shows up in a different
 place. However, the answer is not necessarily wrong; the answer simply
 states that $P(A|B=lev1)$ is undefined.
-To ``remedy'' we can use the \code{smooth} argument:
+To "remedy" we can use the `smooth` argument:
+
 ```{r }
 gr.uG <- grain(uG, data=dat, smooth=e)
 ``` 
@@ -853,8 +898,7 @@ querygrain(gr.uG, evidence=list(B="lev1"), exclude=FALSE, simplify=TRUE)
 
 
 
-## Brute force computations and why they fail
-{#sec:brute-force-comp}
+## Brute force computations and why they fail {#sec:brute-force-comp}
 
 
 The gRain package makes computations as those outlined above in a
@@ -911,94 +955,4 @@ tabMarg(cond2, "lung")
 tabMarg(cond2, "bronc")
 ```
 
-
-
-
-
-% ```{r  } 
-% f1 <- function(){
-%     cond1 <- ar_slice(joint, slice=ev)
-%     cond1 <- cond1 / sum(cond1)
-%     dim(cond1)
-%     tabMarg(cond1, "lung")    
-% }
-% f2 <- function(){
-%     cond2 <- ar_slice_mult(joint, slice=ev)
-%     cond2 <- cond2 / sum(cond2)
-%     dim(cond2)
-%     tabMarg(cond2, "lung")    
-% }
-% f1()
-% f2()
-% querygrain(chest_bn, nodes="lung", evidence=ev)
-% chest_bn1 <- propagate(chest_bn)
-% if (require(microbenchmark)){
-%     microbenchmark(f1(), f2(),
-%                    f3=querygrain(chest_bn, nodes="lung", evidence=ev),
-%                    f4=querygrain(chest_bn, nodes="lung", evidence=ev)                   
-%                    )                   
-% }
-% @
-
-
-%%\SweaveInput{Rmarkup.STY}
-%% ------------------------
-%% \definecolor{darkred}{rgb}{.7,0,0}
-%% \definecolor{midnightblue}{rgb}{0.098,0.098,0.439}
-%% 
-%% \DefineVerbatimEnvironment{Sinput}{Verbatim}{
-%%   fontfamily=tt,
-%%   %%fontseries=b,
-%%   %% xleftmargin=2em,
-%%   formatcom={\color{midnightblue}}
-%% }
-%% \DefineVerbatimEnvironment{Soutput}{Verbatim}{
-%%   fontfamily=tt,
-%%   %%fontseries=b,
-%%   %% xleftmargin=2em,
-%%   formatcom={\color{darkred}}
-%% }
-%% \DefineVerbatimEnvironment{Scode}{Verbatim}{
-%%   fontfamily=tt,
-%%   %%fontseries=b,
-%%   %% xleftmargin=2em,
-%%   formatcom={\color{blue}}
-%% }
-%% 
-%% \fvset{listparameters={\setlength{\topsep}{-2pt}}}
-%% \renewenvironment{Schunk}{\linespread{.90}}{}
-%% %% ------------------------
-%% 
-
-
-
-
-% We can look closer into this zero--probability issue. Because the node
-% \code{either} is logical, half of the configurations will have zero probability:
-
-% ```{r }
-% tt <- querygrain(chest_bn, type="joint")
-% sum(tt == 0) / length(tt)
-% @ 
-
-% In particular the configuration above has zero probability
-% ```{r }
-% sum(ar_slice(tt, list(either="no", tub="yes")))
-% @ 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\bibliography{grain}
-\end{document}
 

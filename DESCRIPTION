@@ -1,5 +1,5 @@
 Package: gRain
-Version: 1.4.1.9001
+Version: 1.4.1.9004
 Title: Graphical Independence Networks
 Author: Søren Højsgaard <sorenh@math.aau.dk>
 Maintainer: Søren Højsgaard <sorenh@math.aau.dk> 
@@ -14,6 +14,7 @@ Depends:
     methods,
     gRbase (>= 2.0.0)
 Suggests:
+    markdown,
     microbenchmark,
     knitr,
     testthat (>= 2.1.0)
@@ -28,5 +29,5 @@ Encoding: UTF-8
 VignetteBuilder: knitr
 LinkingTo: Rcpp (>= 0.11.1), RcppArmadillo, RcppEigen, gRbase
 ByteCompile: Yes
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Roxygen: list(markdown = TRUE)

@@ -10,7 +10,6 @@
 #'     which is a pure R implementation of the Lauritzen-Spiegelhalter
 #'     algorithm. The c++ based version is several times faster than
 #'     the purely R based version.
-#'
 #' 
 #' @aliases propagate.grain propagateLS propagateLS__
 #' @param object A grain object
@@ -62,10 +61,6 @@ propagate.grain <- function(object, details=object$details, engine="cpp", ...){
 }
 
 
-
-
-
-
 ## Lauritzen Spiegelhalter propagation
 ##
 
@@ -100,6 +95,7 @@ propagateLS <- function(cq_pot_list, rip, initialize=TRUE, details=0){
             pa.pot   <- cq_pot_list[[pa[ i ]]]
 
             if (length(sp) > 0){
+                cat("103\n")
                 sp.pot               <- tableMargin(cq.pot, sp)
                 cq_pot_list[[ i ]]     <- tableOp2(cq.pot, sp.pot, `/`)
                 cq_pot_list[[pa[ i ]]] <- tableOp2(pa.pot, sp.pot, `*`)
@@ -164,7 +160,7 @@ compute_p_evidence_worker <- function(cq_pot_list, rip, initialize=TRUE, details
     cliq       <- rip$cliques
     seps       <- rip$separators
     pa         <- rip$parent
-    child_list <- rip$childList
+    ## child_list <- rip$childList
     ncliq      <- length(cliq)
 
     ## Needed because RIP returns 0 as parent index for clique 1:
@@ -178,6 +174,8 @@ compute_p_evidence_worker <- function(cq_pot_list, rip, initialize=TRUE, details
             sp   <- seps[[ i ]]
             cq.pot   <- cq_pot_list[[ i ]]
             pa.pot   <- cq_pot_list[[pa[ i ]]]
+            ## cat("i:", i, "sp:", sp, "cq.pot:", names(dimnames(cq.pot)), "pa:", pa[i],
+            ## "pa.pot:", names(dimnames(pa.pot)), "\n")
 
             if (length(sp) > 0){
                 sp.pot               <- tableMargin(cq.pot, sp)
@@ -198,30 +196,3 @@ compute_p_evidence_worker <- function(cq_pot_list, rip, initialize=TRUE, details
 
 
 
-
-
-
-    ## .infoPrint(details, 2, cat("..BACKWARD:\n"))
-
-## cq   <- cliq[[ i ]]
-
-    ## .infoPrint(details, 2, cat("..FORWARD:\n"))
-            ## .infoPrint2(details, 2, "Clique %d: {%s}\n",  i , .colstr( cq ))
-            ## .infoPrint2(details, 2, "Marg onto sep {%s}\n", .colstr(sp))
-        ## .infoPrint2(details, 2, "Clique %d: {%s}\n",  i , .colstr(cliq[[ i ]]))
-            ## .infoPrint2(details,2, "..Children: %s\n", .colstr(ch))
-                    ## .infoPrint2(details, 2, "Marg onto sep %i: {%s}\n", ch[ j ], .colstr(seps[[ch[ j ]]]))
-                    ## .infoPrint(details, 4, { cat("Marginal:\n"); print (sp.pot) })
-
-
-                    ##cat(sprintf("......is.na: sp.pot=%i\n", any(is.na(sp.pot))))
-
-            ## str(list(ncliq=ncliq, sp=sp, cq=cq))
-            ## if ((length(sp) >= 1) && !is.na(sp)){ ## Changed on May 9, 2022
-    
-    ## FIXME: propagate.grain : Looks strange
-    ## if (!is.null((ev <- getEvidence(object)))){
-        ## attr(ev, "pEvidence") <- pEvidence(object)
-        ## object$evidence <- ev
-    ## }
-    

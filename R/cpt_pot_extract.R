@@ -94,7 +94,13 @@ extract_pot <- function(data_, graph, smooth=0) {
         stop("'graph' not undirected and triangulated")
 
     rip_  <- rip(graph)
+    ## ripit1 <<- rip_
+    
+    ## cat("rip:\n"); doit(ripit1$cliques)
     out   <- extract_pot_worker(data_, rip_$cliques, rip_$sep, smooth=smooth)
+    ## cat("out:\n");doit(lapply(out, .namesDimnames))
+    
+    
     attr(out, "rip")   <- rip_
     attr(out, "graph") <- graph    
     class(out)         <- "pot_representation"
@@ -187,10 +193,6 @@ extract_cpt_worker <- function(data_, vpa, smooth=0) {
         marginal_data(data_, ss, is.df)
     })
     
-
-    ## FIXME : Get rid of this parray stuff (at least as a class)
-    ## out <- lapply(out, as.parray, normalize="first", smooth=smooth)
-
     out <- lapply(out,
                     function(oo){
                         tabNormalize(oo + smooth, type="first")
@@ -198,28 +200,13 @@ extract_cpt_worker <- function(data_, vpa, smooth=0) {
 
     chk <- unlist(lapply(out,
                          function(zz) {
-
                              any(is.na(zz))
                          }
                          ))
-    
-
-
-
-    
-    ## out <- lapply(out, function(o){
-    ##     tabNormalize(o, type="first")
-    ## })
-    
-    ## chk <- unlist(lapply(out, function(zz){
-    ##     any(is.na(zz))
-    ## }))
-
 
     nas <- names(chk)[which(chk)]
     
     if (length(nas) > 0) {
-
         cat(sprintf("NAs found in conditional probability table(s) for nodes: %s\n",
                     toString(nas)))
         cat(sprintf("  ... consider using the smooth argument\n"))
@@ -237,13 +224,13 @@ extract_pot_worker <- function(data_, cliq, seps=NULL, smooth=0) {
     
     out <- vector("list", length(cliq))
     is.df <- is.data.frame(data_)
-    for ( i  in seq_along(cliq)){
+    for (i in seq_along(cliq)){
         cq   <- cliq[[ i ]]
         sp   <- seps[[ i ]]
         t.cq <- marginal_data(data_, cq, is.df) + smooth       
-        ##str(list(cq=cq, sp=sp))
         out[[i]] <- .normalize(t.cq, sp)
     }
+    ## oo <<- out
     out
 }
 
@@ -272,8 +259,10 @@ marginal_data <- function(data_, set, is.df=NULL) {
     if (is.null(is.df))
         is.df <- is.data.frame(data_)
 
-    if (is.df) .dfMarg(data_, set)
-    else tabMarg(data_, set)
+    if (is.df)
+        .dfMarg(data_, set)
+    else
+        tabMarg(data_, set)
         
 }
 
@@ -281,8 +270,6 @@ is_valid_data <- function(data_) {
     if (!(is.data.frame(data_) || is.named.array(data_)))
         stop("'data_' must be dataframe or array.")
 }
-
-
 
 
 ## ---------------------------------------------------------------
@@ -311,3 +298,16 @@ extractMARG <- extract_marg
 
 ## #' @rdname components_extract
 ## data2marg <- extract_marg
+
+
+    ## FIXME : Get rid of this parray stuff (at least as a class)
+    ## out <- lapply(out, as.parray, normalize="first", smooth=smooth)
+    
+    ## out <- lapply(out, function(o){
+    ##     tabNormalize(o, type="first")
+    ## })
+    
+    ## chk <- unlist(lapply(out, function(zz){
+    ##     any(is.na(zz))
+    ## }))
+
