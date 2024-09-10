@@ -50,8 +50,8 @@
 #'
 #' @examples
 #'
-#' data(example_chest_cpt)
-#' x <- compile_cpt(example_chest_cpt)
+#' example("example_chest_cpt")
+#' x <- compile_cpt(chest_cpt)
 #' class(x)
 #' grain(x)
 #' 

@@ -62,8 +62,8 @@
 #'
 #' @examples
 #' 
-#' data(example_chest_cpt)
-#' chest.bn <- grain(compileCPT(example_chest_cpt))
+#' example("example_chest_cpt")
+#' chest.bn <- grain(compileCPT(chest_cpt))
 #' chest.bn <- compile(chest.bn)
 #' 
 #' ## 1) These two forms are identical

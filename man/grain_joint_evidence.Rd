@@ -41,8 +41,8 @@ great care.
 }
 \examples{
 
-data(example_chest_cpt)
-chest.bn <- grain(compileCPT(example_chest_cpt))
+example("example_chest_cpt")
+chest.bn <- grain(compileCPT(chest_cpt))
 chest.bn <- compile(chest.bn)
 
 uni <- list(asia = c("yes", "no"), tub = c("yes", "no"),
