@@ -22,8 +22,9 @@
 #' @aliases print.grain_joint_evidence
 #' 
 #' @examples
-#' data(chest_cpt)
-#' chest.bn <- grain(compileCPT(chest_cpt))
+#' 
+#' data(example_chest_cpt)
+#' chest.bn <- grain(compileCPT(example_chest_cpt))
 #' chest.bn <- compile(chest.bn)
 #' 
 #' uni <- list(asia = c("yes", "no"), tub = c("yes", "no"),
@@ -42,7 +43,7 @@
 #'
 #' # Notice: The evidence is defined on (subsets of) cliques of the junction tree
 #' # and therefore evidence can readily be absorbed:
-#' getgrain(chest.bn, "rip")$cliques  %>% str
+#' getgrain(chest.bn, "rip")$cliques |> str()
 #'
 #' # On the other hand, below is evidence which is not defined cliques
 #' # of the junction tree and therefore evidence can not easily be
@@ -82,7 +83,7 @@
 #' jevi
 #'
 #' chest.bn3 <- setJEvidence(chest.bn, evidence=jevi)
-#' evidence(chest.bn3)
+#' getEvidence(chest.bn3)
 #'
 
 

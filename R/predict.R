@@ -28,10 +28,10 @@
 #' @keywords models
 #'
 #' @examples
-#' data(chest_cpt)
+#' data(example_chest_cpt)
 #' data(chestSim500)
 #'
-#' chest.bn <- grain(compileCPT(chest_cpt))
+#' chest.bn <- grain(compileCPT(example_chest_cpt))
 #' nd <- chestSim500[1:4]
 #'
 #' predict(chest.bn, response="bronc", newdata=nd)
@@ -73,6 +73,7 @@ predict.grain <- function(object, response, predictors=setdiff(names(newdata), r
         ## objecttmp1    <- setFinding(object, nodes=names(case), states=case)
 
     for (i in 1:nrow(nd)){
+        
         objecttmp1    <- setFinding(object, nodes=vn, states=nd[i,,drop=FALSE])
         p.e       <- pEvidence(objecttmp1)
         ##cat(sprintf("pEvidence=%20.18f\n", p.e))

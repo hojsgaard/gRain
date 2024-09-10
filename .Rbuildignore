@@ -7,3 +7,6 @@ LICENSE
 NAMESPACE_OLD
 ^CRAN-SUBMISSION$
 ^cran-comments\.md$
+docs
+README.Rmd
+rain_devel.Rproj

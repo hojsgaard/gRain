@@ -53,23 +53,23 @@ compatibility.
 ## Logical OR:
 
 ## A variable v is TRUE if either of its parents pa1 and pa2 are TRUE:
-ortab( c("v", "pa1", "pa2") ) \%>\% ftable(row.vars="v")
+ortab( c("v", "pa1", "pa2") ) |> ftable(row.vars="v")
 ## TRUE and FALSE can be recoded to e.g. yes and no:
-ortab( c("v", "pa1", "pa2"), levels=c("yes", "no") ) \%>\% ftable(row.vars="v")
+ortab( c("v", "pa1", "pa2"), levels=c("yes", "no") ) |> ftable(row.vars="v")
 
 ## Logical AND:
 
 ## Same story here:
-andtab(c("v", "pa1", "pa2") ) \%>\% ftable(row.vars="v")
-andtab(c("v", "pa1", "pa2"), levels=c("yes", "no") ) \%>\% ftable(row.vars="v")
+andtab(c("v", "pa1", "pa2") ) |> ftable(row.vars="v")
+andtab(c("v", "pa1", "pa2"), levels=c("yes", "no") ) |> ftable(row.vars="v")
 
 ## Combined approach
 
-booltab(c("v", "pa1", "pa2"), op=`&`) \%>\% ftable(row.vars="v") ## AND
-booltab(c("v", "pa1", "pa2"), op=`|`) \%>\% ftable(row.vars="v") ## OR
+booltab(c("v", "pa1", "pa2"), op=`&`) |> ftable(row.vars="v") ## AND
+booltab(c("v", "pa1", "pa2"), op=`|`) |> ftable(row.vars="v") ## OR
 
-booltab(~v + pa1 + pa2, op=`&`) \%>\% ftable(row.vars="v") ## AND
-booltab(~v + pa1 + pa2, op=`|`) \%>\% ftable(row.vars="v") ## OR
+booltab(~v + pa1 + pa2, op=`&`) |> ftable(row.vars="v") ## AND
+booltab(~v + pa1 + pa2, op=`|`) |> ftable(row.vars="v") ## OR
 
 }
 \references{

@@ -51,6 +51,7 @@
 #'     Software, 46(10), 1-26.
 #'     \url{https://www.jstatsoft.org/v46/i10/}.
 #' @keywords models
+#' 
 #' @examples
 #'
 #' ## See the wet grass example at
@@ -71,9 +72,9 @@
 #' 
 #' ## Wet grass example
 #' ssp <- list(R=yn, S=yn, G=yn) # state space
-#' p.R    <- cptable(~R,     levels=ssp, values=c(.2, .8))
-#' p.S_R  <- cptable(~S:R,   levels=ssp, values=c(.01, .99, .4, .6))
-#' p.G_SR <- cptable(~G:S:R, levels=ssp, values=c(.99, .01, .8, .2, .9, .1, 0, 1))
+#' p.R    <- cpt(~R,     levels=ssp, values=c(.2, .8))
+#' p.S_R  <- cpt(~S:R,   levels=ssp, values=c(.01, .99, .4, .6))
+#' p.G_SR <- cpt(~G:S:R, levels=ssp, values=c(.99, .01, .8, .2, .9, .1, 0, 1))
 #'
 #' wet.cpt <- compileCPT(p.R, p.S_R, p.G_SR)
 #' wet.cpt
@@ -94,8 +95,6 @@ cpt <- function(names, levels, values, normalize = "first", smooth=0){
 ## #' @rdname cpt
 ## #' @export
 ## cptable <- cpt
-
-
 
 
 #' @rdname cpt

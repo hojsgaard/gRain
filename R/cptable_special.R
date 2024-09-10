@@ -37,30 +37,26 @@
 #' ## Logical OR:
 #'
 #' ## A variable v is TRUE if either of its parents pa1 and pa2 are TRUE:
-#' ortab( c("v", "pa1", "pa2") ) %>% ftable(row.vars="v")
+#' ortab( c("v", "pa1", "pa2") ) |> ftable(row.vars="v")
 #' ## TRUE and FALSE can be recoded to e.g. yes and no:
-#' ortab( c("v", "pa1", "pa2"), levels=c("yes", "no") ) %>% ftable(row.vars="v")
+#' ortab( c("v", "pa1", "pa2"), levels=c("yes", "no") ) |> ftable(row.vars="v")
 #'
 #' ## Logical AND:
 #'
 #' ## Same story here:
-#' andtab(c("v", "pa1", "pa2") ) %>% ftable(row.vars="v")
-#' andtab(c("v", "pa1", "pa2"), levels=c("yes", "no") ) %>% ftable(row.vars="v")
+#' andtab(c("v", "pa1", "pa2") ) |> ftable(row.vars="v")
+#' andtab(c("v", "pa1", "pa2"), levels=c("yes", "no") ) |> ftable(row.vars="v")
 #'
 #' ## Combined approach
 #' 
-#' booltab(c("v", "pa1", "pa2"), op=`&`) %>% ftable(row.vars="v") ## AND
-#' booltab(c("v", "pa1", "pa2"), op=`|`) %>% ftable(row.vars="v") ## OR
+#' booltab(c("v", "pa1", "pa2"), op=`&`) |> ftable(row.vars="v") ## AND
+#' booltab(c("v", "pa1", "pa2"), op=`|`) |> ftable(row.vars="v") ## OR
 #'
-#' booltab(~v + pa1 + pa2, op=`&`) %>% ftable(row.vars="v") ## AND
-#' booltab(~v + pa1 + pa2, op=`|`) %>% ftable(row.vars="v") ## OR
+#' booltab(~v + pa1 + pa2, op=`&`) |> ftable(row.vars="v") ## AND
+#' booltab(~v + pa1 + pa2, op=`|`) |> ftable(row.vars="v") ## OR
 #'
-## ## We use our own operator, for example "exclusive or" which is
-## ## TRUE only if one but not both arguments are TRUE.
 
-## xor <- function(e1,e2){!mapply(all, e1, e2) & mapply(any, e1, e2)}
-## booltab(c("v", "pa1", "pa2"), op=xor) %>% ftable(row.vars="v") ## XOR
-## 
+
 
 #' @export
 booltab <- function(vpa, levels=c(TRUE, FALSE), op=`&`){
@@ -108,6 +104,7 @@ ortable <- ortab
 #' @param allele A character vector.
 #' @param names  Names of columns in dataframe.
 #' @note No error checking at all on the input.
+#'
 #' @examples
 #' ## Inheritance of the alleles "y" and "g"
 #' 
@@ -147,3 +144,9 @@ mendel <- function(allele, names=c("child", "father", "mother")){
 
 
 
+## ## We use our own operator, for example "exclusive or" which is
+## ## TRUE only if one but not both arguments are TRUE.
+
+## xor <- function(e1,e2){!mapply(all, e1, e2) & mapply(any, e1, e2)}
+## booltab(c("v", "pa1", "pa2"), op=xor) |> ftable(row.vars="v") ## XOR
+## 

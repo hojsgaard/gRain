@@ -1,8 +1,3 @@
-##
-## plot (gRain)
-##
-
-
 #' @method plot grain
 #' @export
 plot.grain <- function(x, type, ...) {
@@ -38,32 +33,3 @@ plot.grain <- function(x, type, ...) {
 
 
 
-## #' @method plot grain
-## #' @export
-## plot.grain <- function(x, type, ...){
-    
-##    if (!requireNamespace("Rgraphviz", quietly = TRUE)) {
-##        cat("The Rgraphviz package (from Bioconductor) must be installed to display the models\n")
-##        return()
-##    }
-
-##    if (missing(type)){
-##        if (isCompiled(x)){
-##            Rgraphviz::plot(x$ug)
-##        } else {
-##            if ("pot_grain" %in% class(x)){
-##                Rgraphviz::plot(x$ug)
-##            } else {
-##                Rgraphviz::plot(x$dag)
-##            }
-##        }
-##    } else {
-##        if (type=="jt") ## For backward compatibility; p 57 in GMwR-book
-##            type="rip"
-##        zz <- x[[type]]
-##        if (!is.null(zz))
-##            Rgraphviz::plot(zz)
-##        else
-##            cat("Slot", type, "does not exist \n")
-##    }
-## }

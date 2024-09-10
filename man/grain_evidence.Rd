@@ -5,12 +5,12 @@
 \alias{setEvidence}
 \alias{retractEvidence}
 \alias{absorbEvidence}
+\alias{evidence_get}
 \alias{pEvidence}
 \alias{getEvidence}
-\alias{evidence}
-\alias{evidence.grain}
-\alias{evidence<-}
-\alias{evidence<-.grain}
+\alias{evidence_add}
+\alias{evidence_drop}
+\alias{evidence_p}
 \title{Set, update and remove evidence.}
 \usage{
 setEvidence(
@@ -30,21 +30,21 @@ pEvidence(object, evidence = NULL)
 
 getEvidence(object, short = TRUE)
 
-evidence(object, short = TRUE)
+evidence_add(object, evidence = NULL, propagate = TRUE, details = 0)
 
-\method{evidence}{grain}(object, short = TRUE)
+evidence_get(object, short = TRUE)
 
-evidence(object) <- value
+evidence_drop(object, nodes = NULL, propagate = TRUE)
 
-\method{evidence}{grain}(object) <- value
+evidence_p(object, evidence = NULL)
 }
 \arguments{
 \item{object}{A "grain" object}
 
 \item{nodes}{A vector of nodes; those nodes for which the
-(conditional) distribution is requested.}
+(conditional) distribution is requested. Now deprecated; use argument 'evidence' instead.}
 
-\item{states}{A vector of states (of the nodes given by 'nodes')}
+\item{states}{A vector of states (of the nodes given by 'nodes'). Now deprecated; use argument 'evidence' instead.}
 
 \item{evidence}{An alternative way of specifying findings
 (evidence), see examples below.}
@@ -55,8 +55,6 @@ evidence(object) <- value
 
 \item{short}{If TRUE a dataframe with a summary is returned;
 otherwise a list with all details.}
-
-\item{value}{The evidence in the form of a named list or an evidence-object.}
 }
 \value{
 A list of tables with potentials.
@@ -77,8 +75,8 @@ The syntax of \code{setEvidence()} may change in the future.
 }
 \examples{
 
-data(chest_cpt)
-chest.bn <- grain(compileCPT(chest_cpt))
+data(example_chest_cpt)
+chest.bn <- grain(compileCPT(example_chest_cpt))
 chest.bn <- compile(chest.bn)
 
 ## 1) These two forms are identical

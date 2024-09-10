@@ -1,0 +1,971 @@
+
+
+---
+title: Graphical Independence Networks
+subtitle: A vignette for the gRain package
+author: Søren Højsgaard
+output:
+  bookdown::html_document2:
+    base_format: rmarkdown::html_vignette
+    toc: true
+    number_sections: true
+  pdf_document:
+    keep_tex: true
+    toc_depth: 3
+    number_sections: true
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{Graphical Independence Networks}
+  %\VignetteKeyword{Graphical Models}
+  %\VignetteKeyword{Bayesian networks}
+  %\VignetteKeyword{Graphical models} 
+  %\VignettePackage{gRain}
+  %\VignetteEngine{knitr::knitr}
+  %\VignetteEncoding{UTF-8}
+bibliography: grain.bib 
+--- 
+
+\tableofcontents
+
+
+```{r include=FALSE,echo=FALSE,warning=FALSE}
+dir.create("figures")
+knitr::opts_chunk$set(fig.height=3, fig.width=5,
+               fig.path='figures/grain-',
+               warning=FALSE, message=FALSE
+)
+options("prompt"="> ","width"=85, "digits"=4)
+library(gRain)
+```
+
+
+```{r echo=FALSE}
+require(gRain)
+prettyVersion <- packageDescription("gRain")$Version
+prettyDate <- format(Sys.Date())
+```
+
+# Bayesian networks
+
+## Introduction
+
+The gRain package implements Bayesian Networks (hereafter often
+abbreviated BNs). The name gRain is an acronym for [gra]phical
+[i]ndependence [n]etworks. The main reference for gRain  is
+@hoj:12, see also `citation("gRain")`.
+
+
+Moreover, @hoj:edw:lau:12 gives a broad treatment of graphical
+models (including Bayesian networks) More information about the
+package, other graphical modelling packages and development versions
+is available from
+
+\begin{quote}
+(http://people.math.aau.dk/~sorenh/software/gR)
+\end{quote}
+
+
+<!-- ## Two worked examples {#sec:two-worked-examples} -->
+
+<!-- ### Wet grass {#sec:wet-grass} -->
+
+<!-- The `wet grass` example is motivated by the following narrative (taken from  -->
+<!-- (https://en.wikipedia.org/wiki/Bayesian_network)): -->
+
+<!--   *"Two events can cause grass to be wet: an active sprinkler or -->
+<!--   rain. Rain has a direct effect on the use of the sprinkler (namely -->
+<!--   that when it rains, the sprinkler usually is not active).*" -->
+
+<!-- ```{r echo=F, results='hide'} -->
+<!-- yn <- c("yes","no") -->
+<!-- p.R    <- cpt(~R, values=c(2, 8), levels=yn) -->
+<!-- p.S_R  <- cpt(~S:R, values=c(1, 99, 4, 6), levels=yn) -->
+<!-- p.G_SR <- cpt(~G:S:R, values=c(99, 1, 8, 2, 9, 1, 0, 1), levels=yn) -->
+<!-- grass_bn <- compile_cpt(p.R, p.S_R, p.G_SR)  %>% grain -->
+<!-- ```  -->
+
+<!-- ```{r chest-grass, fig.height=5, echo=F, fig.cap="Wet graph example; taken from Wikipedia."} -->
+<!-- par(mar=c(0,0,0,0)) -->
+<!-- plot(grass_bn$dag) -->
+<!-- ``` -->
+
+
+### Example: Chest clinic {#sec:chest-clinic}
+
+
+```{r echo=F, results='hide'}
+yn <- c("yes","no") 
+a    <- cpt(~asia, values=c(1,99),levels=yn)
+t.a  <- cpt(~tub|asia, values=c(5,95,1,99),levels=yn)
+s    <- cpt(~smoke, values=c(5,5), levels=yn)
+l.s  <- cpt(~lung|smoke, values=c(1,9,1,99), levels=yn)
+b.s  <- cpt(~bronc|smoke, values=c(6,4,3,7), levels=yn)
+e.lt <- cpt(~either|lung:tub,values=c(1,0,1,0,1,0,0,1),levels=yn)
+x.e  <- cpt(~xray|either, values=c(98,2,5,95), levels=yn)
+d.be <- cpt(~dysp|bronc:either, values=c(9,1,7,3,8,2,1,9), levels=yn)
+cpt_list <- list(a, t.a, s, l.s, b.s, e.lt, x.e, d.be)
+plist <- compile_cpt(cpt_list)
+plist
+chest_bn <- grain(plist, compile=FALSE)
+chest_bn
+``` 
+
+This section reviews the chest clinic example of @lau/spieg:88
+(illustrated in Figure \@ref(fig:chest-LS)) and shows one way of
+specifying the model in gRain.  @lau/spieg:88 motivate the
+chest clinic example with the following narrative:
+
+  *``Shortness--of--breath (dyspnoea) may be due to tuberculosis, lung
+  cancer or bronchitis, or none of them, or more than one of them. A
+  recent visit to Asia increases the chances of tuberculosis, while
+  smoking is known to be a risk factor for both lung cancer and
+  bronchitis. The results of a single chest X--ray do not discriminate
+  between lung cancer and tuberculosis, as neither does the presence or
+  absence of dyspnoea.''*
+
+```{r}
+chest_dag <- dag(list("asia", c("tub", "asia"), "smoke", c("lung", "smoke"), c("bronc", 
+"smoke"), c("either", "tub", "lung"), c("xray", "either"), c("dysp", 
+"bronc", "either")))
+library(igraph)
+par(mar=c(0,0,0,0))
+plot(chest_dag)
+```
+
+
+```{r chest-LS, echo=F, fig.height=3, fig.cap="Chest clinic example from Lauritzen and Spiegelhalter (1988)."}
+par(mar=c(0,0,0,0))
+plot(chest_bn)
+``` 
+
+## Building a Bayesian network
+
+The description above involves the following binary variables:
+$a=\mbox{asia}$,
+$s=\mbox{smoker}$,
+$t=\mbox{tuberculosis}$,
+$l=\mbox{lung cancer}$,
+$b=\mbox{bronchitis}$,
+$e=\mbox{either tuberculosis or lung cancer}$,
+$d=\mbox{dyspnoea}$ and
+$x=\mbox{xray}$. 
+
+Each variable is binary and can take the values "yes" and "no": Note
+that $e$ is a logical variable which is true (yes) if either $t$ or
+$l$ are true (yes) and false (no) otherwise.  The connection between
+the variables is displayed by the DAG (directed acyclic graph) in
+Figure~\@ref(fig:chest-LS).
+
+A joint probability density factorizing according to a DAG with nodes
+$V$ can be constructed as follows: Each node $v\in V$ has a set
+$pa(v)$ of parents and each node $v\in V$ has a finite set of
+states. A joint distribution over the variables $V$ can be given as a
+product of conditional distributions
+
+\begin{align}
+  (\#eq:dagfact1)
+  p(V) = \prod_{v\in V} p(v|pa(v))
+\end{align}
+
+where $p(v|pa(v))$ is a function defined on $(v,pa(v))$. This function
+satisfies that 
+$$
+\sum_{v^*} p(v=v^*|pa(v))=1,
+$$ 
+
+i.e.\ that for each configuration of the parents $pa(v)$, the sum over
+the levels of $v$ equals one. Hence $p(v|pa(v))$ becomes the
+conditional distribution of $v$ given $pa(v)$.  In practice
+$p(v|pa(v))$ is specified as a table called a conditional probability
+table or a CPT for short.  Thus, a Bayesian network can be regarded as
+a complex stochastic model built up by putting together simple
+components (conditional probability distributions).  A joint
+probability density for all eight variables in
+Figure~\@ref(fig:chest-LS) can be constructed as
+
+\begin{align}
+  (\#eq:chestfact1)
+  p(V) =
+  p(a)p(s)p(t|a)p(l|s)p(b|s)p(e|t,l)
+  p(d|e, b)p(x|e).
+\end{align}
+
+
+## Queries to networks
+
+Suppose we are given the evidence (sometimes also called "finding")
+that a set of variables $E\subset V$ have a specific value $e^*$.
+With this evidence, we are often interested in the conditional
+distribution $p(v|E=e^*)$ for some of the variables $v \in V \setminus
+E$ or in $p(U|E=e^*)$ for a set $U\subset V \setminus E$. Interest
+might also be in calculating the probability of a specific event,
+e.g.\ the probability of seeing a specific evidence, i.e.\ $p(E=e^*)$.
+Other types of evidence (called soft evidence, virtual evidence or
+likelihood evidence) are discussed in Section \@ref(sec:hard-soft).
+
+For example that a person has recently visited Asia and suffers from
+dyspnoea, i.e.\ $a=\mbox{yes}$ and $d=\mbox{yes}$.  In the chest
+clinic example, interest might be in $p(l|e^*)$, $p(t|e^*)$ and
+$p(b|e^*)$, or possibly in the joint (conditional) distribution
+$p(l,t,b|e^*)$.
+
+
+## A one--minute version of gRain
+
+### Specifying a Bayesian network
+
+A simple way of  specifying the model for the chest clinic
+example is as follows.
+
+Specify conditional probability tables (with values as given in
+  @lau/spieg:88) (there are other ways of specifying conditional
+  probability tables, see the package documentation):
+
+```{r }
+yn <- c("yes","no")
+a    <- cpt(~asia, values=c(1, 99),levels=yn)
+t.a  <- cpt(~tub|asia, values=c(5, 95, 1, 99),levels=yn)
+s    <- cpt(~smoke, values=c(5, 5), levels=yn)
+l.s  <- cpt(~lung|smoke, values=c(1, 9, 1, 99), levels=yn)
+b.s  <- cpt(~bronc|smoke, values=c(6, 4, 3, 7), levels=yn)
+e.lt <- cpt(~either|lung:tub,values=c(1, 0, 1, 0, 1, 0, 0, 1),levels=yn)
+x.e  <- cpt(~xray|either, values=c(98, 2, 5, 95), levels=yn)
+d.be <- cpt(~dysp|bronc:either, values=c(9, 1, 7, 3, 8, 2, 1, 9), levels=yn)
+``` 
+
+Compile list of conditional probability tables.
+
+```{r }
+chest_cpt <- compile_cpt(a, t.a, s, l.s, b.s, e.lt, x.e, d.be)
+chest_cpt
+``` 
+
+The components are arrays, but coercion into dataframes sometimes
+makes it easier to digest the components.
+
+```{r }
+chest_cpt$tub
+chest_cpt$tub  |> as.data.frame.table()
+``` 
+
+Create the network:
+```{r  } 
+chest_bn <- grain(chest_cpt)
+chest_bn
+```
+
+Default is that the network is compiled at creation time, but if one
+chooses not to do so, compilation can be done with:
+
+```{r  } 
+chest_bn <- compile(chest_bn)
+```
+
+
+
+### Setting evidence and querying a network {#sec:querying-network}
+
+In the chest clinic example, there are three disease variables, two
+background variables and two symptoms. Following the narrative, we can
+set evidence that a person has recently visited Asia and has dyspnoea:
+
+```{r}
+disease <- c("tub", "lung", "bronc")
+asia_dysp <- list(asia="yes", dysp="yes")
+```
+
+Initially, the network can be queried without evidence:
+
+```{r }
+chest_bn |> qgrain(nodes=disease, type="marginal")
+chest_bn |> qgrain(nodes=disease, type="marginal", simplify = TRUE)
+
+chest_bn |> qgrain(nodes=disease, type="joint") 
+chest_bn |> qgrain(nodes=disease, type="joint", simplify = TRUE)
+
+chest_bn |> qgrain(nodes=disease, type="conditional")
+chest_bn |> qgrain(nodes=disease, type="conditional", simplify = TRUE)
+``` 
+
+Above we obtain the marginal, joint distributions and conditional
+distribution for the disease variables. The output can in some cases
+be simplified to dataframes. For the conditional distribution, we
+obtain the conditional distribution of the first node given the rest
+of the nodes.
+
+
+
+## Setting evidence
+
+Evidence can be entered in different ways:
+
+```{r}
+asia_dysp <- list(asia="yes", dysp="yes")
+
+chest_ev <- chest_bn |>
+    evidence_add(evidence=asia_dysp)
+
+chest_ev <- chest_bn |>
+    setEvidence(evidence=asia_dysp)
+
+## chest_ev <- chest_bn |> ## For backward compatibility
+##    setEvidence(nodes=c("asia", "dysp"), states=c("yes", "yes"))
+```
+
+The evidence is a list and can conveniently be displayed as a dataframe:
+
+```{r }
+chest_ev |> getEvidence() |> as.data.frame()
+
+chest_ev |> evidence_get() |> as.data.frame()
+
+
+``` 
+
+```{r }
+chest_ev |> querygrain(nodes=disease, simplify = TRUE)
+chest_ev |> ask(nodes=disease, simplify = TRUE)
+
+chest_ev |> pEvidence()
+``` 
+
+The network can be queried again, and we can also obtain the
+probability of observing this evidence:
+
+```{r }
+chest_ev |> querygrain(nodes=disease, simplify=TRUE)
+chest_ev |> pEvidence()
+chest_ev |> evidence_p()
+``` 
+
+```{r }
+chest_bn |> pEvidence(evidence=list(asia="yes", dysp="yes"))
+``` 
+
+
+The probability of observing a specific evidence can be found by
+  setting the evidence as a vector of weights. This is useful in
+  connection with soft evidence (also called likelihood evidence), see
+  Section~\@ref(sec:hard-soft).
+
+## Hints and shortcuts {#sec:small-shortcuts}
+
+An alternative way of specifying a network is by first defining CPTs
+and then entering values afterwards. Programmatically, this can be
+done as:
+
+```{r }
+yn <- c("yes", "no")
+
+node_parents_list <-
+    list("asia", c("tub", "asia"), "smoke", c("lung", "smoke"),
+         c("bronc", "smoke"), c("either", "tub", "lung"),
+         c("xray", "either"), c("dysp", "bronc", "either"))
+
+## nms <- unique(unlist(node_parents_list))
+## universe <- setNames(rep(list(yn),length(nms)), nms)
+## universe |> head(3)
+
+chest_dummy_cpt2 <- lapply(node_parents_list, function(f){
+    cpt(f, levels=yn)
+})
+bn_template <- compile_cpt(chest_dummy_cpt2) |> grain()
+``` 
+
+Above the network has ones in all potentials. Next update values in
+(some of the) potentials:
+
+```{r}
+cpt_values <- list(asia=c(1, 99),
+                   tub=c(5, 95, 1, 99),
+                   smoke=c(5, 5),
+                   lung=c(1, 9, 1, 99),            
+                   bronc=c(6, 4, 3, 7),
+                   either=c(1, 0, 1, 0, 1, 0, 0, 1),
+                   xray=c(98, 2, 5, 95),
+                   dysp=c(9, 1, 7, 3, 8, 2, 1, 9)
+                   )
+
+bn_real <- replace_cpt(bn_template, cpt_values)
+```
+
+```{r}
+bn_template |> qgrain(evi=asia_dysp, nodes=disease, simplify = TRUE)
+bn_real |> qgrain(evi=asia_dysp, nodes=disease, simplify = TRUE)
+
+bn_template |> ask(nodes=disease, evi=asia_dysp, simplify = TRUE)
+bn_real |> ask(nodes=disease, evi=asia_dysp, simplify = TRUE)
+```
+
+
+Consider querying a network where focus is on 
+  marginal distributions (the default). If all variables have the same
+  levels (as the case is here), the output can be coerced to a
+  dataframe:
+
+```{r }
+querygrain(chest_bn, nodes=disease, simplify = TRUE)
+``` 
+
+In the more general case the output can be coerced to a list of dataframes
+
+```{r }
+querygrain(chest_bn, nodes=disease, result="data.frame")
+``` 
+
+A typical use of gRain involves setting evidence and then
+  querying the network afterwards. This can all be done in one call of
+  `querygrain()` (notice that this does not alter the network object):
+
+```{r } 
+chest_bn |> querygrain(evidence=asia_dysp,
+                       nodes=disease, simplify = TRUE)
+```
+
+Evidence can be also be given as a vector of weights. 
+
+```{r } 
+chest_bn |> querygrain(evidence=list(asia=c(1, 0), dysp=c(1, 0)),
+                       nodes=disease, simplify = TRUE)
+```
+
+The weights must be non-negative but need not sum to one. This is
+important in connection with soft evidence (also called likelihood
+evidence), see Section~\@ref(sec:hard-soft). Above, the weights could
+also have been set as c(.1, 0). The important part is that the
+zero excludes certain states as being impossible.
+
+
+Nodes on which evidence is given are not reported unless `exclude=FALSE` 
+
+```{r } 
+querygrain(chest_bn,
+           evidence=list(asia=c(1, 0), dysp=c(1, 0)),
+           nodes=c("lung", "bronc", "asia", "dysp"),
+           exclude=FALSE, simplify = TRUE)
+```
+
+If `nodes`are not specified, queries for all nodes without evidence are reported.
+
+```{r } 
+querygrain(chest_bn,
+           evidence=asia_dysp,
+           simplify = TRUE)
+```
+
+If `nodes` are not specified and `exclude=FALSE`, then queries for all nodes are reported.
+
+```{r } 
+querygrain(chest_bn,
+           evidence=asia_dysp,
+           exclude = FALSE, simplify = TRUE)
+```
+
+
+## Conditioning on evidence with zero probability {#sec:zero-probabilities}
+
+Consider setting the evidence
+```{r }
+chest_bn3 <- setEvidence(chest_bn, evidence=list(either="no", tub="yes"))
+``` 
+
+Under the model, this specific evidence has zero probability:
+`either` is true if `tub` is true or `lung` is true (or
+both). Hence the specific evidence is impossible and therefore, all
+conditional probabilities are (under the model) undefined:
+
+```{r }
+pEvidence(chest_bn3)
+querygrain(chest_bn3, nodes=disease, type="joint")
+``` 
+
+
+## Hard and soft (likelihood) evidence {#sec:hard-soft}
+
+Below we describe  how to work with virtual evidence (also known
+as soft evidence or likelihood evidence) in gRain. This is done via the function
+setEvidence().
+
+The clique potential representation in a Bayesian network gives
+\begin{align}
+  p(x) \propto \psi(x) = \prod_{C} \psi_C(x_C).
+\end{align}
+
+Here we recall that the whole idea in computations with Bayesian
+networks is to avoid calculation the product on the right hand
+side above. Instead computations are based on propagation (multiplying,
+dividing and summing clique potentials $\psi_C$ in an appropriate
+order, and such an appropriate order comes from a junction tree).
+The normalizing constant, say $c=\sum_x \psi(x)$, comes out of
+propagation as a "by-product".
+
+Suppose a set of nodes $E$ are known to have a specific value,
+i.e. $x_E=x^*_E$. This is called hard evidence. The probability of
+the event $x_E=x^*_E$ is
+\begin{align}
+  p(x_E=x^*_E)=E_p\{I(x_E=x^*_E)\} = \sum_x I(x_E=x^*_E) p(x)
+  = \frac{1}{c} \sum_x I(x_E=x^*_E) \psi(x)
+\end{align}
+
+The computations are based on modifying the clique potentials $\psi_C$
+by giving value zero to states in $\psi_C$ which are not consistent
+with $x_E=x^*_E$. This can be achieved with an indicator function, say
+$L_C(x_C)$ such that we obtain a set of new potentials $\tilde \psi_C(x)
+= L_C(x_C) \psi_C(x_C)$. Propagation with these new potentials gives,
+as a by product, $\tilde c=\sum \tilde \psi(x)$ where
+$\tilde\psi(x)= \prod_C \tilde\psi_C(x_C)$. Consequently, we have
+$p(x_E=x^*_E)=\tilde c / c$.
+
+In a more general setting we may have non--negative weights $L(x)$ for
+each value of $x$. We may calculate
+\begin{align}
+  E_p\{L(X)\} = \sum_x L(x)p(x)
+\end{align}
+If $L(X)$ factorizes as $L(X)= \prod_C L_C(X_C)$ then the computations are
+carried out as outlined above, i.e.\ by the message passing scheme.
+
+
+
+### Hard evidence  {#sec:hard-evidence}
+
+
+Suppose we want to make a diagnosis about tuberculosis given the evidence that a person is a smoker.
+We call such evidence hard evidence because the state of the variables are known with certainty.
+The function setEvidence() can  be used for this purpose. The following forms are equivalent (the reason will be explained below): 
+
+```{r }
+chest_ev1 <- setEvidence(chest_bn, evidence=list(smoke="yes"))
+chest_ev2 <- setEvidence(chest_bn, evidence=list(smoke=c(1, 0)))
+``` 
+
+```{r }
+chest_bn |> querygrain(nodes=disease, simplify = TRUE)
+chest_ev1 |> querygrain(nodes=disease, simplify = TRUE)
+``` 
+
+
+### Soft evidence (also called virtual evidence or likelihood evidence) {#sec:virt-evid-likel}
+
+Suppose we are not certain if a patient is a smoker or not. We shall assume that for patients who are smokers, we would (correctly) guess so in 80\% of the cases, whereas for patients who are not smokers we would (erroneously) guess that they are smokers in 10\% of the cases.
+
+In gRain this, situation can be handled in two different ways. One way is to introduce a new variable `smoke_guess` with `smoke` as its only parent and then we enter evidence for this node.
+
+```{r}
+g.s <- cpt(~ smoke_guess|smoke, levels=yn,
+              values=c(.8, .2, .1, .9))
+g.s
+```
+
+```{r}
+chest_ext <- c(cpt_list, list(g.s)) |> compile_cpt() |> grain()
+querygrain(chest_ext, nodes=disease, simplify = TRUE)
+querygrain(chest_ext, nodes=disease, evidence=list(smoke="yes"), simplify = TRUE)
+querygrain(chest_ext, nodes=disease, evidence=list(smoke_guess="yes"), simplify = TRUE)
+```
+
+Another approach is to enter virtual evidence
+in the original network as shown below.
+
+```{r }
+chest_ve <- chest_bn |>
+    setEvidence(evidence = list(smoke = c(.8, .1)))
+chest_ve |> querygrain(nodes=disease, simplify = TRUE)
+getEvidence(chest_ve)
+``` 
+
+Consequently, specifying the hard evidence that 
+ `smoke="yes"` can
+be done as
+```{r }
+chest_bn |> setEvidence(evidence=list(smoke=c(1, 0)))
+``` 
+
+## Building a network from data {#sec:using-data}
+
+When building a network from data, there are two situations to be distinguished between. 1) The network is known and the data is used to estimate the parameters in the network. 2) The network is unknown and the data is used to estimate the network structure and the parameters in the network.
+
+In both cases it is possible to have a network specified as a dag or as an undirected (chordal) graph. The following code illustrates how to build a network from data. The data is simulated data from the chest clinic example.
+
+
+### Building a network from a known network {#sec:building-known}
+
+The following list defines a dag for the chest clinic example: Each component is a list with two elements: the first element is the node and the second element is a vector of parents. 
+
+```{r}
+node_parents_list <- list("asia", c("tub", "asia"), "smoke", c("lung", "smoke"),
+              c("bronc", "smoke"), c("either", "tub", "lung"),
+              c("xray", "either"), c("dysp", "bronc", "either"))
+
+g1 <- dag(node_parents_list)
+par(mar=c(0,0,0,0))
+plot(g1)
+```
+
+The following list defines an undirected graph for the chest clinic example: Each component is a list with the nodes in the clique.
+
+```{r}
+cliq <- list(c("xray", "either"), c("asia", "tub"), c("smoke", "lung", 
+"bronc"), c("lung", "either", "tub"), c("lung", "either", "bronc"
+), c("bronc", "either", "dysp"))
+
+g2 <- ug(cliq)
+par(mar=c(0,0,0,0))
+plot(g2)
+```
+
+A netowrk can be built from data using:
+
+```{r}
+bn1 <- grain(g1, data=gRbase::chestSim100000)
+bn2 <- grain(g2, data=gRbase::chestSim100000)
+```
+
+It is explained in the references that the two networks specify the same joint distribution because internally a dag is converted to an undirected chordal graph which provides the basis for the computations. In practice the two joint distributions differ slightly, and this is because the way in which information is extracted from data, see examples below.
+
+```{r}
+j1 <- querygrain(bn1, type="joint")
+j2 <- querygrain(bn2, type="joint")
+d <- j1 %a-% j2
+max(abs(d))
+```
+
+
+## Building networks from data {#sec:building-networks}
+
+The following two graphs specify the same model stating that A and C are conditionally independent given B. The first graph is a directed acyclic graph (DAG) and the second graph is an undirected graph (UG). 
+
+```{r }
+g1  <- dag(~A:C + B:C, result="igraph")
+g2  <- ug(~A:C + B:C, result="igraph")
+par(mfrow=c(1,2), mar=c(0,0,0,0))
+plot(g1); plot(g2)
+``` 
+
+Given such a graph, we can build a network from data. Suppose data is as follows:
+
+```{r }
+tab <- tabNew(~A:B:C, levels=c("+", "-"), 
+              values=c(1, 2, 3, 5, 1, 2, 1, 4))
+``` 
+
+A network can be built from data using:
+
+```{r }
+bn1 <- grain(g1, data=tab)
+bn2 <- grain(g2, data=tab)
+``` 
+
+The two networks specify the same joint distribution:
+
+```{r}
+j1 <- querygrain(bn1, type="joint")
+j2 <- querygrain(bn2, type="joint")
+d <- j1 %a-% j2
+max(abs(d))
+```
+
+
+In the process of creating networks, conditional probability tables
+are extracted when the graph is a dag and clique potentials are
+extracted when the graph is a chordal (i.e.\ triangulated) undirected
+graph. This takes place as follows (internally):
+
+Neet to estimate $p(A|B)$, $p(C|B)$ and $p(B)$ from the data. This can be done as follows:
+```{r}
+p <- extract_cpt(tab, g1) |> c()
+p
+```
+
+Likewise, we can extract the clique potentials from the data, call these $q(AC)$ and $q(BC)$:
+
+```{r}
+q <- extract_pot(tab, g2) |> c()
+q
+```
+
+Clique potentials are not uniquely defined, but the product of clique potentials is. In the implementation in gRain, $q(AC)$ is the relative frequency in the $AC$-marginal table, i.e. $p(AB)$. Moreover and $q(BC)$ is the frequency in the $BC$-marginal table divided by the frequency in the $C$-marginal table. Hence, the product of the clique potentials and the product of the cpts is the same as the joint distribution:
+
+```{r}
+tabProd(p) |> ftable()
+tabProd(q) |> ftable()
+```
+
+
+
+### Handling zeros in the data {#sec:handling-zeros}
+
+Next suppose data is as follows
+
+```{r}
+tab0 <- tab
+tab0[1:4] <- 0
+tab0
+```
+
+
+In the process of creating networks above, the following quantities are computed:
+
+```{r}
+n_BC <- tab0 |> tabMarg(~B:C)
+n_AC <- tab0 |> tabMarg(~A:C)
+n_C  <- tab0 |> tabMarg(~C)
+
+p.B_C <- n_BC %a/% n_C
+p.A_C <- n_AC %a/% n_C
+p.C <- n_C / sum(n_C)
+p.C
+p.B_C
+p.A_C
+```
+
+```{r }
+bn01 <- grain(g1, data=tab0)
+bn02 <- grain(g2, data=tab0)
+``` 
+
+
+```{r}
+p <- extract_cpt(tab0, g1) |> c()
+q <- extract_pot(tab0, g2) |> c()
+p
+q
+tabProd(p) |> ftable()
+tabProd(q) |> ftable()
+```
+
+
+```{r }
+eps <- 0.01
+bn01e <- grain(g1, data=tab0, smooth=eps)
+bn02e <- grain(g2, data=tab0, smooth=eps)
+``` 
+
+
+```{r}
+j1 <- querygrain(bn01e, type="joint")
+j2 <- querygrain(bn02e, type="joint")
+j1
+j2
+d <- j1 %a-% j2
+max(abs(d))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+### Building a network from an unknown network {#sec:building-unknown}
+
+This is a more complex task, sometimes called structural learning. The
+following code illustrates how to build a network from data. The data
+is simulated data from the chest clinic example.
+
+We illustrate two approaches: 1) based on the stepwise algorithm in
+the gRim package and 2) based on the hill climbing algorithm in the
+bnlearn package.
+
+
+```{r}
+dat <- gRbase::chestSim10000
+
+## Using gRim and stepwise selection
+sat_model <-  gRim::dmod(~.^., data=dat)
+mm1 <- stepwise(sat_model, criterion="aic", type="decomposable")
+bn1 <- grain(mm1$modelinfo$ug, data=dat)
+bn1 <- grain(mm1$modelinfo$ug, data=dat, smooth=0.01)
+
+## Using bnlearn and hill climbing
+sat_graph <- bnlearn::random.graph(names(dat), prob = 1) # complete graph
+mm2 <- bnlearn::hc(dat, start=sat_graph)
+bn2 <- bnlearn::as.grain(bnlearn::bn.fit(mm2, dat))
+```
+
+An important detail is that gRim works with decomposable undirected
+graphical models (see Figure \@ref(fig:bn1)) while bnlearn works with
+dags (see Figure \@ref(fig:bn2), left). However, even for models
+specified as dags, all comptational structures are based on a
+corresponding undirected graph (see Figure \@ref(fig:bn2), left). For
+details, see the references.
+
+```{r bn1, echo=F, fig.cap="XXXX."}
+par(mfrow=c(1, 1), mar=c(0,0,0,0))
+coords <- layout_(bn1$ug, nicely())
+plot(bn1$ug, layout=coords)
+```
+
+```{r bn2, echo=F, fig.cap="XXXX."}
+par(mfrow=c(1,2), mar=c(0,0,0,0))
+new_coords <- function(coords, src, dst) {
+  nms1 <- nodes(src)
+  nms2 <- nodes(dst)
+  coords[match(nms2, nms1),]
+}
+plot(bn2$dag, layout=new_coords(coords, bn1$ug, bn2$dag))
+plot(bn2$ug, layout=new_coords(coords, bn1$ug, bn2$ug))
+```
+
+
+
+
+
+## Extending networks to include other types of variables {#sec:mixture}
+
+gRain only handles discrete variables with a finite state space, but
+using likelihood evidence it is possible to work with networks with
+both discrete and continuous variables (or other types of variables).
+This is possible only when he networks have a specific structure. This
+is possible when no discrete variable has non--discrete parents.
+
+Take a simple example: Form a network for variables $x=(x_1, x_2)$. 
+Conceptually augment this network with additional variables $y=(y_1, y_2)$ where
+$y_1|x_1=k \sim N(\mu_k, v)$ and
+$y_2|x_2=k \sim Poi(l_k)$ for $k=1,2$. Also we make the assumption
+that $y_1$ and $y_2$ are independent given $x=(x_1, x_2)$. This gives the DAG
+below:
+
+```{r }
+par(mar=c(0,0,0,0))
+plot(dag(~y1:x1 + x2:x1 + y2:x2))
+``` 
+
+
+A network for $x$ can be constructed as:
+
+```{r }
+u <- list(x1=yn, x2=yn)
+x1 <- cpt(~x1, values=c(1, 3), levels=u)
+x2 <- cpt(~x2|x1, values=c(3, 1, 1, 7), levels=u)
+bn <- grain(compile_cpt(x1, x2))
+querygrain(bn, simplify=TRUE)
+```
+
+The augmentation of $y|x$ can go along these lines: The parameters
+describing $y|x$ are set to be:
+
+```{r }
+s <- 2
+mu <- c(mu1=2, mu2=5)
+lambda <- c(lambda1=1, lambda2=5)
+``` 
+
+Suppose we observe $y_1 = y_1^*$. Then
+
+\begin{align}
+  p(x|y_1= y_1^*)\propto p(x_1)p(x_2|x_1) p(y_1=y_1^*|x_1) =  p(x_1)p(x_2|x_1) L_1(x_1)
+\end{align}
+
+where $L_1(x_1)$ denotes the likelihood. In a network setting this
+corresponds to changing $p(x_1)$ as
+\begin{align}
+  p(x_1) \leftarrow p(x_1)L_1(x_1)
+\end{align}
+and then carry on with propagation. This can be achieved in different ways. 
+
+The likelihood is:
+```{r }
+y1_obs <- 14 # Observed value for y1_obs
+lik1 <- dnorm(y1_obs, mean=mu, sd=s)
+lik1
+``` 
+
+One is by setting the likelihood as evidence. 
+An alternative is to explicitly modify the CPT which specifies $p(x_1)$:
+```{r }
+querygrain(bn, simplify=TRUE, exclude=FALSE)
+bn1 <- setEvidence(bn, evidence=list(x1=lik1))
+querygrain(bn1, simplify=TRUE, exclude=FALSE)
+
+x1_upd <- getgrain(bn, "cptlist")$x1 * lik1
+bn2 <- replace_cpt(bn, list(x1=x1_upd))
+querygrain(bn2, simplify=TRUE) 
+``` 
+
+A final remark: The conditional distribution of
+$y_1$ is normal, but the unconditional distribution is a mixture of
+normals. Likewise, the conditional distribution of
+$y_2$ is poisson, but the unconditional distribution is a mixture of
+two poisson distributions. Evidence on, say $y_1$ changes the belief in $x_1$ and
+$x_2$ and this in turn changes the distribution of
+$y_2$ (evidence changes the mixture weights.)  
+
+
+```{r }
+nsim <- 10000
+xsim_marg <- simulate(bn, nsim, seed=2022)
+xsim_cond <- simulate(bn1, nsim, seed=2022)
+y2marg  <- rpois(n=nsim, lambda=lambda[xsim_marg$x2])
+y2cond  <- rpois(n=nsim, lambda=lambda[xsim_cond$x2])
+summary(y2marg)
+summary(y2cond)
+par(mfrow=c(1,2))
+y2marg |> hist(prob=T, ylim=c(0, .4), breaks=20, main="marginal p(y2)")
+y2cond |> hist(prob=T, ylim=c(0, .4), breaks=20, main="conditional p(y2|y1*)")
+``` 
+
+
+
+## Brute force computations and why they fail {#sec:brute-force-comp}
+
+
+The gRain package makes computations as those outlined above in a very
+efficient way; please see the references.  However, it is in this
+small example also possible to make the computations directly: We can
+construct the joint distribution (an array with $2^8=256$ entries)
+directly as:
+
+```{r  } 
+joint <- tabProd(chest_cpt)
+dim(joint)
+joint  |> as.data.frame.table() |> head()
+```
+
+This will clearly fail even moderate size problems: For example, a
+model with $80$ nodes each with $10$ levels will give a joint state
+space with $10^{80}$ states; that is about the number of atoms in the
+universe. Similarly, $265$ binary variables will result in a joint
+state space of about the same size. Yet, gRain has been used
+successfully in models with tens of thousand variables.  The ``trick''
+in gRain is to make all computations without ever forming the joint
+distribution.
+
+However, we
+can do all the computations by brute force methods as we will
+illustrate here:
+
+
+Marginal distributions are
+```{r  } 
+tabMarg(joint, "lung")
+tabMarg(joint, "bronc")
+```
+
+Conditioning on evidence can be done in different ways: The
+conditional density is a $6$--way slice of the original $8$--way joint
+distribution:
+
+```{r  } 
+asia_dysp
+cond1 <- tabSlice(joint, slice=asia_dysp)
+cond1 <- cond1 / sum(cond1)
+dim(cond1)
+tabMarg(cond1, "lung")
+tabMarg(cond1, "bronc")
+```
+
+Alternatively, multiply all entries not consistent by zero and all
+other entries by one and then marginalize:
+
+```{r  } 
+cond2 <- tabSliceMult(joint, slice=asia_dysp)
+cond2 <- cond2 / sum(cond2)
+dim(cond2)
+tabMarg(cond2, "lung")
+tabMarg(cond2, "bronc")
+```

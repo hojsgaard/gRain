@@ -4,7 +4,7 @@
 #'
 #' @name internal-grain
 #'
-#' @aliases %>% getgin getgrain plot.grain printlist splitVec
+#' @aliases getgin getgrain plot.grain printlist splitVec
 
 ## #' 
 ## #' @aliases summary.grain print.huginNet print.cptable print.cpt_spec
@@ -13,7 +13,7 @@
 ## #'     splitVec.default splitVec.list valueLabels.cptable
 ## #'     varNames.cptable valueLabels.table varNames.table setSliceValue
 ## #'     tableListProd print.grainEvidence_ print.grainJEvidence_
-## #'     setJointEvidence retractJointEvidence %>%
+## #'     setJointEvidence retractJointEvidence 
 #' 
 #' @keywords internal
 NULL

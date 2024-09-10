@@ -33,9 +33,8 @@
 #' chest2 <- setFinding(chest, c("VisitToAsia", "Dyspnoea"),
 #'                             c("yes", "yes"))
 #' simulate(chest2, n=10)
-#' @export simulate.grain
-
-#' @export 
+#' 
+#' @export
 simulate.grain <- function(object, nsim=1, seed=NULL, ...){
 
     if (!isCompiled(object)){
@@ -60,7 +59,7 @@ simulate.grain <- function(object, nsim=1, seed=NULL, ...){
         ctab <- plist[[ii]]
         sep  <- seplist[[ii]]    ## What we condition on
         if (length(sep) == 0)
-            res <- simulateArray(ctab, nsim=nsim)
+            res <- simulateArray(ctab, nsim=nsim, seed=seed)
         else {                            
             mtab <- tableMargin(ctab, sep)     ## FIXME: Old table-function
             ctab <- tableOp2(ctab, mtab, `/`)  ## FIXME: Old table-function
@@ -85,7 +84,7 @@ simulate.grain <- function(object, nsim=1, seed=NULL, ...){
                 idx  <- given[match(kk, key), ]
                 ## dd <<- list(x=ctab, nsim=n_sim, margin=sepidx, value.margin=idx)
                 res[kk == key, ] <- simulateArray(ctab, nsim=n_sim,
-                                                  margin=sepidx, value.margin=idx)
+                                                  margin=sepidx, value.margin=idx, seed=seed)
             }
         }         
         ans[, colnames(res)] <- res

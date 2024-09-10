@@ -51,20 +51,20 @@
 #' getgrain(wet.bn, "cpt")[c("R","S")]
 #' 
 #' # Update some CPTs
-#' wet.bn <- replaceCPT(wet.bn, list(R=c(.3, .7), S=c(.1, .9, .7, .3)))
+#' wet.bn <- replace_cpt(wet.bn, list(R=c(.3, .7), S=c(.1, .9, .7, .3)))
 #' getgrain(wet.bn, "cpt")[c("R","S")]
 #' 
 #' @export 
 #' @rdname replace-cpt
-replaceCPT <- function(object, value){
-    UseMethod("replaceCPT")
+replace_cpt <- function(object, value){
+    UseMethod("replace_cpt")
 }
 
 ## Modifies cptlist in object. 
 
 #' @export 
 #' @rdname replace-cpt
-replaceCPT.cpt_grain <- function(object, value){
+replace_cpt.cpt_grain <- function(object, value){
 
     if (!isCompiled(object))
         stop("grain object must be compiled")

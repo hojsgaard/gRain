@@ -2,7 +2,6 @@
 % Please edit documentation in R/grain_internal.R
 \name{internal-grain}
 \alias{internal-grain}
-\alias{\%>\%}
 \alias{getgin}
 \alias{getgrain}
 \alias{plot.grain}

@@ -2,13 +2,13 @@
 % Please edit documentation in R/replace_cpt.R
 \name{replace-cpt}
 \alias{replace-cpt}
-\alias{replaceCPT}
-\alias{replaceCPT.cpt_grain}
+\alias{replace_cpt}
+\alias{replace_cpt.cpt_grain}
 \title{Replace CPTs in Bayesian network}
 \usage{
-replaceCPT(object, value)
+replace_cpt(object, value)
 
-\method{replaceCPT}{cpt_grain}(object, value)
+\method{replace_cpt}{cpt_grain}(object, value)
 }
 \arguments{
 \item{object}{A \code{grain} object.}
@@ -48,7 +48,7 @@ wet.bn <- compileCPT(p.R, p.S_R, p.G_SR)  |> grain()
 getgrain(wet.bn, "cpt")[c("R","S")]
 
 # Update some CPTs
-wet.bn <- replaceCPT(wet.bn, list(R=c(.3, .7), S=c(.1, .9, .7, .3)))
+wet.bn <- replace_cpt(wet.bn, list(R=c(.3, .7), S=c(.1, .9, .7, .3)))
 getgrain(wet.bn, "cpt")[c("R","S")]
 
 }

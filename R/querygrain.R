@@ -6,7 +6,7 @@
 #' 
 #' @name querygrain
 #' 
-#' @aliases querygrain querygrain.grain qgrain
+#' @aliases querygrain querygrain.grain qgrain ask ask.grain
 #'
 #' @param object A `grain` object.
 #' @param nodes A vector of nodes; those nodes for which the
@@ -63,6 +63,26 @@ querygrain <- function(object, nodes=nodeNames(object), type="marginal",
   UseMethod("querygrain")
 }
 
+#' @export
+ask <- function(object, nodes=nodeNames(object), type="marginal",
+                       evidence=NULL, exclude=TRUE, normalize=TRUE,
+                       simplify=FALSE, result="array", details=0)
+{
+  UseMethod("ask")
+}
+
+
+#' @export
+ask.grain <- function(object, nodes = nodeNames(object), type = "marginal",
+                      evidence=NULL, exclude=TRUE, normalize=TRUE,
+                      simplify=FALSE,
+                      result="array", details=0){
+    cl <- match.call()
+    cl[[1]] <- as.name("querygrain.grain")
+    eval(cl)
+}
+
+
 #' @export 
 qgrain <- querygrain
 
@@ -73,7 +93,7 @@ querygrain.grain <- function(object, nodes = nodeNames(object), type = "marginal
                              result="array", details=0){
 
     if (!is.null(evidence)){
-        if (details>=1) cat(" Inserting (additional) evidence\n")
+        if (details >= 1) cat(" Inserting (additional) evidence\n")
         object <- setEvidence(object, evidence=evidence)
     }
     
@@ -81,9 +101,14 @@ querygrain.grain <- function(object, nodes = nodeNames(object), type = "marginal
     result <- match.arg(result, c("array","data.frame"))
     t0 <- proc.time()
 
-    if (is.null(nodes)) return(invisible(NULL))
-    else if (inherits(nodes, "formula")) nodes <- unlist(rhsf2list(nodes))
-
+    if (is.null(nodes)){
+        return(invisible(NULL))
+    }
+    else {
+        if (inherits(nodes, "formula"))
+            nodes <- unlist(rhsf2list(nodes))
+    }
+    
     if (!isCompiled(object)){ 
         if (details >= 1) cat("  Compiling (and propagating) model ...\n")
         object <- compile(object, propagate=TRUE)
@@ -113,11 +138,14 @@ querygrain.grain <- function(object, nodes = nodeNames(object), type = "marginal
                    out <- qobject
            })
 
+
     if (simplify){
-        out <- simplify_query(out)
-    } else {
-        if (result == "data.frame")
-            out <- lapply(out, as.data.frame.table)
+        if (identical(type, "marginal")){
+            out <- simplify_query(out)
+            out <- out[nodes, ]
+        } else {
+            out <- as.data.frame.table(out)
+        }
     }
     
     if (object$control$timing)
@@ -161,7 +189,11 @@ querygrain.grain <- function(object, nodes = nodeNames(object), type = "marginal
 
         object  <- absorbEvidence( object )
         zz <- lapply(1:nrow(gr2), function(i){
-            tmp <- setFinding(object, nodes=nodes2, states=gr2[i,])
+            
+##            tmp <- setFinding(object, nodes=nodes2, states=gr2[i,])
+            ev <- setNames(as.list(gr2[i,]), nodes2)
+            tmp <- setEvidence(object, evidence=ev)
+            
             r   <- .nodeMarginal(tmp, nodes[1])
             v   <- r[[1]] * pEvidence(tmp)
             v
@@ -202,12 +234,4 @@ querygrain.grain <- function(object, nodes = nodeNames(object), type = "marginal
         return( out )
     }
 }
-
-##mtab   <- tableMargin( cpot, cvert ) ## FIX tableMargin replaced
-
-## querygrain - .nodeMarginal: Calculations based on equipot
-##cpot   <- pot(object)$pot_equi[[ idx ]]
-
-##idxb <- sapply(cliq, function(cq) subsetof(nodes, cq))
-##tab   <- pot(object)$pot_equi[[ which(idxb)[1] ]]
 

@@ -4,6 +4,8 @@
 \alias{querygrain}
 \alias{querygrain.grain}
 \alias{qgrain}
+\alias{ask}
+\alias{ask.grain}
 \title{Query a network}
 \usage{
 querygrain(

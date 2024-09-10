@@ -78,8 +78,8 @@ pt
 cp
 
 # Both specify the same probability distribution
-tabListMult(pt) \%>\% as.data.frame.table
-tabListMult(cp) \%>\% as.data.frame.table
+tabListMult(pt) |> as.data.frame.table()
+tabListMult(cp) |> as.data.frame.table()
 
 \dontrun{
 # Bayesian networks can be created as
@@ -91,6 +91,7 @@ bn.daG  <- grain(cp)
 bn.uG   <- grain(uG, data=lizard)
 bn.daG  <- grain(daG, data=lizard)
 }
+
 }
 \references{
 Søren Højsgaard (2012). Graphical Independence Networks

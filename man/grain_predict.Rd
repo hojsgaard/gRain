@@ -43,10 +43,10 @@ finding (evidence) on other variables in an independence
 network.
 }
 \examples{
-data(chest_cpt)
+data(example_chest_cpt)
 data(chestSim500)
 
-chest.bn <- grain(compileCPT(chest_cpt))
+chest.bn <- grain(compileCPT(example_chest_cpt))
 nd <- chestSim500[1:4]
 
 predict(chest.bn, response="bronc", newdata=nd)
