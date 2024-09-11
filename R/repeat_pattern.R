@@ -83,7 +83,9 @@ repeat_pattern <- function(plist, instances, unlist=TRUE, data=NULL){
 }
 
 
-#' @rdname repeat_pattern
+#' @rdname old_repeat_pattern
+#' @inherit repeat_pattern
+#' @concept old_names
 #' @export 
 repeatPattern <- repeat_pattern
 

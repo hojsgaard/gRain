@@ -10,3 +10,4 @@ NAMESPACE_OLD
 docs
 README.Rmd
 rain_devel.Rproj
+_pkgdown.yml

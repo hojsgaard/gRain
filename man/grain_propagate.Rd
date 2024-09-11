@@ -5,14 +5,11 @@
 \alias{propagate.grain}
 \alias{propagateLS}
 \alias{propagateLS__}
-\alias{compute_p_evidence}
-\title{Propagate a graphical independence network (a Bayesian network)}
+\title{Propagate in a Bayesian network}
 \usage{
 \method{propagate}{grain}(object, details = object$details, engine = "cpp", ...)
 
 propagateLS(cq_pot_list, rip, initialize = TRUE, details = 0)
-
-compute_p_evidence(object, details = object$details, engine = "cpp", ...)
 }
 \arguments{
 \item{object}{A grain object}

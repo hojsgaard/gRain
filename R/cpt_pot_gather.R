@@ -86,11 +86,13 @@ compile_pot <- function(x, ..., forceCheck=TRUE){
 ## For backward compatibility; deprecate in future release
 ## -------------------------------------------------------------
 
-#' @rdname components_gather
+#' @rdname old_components_gather
+#' @inherit components_gather
+#' @concept old_names
 #' @export
 compileCPT <- compile_cpt
 
-#' @rdname components_gather
+#' @rdname old_components_gather
 #' @export
 compilePOT <- compile_pot
 

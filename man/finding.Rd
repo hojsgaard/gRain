@@ -92,5 +92,6 @@ with the gRain Package for R. Journal of Statistical Software, 46(10), 1-26.
 \author{
 Søren Højsgaard, \email{sorenh@math.aau.dk}
 }
+\concept{old_names}
 \keyword{models}
 \keyword{utilities}

@@ -5,7 +5,7 @@
 \alias{compile.grain}
 \alias{compile.cpt_grain}
 \alias{compile.pot_grain}
-\title{Compile a graphical independence network (a Bayesian network)}
+\title{Compile Bayesian network.}
 \usage{
 \method{compile}{grain}(
   object,

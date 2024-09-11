@@ -24,7 +24,6 @@
 #'   * \code{extract_pot}: A list of clique potentials.
 #'   * \code{extract_marg}: A list of clique marginals. 
 #'
-#'
 #' @seealso \code{\link{compileCPT}}, \code{\link{compilePOT}},
 #'     \code{\link{grain}}
 #'
@@ -103,8 +102,6 @@ extract_pot <- function(data_, graph, smooth=0) {
     class(out)         <- "pot_representation"
     out
 }
-
-
 
 #' @export 
 #' @rdname components_extract
@@ -266,6 +263,8 @@ extract_marg_worker <- function(data_, marg, seps=NULL, smooth=0) {
 }
 
 
+
+
 ## helper function; can possibly be made faster
 marginal_data <- function(data_, set, is.df=NULL) {
 
@@ -294,38 +293,20 @@ is_valid_data <- function(data_) {
 ## FIXME for backward compatibility; deprecate in future release
 ## ---------------------------------------------------------------
 
-#' @rdname components_extract
+
+
+#' @name old_components_extract
+#' @inherit components_extract
+#' @concept old_names
 #' @export 
 extractCPT <- extract_cpt
 
-#' @rdname components_extract
+#' @rdname old_components_extract
 #' @export 
 extractPOT <- extract_pot
 
-#' @rdname components_extract
+#' @rdname old_components_extract
 #' @export 
 extractMARG <- extract_marg
 
-
-
-## #' @rdname components_extract
-## data2cpt <- extract_cpt
-
-## #' @rdname components_extract
-## data2pot <- extract_pot
-
-## #' @rdname components_extract
-## data2marg <- extract_marg
-
-
-    ## FIXME : Get rid of this parray stuff (at least as a class)
-    ## out <- lapply(out, as.parray, normalize="first", smooth=smooth)
-    
-    ## out <- lapply(out, function(o){
-    ##     tabNormalize(o, type="first")
-    ## })
-    
-    ## chk <- unlist(lapply(out, function(zz){
-    ##     any(is.na(zz))
-    ## }))
 

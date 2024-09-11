@@ -8,7 +8,7 @@
 \alias{grain.pot_spec}
 \alias{grain.igraph}
 \alias{grain.dModel}
-\title{Graphical Independence Network}
+\title{Create Bayesian network}
 \usage{
 grain(x, ...)
 
@@ -61,7 +61,7 @@ table if the grain is built from a graph plus a dataset.}
 An object of class "grain"
 }
 \description{
-Creating grain objects (graphical independence network).
+Create Bayesian network  (grain objects (graphical independence network)).
 }
 \details{
 If 'smooth' is non-zero then entries of 'values' which a

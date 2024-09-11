@@ -5,7 +5,7 @@
 
 ## ##################################################################
 ##
-#' @title Simulate from an independence network
+#' @title Simulate from a Bayesian network
 #' @description Simulate data from an independence network.
 #' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
 #' @name grain-simulate

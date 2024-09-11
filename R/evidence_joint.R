@@ -91,10 +91,10 @@
 #' @rdname grain_joint_evidence
 setJEvidence <- function(object, evidence=NULL, propagate=TRUE, details=0){
     
-    setJEvidence_(object, evidence=evidence, propagate=propagate, details=details)
+    set_joint_evidence_worker(object, evidence=evidence, propagate=propagate, details=details)
 }
 
-setJEvidence_<- function(object, evidence=NULL, propagate=TRUE, details=0){
+set_joint_evidence_worker<- function(object, evidence=NULL, propagate=TRUE, details=0){
 
     if (!inherits(object, "grain")) {
         stop("'object' is not a grain object")

@@ -1,30 +1,30 @@
 
-#' Get superset for each element in a list
-#'
-#' For each element (vector) x in x_set, find the first element (vector) y
-#' in y_set such that x is contained in y
-#' 
-#' @param x_set Vector or list of vectors.
-#' @param y_set Vector or list of vectors.
-#' @param warn Should a warning be made if an element is found.
-#'
-#' @examples
-#' x_set <- list(c("a", "b"), "e", c("b", "a"))
-#' y_set <- list(c("f","u", "e"), c("a", "b", "c", "a"), c("b", "c", "a"))
-#' get_superset_list(x_set, y_set)
-#' get_superset_list(letters[1:4], y_set)
-#' get_superset_list(letters[1:4], letters[1:10])
-#' get_superset_list(x_set, letters[1:10])
-#' x_set <- list(c("a", "b"), "e", c("b", "a"), "o")
-#' y_set <- list(c("f","u", "e"), c("a", "b", "c", "a"), c("b", "c", "a"))
-#' ## get_superset_list(x_set, y_set, warn=TRUE) ## Will give warning.
-#' get_superset_list(x_set, y_set, warn=FALSE)
-#' 
-#' @export
+## ' Get superset for each element in a list
+## '
+## ' For each element (vector) x in x_set, find the first element (vector) y
+## ' in y_set such that x is contained in y
+## ' 
+## ' @param x_set Vector or list of vectors.
+## ' @param y_set Vector or list of vectors.
+## ' @param warn Should a warning be made if an element is found.
+## '
+## ' @examples
+## ' x_set <- list(c("a", "b"), "e", c("b", "a"))
+## ' y_set <- list(c("f","u", "e"), c("a", "b", "c", "a"), c("b", "c", "a"))
+## ' get_superset_list(x_set, y_set)
+## ' get_superset_list(letters[1:4], y_set)
+## ' get_superset_list(letters[1:4], letters[1:10])
+## ' get_superset_list(x_set, letters[1:10])
+## ' x_set <- list(c("a", "b"), "e", c("b", "a"), "o")
+## ' y_set <- list(c("f","u", "e"), c("a", "b", "c", "a"), c("b", "c", "a"))
+## ' ## get_superset_list(x_set, y_set, warn=TRUE) ## Will give warning.
+## ' get_superset_list(x_set, y_set, warn=FALSE)
+## ' 
+## #' @export
 get_superset_list <- function(x_set, y_set, warn=FALSE) {
     out <- lapply(x_set,
                   function(x){
-                      get_superset(x, y_set, all=FALSE)
+                      gRbase::get_superset(x, y_set, all=FALSE)
                   })
     len <- sapply(out, length)
     v <- which(len == 0)

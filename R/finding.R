@@ -18,7 +18,7 @@
 #'     evidence-functions in the future.
 #' 
 #' @name finding
-#' 
+#' @concept old_names
 #' @aliases setFinding retractFinding getFinding pFinding
 #' @param object A "grain" object
 #' @param nodes A vector of nodes

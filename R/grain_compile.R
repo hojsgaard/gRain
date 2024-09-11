@@ -4,7 +4,7 @@
 
 ## FIXME compile examples to be written
 
-#' @title Compile a graphical independence network (a Bayesian network)
+#' @title Compile Bayesian network.
 #' 
 #' @description Compiles a Bayesian network. This means creating a
 #'     junction tree and establishing clique potentials.

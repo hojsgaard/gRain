@@ -1,7 +1,7 @@
 ## ###################################################################
 ##
-#' @title Graphical Independence Network
-#' @description Creating grain objects (graphical independence network).
+#' @title Create Bayesian network
+#' @description Create Bayesian network  (grain objects (graphical independence network)).
 #' @name grain-main
 #' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
 ##

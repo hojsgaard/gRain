@@ -1,0 +1,20 @@
+reference:
+- title: Others
+  desc: > 
+    These are functions not mentioned above.
+  contents:
+  - lacks_concepts(c("old_names"))
+- title: New names
+  desc: >    
+    New names.
+  contents:
+  - has_concept("new_names")
+- title: Old names
+  desc: >    
+    Old names.
+  contents:
+  - has_concept("old_names")
+- title: Complete reference
+  desc: ~
+  contents:
+  - matches(".*")

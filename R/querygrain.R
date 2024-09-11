@@ -1,4 +1,4 @@
-#' @title Query a network
+#' @title Query a Bayesian network
 #' 
 #' @description Query an independence network, i.e. obtain the
 #'     conditional distribution of a set of variables - possibly (and

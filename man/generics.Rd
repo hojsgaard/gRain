@@ -10,8 +10,6 @@
 \alias{universe.grain}
 \alias{isCompiled}
 \alias{isPropagated}
-\alias{isCompiled<-}
-\alias{isPropagated<-}
 \alias{vpar.cpt_spec}
 \alias{vpar.cpt_grain}
 \alias{rip.grain}
@@ -34,10 +32,6 @@ isCompiled(object)
 
 isPropagated(object)
 
-isCompiled(object) <- value
-
-isPropagated(object) <- value
-
 \method{vpar}{cpt_spec}(object, ...)
 
 \method{vpar}{cpt_grain}(object, ...)
@@ -50,8 +44,6 @@ isPropagated(object) <- value
 \item{nodes}{Some nodes of the object.}
 
 \item{...}{Additional arguments; currently not used.}
-
-\item{value}{Value to be set for slot in object.}
 
 \item{x, object}{A relevant object.}
 }

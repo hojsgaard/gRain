@@ -1,4 +1,4 @@
-#' @title Propagate a graphical independence network (a Bayesian network)
+#' @title Propagate in a Bayesian network
 #' 
 #' @description Propagation refers to calibrating the cliques of the
 #'     junction tree so that the clique potentials are consistent on
@@ -135,8 +135,8 @@ propagateLS <- function(cq_pot_list, rip, initialize=TRUE, details=0){
     cq_pot_list
 }
 
-#' @rdname grain_propagate
-#' @export 
+## #' @rdname grain_propagate
+## #' @export 
 compute_p_evidence <- function(object, details=object$details, engine="cpp", ...){
 
     engine="r" ## FIXME
