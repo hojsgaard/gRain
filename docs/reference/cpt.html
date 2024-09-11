@@ -113,8 +113,8 @@ Software, 46(10), 1-26.
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="logical.html">andtable</a></code>, <code><a href="logical.html">ortable</a></code>,
-<code><a href="components_extract.html">extract_cpt</a></code>, <code><a href="components_gather.html">compileCPT</a></code>,
-<code><a href="components_extract.html">extract_cpt</a></code>, <code><a href="components_gather.html">compilePOT</a></code>,
+<code><a href="components_extract.html">extract_cpt</a></code>, <code><a href="old_components_gather.html">compileCPT</a></code>,
+<code><a href="components_extract.html">extract_cpt</a></code>, <code><a href="old_components_gather.html">compilePOT</a></code>,
 <code><a href="grain-main.html">grain</a></code></p></div>
     </div>
     <div id="author">
@@ -170,7 +170,7 @@ Software, 46(10), 1-26.
 <span class="r-in"><span><span class="va">p.S_R</span>  <span class="op">&lt;-</span> <span class="fu">cpt</span><span class="op">(</span><span class="op">~</span><span class="va">S</span><span class="op">:</span><span class="va">R</span>,   levels<span class="op">=</span><span class="va">ssp</span>, values<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">.01</span>, <span class="fl">.99</span>, <span class="fl">.4</span>, <span class="fl">.6</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">p.G_SR</span> <span class="op">&lt;-</span> <span class="fu">cpt</span><span class="op">(</span><span class="op">~</span><span class="va">G</span><span class="op">:</span><span class="va">S</span><span class="op">:</span><span class="va">R</span>, levels<span class="op">=</span><span class="va">ssp</span>, values<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">.99</span>, <span class="fl">.01</span>, <span class="fl">.8</span>, <span class="fl">.2</span>, <span class="fl">.9</span>, <span class="fl">.1</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">wet.cpt</span> <span class="op">&lt;-</span> <span class="fu"><a href="components_gather.html">compileCPT</a></span><span class="op">(</span><span class="va">p.R</span>, <span class="va">p.S_R</span>, <span class="va">p.G_SR</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wet.cpt</span> <span class="op">&lt;-</span> <span class="fu"><a href="old_components_gather.html">compileCPT</a></span><span class="op">(</span><span class="va">p.R</span>, <span class="va">p.S_R</span>, <span class="va">p.G_SR</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">wet.cpt</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  P( R )</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  P( S | R )</span>

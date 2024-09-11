@@ -99,8 +99,33 @@ great care.</p>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">chest_cpt</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">chest.bn</span> <span class="op">&lt;-</span> <span class="fu"><a href="grain-main.html">grain</a></span><span class="op">(</span><span class="fu"><a href="components_gather.html">compileCPT</a></span><span class="op">(</span><span class="va">chest_cpt</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/example.html" class="external-link">example</a></span><span class="op">(</span><span class="st">"example_chest_cpt"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> exmp__&gt; yn   &lt;- c("yes", "no")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> exmp__&gt; a    &lt;- cpt(~asia, values=c(1,99),levels=yn)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> exmp__&gt; t.a  &lt;- cpt(~tub|asia, values=c(5,95,1,99),levels=yn)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> exmp__&gt; s    &lt;- cpt(~smoke, values=c(5,5), levels=yn)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> exmp__&gt; l.s  &lt;- cpt(~lung|smoke, values=c(1,9,1,99), levels=yn)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> exmp__&gt; b.s  &lt;- cpt(~bronc|smoke, values=c(6,4,3,7), levels=yn)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> exmp__&gt; e.lt &lt;- cpt(~either|lung:tub,values=c(1,0,1,0,1,0,0,1),levels=yn)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> exmp__&gt; x.e  &lt;- cpt(~xray|either, values=c(98,2,5,95), levels=yn)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> exmp__&gt; d.be &lt;- cpt(~dysp|bronc:either, values=c(9,1,7,3,8,2,1,9), levels=yn)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> exmp__&gt; chest_cpt &lt;- list(a, t.a, s, l.s, b.s, e.lt, x.e, d.be)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> exmp__&gt; ## bn &lt;- grain(compile_cpt(chest_cpt))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> exmp__&gt; </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> exmp__&gt; </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> exmp__&gt; </span>
+<span class="r-in"><span><span class="va">chest.bn</span> <span class="op">&lt;-</span> <span class="fu"><a href="grain-main.html">grain</a></span><span class="op">(</span><span class="fu"><a href="old_components_gather.html">compileCPT</a></span><span class="op">(</span><span class="va">chest_cpt</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">chest.bn</span> <span class="op">&lt;-</span> <span class="fu">compile</span><span class="op">(</span><span class="va">chest.bn</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">uni</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>asia <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"yes"</span>, <span class="st">"no"</span><span class="op">)</span>, tub <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"yes"</span>, <span class="st">"no"</span><span class="op">)</span>,</span></span>
@@ -117,7 +142,7 @@ great care.</p>
 <span class="r-in"><span><span class="va">chest.bn2</span> <span class="op">&lt;-</span> <span class="fu">setJEvidence</span><span class="op">(</span><span class="va">chest.bn</span>, evidence<span class="op">=</span><span class="va">ev</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">chest.bn2</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Independence network: Compiled: TRUE Propagated: TRUE Evidence: TRUE </span>
-<span class="r-in"><span><span class="fu"><a href="grain_evidence.html">getEvidence</a></span><span class="op">(</span><span class="va">chest.bn2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="old_grain_evidence.html">getEvidence</a></span><span class="op">(</span><span class="va">chest.bn2</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> asia</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> yes  no </span>
@@ -175,7 +200,7 @@ great care.</p>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Instead we can do</span></span></span>
-<span class="r-in"><span><span class="va">new.ev</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="grain_evidence.html">getEvidence</a></span><span class="op">(</span><span class="va">chest.bn2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>smoke<span class="op">=</span><span class="st">"yes"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">new.ev</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="old_grain_evidence.html">getEvidence</a></span><span class="op">(</span><span class="va">chest.bn2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>smoke<span class="op">=</span><span class="st">"yes"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">chest.bn</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Independence network: Compiled: TRUE Propagated: FALSE Evidence: FALSE </span>
 <span class="r-in"><span><span class="fu">setJEvidence</span><span class="op">(</span><span class="va">chest.bn</span>, evidence<span class="op">=</span><span class="va">new.ev</span><span class="op">)</span></span></span>
@@ -213,7 +238,7 @@ great care.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "grain_joint_evidence"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">chest.bn3</span> <span class="op">&lt;-</span> <span class="fu">setJEvidence</span><span class="op">(</span><span class="va">chest.bn</span>, evidence<span class="op">=</span><span class="va">jevi</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="grain_evidence.html">getEvidence</a></span><span class="op">(</span><span class="va">chest.bn3</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="old_grain_evidence.html">getEvidence</a></span><span class="op">(</span><span class="va">chest.bn3</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> asia</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> yes  no </span>

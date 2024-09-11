@@ -83,13 +83,13 @@ examples below.</p></dd>
     <p>NOTICE: The functions described here are kept only for
 backward compatibility; please use the corresponding
 evidence-functions in the future:</p>
-<p><code><a href="grain_evidence.html">setEvidence()</a></code> is an improvement of <code>setFinding()</code> (and as such
+<p><code><a href="old_grain_evidence.html">setEvidence()</a></code> is an improvement of <code>setFinding()</code> (and as such
 <code>setFinding</code> is obsolete). Users are recommended to use
-<code><a href="grain_evidence.html">setEvidence()</a></code> in the future.</p>
-<p><code><a href="grain_evidence.html">setEvidence()</a></code> allows to specification of "hard evidence" (specific
+<code><a href="old_grain_evidence.html">setEvidence()</a></code> in the future.</p>
+<p><code><a href="old_grain_evidence.html">setEvidence()</a></code> allows to specification of "hard evidence" (specific
 values for variables) and likelihood evidence (also known as virtual
 evidence) for variables.</p>
-<p>The syntax of <code><a href="grain_evidence.html">setEvidence()</a></code> may change in the future.</p>
+<p>The syntax of <code><a href="old_grain_evidence.html">setEvidence()</a></code> may change in the future.</p>
     </div>
     <div id="references">
     <h2>References</h2>
@@ -99,8 +99,8 @@ with the gRain Package for R. Journal of Statistical Software, 46(10), 1-26.
     </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p><code><a href="grain_evidence.html">setEvidence</a></code>, <code><a href="grain_evidence.html">getEvidence</a></code>,
-<code><a href="grain_evidence.html">retractEvidence</a></code>, <code><a href="grain_evidence.html">pEvidence</a></code>,
+    <div class="dont-index"><p><code><a href="old_grain_evidence.html">setEvidence</a></code>, <code><a href="old_grain_evidence.html">getEvidence</a></code>,
+<code><a href="old_grain_evidence.html">retractEvidence</a></code>, <code><a href="old_grain_evidence.html">pEvidence</a></code>,
 <code><a href="querygrain.html">querygrain</a></code></p></div>
     </div>
     <div id="author">
@@ -121,7 +121,7 @@ with the gRain Package for R. Journal of Statistical Software, 46(10), 1-26.
 <span class="r-in"><span><span class="va">e.lt</span> <span class="op">&lt;-</span> <span class="fu"><a href="cpt.html">cpt</a></span><span class="op">(</span><span class="op">~</span><span class="va">either</span><span class="op">+</span><span class="va">lung</span><span class="op">+</span><span class="va">tub</span>,values<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,levels<span class="op">=</span><span class="va">yn</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">x.e</span>  <span class="op">&lt;-</span> <span class="fu"><a href="cpt.html">cpt</a></span><span class="op">(</span><span class="op">~</span><span class="va">xray</span><span class="op">+</span><span class="va">either</span>, values<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">98</span>, <span class="fl">2</span>, <span class="fl">5</span>, <span class="fl">95</span><span class="op">)</span>, levels<span class="op">=</span><span class="va">yn</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">d.be</span> <span class="op">&lt;-</span> <span class="fu"><a href="cpt.html">cpt</a></span><span class="op">(</span><span class="op">~</span><span class="va">dysp</span><span class="op">+</span><span class="va">bronc</span><span class="op">+</span><span class="va">either</span>, values<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">9</span>, <span class="fl">1</span>, <span class="fl">7</span>, <span class="fl">3</span>, <span class="fl">8</span>, <span class="fl">2</span>, <span class="fl">1</span>, <span class="fl">9</span><span class="op">)</span>, levels<span class="op">=</span><span class="va">yn</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">chest.cpt</span> <span class="op">&lt;-</span> <span class="fu"><a href="components_gather.html">compileCPT</a></span><span class="op">(</span><span class="va">a</span>, <span class="va">t.a</span>, <span class="va">s</span>, <span class="va">l.s</span>, <span class="va">b.s</span>, <span class="va">e.lt</span>, <span class="va">x.e</span>, <span class="va">d.be</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">chest.cpt</span> <span class="op">&lt;-</span> <span class="fu"><a href="old_components_gather.html">compileCPT</a></span><span class="op">(</span><span class="va">a</span>, <span class="va">t.a</span>, <span class="va">s</span>, <span class="va">l.s</span>, <span class="va">b.s</span>, <span class="va">e.lt</span>, <span class="va">x.e</span>, <span class="va">d.be</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">chest.bn</span> <span class="op">&lt;-</span> <span class="fu"><a href="grain-main.html">grain</a></span><span class="op">(</span><span class="va">chest.cpt</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## These two forms are equivalent</span></span></span>

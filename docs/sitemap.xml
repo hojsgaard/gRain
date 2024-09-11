@@ -9,7 +9,11 @@
 <url><loc>/reference/components_extract.html</loc></url>
 <url><loc>/reference/components_gather.html</loc></url>
 <url><loc>/reference/cpt.html</loc></url>
+<url><loc>/reference/evidence.html</loc></url>
 <url><loc>/reference/evidence_object.html</loc></url>
+<url><loc>/reference/evidence_p.html</loc></url>
+<url><loc>/reference/example_chest.html</loc></url>
+<url><loc>/reference/example_grass.html</loc></url>
 <url><loc>/reference/finding.html</loc></url>
 <url><loc>/reference/generics.html</loc></url>
 <url><loc>/reference/get_superset_list.html</loc></url>
@@ -26,6 +30,10 @@
 <url><loc>/reference/load-save-hugin.html</loc></url>
 <url><loc>/reference/logical.html</loc></url>
 <url><loc>/reference/mendel.html</loc></url>
+<url><loc>/reference/old_components_extract.html</loc></url>
+<url><loc>/reference/old_components_gather.html</loc></url>
+<url><loc>/reference/old_grain_evidence.html</loc></url>
+<url><loc>/reference/old_repeat_pattern.html</loc></url>
 <url><loc>/reference/querygrain.html</loc></url>
 <url><loc>/reference/repeat_pattern.html</loc></url>
 <url><loc>/reference/replace-cpt.html</loc></url>
