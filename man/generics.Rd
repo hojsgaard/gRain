@@ -7,6 +7,7 @@
 \alias{nodeStates}
 \alias{nodeStates.grain}
 \alias{universe}
+\alias{universe.grain}
 \alias{isCompiled}
 \alias{isPropagated}
 \alias{vpar.cpt_spec}
@@ -23,6 +24,8 @@ nodeStates(object, nodes = nodeNames(object))
 \method{nodeStates}{grain}(object, nodes = nodeNames(object))
 
 universe(object, ...)
+
+\method{universe}{grain}(object, ...)
 
 isCompiled(object)
 

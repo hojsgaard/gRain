@@ -116,17 +116,6 @@ set_evidence_worker <- function(object, evidence=NULL, propagate=TRUE, details=0
     ## cat("++++ set_evidence_worker input evidence: \n"); str(evidence)
 
     stopifnot_grain(object)    
-    insertEvi <- function(evi_object, pot, hostclique){
-        if ( !inherits(evi_object, "grain_evidence") )
-            stop("'object' is not a 'grain_evidence' object")
-        
-        for (i in seq_along( evi_object$evi_weight) ){
-            p <- evi_object$evi_weight[[ i ]]
-            j <- hostclique[ i ]
-            pot[[j]] <- tabMult(pot[[ j ]], p)
-        }
-        pot
-    }
     
     if (is.null_evi( evidence )){
         cat("Nothing to do\n")
@@ -151,10 +140,11 @@ set_evidence_worker <- function(object, evidence=NULL, propagate=TRUE, details=0
             }
         }
 
-        if (length(varNames(ne)) > 0){
+        if (length(grain_evidence_names(ne)) > 0){
             rp  <- getgrain(object, "rip")    
-            host  <- get_superset_list(varNames(ne), rp$cliques)
-            object$potential$pot_temp <- insertEvi(ne, getgrain(object, "pot_temp"), host)
+            host  <- get_superset_list(grain_evidence_names(ne), rp$cliques)
+            object$potential$pot_temp <- 
+              insertEvi(ne, getgrain(object, "pot_temp"), host)
             
             te <- if (is.null_evi(oe))
                       ne
@@ -166,6 +156,24 @@ set_evidence_worker <- function(object, evidence=NULL, propagate=TRUE, details=0
     } 
     if (propagate) propagate(object) else object
 }
+
+insertEvi <- function(evi_object, pot, hostclique){
+  if ( !inherits(evi_object, "grain_evidence") )
+    stop("'object' is not a 'grain_evidence' object")
+  
+  for (i in seq_along( evi_object$evi_weight) ){
+    p <- evi_object$evi_weight[[ i ]]
+    j <- hostclique[ i ]
+    pot[[j]] <- tabMult(pot[[ j ]], p)
+  }
+  pot
+}
+
+
+
+
+
+
 
 retract_evidence_worker <- function(object, nodes=NULL, propagate=TRUE) {
     ##cat("++++ retractEvidence_\n")

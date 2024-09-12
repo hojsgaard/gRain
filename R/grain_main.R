@@ -118,6 +118,7 @@ grain.pot_spec <- function(x, control=list(), smooth=0, compile=TRUE, details=0,
 
 
 ## A graph + data (wrappers for calling grain.pot_spec and grain.cpt_spec)
+
 #' @export
 #' @rdname grain-main
 grain.igraph <- function(x, control=list(), smooth=0, compile=TRUE, details=0, data=NULL, ...) {

@@ -45,8 +45,8 @@ universe <- function(object, ...)
     UseMethod("universe")
 }
 
-## #' @export
-## #' @rdname generics
+#' @export
+#' @rdname generics
 universe.grain <- function(object, ...)
 {
     getgrain(object, "universe")
@@ -110,10 +110,11 @@ rip.grain <- function(object, ...)
 
 ## #' @export
 ## #' @rdname generics
-varNames.grainEvidence_ <- function(x)
-{
-    getgrain(x, "summary")$nodes
-}
+
+## varNames.grainEvidence_ <- function(x)
+## {
+##     getgrain(x, "summary")$nodes
+## }
 
 
 

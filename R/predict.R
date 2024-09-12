@@ -74,7 +74,7 @@ predict.grain <- function(object, response, predictors=setdiff(names(newdata), r
 
     for (i in 1:nrow(nd)){
         
-        objecttmp1    <- setFinding(object, nodes=vn, states=nd[i,,drop=FALSE])
+        objecttmp1 <- setFinding(object, nodes=vn, states=nd[i,,drop=FALSE])
         p.e       <- pEvidence(objecttmp1)
         ##cat(sprintf("pEvidence=%20.18f\n", p.e))
         if (p.e < .Machine$double.xmin){

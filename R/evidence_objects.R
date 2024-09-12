@@ -7,14 +7,13 @@
 ##
 ## ###############################################################
 ## '
-## ' @aliases subset.grain_evidence print.grain_evidence varNames.grain_evidence
+## ' @aliases subset.grain_evidence print.grain_evidence 
 ## ' 
 ## ' @details Evidence is specified as a list. Internally, evidence is
 ## '     represented as a grain evidence object which is a list with 4 elements.
 ## ' 
 ## ' @examples
 ## '
-
 ## ' ## Define the universe
 ## ' yn <- c("yes", "no")
 ## ' uni <- list(asia = yn, tub = yn, smoke = yn, lung = yn,
@@ -54,8 +53,6 @@
 ## ' @param evi_list A named list with evidence; see 'examples' below.
 ## ' @param levels A named list with the levels of all variables. 
 
-
-
 grain_evidence_new <- function(evi_list=NULL, levels) {
 
     if (inherits(evi_list, "grain_evidence")) {
@@ -76,7 +73,6 @@ grain_evidence_new <- function(evi_list=NULL, levels) {
         evi_weight   <- vector("list", length(evi_list))
         is_hard      <- rep.int(TRUE,  length(evi_list))
         hard_state   <- rep.int(NA,    length(evi_list))
-
         
         for (i in seq_along(evi_list)){
             ev <- evi_list[i]
@@ -124,12 +120,12 @@ grain_evidence_new <- function(evi_list=NULL, levels) {
 is.null_evi <- function(object) {
     if (missing(object)) TRUE
     else if (length(object) == 0) TRUE
-    else if (inherits(object, "grain_evidence") && length(varNames(object)) == 0) TRUE
+    else if (inherits(object, "grain_evidence") && length(grain_evidence_names(object)) == 0) TRUE
     else FALSE
 
 }
 
-varNames.grain_evidence <- function(x) x$nodes
+grain_evidence_names <- function(x) x$nodes
 
 ## ' @name evidence_object
 ## ' @param row.names Not used.
@@ -164,8 +160,8 @@ grain_evidence_setdiff <- function(ev1, ev2) {
     if (length(ev1) == 0) ev1 <- grain_evidence_new( ev1 )
     if (length(ev2) == 0) ev2 <- grain_evidence_new( ev2 )
     
-    nn  <- setdiff( varNames(ev1), varNames(ev2) )
-    out <- subset(ev1, select=nn)
+    nn  <- setdiff( grain_evidence_names(ev1), grain_evidence_names(ev2) )
+    out <- grain_evidence_subset(ev1, select=nn)
     class(out) <- c("grain_evidence", "list")
     out <- as.data.frame.grain_evidence(out)
     class(out) <- c("grain_evidence", "data.frame")
@@ -186,18 +182,18 @@ grain_evidence_union <- function(ev1, ev2) {
 }
 
 
-subset.grain_evidence <- function(x, subset, select, drop = FALSE, ...){
+grain_evidence_subset <- function(x, subset, select, drop = FALSE, ...){
     if (missing(select)) x
     else if (length(select)==0) grain_evidence_new(list())
     else {
-        nl <- as.list(1L:length(varNames(x)))
-        names(nl) <- varNames(x)
+        nl <- as.list(1L:length(grain_evidence_names(x)))
+        names(nl) <- grain_evidence_names(x)
         vars <- eval(substitute(select), nl, parent.frame())
         if (is.character(vars))
-            vars <- match(vars, varNames(x))
+            vars <- match(vars, grain_evidence_names(x))
         if (any(is.na(vars)))
             stop("'vars' contain NA")
-        if (max(vars) > length(varNames(x)))
+        if (max(vars) > length(grain_evidence_names(x)))
             stop("'vars' too large")
         out <- lapply(x, "[", vars)
         class(out) <- class(x)
