@@ -131,11 +131,7 @@ absence of dyspnoea.’’</em></p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">chest_dag</span> <span class="op">&lt;-</span> <span class="fu">dag</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"asia"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"tub"</span>, <span class="st">"asia"</span><span class="op">)</span>, <span class="st">"smoke"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"lung"</span>, <span class="st">"smoke"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bronc"</span>, </span>
 <span><span class="st">"smoke"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"either"</span>, <span class="st">"tub"</span>, <span class="st">"lung"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"xray"</span>, <span class="st">"either"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dysp"</span>, </span>
-<span><span class="st">"bronc"</span>, <span class="st">"either"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r.igraph.org/" class="external-link">igraph</a></span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">chest_dag</span><span class="op">)</span></span></code></pre></div>
-<p><img src="figures/grain-unnamed-chunk-4-1.png" width="480"></p>
+<span><span class="st">"bronc"</span>, <span class="st">"either"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
 <img src="figures/grain-chest-LS-1.png" alt="Chest clinic example from Lauritzen and Spiegelhalter (1988)." width="480"><p class="caption">
 Chest clinic example from Lauritzen and Spiegelhalter (1988).
@@ -319,7 +315,7 @@ dyspnoea:</p>
 <span><span class="va">asia_dysp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>asia<span class="op">=</span><span class="st">"yes"</span>, dysp<span class="op">=</span><span class="st">"yes"</span><span class="op">)</span></span></code></pre></div>
 <p>Initially, the network can be queried without evidence:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">chest_bn</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/querygrain.html">qgrain</a></span><span class="op">(</span>nodes<span class="op">=</span><span class="va">disease</span>, type<span class="op">=</span><span class="st">"marginal"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">chest_bn</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/querygrain.html">querygrain</a></span><span class="op">(</span>nodes<span class="op">=</span><span class="va">disease</span>, type<span class="op">=</span><span class="st">"marginal"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## $tub</span></span>
 <span><span class="co">## tub</span></span>
 <span><span class="co">##    yes     no </span></span>
@@ -335,13 +331,13 @@ dyspnoea:</p>
 <span><span class="co">##  yes   no </span></span>
 <span><span class="co">## 0.45 0.55</span></span></code></pre>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">chest_bn</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/querygrain.html">qgrain</a></span><span class="op">(</span>nodes<span class="op">=</span><span class="va">disease</span>, type<span class="op">=</span><span class="st">"marginal"</span>, simplify <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">chest_bn</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/querygrain.html">querygrain</a></span><span class="op">(</span>nodes<span class="op">=</span><span class="va">disease</span>, type<span class="op">=</span><span class="st">"marginal"</span>, simplify <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##          yes     no</span></span>
 <span><span class="co">## tub   0.0104 0.9896</span></span>
 <span><span class="co">## lung  0.0550 0.9450</span></span>
 <span><span class="co">## bronc 0.4500 0.5500</span></span></code></pre>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">chest_bn</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/querygrain.html">qgrain</a></span><span class="op">(</span>nodes<span class="op">=</span><span class="va">disease</span>, type<span class="op">=</span><span class="st">"joint"</span><span class="op">)</span> </span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">chest_bn</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/querygrain.html">querygrain</a></span><span class="op">(</span>nodes<span class="op">=</span><span class="va">disease</span>, type<span class="op">=</span><span class="st">"joint"</span><span class="op">)</span> </span></code></pre></div>
 <pre><code><span><span class="co">## , , bronc = yes</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">##      lung</span></span>
@@ -356,7 +352,7 @@ dyspnoea:</p>
 <span><span class="co">##   yes 0.0002444 0.005476</span></span>
 <span><span class="co">##   no  0.0232556 0.521024</span></span></code></pre>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">chest_bn</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/querygrain.html">qgrain</a></span><span class="op">(</span>nodes<span class="op">=</span><span class="va">disease</span>, type<span class="op">=</span><span class="st">"joint"</span>, simplify <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">chest_bn</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/querygrain.html">querygrain</a></span><span class="op">(</span>nodes<span class="op">=</span><span class="va">disease</span>, type<span class="op">=</span><span class="st">"joint"</span>, simplify <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##   tub lung bronc      Freq</span></span>
 <span><span class="co">## 1 yes  yes   yes 0.0003276</span></span>
 <span><span class="co">## 2  no  yes   yes 0.0311724</span></span>
@@ -367,7 +363,7 @@ dyspnoea:</p>
 <span><span class="co">## 7 yes   no    no 0.0054756</span></span>
 <span><span class="co">## 8  no   no    no 0.5210244</span></span></code></pre>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">chest_bn</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/querygrain.html">qgrain</a></span><span class="op">(</span>nodes<span class="op">=</span><span class="va">disease</span>, type<span class="op">=</span><span class="st">"conditional"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">chest_bn</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/querygrain.html">querygrain</a></span><span class="op">(</span>nodes<span class="op">=</span><span class="va">disease</span>, type<span class="op">=</span><span class="st">"conditional"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## , , bronc = yes</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">##      lung</span></span>
@@ -382,7 +378,7 @@ dyspnoea:</p>
 <span><span class="co">##   yes 0.0104 0.0104</span></span>
 <span><span class="co">##   no  0.9896 0.9896</span></span></code></pre>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">chest_bn</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/querygrain.html">qgrain</a></span><span class="op">(</span>nodes<span class="op">=</span><span class="va">disease</span>, type<span class="op">=</span><span class="st">"conditional"</span>, simplify <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">chest_bn</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/querygrain.html">querygrain</a></span><span class="op">(</span>nodes<span class="op">=</span><span class="va">disease</span>, type<span class="op">=</span><span class="st">"conditional"</span>, simplify <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##   tub lung bronc   Freq</span></span>
 <span><span class="co">## 1 yes  yes   yes 0.0104</span></span>
 <span><span class="co">## 2  no  yes   yes 0.9896</span></span>
@@ -405,14 +401,13 @@ nodes.</p>
 <p>Evidence can be entered in different ways:</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">asia_dysp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>asia<span class="op">=</span><span class="st">"yes"</span>, dysp<span class="op">=</span><span class="st">"yes"</span><span class="op">)</span></span>
+<span></span>
 <span><span class="va">chest_ev</span> <span class="op">&lt;-</span> <span class="va">chest_bn</span> <span class="op">|&gt;</span></span>
-<span>    <span class="fu"><a href="../reference/grain_evidence.html">setEvidence</a></span><span class="op">(</span>evidence<span class="op">=</span><span class="va">asia_dysp</span><span class="op">)</span></span>
-<span><span class="co">## chest_ev &lt;- chest_bn |&gt; ## For backward compatibility</span></span>
-<span><span class="co">##    setEvidence(nodes=c("asia", "dysp"), states=c("yes", "yes"))</span></span></code></pre></div>
+<span>    <span class="fu"><a href="../reference/grain_evidence.html">evidence_add</a></span><span class="op">(</span>evidence<span class="op">=</span><span class="va">asia_dysp</span><span class="op">)</span></span></code></pre></div>
 <p>The evidence is a list and can conveniently be displayed as a
 dataframe:</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">chest_ev</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/grain_evidence.html">getEvidence</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">chest_ev</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/grain_evidence.html">evidence_get</a></span><span class="op">(</span><span class="op">)</span> </span></code></pre></div>
 <pre><code><span><span class="co">##   nodes is_hard hard_state evi_weight</span></span>
 <span><span class="co">## 1  asia    TRUE        yes       1, 0</span></span>
 <span><span class="co">## 2  dysp    TRUE        yes       1, 0</span></span></code></pre>
@@ -423,7 +418,7 @@ dataframe:</p>
 <span><span class="co">## lung  0.09953 0.9005</span></span>
 <span><span class="co">## bronc 0.81140 0.1886</span></span></code></pre>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">chest_ev</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/grain_evidence.html">pEvidence</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">chest_ev</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/grain_evidence.html">evidence_prob</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 0.004501</span></span></code></pre>
 <p>The network can be queried again, and we can also obtain the
 probability of observing this evidence:</p>
@@ -434,10 +429,10 @@ probability of observing this evidence:</p>
 <span><span class="co">## lung  0.09953 0.9005</span></span>
 <span><span class="co">## bronc 0.81140 0.1886</span></span></code></pre>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">chest_ev</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/grain_evidence.html">pEvidence</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">chest_ev</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/grain_evidence.html">evidence_prob</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 0.004501</span></span></code></pre>
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">chest_bn</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/grain_evidence.html">pEvidence</a></span><span class="op">(</span>evidence<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>asia<span class="op">=</span><span class="st">"yes"</span>, dysp<span class="op">=</span><span class="st">"yes"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">chest_bn</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/grain_evidence.html">evidence_prob</a></span><span class="op">(</span>evidence<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>asia<span class="op">=</span><span class="st">"yes"</span>, dysp<span class="op">=</span><span class="st">"yes"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 0.004501</span></span></code></pre>
 <p>The probability of observing a specific evidence can be found by
 setting the evidence as a vector of weights. This is useful in
@@ -458,14 +453,10 @@ as:</p>
 <span>         <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bronc"</span>, <span class="st">"smoke"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"either"</span>, <span class="st">"tub"</span>, <span class="st">"lung"</span><span class="op">)</span>,</span>
 <span>         <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"xray"</span>, <span class="st">"either"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dysp"</span>, <span class="st">"bronc"</span>, <span class="st">"either"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co">## nms &lt;- unique(unlist(node_parents_list))</span></span>
-<span><span class="co">## universe &lt;- setNames(rep(list(yn),length(nms)), nms)</span></span>
-<span><span class="co">## universe |&gt; head(3)</span></span>
-<span></span>
 <span><span class="va">chest_dummy_cpt2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">node_parents_list</span>, <span class="kw">function</span><span class="op">(</span><span class="va">f</span><span class="op">)</span><span class="op">{</span></span>
 <span>    <span class="fu"><a href="../reference/cpt.html">cpt</a></span><span class="op">(</span><span class="va">f</span>, levels<span class="op">=</span><span class="va">yn</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
-<span><span class="va">bn_template</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/components_gather.html">compile_cpt</a></span><span class="op">(</span><span class="va">chest_dummy_cpt2</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/grain-main.html">grain</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">bn_temp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/components_gather.html">compile_cpt</a></span><span class="op">(</span><span class="va">chest_dummy_cpt2</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/grain-main.html">grain</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>Above the network has ones in all potentials. Next update values in
 (some of the) potentials:</p>
 <div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
@@ -476,18 +467,16 @@ as:</p>
 <span>                   bronc<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">6</span>, <span class="fl">4</span>, <span class="fl">3</span>, <span class="fl">7</span><span class="op">)</span>,</span>
 <span>                   either<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span>                   xray<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">98</span>, <span class="fl">2</span>, <span class="fl">5</span>, <span class="fl">95</span><span class="op">)</span>,</span>
-<span>                   dysp<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">9</span>, <span class="fl">1</span>, <span class="fl">7</span>, <span class="fl">3</span>, <span class="fl">8</span>, <span class="fl">2</span>, <span class="fl">1</span>, <span class="fl">9</span><span class="op">)</span></span>
-<span>                   <span class="op">)</span></span>
-<span></span>
-<span><span class="va">bn_real</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/replace-cpt.html">replace_cpt</a></span><span class="op">(</span><span class="va">bn_template</span>, <span class="va">cpt_values</span><span class="op">)</span></span></code></pre></div>
+<span>                   dysp<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">9</span>, <span class="fl">1</span>, <span class="fl">7</span>, <span class="fl">3</span>, <span class="fl">8</span>, <span class="fl">2</span>, <span class="fl">1</span>, <span class="fl">9</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">bn_real</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/replace-cpt.html">replace_cpt</a></span><span class="op">(</span><span class="va">bn_temp</span>, <span class="va">cpt_values</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">bn_template</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/querygrain.html">qgrain</a></span><span class="op">(</span>evi<span class="op">=</span><span class="va">asia_dysp</span>, nodes<span class="op">=</span><span class="va">disease</span>, simplify <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">bn_temp</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/querygrain.html">querygrain</a></span><span class="op">(</span>evi<span class="op">=</span><span class="va">asia_dysp</span>, nodes<span class="op">=</span><span class="va">disease</span>, simplify <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##       yes  no</span></span>
 <span><span class="co">## tub   0.5 0.5</span></span>
 <span><span class="co">## lung  0.5 0.5</span></span>
 <span><span class="co">## bronc 0.5 0.5</span></span></code></pre>
 <div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">bn_real</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/querygrain.html">qgrain</a></span><span class="op">(</span>evi<span class="op">=</span><span class="va">asia_dysp</span>, nodes<span class="op">=</span><span class="va">disease</span>, simplify <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">bn_real</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/querygrain.html">querygrain</a></span><span class="op">(</span>evi<span class="op">=</span><span class="va">asia_dysp</span>, nodes<span class="op">=</span><span class="va">disease</span>, simplify <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##           yes     no</span></span>
 <span><span class="co">## tub   0.08775 0.9122</span></span>
 <span><span class="co">## lung  0.09953 0.9005</span></span>
@@ -551,9 +540,9 @@ excludes certain states as being impossible.</p>
 <span>           nodes<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"lung"</span>, <span class="st">"bronc"</span>, <span class="st">"asia"</span>, <span class="st">"dysp"</span><span class="op">)</span>,</span>
 <span>           exclude<span class="op">=</span><span class="cn">FALSE</span>, simplify <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##           yes     no</span></span>
+<span><span class="co">## asia  1.00000 0.0000</span></span>
 <span><span class="co">## lung  0.09953 0.9005</span></span>
 <span><span class="co">## bronc 0.81140 0.1886</span></span>
-<span><span class="co">## asia  1.00000 0.0000</span></span>
 <span><span class="co">## dysp  1.00000 0.0000</span></span></code></pre>
 <p>If <code>nodes</code>are not specified, queries for all nodes without
 evidence are reported.</p>
@@ -562,14 +551,12 @@ evidence are reported.</p>
 <span>           evidence<span class="op">=</span><span class="va">asia_dysp</span>,</span>
 <span>           simplify <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##            yes     no</span></span>
-<span><span class="co">## NA          NA     NA</span></span>
 <span><span class="co">## tub    0.08775 0.9122</span></span>
-<span><span class="co">## smoke  0.62592 0.3741</span></span>
 <span><span class="co">## lung   0.09953 0.9005</span></span>
-<span><span class="co">## bronc  0.81140 0.1886</span></span>
 <span><span class="co">## either 0.18230 0.8177</span></span>
-<span><span class="co">## xray   0.21954 0.7805</span></span>
-<span><span class="co">## NA.1        NA     NA</span></span></code></pre>
+<span><span class="co">## bronc  0.81140 0.1886</span></span>
+<span><span class="co">## smoke  0.62592 0.3741</span></span>
+<span><span class="co">## xray   0.21954 0.7805</span></span></code></pre>
 <p>If <code>nodes</code> are not specified and
 <code>exclude=FALSE</code>, then queries for all nodes are reported.</p>
 <div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
@@ -579,26 +566,26 @@ evidence are reported.</p>
 <pre><code><span><span class="co">##            yes     no</span></span>
 <span><span class="co">## asia   1.00000 0.0000</span></span>
 <span><span class="co">## tub    0.08775 0.9122</span></span>
-<span><span class="co">## smoke  0.62592 0.3741</span></span>
 <span><span class="co">## lung   0.09953 0.9005</span></span>
-<span><span class="co">## bronc  0.81140 0.1886</span></span>
 <span><span class="co">## either 0.18230 0.8177</span></span>
-<span><span class="co">## xray   0.21954 0.7805</span></span>
-<span><span class="co">## dysp   1.00000 0.0000</span></span></code></pre>
+<span><span class="co">## bronc  0.81140 0.1886</span></span>
+<span><span class="co">## smoke  0.62592 0.3741</span></span>
+<span><span class="co">## dysp   1.00000 0.0000</span></span>
+<span><span class="co">## xray   0.21954 0.7805</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="sec:zero-probabilities">Conditioning on evidence with zero probability<a class="anchor" aria-label="anchor" href="#sec:zero-probabilities"></a>
 </h3>
 <p>Consider setting the evidence</p>
 <div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">chest_bn3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grain_evidence.html">setEvidence</a></span><span class="op">(</span><span class="va">chest_bn</span>, evidence<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>either<span class="op">=</span><span class="st">"no"</span>, tub<span class="op">=</span><span class="st">"yes"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">chest_bn3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grain_evidence.html">evidence_add</a></span><span class="op">(</span><span class="va">chest_bn</span>, evidence<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>either<span class="op">=</span><span class="st">"no"</span>, tub<span class="op">=</span><span class="st">"yes"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Under the model, this specific evidence has zero probability:
 <code>either</code> is true if <code>tub</code> is true or
 <code>lung</code> is true (or both). Hence the specific evidence is
 impossible and therefore, all conditional probabilities are (under the
 model) undefined:</p>
 <div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/grain_evidence.html">pEvidence</a></span><span class="op">(</span><span class="va">chest_bn3</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/grain_evidence.html">evidence_prob</a></span><span class="op">(</span><span class="va">chest_bn3</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 0</span></span></code></pre>
 <div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/querygrain.html">querygrain</a></span><span class="op">(</span><span class="va">chest_bn3</span>, nodes<span class="op">=</span><span class="va">disease</span>, type<span class="op">=</span><span class="st">"joint"</span><span class="op">)</span></span></code></pre></div>
@@ -612,7 +599,7 @@ model) undefined:</p>
 </h3>
 <p>Below we describe how to work with virtual evidence (also known as
 soft evidence or likelihood evidence) in gRain. This is done via the
-function setEvidence().</p>
+function evidence_add().</p>
 <p>The clique potential representation in a Bayesian network gives
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>∝</mo><mi>ψ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><munder><mo>∏</mo><mi>C</mi></munder><msub><mi>ψ</mi><mi>C</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>x</mi><mi>C</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{align}
   p(x) \propto \psi(x) = \prod_{C} \psi_C(x_C).
@@ -675,8 +662,8 @@ because the state of the variables are known with certainty. The
 function setEvidence() can be used for this purpose. The following forms
 are equivalent (the reason will be explained below):</p>
 <div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">chest_ev1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grain_evidence.html">setEvidence</a></span><span class="op">(</span><span class="va">chest_bn</span>, evidence<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>smoke<span class="op">=</span><span class="st">"yes"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">chest_ev2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grain_evidence.html">setEvidence</a></span><span class="op">(</span><span class="va">chest_bn</span>, evidence<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>smoke<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">chest_ev1</span> <span class="op">&lt;-</span> <span class="va">chest_bn</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/grain_evidence.html">evidence_add</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>smoke<span class="op">=</span><span class="st">"yes"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">chest_ev2</span> <span class="op">&lt;-</span> <span class="va">chest_bn</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/grain_evidence.html">evidence_add</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>smoke<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">chest_bn</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/querygrain.html">querygrain</a></span><span class="op">(</span>nodes<span class="op">=</span><span class="va">disease</span>, simplify <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##          yes     no</span></span>
@@ -712,19 +699,19 @@ this node.</p>
 <span><span class="co">##         no  0.2 0.9</span></span></code></pre>
 <div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">chest_ext</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">cpt_list</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">g.s</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/components_gather.html">compile_cpt</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/grain-main.html">grain</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/querygrain.html">querygrain</a></span><span class="op">(</span><span class="va">chest_ext</span>, nodes<span class="op">=</span><span class="va">disease</span>, simplify <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">chest_ext</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/querygrain.html">querygrain</a></span><span class="op">(</span>nodes<span class="op">=</span><span class="va">disease</span>, simplify <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##          yes     no</span></span>
 <span><span class="co">## tub   0.0104 0.9896</span></span>
 <span><span class="co">## lung  0.0550 0.9450</span></span>
 <span><span class="co">## bronc 0.4500 0.5500</span></span></code></pre>
 <div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/querygrain.html">querygrain</a></span><span class="op">(</span><span class="va">chest_ext</span>, nodes<span class="op">=</span><span class="va">disease</span>, evidence<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>smoke<span class="op">=</span><span class="st">"yes"</span><span class="op">)</span>, simplify <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">chest_ext</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/querygrain.html">querygrain</a></span><span class="op">(</span>nodes<span class="op">=</span><span class="va">disease</span>, evidence<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>smoke<span class="op">=</span><span class="st">"yes"</span><span class="op">)</span>, simplify <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##          yes     no</span></span>
 <span><span class="co">## tub   0.0104 0.9896</span></span>
 <span><span class="co">## lung  0.1000 0.9000</span></span>
 <span><span class="co">## bronc 0.6000 0.4000</span></span></code></pre>
 <div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/querygrain.html">querygrain</a></span><span class="op">(</span><span class="va">chest_ext</span>, nodes<span class="op">=</span><span class="va">disease</span>, evidence<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>smoke_guess<span class="op">=</span><span class="st">"yes"</span><span class="op">)</span>, simplify <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">chest_ext</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/querygrain.html">querygrain</a></span><span class="op">(</span>nodes<span class="op">=</span><span class="va">disease</span>, evidence<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>smoke_guess<span class="op">=</span><span class="st">"yes"</span><span class="op">)</span>, simplify <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##          yes     no</span></span>
 <span><span class="co">## tub   0.0104 0.9896</span></span>
 <span><span class="co">## lung  0.0900 0.9100</span></span>
@@ -733,36 +720,20 @@ this node.</p>
 as shown below.</p>
 <div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">chest_ve</span> <span class="op">&lt;-</span> <span class="va">chest_bn</span> <span class="op">|&gt;</span></span>
-<span>    <span class="fu"><a href="../reference/grain_evidence.html">setEvidence</a></span><span class="op">(</span>evidence <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>smoke <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">.8</span>, <span class="fl">.1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="../reference/grain_evidence.html">evidence_add</a></span><span class="op">(</span>evidence <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>smoke <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">.8</span>, <span class="fl">.1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">chest_ve</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/querygrain.html">querygrain</a></span><span class="op">(</span>nodes<span class="op">=</span><span class="va">disease</span>, simplify <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##          yes     no</span></span>
 <span><span class="co">## tub   0.0104 0.9896</span></span>
 <span><span class="co">## lung  0.0900 0.9100</span></span>
 <span><span class="co">## bronc 0.5667 0.4333</span></span></code></pre>
 <div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/grain_evidence.html">getEvidence</a></span><span class="op">(</span><span class="va">chest_ve</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## $nodes</span></span>
-<span><span class="co">## [1] "smoke"</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">## $is_hard</span></span>
-<span><span class="co">## [1] FALSE</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">## $hard_state</span></span>
-<span><span class="co">## [1] NA</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">## $evi_weight</span></span>
-<span><span class="co">## $evi_weight[[1]]</span></span>
-<span><span class="co">## smoke</span></span>
-<span><span class="co">## yes  no </span></span>
-<span><span class="co">## 0.8 0.1 </span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">## attr(,"class")</span></span>
-<span><span class="co">## [1] "grain_evidence" "list"</span></span></code></pre>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/grain_evidence.html">evidence_get</a></span><span class="op">(</span><span class="va">chest_ve</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">##   nodes is_hard hard_state evi_weight</span></span>
+<span><span class="co">## 1 smoke   FALSE         NA   0.8, 0.1</span></span></code></pre>
 <p>Consequently, specifying the hard evidence that
 <code>smoke="yes"</code> can be done as</p>
 <div class="sourceCode" id="cb80"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">chest_bn</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/grain_evidence.html">setEvidence</a></span><span class="op">(</span>evidence<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>smoke<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">chest_bn</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/old_grain_evidence.html">setEvidence</a></span><span class="op">(</span>evidence<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>smoke<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Independence network: Compiled: TRUE Propagated: TRUE Evidence: TRUE</span></span></code></pre>
 </div>
 </div>
@@ -1212,7 +1183,7 @@ explicitly modify the CPT which specifies
 <span><span class="co">## x1 0.2500 0.7500</span></span>
 <span><span class="co">## x2 0.2812 0.7188</span></span></code></pre>
 <div class="sourceCode" id="cb143"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">bn1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grain_evidence.html">setEvidence</a></span><span class="op">(</span><span class="va">bn</span>, evidence<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>x1<span class="op">=</span><span class="va">lik1</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">bn1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/old_grain_evidence.html">setEvidence</a></span><span class="op">(</span><span class="va">bn</span>, evidence<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>x1<span class="op">=</span><span class="va">lik1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/querygrain.html">querygrain</a></span><span class="op">(</span><span class="va">bn1</span>, simplify<span class="op">=</span><span class="cn">TRUE</span>, exclude<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##          yes     no</span></span>
 <span><span class="co">## x1 0.0001267 0.9999</span></span>
@@ -1273,13 +1244,13 @@ entries) directly as:</p>
 <pre><code><span><span class="co">## [1] 2 2 2 2 2 2 2 2</span></span></code></pre>
 <div class="sourceCode" id="cb154"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">joint</span>  <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">as.data.frame.table</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##   smoke xray asia lung tub dysp bronc either      Freq</span></span>
-<span><span class="co">## 1   yes  yes  yes  yes yes  yes   yes    yes 1.323e-05</span></span>
-<span><span class="co">## 2    no  yes  yes  yes yes  yes   yes    yes 6.615e-07</span></span>
-<span><span class="co">## 3   yes   no  yes  yes yes  yes   yes    yes 2.700e-07</span></span>
-<span><span class="co">## 4    no   no  yes  yes yes  yes   yes    yes 1.350e-08</span></span>
-<span><span class="co">## 5   yes  yes   no  yes yes  yes   yes    yes 2.620e-04</span></span>
-<span><span class="co">## 6    no  yes   no  yes yes  yes   yes    yes 1.310e-05</span></span></code></pre>
+<pre><code><span><span class="co">##   xray smoke asia tub lung dysp bronc either      Freq</span></span>
+<span><span class="co">## 1  yes   yes  yes yes  yes  yes   yes    yes 1.323e-05</span></span>
+<span><span class="co">## 2   no   yes  yes yes  yes  yes   yes    yes 2.700e-07</span></span>
+<span><span class="co">## 3  yes    no  yes yes  yes  yes   yes    yes 6.615e-07</span></span>
+<span><span class="co">## 4   no    no  yes yes  yes  yes   yes    yes 1.350e-08</span></span>
+<span><span class="co">## 5  yes   yes   no yes  yes  yes   yes    yes 2.620e-04</span></span>
+<span><span class="co">## 6   no   yes   no yes  yes  yes   yes    yes 5.346e-06</span></span></code></pre>
 <p>This will clearly fail even moderate size problems: For example, a
 model with
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>80</mn><annotation encoding="application/x-tex">80</annotation></semantics></math>
