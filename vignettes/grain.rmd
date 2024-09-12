@@ -1,5 +1,4 @@
 
-
 ---
 title: Graphical Independence Networks
 subtitle: A vignette for the gRain package
@@ -36,6 +35,7 @@ knitr::opts_chunk$set(fig.height=3, fig.width=5,
 )
 options("prompt"="> ","width"=85, "digits"=4)
 library(gRain)
+library(igraph)
 ```
 
 
@@ -127,9 +127,6 @@ chest clinic example with the following narrative:
 chest_dag <- dag(list("asia", c("tub", "asia"), "smoke", c("lung", "smoke"), c("bronc", 
 "smoke"), c("either", "tub", "lung"), c("xray", "either"), c("dysp", 
 "bronc", "either")))
-library(igraph)
-par(mar=c(0,0,0,0))
-plot(chest_dag)
 ```
 
 
@@ -277,14 +274,14 @@ asia_dysp <- list(asia="yes", dysp="yes")
 Initially, the network can be queried without evidence:
 
 ```{r }
-chest_bn |> qgrain(nodes=disease, type="marginal")
-chest_bn |> qgrain(nodes=disease, type="marginal", simplify = TRUE)
+chest_bn |> querygrain(nodes=disease, type="marginal")
+chest_bn |> querygrain(nodes=disease, type="marginal", simplify = TRUE)
 
-chest_bn |> qgrain(nodes=disease, type="joint") 
-chest_bn |> qgrain(nodes=disease, type="joint", simplify = TRUE)
+chest_bn |> querygrain(nodes=disease, type="joint") 
+chest_bn |> querygrain(nodes=disease, type="joint", simplify = TRUE)
 
-chest_bn |> qgrain(nodes=disease, type="conditional")
-chest_bn |> qgrain(nodes=disease, type="conditional", simplify = TRUE)
+chest_bn |> querygrain(nodes=disease, type="conditional")
+chest_bn |> querygrain(nodes=disease, type="conditional", simplify = TRUE)
 ``` 
 
 Above we obtain the marginal, joint distributions and conditional
@@ -304,29 +301,17 @@ asia_dysp <- list(asia="yes", dysp="yes")
 
 chest_ev <- chest_bn |>
     evidence_add(evidence=asia_dysp)
-
-chest_ev <- chest_bn |>
-    setEvidence(evidence=asia_dysp)
-
-## chest_ev <- chest_bn |> ## For backward compatibility
-##    setEvidence(nodes=c("asia", "dysp"), states=c("yes", "yes"))
 ```
 
 The evidence is a list and can conveniently be displayed as a dataframe:
 
 ```{r }
-chest_ev |> getEvidence() |> as.data.frame()
-
-chest_ev |> evidence_get() |> as.data.frame()
-
-
+chest_ev |> evidence_get() 
 ``` 
 
 ```{r }
 chest_ev |> querygrain(nodes=disease, simplify = TRUE)
-chest_ev |> ask(nodes=disease, simplify = TRUE)
-
-chest_ev |> pEvidence()
+chest_ev |> evidence_prob()
 ``` 
 
 The network can be queried again, and we can also obtain the
@@ -334,12 +319,11 @@ probability of observing this evidence:
 
 ```{r }
 chest_ev |> querygrain(nodes=disease, simplify=TRUE)
-chest_ev |> pEvidence()
-chest_ev |> evidence_p()
+chest_ev |> evidence_prob()
 ``` 
 
 ```{r }
-chest_bn |> pEvidence(evidence=list(asia="yes", dysp="yes"))
+chest_bn |> evidence_prob(evidence=list(asia="yes", dysp="yes"))
 ``` 
 
 
@@ -362,14 +346,10 @@ node_parents_list <-
          c("bronc", "smoke"), c("either", "tub", "lung"),
          c("xray", "either"), c("dysp", "bronc", "either"))
 
-## nms <- unique(unlist(node_parents_list))
-## universe <- setNames(rep(list(yn),length(nms)), nms)
-## universe |> head(3)
-
 chest_dummy_cpt2 <- lapply(node_parents_list, function(f){
     cpt(f, levels=yn)
 })
-bn_template <- compile_cpt(chest_dummy_cpt2) |> grain()
+bn_temp <- compile_cpt(chest_dummy_cpt2) |> grain()
 ``` 
 
 Above the network has ones in all potentials. Next update values in
@@ -383,18 +363,13 @@ cpt_values <- list(asia=c(1, 99),
                    bronc=c(6, 4, 3, 7),
                    either=c(1, 0, 1, 0, 1, 0, 0, 1),
                    xray=c(98, 2, 5, 95),
-                   dysp=c(9, 1, 7, 3, 8, 2, 1, 9)
-                   )
-
-bn_real <- replace_cpt(bn_template, cpt_values)
+                   dysp=c(9, 1, 7, 3, 8, 2, 1, 9))
+bn_real <- replace_cpt(bn_temp, cpt_values)
 ```
 
 ```{r}
-bn_template |> qgrain(evi=asia_dysp, nodes=disease, simplify = TRUE)
-bn_real |> qgrain(evi=asia_dysp, nodes=disease, simplify = TRUE)
-
-bn_template |> ask(nodes=disease, evi=asia_dysp, simplify = TRUE)
-bn_real |> ask(nodes=disease, evi=asia_dysp, simplify = TRUE)
+bn_temp |> querygrain(evi=asia_dysp, nodes=disease, simplify = TRUE)
+bn_real |> querygrain(evi=asia_dysp, nodes=disease, simplify = TRUE)
 ```
 
 
@@ -466,7 +441,7 @@ querygrain(chest_bn,
 
 Consider setting the evidence
 ```{r }
-chest_bn3 <- setEvidence(chest_bn, evidence=list(either="no", tub="yes"))
+chest_bn3 <- evidence_add(chest_bn, evidence=list(either="no", tub="yes"))
 ``` 
 
 Under the model, this specific evidence has zero probability:
@@ -475,7 +450,7 @@ both). Hence the specific evidence is impossible and therefore, all
 conditional probabilities are (under the model) undefined:
 
 ```{r }
-pEvidence(chest_bn3)
+evidence_prob(chest_bn3)
 querygrain(chest_bn3, nodes=disease, type="joint")
 ``` 
 
@@ -484,7 +459,7 @@ querygrain(chest_bn3, nodes=disease, type="joint")
 
 Below we describe  how to work with virtual evidence (also known
 as soft evidence or likelihood evidence) in gRain. This is done via the function
-setEvidence().
+evidence_add().
 
 The clique potential representation in a Bayesian network gives
 \begin{align}
@@ -534,8 +509,8 @@ We call such evidence hard evidence because the state of the variables are known
 The function setEvidence() can  be used for this purpose. The following forms are equivalent (the reason will be explained below): 
 
 ```{r }
-chest_ev1 <- setEvidence(chest_bn, evidence=list(smoke="yes"))
-chest_ev2 <- setEvidence(chest_bn, evidence=list(smoke=c(1, 0)))
+chest_ev1 <- chest_bn |> evidence_add(list(smoke="yes"))
+chest_ev2 <- chest_bn |> evidence_add(list(smoke=c(1, 0)))
 ``` 
 
 ```{r }
@@ -558,9 +533,9 @@ g.s
 
 ```{r}
 chest_ext <- c(cpt_list, list(g.s)) |> compile_cpt() |> grain()
-querygrain(chest_ext, nodes=disease, simplify = TRUE)
-querygrain(chest_ext, nodes=disease, evidence=list(smoke="yes"), simplify = TRUE)
-querygrain(chest_ext, nodes=disease, evidence=list(smoke_guess="yes"), simplify = TRUE)
+chest_ext |> querygrain(nodes=disease, simplify = TRUE)
+chest_ext |> querygrain(nodes=disease, evidence=list(smoke="yes"), simplify = TRUE)
+chest_ext |> querygrain(nodes=disease, evidence=list(smoke_guess="yes"), simplify = TRUE)
 ```
 
 Another approach is to enter virtual evidence
@@ -568,9 +543,9 @@ in the original network as shown below.
 
 ```{r }
 chest_ve <- chest_bn |>
-    setEvidence(evidence = list(smoke = c(.8, .1)))
+    evidence_add(evidence = list(smoke = c(.8, .1)))
 chest_ve |> querygrain(nodes=disease, simplify = TRUE)
-getEvidence(chest_ve)
+evidence_get(chest_ve)
 ``` 
 
 Consequently, specifying the hard evidence that 
