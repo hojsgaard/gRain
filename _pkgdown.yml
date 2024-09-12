@@ -9,7 +9,7 @@ reference:
     These functions are kept in the package for backward compatibility. They may be deprecated in the future. 
   contents:
   - has_concept("old_names")
-- title: Complete reference
-  desc: ~
-  contents:
-  - matches(".*")
+## - title: Complete reference
+##   desc: ~
+##   contents:
+##   - matches(".*")
