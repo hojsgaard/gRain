@@ -1,4 +1,4 @@
-#' @title Make predictions from a probabilistic network
+#' @title Make predictions from Bayesian network
 #' 
 #' @description Makes predictions (either as the most likely state or
 #'     as the conditional distributions) of variables conditional on

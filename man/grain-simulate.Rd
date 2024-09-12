@@ -3,7 +3,7 @@
 \name{grain-simulate}
 \alias{grain-simulate}
 \alias{simulate.grain}
-\title{Simulate from a Bayesian network}
+\title{Simulate from Bayesian network}
 \usage{
 \method{simulate}{grain}(object, nsim = 1, seed = NULL, ...)
 }

@@ -6,7 +6,7 @@
 \alias{qgrain}
 \alias{ask}
 \alias{ask.grain}
-\title{Query a network}
+\title{Query a Bayesian network}
 \usage{
 querygrain(
   object,

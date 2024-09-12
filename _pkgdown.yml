@@ -1,17 +1,12 @@
 reference:
-- title: Others
+- title: Functions in gRain
   desc: > 
-    These are functions not mentioned above.
+    Functions in gRain to be used in the future.
   contents:
   - lacks_concepts(c("old_names"))
-- title: New names
-  desc: >    
-    New names.
-  contents:
-  - has_concept("new_names")
 - title: Old names
   desc: >    
-    Old names.
+    These functions are kept in the package for backward compatibility. They may be deprecated in the future. 
   contents:
   - has_concept("old_names")
 - title: Complete reference

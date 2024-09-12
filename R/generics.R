@@ -4,7 +4,7 @@
 #'
 #' @name generics
 #' 
-#' @param x,object A relevant object.
+#' @param object A relevant object.
 #' @param nodes Some nodes of the object.
 ## #' @param value Value to be set for slot in object.
 #' @param ... Additional arguments; currently not used.
@@ -45,8 +45,8 @@ universe <- function(object, ...)
     UseMethod("universe")
 }
 
-#' @export
-#' @rdname generics
+## #' @export
+## #' @rdname generics
 universe.grain <- function(object, ...)
 {
     getgrain(object, "universe")
@@ -108,8 +108,8 @@ rip.grain <- function(object, ...)
     getgin(object, "rip")
 }
 
-#' @export
-#' @rdname generics
+## #' @export
+## #' @rdname generics
 varNames.grainEvidence_ <- function(x)
 {
     getgrain(x, "summary")$nodes

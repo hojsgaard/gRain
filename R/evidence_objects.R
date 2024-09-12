@@ -14,17 +14,18 @@
 ## ' 
 ## ' @examples
 ## '
+
 ## ' ## Define the universe
 ## ' yn <- c("yes", "no")
 ## ' uni <- list(asia = yn, tub = yn, smoke = yn, lung = yn,
 ## '             bronc = yn, either = yn, xray = yn, dysp = yn)
 ## '
 ## ' e1 <- list(dysp="no", xray="no")
-## ' eo1 <- new_evi(e1, levels=uni)
+## ' eo1 <- grain_evidence_new(e1, levels=uni)
 ## ' eo1  |> as.data.frame()
 ## ' 
 ## ' e2 <- list(dysp="no", xray=c(0, 1))
-## ' eo2 <- new_evi(e2, levels=uni)
+## ' eo2 <- grain_evidence_new(e2, levels=uni)
 ## ' eo2 |> as.data.frame()
 ## '
 ## ' # Above e1 and e2 specifies the same evidence but information about
@@ -32,7 +33,7 @@
 ## ' # maintained.
 ## ' 
 ## ' e3 <- list(dysp="yes", asia="yes")
-## ' eo3 <- new_evi(e3, uni)
+## ' eo3 <- grain_evidence_new(e3, uni)
 ## ' eo3 |> as.data.frame()
 ## ' 
 ## ' # If evidence 'e1' is already set in the network and new evidence
@@ -43,17 +44,19 @@
 ## ' # evidence in 'e3' is really asia="yes".
 ## '
 ## ' # To subtract existing evidence from new evidence we can do:
-## ' setdiff_evi(eo3, eo1) |> as.data.frame()
+## ' zz <- grain_evidence_setdiff(eo3, eo1)
 ## '
 ## ' # Likewise the 'union' is
-## ' union_evi(eo3, eo1) |> as.data.frame()
+## ' zz <- grain_evidence_union(eo3, eo1)
 ## '
 ## ' @export 
 ## ' @rdname evidence_object
 ## ' @param evi_list A named list with evidence; see 'examples' below.
 ## ' @param levels A named list with the levels of all variables. 
 
-new_evi <- function(evi_list=NULL, levels){
+
+
+grain_evidence_new <- function(evi_list=NULL, levels) {
 
     if (inherits(evi_list, "grain_evidence")) {
         return(evi_list)
@@ -113,10 +116,12 @@ new_evi <- function(evi_list=NULL, levels){
             evi_weight = evi_weight[keep])
     }
     class(out) <- c("grain_evidence", "list")
+    out <- as.data.frame.grain_evidence(out)
+    class(out) <- c("grain_evidence", "data.frame")
     out
 }
 
-is.null_evi <- function(object){
+is.null_evi <- function(object) {
     if (missing(object)) TRUE
     else if (length(object) == 0) TRUE
     else if (inherits(object, "grain_evidence") && length(varNames(object)) == 0) TRUE
@@ -126,12 +131,12 @@ is.null_evi <- function(object){
 
 varNames.grain_evidence <- function(x) x$nodes
 
-#' @rdname evidence_object
-#' @param row.names Not used.
-#' @param optional Not used.
-#' @param x An evidence object.
-#' @param ... Not used.
-#' @export 
+## ' @name evidence_object
+## ' @param row.names Not used.
+## ' @param optional Not used.
+## ' @param x An evidence object.
+## ' @param ... Not used.
+## ' @export 
 as.data.frame.grain_evidence <-
     function (x, row.names = NULL, optional = FALSE, ...) {
         is.atom <- sapply(x, is.atomic)
@@ -146,30 +151,44 @@ as.data.frame.grain_evidence <-
         out
     }
 
-setdiff_evi <- function(ev1, ev2){
-    if (length(ev1) == 0) ev1 <- new_evi( ev1 )
-    if (length(ev2) == 0) ev2 <- new_evi( ev2 )
+as.data.frame.grain_evidence <- function(x) {
+    mm <- lapply(x, function(z) as.data.frame(I(z)))
+    mm <- as.data.frame(mm)
+    names(mm) <- names(x)
+    mm
+}
+
+
+
+grain_evidence_setdiff <- function(ev1, ev2) {
+    if (length(ev1) == 0) ev1 <- grain_evidence_new( ev1 )
+    if (length(ev2) == 0) ev2 <- grain_evidence_new( ev2 )
     
     nn  <- setdiff( varNames(ev1), varNames(ev2) )
     out <- subset(ev1, select=nn)
     class(out) <- c("grain_evidence", "list")
+    out <- as.data.frame.grain_evidence(out)
+    class(out) <- c("grain_evidence", "data.frame")
     out
+
 }
 
-union_evi <- function(ev1, ev2){
-    if (length(ev1)==0) ev1 <- new_evi( ev1 )
-    if (length(ev2)==0) ev2 <- new_evi( ev2 )
-    ev <- setdiff_evi( ev1, ev2 )
+grain_evidence_union <- function(ev1, ev2) {
+    if (length(ev1)==0) ev1 <- grain_evidence_new( ev1 )
+    if (length(ev2)==0) ev2 <- grain_evidence_new( ev2 )
+    ev <- grain_evidence_setdiff( ev1, ev2 )
     out <- mapply(function(l1, l2){c(l1,l2)},
                   ev, ev2, SIMPLIFY=FALSE, USE.NAMES=TRUE)
     class(out) <- c("grain_evidence", "list")
+    out <- as.data.frame.grain_evidence(out)
+    class(out) <- c("grain_evidence", "data.frame")
     out
 }
 
 
 subset.grain_evidence <- function(x, subset, select, drop = FALSE, ...){
     if (missing(select)) x
-    else if (length(select)==0) new_evi(list())
+    else if (length(select)==0) grain_evidence_new(list())
     else {
         nl <- as.list(1L:length(varNames(x)))
         names(nl) <- varNames(x)
@@ -193,7 +212,7 @@ subset.grain_evidence <- function(x, subset, select, drop = FALSE, ...){
 ##
 ## ###############################################
 
-## Bruges i new_evi
+## Bruges i grain_evidence_new
 hard_state_to_array <- function(n, v, lev){
     #str(list(n,v,lev))
     tab <- fast_array(n, list(lev), rep.int(0, length(lev)))
@@ -201,7 +220,7 @@ hard_state_to_array <- function(n, v, lev){
     tab
 }
 
-## Bruges i new_evi
+## Bruges i grain_evidence_new
 soft_state_to_array <- function(n, v, lev){
     #str(list(n,v,lev))
     fast_array(n, list(lev), v)

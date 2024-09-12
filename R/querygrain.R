@@ -63,24 +63,24 @@ querygrain <- function(object, nodes=nodeNames(object), type="marginal",
   UseMethod("querygrain")
 }
 
-#' @export
-ask <- function(object, nodes=nodeNames(object), type="marginal",
-                       evidence=NULL, exclude=TRUE, normalize=TRUE,
-                       simplify=FALSE, result="array", details=0)
-{
-  UseMethod("ask")
-}
+## #' @export
+## ask <- function(object, nodes=nodeNames(object), type="marginal",
+##                        evidence=NULL, exclude=TRUE, normalize=TRUE,
+##                        simplify=FALSE, result="array", details=0)
+## {
+##   UseMethod("ask")
+## }
 
 
-#' @export
-ask.grain <- function(object, nodes = nodeNames(object), type = "marginal",
-                      evidence=NULL, exclude=TRUE, normalize=TRUE,
-                      simplify=FALSE,
-                      result="array", details=0){
-    cl <- match.call()
-    cl[[1]] <- as.name("querygrain.grain")
-    eval(cl)
-}
+## #' @export
+## ask.grain <- function(object, nodes = nodeNames(object), type = "marginal",
+##                       evidence=NULL, exclude=TRUE, normalize=TRUE,
+##                       simplify=FALSE,
+##                       result="array", details=0){
+##     cl <- match.call()
+##     cl[[1]] <- as.name("querygrain.grain")
+##     eval(cl)
+## }
 
 
 #' @export 

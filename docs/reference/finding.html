@@ -129,43 +129,11 @@ with the gRain Package for R. Journal of Statistical Software, 46(10), 1-26.
 <span class="r-in"><span><span class="va">bn2</span> <span class="op">&lt;-</span> <span class="fu">setFinding</span><span class="op">(</span><span class="va">chest.bn</span>, flist<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"chest"</span>, <span class="st">"yes"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"xray"</span>, <span class="st">"yes"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">getFinding</span><span class="op">(</span><span class="va">bn1</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $nodes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "xray"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $is_hard</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $hard_state</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "yes"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $evi_weight</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $evi_weight[[1]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> xray</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> yes  no </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1   0 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "grain_evidence" "list"          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   nodes is_hard hard_state evi_weight</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  xray    TRUE        yes       1, 0</span>
 <span class="r-in"><span><span class="fu">getFinding</span><span class="op">(</span><span class="va">bn2</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $nodes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "xray"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $is_hard</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $hard_state</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "yes"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $evi_weight</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $evi_weight[[1]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> xray</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> yes  no </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1   0 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "grain_evidence" "list"          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   nodes is_hard hard_state evi_weight</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  xray    TRUE        yes       1, 0</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">pFinding</span><span class="op">(</span><span class="va">bn1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.11029</span>
@@ -176,43 +144,11 @@ with the gRain Package for R. Journal of Statistical Software, 46(10), 1-26.
 <span class="r-in"><span><span class="va">bn2</span> <span class="op">&lt;-</span> <span class="fu">retractFinding</span><span class="op">(</span><span class="va">bn2</span>, nodes<span class="op">=</span><span class="st">"asia"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">getFinding</span><span class="op">(</span><span class="va">bn1</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $nodes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "xray"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $is_hard</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $hard_state</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "yes"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $evi_weight</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $evi_weight[[1]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> xray</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> yes  no </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1   0 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "grain_evidence" "list"          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   nodes is_hard hard_state evi_weight</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  xray    TRUE        yes       1, 0</span>
 <span class="r-in"><span><span class="fu">getFinding</span><span class="op">(</span><span class="va">bn2</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $nodes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "xray"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $is_hard</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $hard_state</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "yes"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $evi_weight</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $evi_weight[[1]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> xray</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> yes  no </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1   0 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "grain_evidence" "list"          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   nodes is_hard hard_state evi_weight</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  xray    TRUE        yes       1, 0</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">pFinding</span><span class="op">(</span><span class="va">bn1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.11029</span>

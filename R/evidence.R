@@ -136,7 +136,7 @@ set_evidence_worker <- function(object, evidence=NULL, propagate=TRUE, details=0
         } 
         
         oe <- getEvidence( object ) # Der er noget med typen (old/new)
-        ne <- new_evi( evidence, universe(object)$levels )
+        ne <- grain_evidence_new( evidence, universe(object)$levels )
         
         if (details > 0){
             cat("old.evidence:\n"); print.default(oe)
@@ -145,7 +145,7 @@ set_evidence_worker <- function(object, evidence=NULL, propagate=TRUE, details=0
         
         ## Hvis der er eksisterende evidens, så skal det tages ud af det nye
         if (!is.null_evi( oe ) ){
-            ne <- setdiff_evi( ne, oe )
+            ne <- grain_evidence_setdiff( ne, oe )
             if (details>0) {
                 cat("new evidence - after modification:\n"); print( ne )
             }
@@ -159,7 +159,7 @@ set_evidence_worker <- function(object, evidence=NULL, propagate=TRUE, details=0
             te <- if (is.null_evi(oe))
                       ne
                   else
-                      union_evi(oe, ne)
+                      grain_evidence_union(oe, ne)
             object$evidence <- te
 
         }         

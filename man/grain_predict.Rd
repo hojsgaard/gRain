@@ -3,7 +3,7 @@
 \name{grain_predict}
 \alias{grain_predict}
 \alias{predict.grain}
-\title{Make predictions from a probabilistic network}
+\title{Make predictions from Bayesian network}
 \usage{
 \method{predict}{grain}(
   object,

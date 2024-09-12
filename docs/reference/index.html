@@ -38,8 +38,8 @@
     </div>
 
     <table class="ref-index"><colgroup><col class="alias"><col class="title"></colgroup><tbody><tr><th colspan="2">
-          <h2 id="others">Others <a href="#others" class="anchor" aria-hidden="true"></a></h2>
-          <p class="section-desc"></p><p>These are functions not mentioned above.</p>
+          <h2 id="functions-in-grain">Functions in gRain <a href="#functions-in-grain" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p><p>Functions in gRain to be used in the future.</p>
         </th>
       </tr></tbody><tbody><tr><td>
           <p><code><a href="components_extract.html">extract_cpt()</a></code> <code><a href="components_extract.html">extract_pot()</a></code> <code><a href="components_extract.html">extract_marg()</a></code> <code><a href="components_extract.html">marg2pot()</a></code> <code><a href="components_extract.html">pot2marg()</a></code> </p>
@@ -62,7 +62,7 @@
         </td>
         <td><p>Wet grass example</p></td>
       </tr><tr><td>
-          <p><code><a href="generics.html">nodeNames()</a></code> <code><a href="generics.html">nodeStates()</a></code> <code><a href="generics.html">universe()</a></code> <code><a href="generics.html">isCompiled()</a></code> <code><a href="generics.html">isPropagated()</a></code> <code><a href="generics.html">vpar(<i>&lt;cpt_spec&gt;</i>)</a></code> <code><a href="generics.html">vpar(<i>&lt;cpt_grain&gt;</i>)</a></code> <code><a href="generics.html">rip(<i>&lt;grain&gt;</i>)</a></code> <code><a href="generics.html">varNames(<i>&lt;grainEvidence_&gt;</i>)</a></code> </p>
+          <p><code><a href="generics.html">nodeNames()</a></code> <code><a href="generics.html">nodeStates()</a></code> <code><a href="generics.html">universe()</a></code> <code><a href="generics.html">isCompiled()</a></code> <code><a href="generics.html">isPropagated()</a></code> <code><a href="generics.html">vpar(<i>&lt;cpt_spec&gt;</i>)</a></code> <code><a href="generics.html">vpar(<i>&lt;cpt_grain&gt;</i>)</a></code> <code><a href="generics.html">rip(<i>&lt;grain&gt;</i>)</a></code> </p>
         </td>
         <td><p>gRain generics</p></td>
       </tr><tr><td>
@@ -72,7 +72,7 @@
       </tr><tr><td>
           <p><code><a href="grain-simulate.html">simulate(<i>&lt;grain&gt;</i>)</a></code> </p>
         </td>
-        <td><p>Simulate from a Bayesian network</p></td>
+        <td><p>Simulate from Bayesian network</p></td>
       </tr><tr><td>
           <p><code><a href="grain_compile.html">compile(<i>&lt;grain&gt;</i>)</a></code> </p>
         </td>
@@ -82,13 +82,9 @@
         </td>
         <td><p>Set, update and remove evidence.</p></td>
       </tr><tr><td>
-          <p><code><a href="grain_joint_evidence.html">setJEvidence()</a></code> <code><a href="grain_joint_evidence.html">retractJEvidence()</a></code> <code><a href="grain_joint_evidence.html">new_jev()</a></code> </p>
-        </td>
-        <td><p>Set joint evidence in grain objects</p></td>
-      </tr><tr><td>
           <p><code><a href="grain_predict.html">predict(<i>&lt;grain&gt;</i>)</a></code> </p>
         </td>
-        <td><p>Make predictions from a probabilistic network</p></td>
+        <td><p>Make predictions from Bayesian network</p></td>
       </tr><tr><td>
           <p><code><a href="grain_propagate.html">propagate(<i>&lt;grain&gt;</i>)</a></code> <code><a href="grain_propagate.html">propagateLS()</a></code> </p>
         </td>
@@ -108,7 +104,7 @@
       </tr><tr><td>
           <p><code><a href="querygrain.html">querygrain()</a></code> </p>
         </td>
-        <td><p>Query a network</p></td>
+        <td><p>Query a Bayesian network</p></td>
       </tr><tr><td>
           <p><code><a href="repeat_pattern.html">repeat_pattern()</a></code> </p>
         </td>
@@ -122,12 +118,8 @@
         </td>
         <td><p>Simplify output query to a Bayesian network</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
-          <h2 id="new-names">New names <a href="#new-names" class="anchor" aria-hidden="true"></a></h2>
-          <p class="section-desc"></p><p>New names.</p>
-        </th>
-      </tr></tbody><tbody></tbody><tbody><tr><th colspan="2">
           <h2 id="old-names">Old names <a href="#old-names" class="anchor" aria-hidden="true"></a></h2>
-          <p class="section-desc"></p><p>Old names.</p>
+          <p class="section-desc"></p><p>These functions are kept in the package for backward compatibility. They may be deprecated in the future.</p>
         </th>
       </tr></tbody><tbody><tr><td>
           <p><code><a href="finding.html">setFinding()</a></code> </p>
@@ -178,7 +170,7 @@
         </td>
         <td><p>Set, retrieve, and retract finding in Bayesian network.</p></td>
       </tr><tr><td>
-          <p><code><a href="generics.html">nodeNames()</a></code> <code><a href="generics.html">nodeStates()</a></code> <code><a href="generics.html">universe()</a></code> <code><a href="generics.html">isCompiled()</a></code> <code><a href="generics.html">isPropagated()</a></code> <code><a href="generics.html">vpar(<i>&lt;cpt_spec&gt;</i>)</a></code> <code><a href="generics.html">vpar(<i>&lt;cpt_grain&gt;</i>)</a></code> <code><a href="generics.html">rip(<i>&lt;grain&gt;</i>)</a></code> <code><a href="generics.html">varNames(<i>&lt;grainEvidence_&gt;</i>)</a></code> </p>
+          <p><code><a href="generics.html">nodeNames()</a></code> <code><a href="generics.html">nodeStates()</a></code> <code><a href="generics.html">universe()</a></code> <code><a href="generics.html">isCompiled()</a></code> <code><a href="generics.html">isPropagated()</a></code> <code><a href="generics.html">vpar(<i>&lt;cpt_spec&gt;</i>)</a></code> <code><a href="generics.html">vpar(<i>&lt;cpt_grain&gt;</i>)</a></code> <code><a href="generics.html">rip(<i>&lt;grain&gt;</i>)</a></code> </p>
         </td>
         <td><p>gRain generics</p></td>
       </tr><tr><td>
@@ -188,7 +180,7 @@
       </tr><tr><td>
           <p><code><a href="grain-simulate.html">simulate(<i>&lt;grain&gt;</i>)</a></code> </p>
         </td>
-        <td><p>Simulate from a Bayesian network</p></td>
+        <td><p>Simulate from Bayesian network</p></td>
       </tr><tr><td>
           <p><code><a href="grain_compile.html">compile(<i>&lt;grain&gt;</i>)</a></code> </p>
         </td>
@@ -198,13 +190,9 @@
         </td>
         <td><p>Set, update and remove evidence.</p></td>
       </tr><tr><td>
-          <p><code><a href="grain_joint_evidence.html">setJEvidence()</a></code> <code><a href="grain_joint_evidence.html">retractJEvidence()</a></code> <code><a href="grain_joint_evidence.html">new_jev()</a></code> </p>
-        </td>
-        <td><p>Set joint evidence in grain objects</p></td>
-      </tr><tr><td>
           <p><code><a href="grain_predict.html">predict(<i>&lt;grain&gt;</i>)</a></code> </p>
         </td>
-        <td><p>Make predictions from a probabilistic network</p></td>
+        <td><p>Make predictions from Bayesian network</p></td>
       </tr><tr><td>
           <p><code><a href="grain_propagate.html">propagate(<i>&lt;grain&gt;</i>)</a></code> <code><a href="grain_propagate.html">propagateLS()</a></code> </p>
         </td>
@@ -240,7 +228,7 @@
       </tr><tr><td>
           <p><code><a href="querygrain.html">querygrain()</a></code> </p>
         </td>
-        <td><p>Query a network</p></td>
+        <td><p>Query a Bayesian network</p></td>
       </tr><tr><td>
           <p><code><a href="repeat_pattern.html">repeat_pattern()</a></code> </p>
         </td>

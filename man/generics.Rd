@@ -7,13 +7,11 @@
 \alias{nodeStates}
 \alias{nodeStates.grain}
 \alias{universe}
-\alias{universe.grain}
 \alias{isCompiled}
 \alias{isPropagated}
 \alias{vpar.cpt_spec}
 \alias{vpar.cpt_grain}
 \alias{rip.grain}
-\alias{varNames.grainEvidence_}
 \title{gRain generics}
 \usage{
 nodeNames(object)
@@ -26,8 +24,6 @@ nodeStates(object, nodes = nodeNames(object))
 
 universe(object, ...)
 
-\method{universe}{grain}(object, ...)
-
 isCompiled(object)
 
 isPropagated(object)
@@ -37,15 +33,13 @@ isPropagated(object)
 \method{vpar}{cpt_grain}(object, ...)
 
 \method{rip}{grain}(object, ...)
-
-\method{varNames}{grainEvidence_}(x)
 }
 \arguments{
+\item{object}{A relevant object.}
+
 \item{nodes}{Some nodes of the object.}
 
 \item{...}{Additional arguments; currently not used.}
-
-\item{x, object}{A relevant object.}
 }
 \description{
 Generic functions etc for the gRain package
