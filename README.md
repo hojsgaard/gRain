@@ -1,15 +1,13 @@
 
 <!-- README.md is generated from README.Rmd. Please edit only README.Rmd! -->
 
-## gRain
-
 Bayesian networks in R
 
 Author: Søren Højsgaard
 
 ### Online documentation
 
-<https://hojsgaard.github.io/gRain>
+<https://hojsgaard.github.io/gRain/>
 
 ### Development site
 
@@ -17,8 +15,8 @@ Author: Søren Højsgaard
 
 ### CRAN page:
 
-<https://cran.r-project.org/web/packages/gRain/index.html>
+<https://CRAN.R-project.org/package=gRain>
 
 ### Further info at:
 
-<http://people.math.aau.dk/~sorenh/software/gR/>
+<https://people.math.aau.dk/~sorenh/software/gR/>

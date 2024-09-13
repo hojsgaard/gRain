@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">gRain</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.1.9012</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.2</span>
       </span>
     </div>
 
@@ -102,41 +102,15 @@ with the gRain Package for R. Journal of Statistical Software,
 <span class="r-in"><span><span class="va">chest</span> <span class="op">&lt;-</span> <span class="fu"><a href="load-save-hugin.html">loadHuginNet</a></span><span class="op">(</span><span class="va">tf</span>, details<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/simulate.html" class="external-link">simulate</a></span><span class="op">(</span><span class="va">chest</span>,n<span class="op">=</span><span class="fl">10</span><span class="op">)</span> </span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Hasbronchitis Dyspnoea VisittoAsia Smoker Hastuberculosis Haslungcancer</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1            yes       no          no    yes              no            no</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2             no       no          no     no              no            no</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3             no       no          no     no              no            no</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4             no       no          no     no              no            no</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5            yes       no          no    yes              no            no</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6             no       no          no    yes              no            no</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7             no      yes          no    yes              no            no</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8            yes      yes          no     no              no            no</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9            yes       no          no    yes              no           yes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10            no       no          no    yes              no            no</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    Tuberculosisorcancer PositiveXray</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                    no           no</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                    no           no</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                    no           no</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4                    no           no</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5                    no           no</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6                    no           no</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7                    no           no</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8                    no           no</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9                   yes          yes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10                   no           no</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">chest2</span> <span class="op">&lt;-</span> <span class="fu"><a href="finding.html">setFinding</a></span><span class="op">(</span><span class="va">chest</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"VisitToAsia"</span>, <span class="st">"Dyspnoea"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                            <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"yes"</span>, <span class="st">"yes"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/simulate.html" class="external-link">simulate</a></span><span class="op">(</span><span class="va">chest2</span>, n<span class="op">=</span><span class="fl">10</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    Hasbronchitis Dyspnoea VisittoAsia Smoker Hastuberculosis Haslungcancer</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1            yes      yes          no    yes              no            no</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2            yes      yes          no    yes              no            no</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1             no       no          no     no              no            no</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2             no       no          no    yes              no            no</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3             no      yes          no     no              no            no</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4            yes      yes          no    yes              no            no</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5            yes      yes          no    yes              no            no</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6            yes      yes          no     no              no            no</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7            yes      yes          no    yes              no            no</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4             no       no          no     no              no            no</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5             no       no          no    yes              no            no</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6             no       no          no     no              no            no</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7            yes      yes          no     no              no            no</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 8            yes      yes          no    yes              no            no</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9            yes      yes          no     no              no           yes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9            yes      yes          no    yes              no            no</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10           yes      yes          no    yes              no            no</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Tuberculosisorcancer PositiveXray</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                    no           no</span>
@@ -147,7 +121,33 @@ with the gRain Package for R. Journal of Statistical Software,
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6                    no           no</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 7                    no           no</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 8                    no          yes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9                   yes          yes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9                    no           no</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10                   no           no</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">chest2</span> <span class="op">&lt;-</span> <span class="fu"><a href="finding.html">setFinding</a></span><span class="op">(</span><span class="va">chest</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"VisitToAsia"</span>, <span class="st">"Dyspnoea"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                            <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"yes"</span>, <span class="st">"yes"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/simulate.html" class="external-link">simulate</a></span><span class="op">(</span><span class="va">chest2</span>, n<span class="op">=</span><span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Hasbronchitis Dyspnoea VisittoAsia Smoker Hastuberculosis Haslungcancer</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1            yes      yes          no    yes              no            no</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2            yes      yes          no    yes              no            no</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3            yes      yes          no    yes              no            no</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4            yes      yes          no    yes              no            no</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5            yes      yes          no    yes              no            no</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6            yes      yes          no     no              no            no</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7            yes      yes          no    yes              no            no</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8            yes      yes          no    yes              no            no</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9            yes      yes          no    yes              no            no</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10           yes      yes          no    yes              no            no</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Tuberculosisorcancer PositiveXray</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                    no           no</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                    no           no</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                    no           no</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4                    no           no</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                    no           no</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6                    no          yes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7                    no           no</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8                    no           no</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9                    no           no</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10                   no           no</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

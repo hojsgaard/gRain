@@ -1,10 +1,12 @@
 Package: gRain
-Version: 1.4.1.9012
+Version: 1.4.2
 Title: Graphical Independence Networks
-Author: Søren Højsgaard <sorenh@math.aau.dk>
+Authors@R: person(given = "Søren",
+                    family = "Højsgaard",
+                    role = c("aut", "cre"),
+                    email = "sorenh@math.aau.dk")
 Maintainer: Søren Højsgaard <sorenh@math.aau.dk> 
-Description: Probability propagation in graphical independence networks, also
-    known as Bayesian networks or probabilistic expert systems. Documentation
+Description: Probability propagation in Bayesian networks, also known as graphical independence networks. Documentation
     of the package is provided in vignettes included in the package and in
     the paper by Højsgaard (2012, <doi:10.18637/jss.v046.i10>).
     See 'citation("gRain")' for details. 

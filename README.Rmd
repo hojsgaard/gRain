@@ -12,15 +12,13 @@ knitr::opts_chunk$set(
 )
 ```
 
-## gRain 
-
 Bayesian networks in R
 
 Author: Søren Højsgaard
 
 ### Online documentation
 
-https://hojsgaard.github.io/gRain
+https://hojsgaard.github.io/gRain/
 
 ### Development site
 
@@ -28,8 +26,8 @@ https://github.com/hojsgaard/gRain
 
 ### CRAN page:
 
-https://cran.r-project.org/web/packages/gRain/index.html
+https://CRAN.R-project.org/package=gRain
 
 ### Further info at:
 
-http://people.math.aau.dk/~sorenh/software/gR/
+https://people.math.aau.dk/~sorenh/software/gR/
