@@ -112,7 +112,7 @@ grain_evidence_new <- function(evi_list=NULL, levels) {
             evi_weight = evi_weight[keep])
     }
     class(out) <- c("grain_evidence", "list")
-    out <- as.data.frame.grain_evidence(out)
+    out <- grain_evidence2dataframe(out)
     class(out) <- c("grain_evidence", "data.frame")
     out
 }
@@ -133,21 +133,8 @@ grain_evidence_names <- function(x) x$nodes
 ## ' @param x An evidence object.
 ## ' @param ... Not used.
 ## ' @export 
-as.data.frame.grain_evidence <-
-    function (x, row.names = NULL, optional = FALSE, ...) {
-        is.atom <- sapply(x, is.atomic)
-        atom <- x[is.atom]
-        n.atom <- length(atom)
-        out <- as.data.frame(atom)
-        notatom <- x[!is.atom]
-        n <- names(notatom)
-        for (i in 1:length(notatom)){
-            out[i+n.atom] <- notatom[i]
-        }
-        out
-    }
 
-as.data.frame.grain_evidence <- function(x) {
+grain_evidence2dataframe <- function(x) {
     mm <- lapply(x, function(z) as.data.frame(I(z)))
     mm <- as.data.frame(mm)
     names(mm) <- names(x)
@@ -163,7 +150,7 @@ grain_evidence_setdiff <- function(ev1, ev2) {
     nn  <- setdiff( grain_evidence_names(ev1), grain_evidence_names(ev2) )
     out <- grain_evidence_subset(ev1, select=nn)
     class(out) <- c("grain_evidence", "list")
-    out <- as.data.frame.grain_evidence(out)
+    out <- grain_evidence2dataframe(out)
     class(out) <- c("grain_evidence", "data.frame")
     out
 
@@ -176,7 +163,7 @@ grain_evidence_union <- function(ev1, ev2) {
     out <- mapply(function(l1, l2){c(l1,l2)},
                   ev, ev2, SIMPLIFY=FALSE, USE.NAMES=TRUE)
     class(out) <- c("grain_evidence", "list")
-    out <- as.data.frame.grain_evidence(out)
+    out <- grain_evidence2dataframe(out)
     class(out) <- c("grain_evidence", "data.frame")
     out
 }

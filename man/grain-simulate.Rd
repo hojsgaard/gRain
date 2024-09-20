@@ -33,7 +33,6 @@ simulate(chest,n=10)
 chest2 <- setFinding(chest, c("VisitToAsia", "Dyspnoea"),
                             c("yes", "yes"))
 simulate(chest2, n=10)
-
 }
 \references{
 Søren Højsgaard (2012). Graphical Independence Networks

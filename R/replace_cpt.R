@@ -4,7 +4,7 @@
 #'
 #' @description Replace CPTs of Bayesian network.
 #'
-#' @name replace-cpt
+#' @name replace_cpt
 #' @author Søren Højsgaard, \email{sorenh@@math.aau.dk}
 #' 
 ## ##############################################################
@@ -55,15 +55,22 @@
 #' getgrain(wet.bn, "cpt")[c("R","S")]
 #' 
 #' @export 
-#' @rdname replace-cpt
+#' @rdname replace_cpt
 replace_cpt <- function(object, value){
     UseMethod("replace_cpt")
 }
 
+#' @name old_replace_cpt
+#' @inherit replace_cpt
+#' @concept old_names
+#' @export
+replaceCPT <- replace_cpt
+
+#' 
 ## Modifies cptlist in object. 
 
 #' @export 
-#' @rdname replace-cpt
+#' @rdname replace_cpt
 replace_cpt.cpt_grain <- function(object, value){
 
     if (!isCompiled(object))

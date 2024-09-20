@@ -33,7 +33,8 @@
 #' chest2 <- setFinding(chest, c("VisitToAsia", "Dyspnoea"),
 #'                             c("yes", "yes"))
 #' simulate(chest2, n=10)
-#' 
+#' @method simulate grain
+#' @export simulate.grain
 #' @export
 simulate.grain <- function(object, nsim=1, seed=NULL, ...){
 

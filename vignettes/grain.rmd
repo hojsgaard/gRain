@@ -747,19 +747,20 @@ the gRim package and 2) based on the hill climbing algorithm in the
 bnlearn package.
 
 
-```{r}
+```{r,eval=T}
 dat <- gRbase::chestSim10000
 
 ## Using gRim and stepwise selection
 sat_model <-  gRim::dmod(~.^., data=dat)
 mm1 <- stepwise(sat_model, criterion="aic", type="decomposable")
-bn1 <- grain(mm1$modelinfo$ug, data=dat)
+##bn1 <- grain(mm1$modelinfo$ug, data=dat)
 bn1 <- grain(mm1$modelinfo$ug, data=dat, smooth=0.01)
 
 ## Using bnlearn and hill climbing
 sat_graph <- bnlearn::random.graph(names(dat), prob = 1) # complete graph
 mm2 <- bnlearn::hc(dat, start=sat_graph)
 bn2 <- bnlearn::as.grain(bnlearn::bn.fit(mm2, dat))
+bn2$dag
 ```
 
 An important detail is that gRim works with decomposable undirected
