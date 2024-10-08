@@ -62,11 +62,11 @@ The syntax of \code{setEvidence()} may change in the future.
 }
 \examples{
 
-example("example_chest_cpt")
-chest.bn <- grain(compileCPT(chest_cpt))
+example("grain")
+chest_bn <- grain(compileCPT(chest_cpt))
 
-bn2 <- chest.bn |> evidence_add(list(asia="yes", xray="yes"))
-bn3 <- chest.bn |> evidence_add(list(asia=c(0.8, 0.1), xray="yes"))
+bn2 <- chest_bn |> evidence_add(list(asia="yes", xray="yes"))
+bn3 <- chest_bn |> evidence_add(list(asia=c(0.8, 0.1), xray="yes"))
 
 bn2 |> evidence_get()
 bn3 |> evidence_get()
@@ -80,11 +80,12 @@ bn3 |> evidence_drop("xray")
 bn2 |> evidence_drop("xray") |> evidence_get()
 bn3 |> evidence_drop("xray") |> evidence_get()
 
+
 ## For backward compatibility these functions are available now but
-#may be deprecated later.
-bb2 <- setEvidence(chest.bn, c("asia", "xray"), c("yes", "yes"))
-bb3 <- setEvidence(chest.bn, c("asia", "xray"), list(c(0.8, 0.2), "yes"))
-bb4 <- setFinding(chest.bn, c("asia", "xray"), c("yes", "yes"))
+# may be deprecated later.
+bb2 <- setEvidence(chest_bn, c("asia", "xray"), c("yes", "yes"))
+bb3 <- setEvidence(chest_bn, c("asia", "xray"), list(c(0.8, 0.2), "yes"))
+bb4 <- setFinding(chest_bn, c("asia", "xray"), c("yes", "yes"))
 
 bb2 |> getEvidence()
 bb3 |> getEvidence()
@@ -98,6 +99,11 @@ bb3 |> pEvidence()
 bb2 |> retractEvidence("xray") |> getEvidence()
 bb3 |> retractEvidence("xray") |> getEvidence()
 
+## Evidence from dataframe
+dat <- gRbase::chestSim500[,1:4]
+setEvidence(chest_bn, evidence=dat[1,]) |> getEvidence()
+dat2 <- lapply(dat, as.character) |> as.data.frame() |> as.matrix()
+setEvidence(chest_bn, evidence=dat2[2,]) |> getEvidence()
 }
 \references{
 Søren Højsgaard (2012). Graphical Independence Networks

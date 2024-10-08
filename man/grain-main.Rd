@@ -96,13 +96,13 @@ chest_bn  <- grain(chest_cpt)
 data(lizard, package="gRbase")
 
 ## From a DAG: height <- species -> diam
-daG <- dag(~species + height:species + diam:species, result="igraph")
+daG <- dag(~species + height:species + diam:species)
 
 ## From an undirected graph UG : [height:species][diam:species]
-uG  <- ug(~height:species + diam:species, result="igraph")
+uG  <- ug(~height:species + diam:species)
 
-liz.ug   <- grain(uG, data=lizard)
-liz.dag  <- grain(daG, data=lizard)
+liz_ug   <- grain(uG, data=lizard)
+liz_dag  <- grain(daG, data=lizard)
 }
 \references{
 Søren Højsgaard (2012). Graphical Independence
