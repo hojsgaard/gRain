@@ -11,8 +11,7 @@
 #' @importFrom utils combn str
 #'
 #' @importMethodsFrom stats4 plot
-
-
+#' 
 ## Miscellaneous
 ## -------------
 #' @importFrom stats simulate predict
