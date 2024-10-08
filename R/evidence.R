@@ -32,12 +32,12 @@
 #' @keywords models utilities
 #' @examples
 #' 
-#' example("example_chest_cpt")
-#' chest.bn <- grain(compileCPT(chest_cpt))
+#' example("grain")
+#' chest_bn <- grain(compileCPT(chest_cpt))
 #'
-#' bn2 <- chest.bn |> evidence_add(list(asia="yes", xray="yes"))
-#' bn3 <- chest.bn |> evidence_add(list(asia=c(0.8, 0.1), xray="yes"))
-#'
+#' bn2 <- chest_bn |> evidence_add(list(asia="yes", xray="yes"))
+#' bn3 <- chest_bn |> evidence_add(list(asia=c(0.8, 0.1), xray="yes"))
+#' 
 #' bn2 |> evidence_get()
 #' bn3 |> evidence_get()
 #'
@@ -50,11 +50,12 @@
 #' bn2 |> evidence_drop("xray") |> evidence_get()
 #' bn3 |> evidence_drop("xray") |> evidence_get()
 #' 
+#' 
 #' ## For backward compatibility these functions are available now but
-#' #may be deprecated later.
-#' bb2 <- setEvidence(chest.bn, c("asia", "xray"), c("yes", "yes"))
-#' bb3 <- setEvidence(chest.bn, c("asia", "xray"), list(c(0.8, 0.2), "yes"))
-#' bb4 <- setFinding(chest.bn, c("asia", "xray"), c("yes", "yes"))
+#' # may be deprecated later.
+#' bb2 <- setEvidence(chest_bn, c("asia", "xray"), c("yes", "yes"))
+#' bb3 <- setEvidence(chest_bn, c("asia", "xray"), list(c(0.8, 0.2), "yes"))
+#' bb4 <- setFinding(chest_bn, c("asia", "xray"), c("yes", "yes"))
 #'
 #' bb2 |> getEvidence()
 #' bb3 |> getEvidence()
@@ -68,6 +69,11 @@
 #' bb2 |> retractEvidence("xray") |> getEvidence()
 #' bb3 |> retractEvidence("xray") |> getEvidence()
 #'
+#' ## Evidence from dataframe
+#' dat <- gRbase::chestSim500[,1:4]
+#' setEvidence(chest_bn, evidence=dat[1,]) |> getEvidence()
+#' dat2 <- lapply(dat, as.character) |> as.data.frame() |> as.matrix()
+#' setEvidence(chest_bn, evidence=dat2[2,]) |> getEvidence()
 NULL
 
 ### WORKER FUNCTIONS ###
@@ -125,7 +131,16 @@ set_evidence_worker <- function(object, evidence=NULL, propagate=TRUE, details=0
         } 
         
         oe <- getEvidence( object ) # Der er noget med typen (old/new)
+        if (inherits(evidence, "data.frame")) {
+           if (nrow(evidence) !=1) 
+             stop("'evidence' is dataframe but must have exactly one row\n")
+            evidence <- lapply(evidence, as.character)         
+        }
+##print(evidence)
+        
         ne <- grain_evidence_new( evidence, universe(object)$levels )
+        
+##        print(ne)
         
         if (details > 0){
             cat("old.evidence:\n"); print.default(oe)
@@ -191,7 +206,8 @@ retract_evidence_worker <- function(object, nodes=NULL, propagate=TRUE) {
             stop("'nodes' must be a character or numeric vector")
         oe <- getEvidence( object )
         if (!is.null_evi( oe )){
-            vn <- varNames( oe )
+            #vn <- varNames( oe )
+            vn <- grain_evidence_names(oe)
             if (is.numeric(nodes)){
                 nodes <- vn[nodes]
             }
@@ -203,7 +219,11 @@ retract_evidence_worker <- function(object, nodes=NULL, propagate=TRUE) {
             if ( length( keep ) < length( vn ) ){
                 object <- .resetgrain( object )                
                 if (length( keep ) > 0){
-                    ne <- subset( oe, select=keep )
+#                    ne <- subset( oe, select=keep )
+                    idx <-vn %in% keep
+                    ne <- oe[idx,]
+                    # object$potential$pot_temp <- 
+                    #     insertEvi(ne, getgrain(object, "pot_temp"), idx)                    
                     object <- set_evidence_worker( object, evidence = ne )
                 }
             }

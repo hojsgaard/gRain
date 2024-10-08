@@ -112,6 +112,8 @@ grain_evidence_new <- function(evi_list=NULL, levels) {
             evi_weight = evi_weight[keep])
     }
     class(out) <- c("grain_evidence", "list")
+    #ooo <<- out
+    #print("pppppppppppppppppppp\n")
     out <- grain_evidence2dataframe(out)
     class(out) <- c("grain_evidence", "data.frame")
     out
@@ -135,11 +137,26 @@ grain_evidence_names <- function(x) x$nodes
 ## ' @export 
 
 grain_evidence2dataframe <- function(x) {
+  x <<-x
     mm <- lapply(x, function(z) as.data.frame(I(z)))
     mm <- as.data.frame(mm)
     names(mm) <- names(x)
     mm
 }
+
+grain_evidence2dataframe <-
+  function (x, row.names = NULL, optional = FALSE, ...) {
+    is.atom <- sapply(x, is.atomic)
+    atom <- x[is.atom]
+    n.atom <- length(atom)
+    out <- as.data.frame(atom)
+    notatom <- x[!is.atom]
+    n <- names(notatom)
+    for (i in 1:length(notatom)){
+      out[i+n.atom] <- notatom[i]
+    }
+    out
+  }
 
 
 
