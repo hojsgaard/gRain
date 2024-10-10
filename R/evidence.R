@@ -115,11 +115,9 @@ absorb_evidence_worker <- function(object, propagate=TRUE ){
     if (propagate) propagate(object) else object
 }
 
-
-
 set_evidence_worker <- function(object, evidence=NULL, propagate=TRUE, details=0) {
     ## details=10
-    ## cat("++++ set_evidence_worker input evidence: \n"); str(evidence)
+    cat("++++ set_evidence_worker input evidence: \n"); str(evidence)
 
     stopifnot_grain(object)    
     
@@ -130,49 +128,49 @@ set_evidence_worker <- function(object, evidence=NULL, propagate=TRUE, details=0
             object <- compile(object)
         } 
         
-        oe <- getEvidence( object ) # Der er noget med typen (old/new)
-        if (inherits(evidence, "data.frame")) {
-           if (nrow(evidence) !=1) 
-             stop("'evidence' is dataframe but must have exactly one row\n")
-            evidence <- lapply(evidence, as.character)         
-        }
-##print(evidence)
+        old_evi_object <- getEvidence( object ) # Der er noget med typen (old/new)
+        cat("old_evi_object:\n"); print(old_evi_object)
+
+        ## if (inherits(evidence, "data.frame")) {
+        ##     if (nrow(evidence) !=1) 
+        ##         stop("'evidence' is dataframe but must have exactly one row\n")
+        ##     evidence <- lapply(evidence, as.character)         
+        ## }
+
+        new_evi_object <- grain_evidence_new(evidence, universe(object)$levels)
         
-        ne <- grain_evidence_new( evidence, universe(object)$levels )
-        
-##        print(ne)
+        str(list(evidence=evidence, new_evi_object=new_evi_object))
         
         if (details > 0){
-            cat("old.evidence:\n"); print.default(oe)
-            cat("new evidence:\n"); print.default(ne)
+            cat("old.evidence:\n"); print.default(old_evi_object)
+            cat("new evidence:\n"); print.default(new_evi_object)
         }
         
         ## Hvis der er eksisterende evidens, så skal det tages ud af det nye
-        if (!is.null_evi( oe ) ){
-            ne <- grain_evidence_setdiff( ne, oe )
+        if (!is.null_evi( old_evi_object ) ){
+            new_evi_object <- grain_evidence_setdiff( new_evi_object, old_evi_object )
             if (details>0) {
-                cat("new evidence - after modification:\n"); print( ne )
+                cat("new evidence - after modification:\n"); print( new_evi_object )
             }
         }
 
-        if (length(grain_evidence_names(ne)) > 0){
+        if (length(grain_evidence_names(new_evi_object)) > 0){
             rp  <- getgrain(object, "rip")    
-            host  <- get_superset_list(grain_evidence_names(ne), rp$cliques)
+            host  <- get_superset_list(grain_evidence_names(new_evi_object), rp$cliques)
             object$potential$pot_temp <- 
-              insertEvi(ne, getgrain(object, "pot_temp"), host)
+              insertEvi(new_evi_object, getgrain(object, "pot_temp"), host)
             
-            te <- if (is.null_evi(oe))
-                      ne
+            te <- if (is.null_evi(old_evi_object))
+                      new_evi_object
                   else
-                      grain_evidence_union(oe, ne)
+                      grain_evidence_union(old_evi_object, new_evi_object)
             object$evidence <- te
-
         }         
     } 
     if (propagate) propagate(object) else object
 }
 
-insertEvi <- function(evi_object, pot, hostclique){
+insertEvi <- function(evi_object, pot, hostclique) {
   if ( !inherits(evi_object, "grain_evidence") )
     stop("'object' is not a 'grain_evidence' object")
   
@@ -183,11 +181,6 @@ insertEvi <- function(evi_object, pot, hostclique){
   }
   pot
 }
-
-
-
-
-
 
 
 retract_evidence_worker <- function(object, nodes=NULL, propagate=TRUE) {
@@ -204,27 +197,27 @@ retract_evidence_worker <- function(object, nodes=NULL, propagate=TRUE) {
     } else {
         if (!(is.character( nodes ) || is.numeric( nodes )) )
             stop("'nodes' must be a character or numeric vector")
-        oe <- getEvidence( object )
-        if (!is.null_evi( oe )){
-            #vn <- varNames( oe )
-            vn <- grain_evidence_names(oe)
+        old_evi_object <- getEvidence( object )
+        if (!is.null_evi( old_evi_object )){
+            #vn <- varNames( old_evi_object )
+            vn <- grain_evidence_names(old_evi_object)
             if (is.numeric(nodes)){
                 nodes <- vn[nodes]
             }
             keep <- setdiff( vn, nodes)
+            str(list(keep=keep, vn=vn, nodes=nodes))
             ## NB: keep <= varNames            
-            ## hvis keep==varNames(oe) så gør intet
+            ## hvis keep==varNames(old_evi_object) så gør intet
             ## hvis keep=Ø så bare reset
             ## hvis Ø < keep < varNames så gør som nedenfor
             if ( length( keep ) < length( vn ) ){
                 object <- .resetgrain( object )                
                 if (length( keep ) > 0){
-#                    ne <- subset( oe, select=keep )
+#                    ne <- subset( old_evi_object, select=keep )
                     idx <-vn %in% keep
-                    ne <- oe[idx,]
-                    # object$potential$pot_temp <- 
-                    #     insertEvi(ne, getgrain(object, "pot_temp"), idx)                    
-                    object <- set_evidence_worker( object, evidence = ne )
+                    new_evi_object <- old_evi_object[idx,]
+                    print(new_evi_object)
+                    object <- set_evidence_worker( object, evidence = new_evi_object )
                 }
             }
         }
@@ -310,11 +303,6 @@ getEvidence <- function(object, short=TRUE) {
 pEvidence <- function(object, evidence=NULL) {
     p_evidence_worker(object, evidence=evidence)
 }
-
-
-
-
-
 
 
 
