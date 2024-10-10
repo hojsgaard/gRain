@@ -85,12 +85,6 @@ bb3 |> pEvidence()
 
 bb2 |> retractEvidence("xray") |> getEvidence()
 bb3 |> retractEvidence("xray") |> getEvidence()
-
-## Evidence from dataframe
-dat <- gRbase::chestSim500[,1:4]
-setEvidence(chest_bn, evidence=dat[1,]) |> getEvidence()
-dat2 <- lapply(dat, as.character) |> as.data.frame() |> as.matrix()
-setEvidence(chest_bn, evidence=dat2[2,]) |> getEvidence()
 }
 \references{
 Søren Højsgaard (2012). Graphical Independence Networks

@@ -68,12 +68,6 @@
 #' 
 #' bb2 |> retractEvidence("xray") |> getEvidence()
 #' bb3 |> retractEvidence("xray") |> getEvidence()
-#'
-#' ## Evidence from dataframe
-#' dat <- gRbase::chestSim500[,1:4]
-#' setEvidence(chest_bn, evidence=dat[1,]) |> getEvidence()
-#' dat2 <- lapply(dat, as.character) |> as.data.frame() |> as.matrix()
-#' setEvidence(chest_bn, evidence=dat2[2,]) |> getEvidence()
 NULL
 
 ### WORKER FUNCTIONS ###
@@ -117,7 +111,7 @@ absorb_evidence_worker <- function(object, propagate=TRUE ){
 
 set_evidence_worker <- function(object, evidence=NULL, propagate=TRUE, details=0) {
     ## details=10
-    cat("++++ set_evidence_worker input evidence: \n"); str(evidence)
+    ## cat("++++ set_evidence_worker input evidence: \n"); str(evidence)
 
     stopifnot_grain(object)    
     
@@ -129,7 +123,7 @@ set_evidence_worker <- function(object, evidence=NULL, propagate=TRUE, details=0
         } 
         
         old_evi_object <- getEvidence( object ) # Der er noget med typen (old/new)
-        cat("old_evi_object:\n"); print(old_evi_object)
+        ## cat("old_evi_object:\n"); print(old_evi_object)
 
         ## if (inherits(evidence, "data.frame")) {
         ##     if (nrow(evidence) !=1) 
@@ -139,7 +133,7 @@ set_evidence_worker <- function(object, evidence=NULL, propagate=TRUE, details=0
 
         new_evi_object <- grain_evidence_new(evidence, universe(object)$levels)
         
-        str(list(evidence=evidence, new_evi_object=new_evi_object))
+        ## str(list(evidence=evidence, new_evi_object=new_evi_object))
         
         if (details > 0){
             cat("old.evidence:\n"); print.default(old_evi_object)
@@ -205,7 +199,7 @@ retract_evidence_worker <- function(object, nodes=NULL, propagate=TRUE) {
                 nodes <- vn[nodes]
             }
             keep <- setdiff( vn, nodes)
-            str(list(keep=keep, vn=vn, nodes=nodes))
+            ## str(list(keep=keep, vn=vn, nodes=nodes))
             ## NB: keep <= varNames            
             ## hvis keep==varNames(old_evi_object) så gør intet
             ## hvis keep=Ø så bare reset
