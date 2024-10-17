@@ -1,2 +1,2 @@
-Unfortunately another issue related to the gRaven package was detected. The gRaven maintainer believes it is all fine now. Sorry for the inconvenience.
+Unintended debugging info was printed. Removed now. Title changed to Bayesian Networks. Sorry for the inconvenience.
 
