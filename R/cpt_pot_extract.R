@@ -190,19 +190,13 @@ extract_cpt_worker <- function(data_, vpa_, smooth=0) {
     for (i in seq_along(vpa_)){
         cq   <- vpa_[[ i ]]
         t.cq <- marginal_data(data_, cq, is.df) + smooth       
-#        print(t.cq)
         out[[i]] <- tabNormalize(t.cq + smooth, type="first")
     }
-    
-#    out <<- out
-    
     chk <- unlist(lapply(out,
                          function(zz) {
                              any(is.na(zz))
                          }))
 
-    # nas <- names(chk)[which(chk)]
-    # nas <- names(chk)[which(names(vpa_))]
     nas <- names(vpa_)[chk]
 
     if (length(nas) > 0) {
@@ -218,8 +212,6 @@ extract_pot_worker <- function(data_, cliq, seps=NULL, smooth=0) {
     .normalize <- function(tt, sp) {
         if (length(sp) > 0){ 
           mm <- tabMarg(tt, sp)
-          ##print(mm)
-#          tabDiv0(tt, mm)
           tabDiv(tt, mm)
         } else {
           mm <- sum(tt)

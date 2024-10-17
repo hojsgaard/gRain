@@ -138,14 +138,9 @@ querygrain.grain <- function(object, nodes = nodeNames(object), type = "marginal
                    out <- qobject
            })
 
-    ## cat("uuuuuuuuuuuuuuu\n")
-    ## print(out)
-    ## print(nodes)
-    if (simplify){
+    if (simplify) {
         if (identical(type, "marginal")){
             out <- simplify_query(out)
-            ## print(out)
-            ## out <- out[nodes, ]
         } else {
             out <- as.data.frame.table(out)
         }
@@ -221,11 +216,10 @@ querygrain.grain <- function(object, nodes = nodeNames(object), type = "marginal
              } else {
                  intersect(rip(object)$nodes, nodes)
              }
-    ## print(nodes)
-    ## print(getEvidence(object))
+
     if (exclude)
         nodes <- setdiff(nodes, getEvidence(object)$nodes)
-    ## print(nodes)
+
     idx <- match(nodes, rip(object)$nodes)
     host.cq <- rip(object)$host[idx]
 

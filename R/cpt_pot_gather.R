@@ -1,6 +1,3 @@
-## FIXME: print.marg_spec missing
-## FIXME: summary.pot_spec missing
-## FIXME: summary.marg_spec missing
 
 #' @title Compile conditional probability tables / cliques potentials.
 #' @description Compile conditional probability tables / cliques
@@ -164,14 +161,11 @@ print.cpt_spec_simple <- function(x,...){
 
 compile_cpt_worker <- function(x, forceCheck=TRUE) {
     ## x: A list of cpts (arrays)
-
     ## type <- is.list(x) ##&& all(sapply(x, is.named.array))
     ## if (!type) stop("A list of named arrays is expected")
         
     ## zz: Internal representation of cpts
     zz  <- lapply(x, parse_cpt)
-    ## zz <<- zz
-    ## print(zz)
     
     universe <- .create_universe(zz)
 
@@ -301,7 +295,6 @@ parse_cpt.default <- function(xi){
 
     ## str(list(vpar=vpar, vlev=vlev, values=values, smooth=smooth))
     ## Normalization of CPTs happen here
-    ## print("JJJJJJJJJJJJJJJJJJJJJJ\n")
     ## str(list(vpar=vpar, vlev=vlev, values=values, smooth=smooth))
     values <- matrix(values, nrow=length(vlev))
     s  <- colSums(values)
@@ -311,7 +304,6 @@ parse_cpt.default <- function(xi){
     out <- list(vnam=vpar[1], vlev=vlev, vpar=vpar, values=values,
                 normalize="first", smooth=smooth)
     class(out) <- "cpt_generic"
-    ## print(out)
     out    
 }
 
@@ -321,19 +313,16 @@ parse_cpt.default <- function(xi){
 ## JSS paper)
 
 #' @export
-parse_cpt.cptable_class <- function(xi){
+parse_cpt.cptable_class <- function(xi) {
     ## cat("parse_cpt.cptable_class\n")
-    ## print(xi)
-    ## xi <<- xi
     .parse_cptable_finalize(attr(xi, "vpa"), attr(xi, "levels"), 
                         as.numeric(xi), attr(xi, "smooth"))
 }
 
-.parse_cptable_finalize <- function(vpar, vlev, values, smooth){
+.parse_cptable_finalize <- function(vpar, vlev, values, smooth) {
 
     ## str(list(vpar=vpar, vlev=vlev, values=values, smooth=smooth))
     ## Normalization of CPTs happen here
-    ## print("JJJJJJJJJJJJJJJJJJJJJJ\n")
     ## str(list(vpar=vpar, vlev=vlev, values=values, smooth=smooth))
     values <- matrix(values, nrow=length(vlev))
     s  <- colSums(values)
@@ -343,7 +332,6 @@ parse_cpt.cptable_class <- function(xi){
     out <- list(vnam=vpar[1], vlev=vlev, vpar=vpar, values=values,
                 normalize="first", smooth=smooth)
     class(out) <- "cpt_generic"
-    ## print(out)
     out    
 }
 

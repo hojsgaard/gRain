@@ -101,7 +101,7 @@ grain_evidence_new <- function(evi_list=NULL, levels) {
         
         ## If evidence is zero on all states or negative on some (or all) states then it is invalid
         keep <- unlist(lapply(evi_weight, function(e){ sum(e) !=0 && all(e>=0) }), use.names=FALSE)
-        ## print(keep)
+
         
         nodes <- unique.default(unlist(lapply(evi_weight, .namesDimnames)),
                                 use.names=FALSE )
@@ -112,8 +112,6 @@ grain_evidence_new <- function(evi_list=NULL, levels) {
             evi_weight = evi_weight[keep])
     }
     class(out) <- c("grain_evidence", "list")
-    #ooo <<- out
-    #print("pppppppppppppppppppp\n")
     out <- grain_evidence2dataframe(out)
     class(out) <- c("grain_evidence", "data.frame")
     out

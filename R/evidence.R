@@ -123,16 +123,7 @@ set_evidence_worker <- function(object, evidence=NULL, propagate=TRUE, details=0
         } 
         
         old_evi_object <- getEvidence( object ) # Der er noget med typen (old/new)
-        ## cat("old_evi_object:\n"); print(old_evi_object)
-
-        ## if (inherits(evidence, "data.frame")) {
-        ##     if (nrow(evidence) !=1) 
-        ##         stop("'evidence' is dataframe but must have exactly one row\n")
-        ##     evidence <- lapply(evidence, as.character)         
-        ## }
-
-        new_evi_object <- grain_evidence_new(evidence, universe(object)$levels)
-        
+        new_evi_object <- grain_evidence_new(evidence, universe(object)$levels)        
         ## str(list(evidence=evidence, new_evi_object=new_evi_object))
         
         if (details > 0){
@@ -140,7 +131,6 @@ set_evidence_worker <- function(object, evidence=NULL, propagate=TRUE, details=0
             cat("new evidence:\n"); print.default(new_evi_object)
         }
         
-        ## Hvis der er eksisterende evidens, så skal det tages ud af det nye
         if (!is.null_evi( old_evi_object ) ){
             new_evi_object <- grain_evidence_setdiff( new_evi_object, old_evi_object )
             if (details>0) {
@@ -207,10 +197,9 @@ retract_evidence_worker <- function(object, nodes=NULL, propagate=TRUE) {
             if ( length( keep ) < length( vn ) ){
                 object <- .resetgrain( object )                
                 if (length( keep ) > 0){
-#                    ne <- subset( old_evi_object, select=keep )
                     idx <-vn %in% keep
                     new_evi_object <- old_evi_object[idx,]
-                    print(new_evi_object)
+                    ## print(new_evi_object)
                     object <- set_evidence_worker( object, evidence = new_evi_object )
                 }
             }

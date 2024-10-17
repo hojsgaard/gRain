@@ -183,7 +183,7 @@ summary.grain <- function(object, type='std', ...) {
 
     type <- match.arg(type, c("std", "cliques", "rip", "configurations"))
     
-    cat("Independence network: Compiled:", isCompiled(object),
+    cat("Bayesian network: Compiled:", isCompiled(object),
         "Propagated:", isPropagated(object), "\n")
     
     if (length(object$evidence)) getEvidence(object)
@@ -199,7 +199,6 @@ summary.grain <- function(object, type='std', ...) {
         cat(sprintf(" Maximal clique size:            %4d \n",  max(cq.length)))
         cat(sprintf(" Maximal state space in cliques: %4d \n",
                     max(unlist(lapply(getgrain(object, "pot_equi"), length)) )))
-        ##                    max(unlist(lapply(pot(object)$pot_equi, length)) )))
       
         if(length(e <- getEvidence(object))){
             print(e)
