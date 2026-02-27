@@ -137,30 +137,3 @@ set_dim_names_cptable <- function(xx, i, data=NULL){
 }
 
 
-
-## ' ## All examples from above using cptable
-## ' 
-## ' z0   <- cptable(~z0, values=c(1, 9), levels=yn)                    ## p(z0)
-## ' z_z <- cptable(~z[i]|z[i-1], values=c(1, 99, 2, 98), levels=yn)   ## p(z[i]|z[i-1])
-## ' pat  <- list(z_z) ## Pattern to be repeated
-## ' rep.pat <- repeat_pattern(pat, instances=1:n)
-## ' mc <- compile_cpt(c(list(z0), rep.pat))
-## ' mc 
-## ' mc |> grain()
-## '
-## ' #' z0   <- cptable(~z0, values=c(1, 9), levels=yn)                    ##  p(z0)
-## ' z_z <- cptable(~z[i]|z[i-1], values=c(1, 99, 2, 98), levels=yn)   ##  p(z[i]|z[i-1])
-## ' u_z  <- cptable(~u[i]|z[i], values=c(10, 90, 20, 80), levels=yn)   ##  p(u[i]|z[i])
-## '
-## ' pat  <- list(z_z, u_z) ## Pattern to be repeated
-## ' rep.pat <- repeat_pattern(pat, instances=1:n)
-## ' hmm <- compile_cpt(c(list(z0), rep.pat))
-## ' hmm
-## ' hmm |> grain()
-## '
-## '
-## ' #' z0 <- cptable(~z0, values=c(0.5, 0.5), levels=yn)
-## ' za <- cptable(~z[i] | z[data[i, "p"]], values=c(0.5, 0.5), levels=yn)
-## ' zb <- repeat_pattern(list(za), instances=1:nrow(dep), data=dep)
-## ' tree <- compile_cpt(c(list(z0), zb))  |> grain()
-## ' 
