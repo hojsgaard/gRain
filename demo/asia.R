@@ -34,8 +34,9 @@ cpt.list$either
 bn <- grain( cpt.list )
 bn
 
-if (require(Rgraphviz))
-    plot(bn) # plot dag
+if (requireNamespace("Rgraphviz", quietly = TRUE)) {
+    plot(bn)
+}
 
 #' Compile network (moralize, triangulate, establish clique potential
 #' representation)
@@ -43,11 +44,18 @@ bn <- compile(bn)
 bn
 
 #' Notice for a compiled network we can get these plots
-if (require(Rgraphviz)){
+#'
+if (requireNamespace("Rgraphviz", quietly = TRUE)) {
     par(mfrow=c(1,2))
     plot(bn) # triangulated moral graph
     plot(bn, type="dag")
 }
+
+## if (require(Rgraphviz)){
+##     par(mfrow=c(1,2))
+##     plot(bn) # triangulated moral graph
+##     plot(bn, type="dag")
+## }
 
 #' Find clique marginal representation.
 bn <- propagate(bn); bn

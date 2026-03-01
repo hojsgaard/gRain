@@ -1,4 +1,3 @@
-
 #' @title Compile conditional probability tables / cliques potentials.
 #' @description Compile conditional probability tables / cliques
 #'     potentials as a preprocessing step for creating a graphical
@@ -119,6 +118,7 @@ print.pot_spec <- function(x, ...){
     invisible(x)
 }
 
+#' @export
 summary.cpt_spec <- function(object, ...){
     ## cat("cpt_spec with probabilities:\n")
     lapply(object,
@@ -141,6 +141,7 @@ as_cpt_spec_simple <- function(x){
     z
 }
 
+#' @export
 print.cpt_spec_simple <- function(x,...){
     cat("cpt_spec_simple with probabilities:\n")
     lapply(x,

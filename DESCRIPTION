@@ -1,5 +1,5 @@
 Package: gRain
-Version: 1.4.5
+Version: 1.4.6
 Title: Bayesian Networks
 Authors@R: person(given = "Søren",
                     family = "Højsgaard",
@@ -21,6 +21,7 @@ Suggests:
     knitr,
     markdown,
     microbenchmark,
+    Rgraphviz,
     testthat (>= 2.1.0)
 Imports:
     igraph,
@@ -33,5 +34,5 @@ VignetteBuilder: knitr
 LazyLoad: true
 LinkingTo: Rcpp (>= 0.11.1), RcppArmadillo, RcppEigen, gRbase
 ByteCompile: Yes
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Roxygen: list(markdown = TRUE)
