@@ -1,4 +1,3 @@
-
 ---
 title: Graphical Independence Networks
 subtitle: A vignette for the gRain package
